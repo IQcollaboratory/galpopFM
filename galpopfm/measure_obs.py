@@ -4,6 +4,7 @@ module for observational measurements
 
 
 '''
+import os 
 import numpy as np 
 
 # some constants 
@@ -36,9 +37,9 @@ def mag(wave, spec, band='r_sdss'):
 
     through_wave = np.interp(wave[wlim], through[0,:], through[1,:]) 
 
-    trans = through_wave * 1./np.trapz(through_wave / wave[wlim], x=wave[wlim])
+    trans = through_wave / np.trapz(through_wave / wave[wlim], x=wave[wlim]) # transmission 
     
-    _mag = -2.5 * np.log10(np.trapz(spec[wlim] * trans / wave[wlim], x=wave[wlim])) - 48.60 - 2.5 * mag2cgs
+    _mag = -2.5 * np.log10(np.trapz(spec[:,wlim] * trans / wave[wlim], x=wave[wlim])) - 48.60 - 2.5 * mag2cgs
     return _mag
 
 
@@ -50,8 +51,6 @@ def throughput(band):
     :return through: 
         2 x Nwave array that specifies [wavelength (Ang), throughput] 
     '''
-    if band not in ['V_johnson', 'r_sdss']: raise NotImplementedError
-
     band_dict = {
             'V_johnson': 'johnson_v',
             'galex_fuv': 'galex_fuv', 
@@ -62,8 +61,10 @@ def throughput(band):
             'i_sdss': 'sdss_i', 
             'z_sdss': 'sdss_z' 
             }
-    fband = os.path.join(os.path.dirname(os.path.realpath(__file__)), '%.dat' % band_dict[band])
-    through = np.loadtxt(fband, skiprows=1, unpack=True usecols=[0,1]) 
+    assert band in band_dict.keys() 
+
+    fband = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dat', '%s.dat' % band_dict[band])
+    through = np.loadtxt(fband, skiprows=1, unpack=True, usecols=[0,1]) 
     return through 
 
 
@@ -79,8 +80,8 @@ def A_FUV(fmag, nmag, rmag):
     
     afuv = np.zeros(fmag.shape) 
     afuv[n_r >= 4.] = 3.37 
-    afuv[(n_r >= 4.) & (f_n < 0.95)] = 3.32 * f_n + 0.22
+    afuv[(n_r >= 4.) & (f_n < 0.95)] = 3.32 * f_n[(n_r >= 4.) & (f_n < 0.95)] + 0.22
 
     afuv[n_r < 4.] = 2.96
-    afuv[(n_r < 4.) & (f_n < 0.90)] = 2.99 * f_n +0.27
+    afuv[(n_r < 4.) & (f_n < 0.90)] = 2.99 * f_n[(n_r < 4.) & (f_n < 0.90)] +0.27
     return afuv
