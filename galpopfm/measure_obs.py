@@ -50,6 +50,10 @@ def throughput(band):
         string specifying the band 
     :return through: 
         2 x Nwave array that specifies [wavelength (Ang), throughput] 
+
+    notes
+    -----
+    * taks ~7 seconds 
     '''
     band_dict = {
             'V_johnson': 'johnson_v',
