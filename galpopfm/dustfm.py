@@ -44,6 +44,7 @@ def DEM_slabcalzetti(theta, lam, flux, mstar, nebular=False):
     # randomly sample the inclinatiion angle from 0 - pi/2 
     incl = np.random.uniform(0., 0.5*np.pi, size=mstar.shape[0])
     sec_incl = 1./np.cos(incl) 
+    #cosis = 1.0 - np.cos(np.random.uniform(low=0, high=0.5*np.pi, size=mstar.shape[0]))
     
     if not nebular: 
         return slab_calzetti(lam, tauV, flux, sec_incl, factor=1.) 
