@@ -8,6 +8,9 @@ import numpy as np
 from . import dustfm as dustFM
 from . import measure_obs as measureObs
 
+dat_dir = os.environ['GALPOPFM_DIR']
+
+
 def dust_abc(name, dem='slab_calzetti'):
     '''
     '''
@@ -18,8 +21,7 @@ def dust_abc(name, dem='slab_calzetti'):
     sim_sed = _read_sed(name) 
     
     def rho(tt): 
-        distance_metric(tt, sim_sed, obs, dem=dem) 
-
+        return distance_metric(tt, sim_sed, obs, dem=dem) 
 
     # abc here 
 
@@ -34,13 +36,19 @@ def distance_metric(theta, sed, obs, dem='slab_calzetti'):
             sed['sed_onlyneb'], 
             sed['mstar'], 
             dem=dem) 
-    # noise model here
 
-    # observational measurements  
-    A_V = measureObs.A_V(
-    A_FUV = measureObs.A_FUV(
+    # observational measurements 
+    #A_V = measureObs.A_V(
+    f_mag = measureObs.mag(sed['wave'], flux_dusty, band='galex_fuv') 
+    n_mag = measureObs.mag(sed['wave'], flux_dusty, band='galex_nuv') 
+    r_mag = measureObs.mag(sed['wave'], flux_dusty, band='r_sdss') 
+    # noise model somewhere here
+    a_fuv = measureObs.A_FUV(f_mag, n_mag, r_mag) 
+    #a_v   = measureObs.A_V() 
+
+    # calculate the distance 
+    
     return 
-
 
 
 def _read_sed(name): 

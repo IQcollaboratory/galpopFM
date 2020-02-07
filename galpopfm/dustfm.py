@@ -73,7 +73,7 @@ def slab_calzetti(lam, tauV, mag, sec_incl, factor=1.):
     ##use a slab model, with average (constant) inclination
     #T_V = (1.0-np.exp(-tauV/cosi_ave))/(tauV/cosi_ave)
     ##use a slab model, with randomly assigned inclination
-    T_V = (1.0 - np.exp(-tauV/incl)) / (tauV/incl)
+    T_V = (1.0 - np.exp(-tauV/sec_incl)) / (tauV/sec_incl)
 
     AV = -2.5 * np.log10(T_V)
 
@@ -81,7 +81,7 @@ def slab_calzetti(lam, tauV, mag, sec_incl, factor=1.):
         AV = 0.1 # this can be a free parameters (0.1 is from Romeel's paper as the minimum attenuation) 
         newmag = mag
     else:
-        T_lam = 10.0**(AV * -0.4 * calzetti(lam) * factor)
+        T_lam = 10.0**(AV * -0.4 * calzetti_absorption(lam) * factor)
         newmag = mag * T_lam
     return newmag
 
@@ -232,8 +232,10 @@ def calzetti_absorption(lam):
         
     # Calzetti+(2000) Eq.4
     k_lam = np.zeros(lam.shape)
-    k_lam[(lam >= 0.12) & (lam < 0.63)] = R_V + 2.659 * (-2.156 + 1.509/lam - 0.198/(lam**2) + 0.011/(lam**3))
-    k_lam[(lam >= 0.63) & (lam <= 2.2)] = R_V + 2.659 * (-1.857 + 1.040/lam)
+    wlim = (lam >= 0.12) & (lam < 0.63)
+    k_lam[wlim] = R_V + 2.659 * (-2.156 + 1.509/lam[wlim] - 0.198/(lam[wlim]**2) + 0.011/(lam[wlim]**3))
+    wlim = (lam >= 0.63) & (lam <= 2.2)
+    k_lam[wlim] = R_V + 2.659 * (-1.857 + 1.040/lam[wlim])
 
     k_V_calzetti = 4.87789
     return k_lam/k_V_calzetti
