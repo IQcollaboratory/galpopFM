@@ -19,8 +19,7 @@ def compile_seds(name):
         fprop = os.path.join(dat_dir, 'prop', 'SIMBA-mstar-posvel-cen.txt') # ID, Mstar[Msun], central(True)/satellite(False), pos x 3 (kpc), vel x 3 (km/s)
         fneb = lambda i: os.path.join(dat_dir, 'sed', 'simba', '%i_SIMBA_Fullspectra_Nebular_onlyAGBdust.txt' % i) 
         fnoneb = lambda i: os.path.join(dat_dir, 'sed', 'simba', '%i_SIMBA_Fullspectra_noNebular_onlyAGBdust.txt' % i) 
-        fhdf5 = os.path.join(dat_dir, 'simba.hdf5') 
-
+        fhdf5 = os.path.join(dat_dir, 'sed', 'simba.hdf5') 
     else:
         raise NotImplementedError
     
