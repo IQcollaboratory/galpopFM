@@ -33,16 +33,27 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'):
     return spec_dusty 
 
 
-def DEM_slabcalzetti(theta, lam, flux, mstar, nebular=False): 
+def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=False): 
     ''' Dust Empirical Model that uses the slab model with tauV(theta, mstar)
     parameterization with inclinations randomly sampled 
+    
+    :param theta: 
+        parameter of the DEM model that specifies the M* dep. slope, offset
+        at nebular flux attenuatoin fraction
+    :param lam: 
+        wavelength in angstrom
+    :param flux: 
+        flux of sed (units don't matter) 
+    :param nebular: 
+        if True nebular flux has an attenuation that is scaled from the
+        continuum attenuation.
     '''
-    mstar = np.atleast_1d(mstar) 
+    logmstar = np.atleast_1d(logmstar) 
 
-    tauV = theta[0] * (mstar - 10.) + theta[1] 
+    tauV = theta[0] * (logmstar - 10.) + theta[1] 
     
     # randomly sample the inclinatiion angle from 0 - pi/2 
-    incl = np.random.uniform(0., 0.5*np.pi, size=mstar.shape[0])
+    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
     sec_incl = 1./np.cos(incl) 
     #cosis = 1.0 - np.cos(np.random.uniform(low=0, high=0.5*np.pi, size=mstar.shape[0]))
     
