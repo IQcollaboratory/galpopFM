@@ -6,14 +6,16 @@ module for observational measurements
 '''
 import os 
 import numpy as np 
+from scipy.signal import medfilt2d 
 
 # some constants 
-lsun    = 3.839e33
+lsun    = 3.839e33 # erg/s
 pc2cm   = 3.08568e18
 mag2cgs = np.log10(lsun/4.0/np.pi/(pc2cm**2)/100.0)
 
 H0  = 2.2685455e-18 # 1/s (70. km/s/Mpc) 
 c   = 2.9979e10 # cm/s
+cinA= 2.9979e18 # A/s
 
 def mag(wave, spec, redshift=0.05, band='r_sdss'):
     ''' **THIS DOES NOT WORK YET!**
@@ -84,6 +86,106 @@ def AbsMag_sed(wave, sed, band='r_sdss'):
     return _mag  
 
 
+def A_FUV(fmag, nmag, rmag):
+    ''' Calculate attenuation of FUV A_FUV based on Salim+2007 Eq.(5)  
+
+    :param fmag: 
+        rest-frame (absolute) FUV magnitudee  
+    :param nmag: 
+        rest-frame (absolute) NUV magnitudee  
+    :param rmag: 
+        rest-frame (absolute) r-band magnitudee  
+    '''
+    fmag = np.atleast_1d(fmag) 
+    nmag = np.atleast_1d(nmag) 
+    rmag = np.atleast_1d(rmag) 
+
+    f_n  = fmag - nmag # F-N 
+    n_r  = nmag - rmag   # N-r
+    
+    afuv = np.zeros(fmag.shape) 
+    afuv[n_r >= 4.] = 3.37 
+    afuv[(n_r >= 4.) & (f_n < 0.95)] = 3.32 * f_n[(n_r >= 4.) & (f_n < 0.95)] + 0.22
+
+    afuv[n_r < 4.] = 2.96
+    afuv[(n_r < 4.) & (f_n < 0.90)] = 2.99 * f_n[(n_r < 4.) & (f_n < 0.90)] +0.27
+    return afuv
+
+
+def L_Ha(wave, spec, continuum='median', units='fsps'):
+    ''' Halpha luminosity
+    '''
+    _Ha = L_em('halpha', wave, spec, continuum=continuum, units=units) 
+    return _Ha[0]
+
+
+def L_Hb(wave, spec, continuum='median', units='fsps'):
+    ''' Hbeta luminosity
+    '''
+    _Hb = L_em('hbeta', wave, spec, continuum=continuum, units=units) 
+    return _Hb[0]
+
+
+def L_em(lines, wave, spec, continuum='median', units='fsps'):
+    ''' measure total emissoin line luminosity from spectra 
+    
+    :param wave: 
+        wavelength in angstroms
+    :param spec: 
+        flux in units specified by args `units`. [nspec, nwave] 
+    :param continuum: 
+        specifies the method used to fit the coontinuum
+    :param units: 
+        units of flux. if `units == 'fsps'`, flux unit of Lsun/Hz
+    
+    :return lha: 
+        Halpha luminosity in units of 10-17 erg/s/cm2 (consistent with SDSS)
+
+    notes
+    -----
+    *   we impose that luminosities can't be 0
+    '''
+    wlim_optical = (wave > 1e3) & (wave < 2e4) 
+    wave = wave[wlim_optical] 
+    spec = np.atleast_2d(spec)[:,wlim_optical] 
+    if continuum == 'median': 
+        spec_em = get_spec_em(spec)
+    else: 
+        raise NotImplementedError
+    if isinstance(lines, str): lines = [lines] 
+
+    Lems = [] 
+    for line in lines: 
+        #wlim = (wave > 6554.8) & (wave < 6574.8) # MPA-JHU
+        if line == 'halpha':
+            wlim = (wave > 6554.6) & (wave < 6574.6) # Yan et al.
+        elif line == 'hbeta': 
+            wlim = (wave > 4857.45) & (wave < 4867.05)
+
+        if units == 'fsps':
+            # Lsun/(1/s) * A /s / A^2 * A 
+            Lem = tsum(wave[wlim], spec_em[:,wlim] * cinA / (wave[wlim]**2)) * lsun
+        else:
+            raise NotImplementedError
+        Lems.append(np.clip(Lem, 0., None)) 
+    #LHa = tsum(wave[bandw_Ha],spec_em_Ha[bandw_Ha]) # in 1e-17 erg/s cm^-2
+    return Lems
+
+
+def get_spec_em(spec):
+    ''' get emission lines of spectra by subtracting out the continuum 
+    estimated with median filtering
+
+    notes
+    -----
+    *   this function takes a long time for large number of spectra. we will
+        likely want to implement this in fortran and wrap it... 
+        (~6 mins for SIMBA)
+    '''
+    spec_em = spec - medfilt2d(spec, [1,151])
+    return spec_em
+
+
 def throughput(band): 
     ''' throughput of specified band  
 
@@ -111,32 +213,6 @@ def throughput(band):
     fband = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dat', '%s.dat' % band_dict[band])
     through = np.loadtxt(fband, skiprows=1, unpack=True, usecols=[0,1]) 
     return through 
-
-
-def A_FUV(fmag, nmag, rmag):
-    ''' Calculate attenuation of FUV A_FUV based on Salim+2007 Eq.(5)  
-
-    :param fmag: 
-        rest-frame (absolute) FUV magnitudee  
-    :param nmag: 
-        rest-frame (absolute) NUV magnitudee  
-    :param rmag: 
-        rest-frame (absolute) r-band magnitudee  
-    '''
-    fmag = np.atleast_1d(fmag) 
-    nmag = np.atleast_1d(nmag) 
-    rmag = np.atleast_1d(rmag) 
-
-    f_n  = fmag - nmag # F-N 
-    n_r  = nmag - rmag   # N-r
-    
-    afuv = np.zeros(fmag.shape) 
-    afuv[n_r >= 4.] = 3.37 
-    afuv[(n_r >= 4.) & (f_n < 0.95)] = 3.32 * f_n[(n_r >= 4.) & (f_n < 0.95)] + 0.22
-
-    afuv[n_r < 4.] = 2.96
-    afuv[(n_r < 4.) & (f_n < 0.90)] = 2.99 * f_n[(n_r < 4.) & (f_n < 0.90)] +0.27
-    return afuv
 
 
 def tsum(xin, yin): 
