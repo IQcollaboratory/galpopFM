@@ -16,7 +16,7 @@ from . import measure_obs as measureObs
 dat_dir = os.environ['GALPOPFM_DIR']
 
 
-def dust_abc(name, dem='slab_calzetti'):
+def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, Nthread=1):
     '''
     '''
     # read in observations 
@@ -42,17 +42,66 @@ def dust_abc(name, dem='slab_calzetti'):
     for k in ['sed_noneb', 'sed_onlyneb']: 
         sim_sed_wlim[k] = sim_sed[k][:,wlim]
     
-    def rho(tt): 
-        return distance_metric(tt, sim_sed_wlim, x_obs, dem=dem) 
+    import time
 
-    # abc here 
+    def Sim(tt): 
+        t0 = time.time() 
+        sumstat = sumstat_model(tt, sim_sed_wlim, dem=dem)
+        print('sumstat model takes %f' % (time.time() - t0))
+        return sumstat
+    
+    def Rho(sumsim, obssim): 
+        _rho = distance_metric(sumsim, obssim) 
+        print(_rho) 
+        return _rho
+
+    #--- inference with ABC-PMC below ---
+
+    # threshold 
+    eps = abcpmc.ConstEps(T, eps0) 
+    
+    # prior 
+    prior_min = prior_range[0] 
+    prior_max = prior_range[1] 
+    prior = abcpmc.TophatPrior(prior_min, prior_max) 
+    
+    # sampler 
+    abcpmc_sampler = abcpmc.Sampler(
+            N=N_p,                  # N_particles
+            Y=x_obs,                # data
+            postfn=Sim,   # simulator 
+            dist=Rho, 
+            threads=Nthread
+            )       # distance function  
+
+    # particle proposal 
+    abcpmc_sampler.particle_proposal_cls = abcpmc.ParticleProposal
+
+    pools = [] 
+    print('----------------------------------------')
+    for pool in abcpmc_sampler.sample(prior, eps):#, pool=init_pool):
+        print("T:{0},ratio: {1:>.4f}".format(pool.t, pool.ratio))
+        print('eps ', eps(pool.t))
+        writeABC('eps', pool, abc_dir=abc_dir)
+
+        # write out theta, weights, and distances to file 
+        writeABC('theta', pool, abc_dir=abc_dir) 
+        writeABC('w', pool, abc_dir=abc_dir) 
+        writeABC('rho', pool, abc_dir=abc_dir) 
+
+        # update epsilon based on median thresholding 
+        eps.eps = np.median(np.atleast_2d(pool.dists), axis=0)
+        print('----------------------------------------')
+        pools.append(pool)
+
+    return pools 
 
 
-def distance_metric(theta, sed, obs, dem='slab_calzetti'): 
+def distance_metric(x_model, x_obs): 
     '''
     '''
-    med_fnuv_obs, med_balmer_obs = obs
-    med_fnuv_mod, med_balmer_mod = sumstat_model(theta, sed, dem=dem) 
+    med_fnuv_obs, med_balmer_obs = x_obs
+    med_fnuv_mod, med_balmer_mod = x_model
 
     # L2 norm of the median balmer ratio measurement log( (Ha/Hb)/(Ha/Hb)I )
     _finite = np.isfinite(med_balmer_mod) & np.isfinite(med_balmer_obs)
@@ -141,3 +190,44 @@ def _read_sed(name):
     sed['mstar']        = f['mstar'][...] 
     f.close() 
     return sed
+
+
+def writeABC(type, pool, prior=None, abc_dir=None): 
+    ''' Given abcpmc pool object. Writeout specified ABC pool property
+    '''
+    if abc_dir is None: 
+        abc_dir = os.path.join(dat_dir, 'abc') 
+
+    if type == 'init': # initialize
+        if not os.path.exists(abc_dir): 
+            try: 
+                os.makedirs(abc_dir)
+            except OSError: 
+                pass 
+        # write specific info of the run  
+        f = open(os.path.join(abc_dir, 'info.md'), 'w')
+        f.write('# '+run+' run specs \n')
+        f.write('N_particles = %i \n' % pool.N)
+        f.write('Distance function = %s \n' % pool.dist.__name__)
+        # prior 
+        f.write('Top Hat Priors \n')
+        f.write('Prior Min = [%s] \n' % ','.join([str(prior_obj.min[i]) for i in range(len(prior_obj.min))]))
+        f.write('Prior Max = [%s] \n' % ','.join([str(prior_obj.max[i]) for i in range(len(prior_obj.max))]))
+        f.close()
+
+    elif type == 'eps': # threshold writeout 
+        if pool is None: # write or overwrite threshold writeout
+            f = open(os.path.join(abc_dir, 'epsilon.dat'), "w")
+        else: 
+            f = open(os.path.join(abc_dir, 'epsilon.dat'), "a") # append
+            f.write(str(pool.eps)+'\t'+str(pool.ratio)+'\n')
+        f.close()
+    elif type == 'theta': # particle thetas
+        np.savetxt(os.path.join(abc_dir, 'theta.t%i.dat' % (pool.t)), pool.thetas) 
+    elif type == 'w': # particle weights
+        np.savetxt(os.path.join(abc_dir, 'w.t%i.dat' % (pool.t)), pool.ws)
+    elif type == 'rho': # distance
+        np.savetxt(os.path.join(abc_dir, 'rho.t%i.dat' % (pool.t)), pool.dists)
+    else: 
+        raise ValueError
+    return None 

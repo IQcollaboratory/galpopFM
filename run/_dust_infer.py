@@ -143,6 +143,7 @@ def explore_distances(name):
     #print(div_knn[0][0][0][1]) 
     return None 
 
+
 def test_distance(name): 
     # read in observations 
     dat_dir = os.environ['GALPOPFM_DIR']

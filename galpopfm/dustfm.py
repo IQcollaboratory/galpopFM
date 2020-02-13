@@ -33,7 +33,7 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'):
     return spec_dusty 
 
 
-def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=False): 
+def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=True): 
     ''' Dust Empirical Model that uses the slab model with tauV(theta, mstar)
     parameterization with inclinations randomly sampled 
     
