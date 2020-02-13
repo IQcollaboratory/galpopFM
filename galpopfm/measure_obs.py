@@ -7,6 +7,7 @@ module for observational measurements
 import os 
 import numpy as np 
 from scipy.signal import medfilt2d 
+from scipy.interpolate import interp1d 
 
 # some constants 
 lsun    = 3.839e33 # erg/s
@@ -130,7 +131,7 @@ def L_em(lines, wave, spec, continuum='median', units='fsps'):
     ''' measure total emissoin line luminosity from spectra 
     
     :param wave: 
-        wavelength in angstroms
+        rest-frame wavelength in angstroms
     :param spec: 
         flux in units specified by args `units`. [nspec, nwave] 
     :param continuum: 
@@ -145,9 +146,6 @@ def L_em(lines, wave, spec, continuum='median', units='fsps'):
     -----
     *   we impose that luminosities can't be 0
     '''
-    wlim_optical = (wave > 1e3) & (wave < 2e4) 
-    wave = wave[wlim_optical] 
-    spec = np.atleast_2d(spec)[:,wlim_optical] 
     if continuum == 'median': 
         spec_em = get_spec_em(spec)
     else: 
@@ -172,7 +170,7 @@ def L_em(lines, wave, spec, continuum='median', units='fsps'):
     return Lems
 
 
-def get_spec_em(spec):
+def get_spec_em(spec, fsparse=10):
     ''' get emission lines of spectra by subtracting out the continuum 
     estimated with median filtering
 
@@ -181,8 +179,14 @@ def get_spec_em(spec):
     *   this function takes a long time for large number of spectra. we will
         likely want to implement this in fortran and wrap it... 
         (~6 mins for SIMBA)
+    *   implemented sparse sampling of spectra in order to speed it up. Gets
+        about 10x speed up 
     '''
-    spec_em = spec - medfilt2d(spec, [1,151])
+    width = int(150/fsparse) 
+    if (width % 2) == 0: width+1
+    cont_sparse = medfilt2d(spec[:,::fsparse], [1, width]) 
+    cont_interp = interp1d(np.arange(spec.shape[1])[::fsparse], cont_sparse, fill_value='extrapolate') 
+    spec_em = spec - cont_interp(np.arange(spec.shape[1]))  #medfilt2d(spec, [1,151])
     return spec_em
 
 

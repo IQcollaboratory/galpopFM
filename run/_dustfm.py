@@ -49,7 +49,7 @@ def fm_fuv(name):
     f.close() 
     
     theta = np.array([0.1, 0.2, 1./0.44]) 
-    flux_dusty = dustFM.Attenuate(
+    sed_dusty = dustFM.Attenuate(
             theta, 
             sed['wave'], 
             sed['sed_noneb'], 
@@ -58,9 +58,9 @@ def fm_fuv(name):
             dem='slab_calzetti') 
 
     # observational measurements 
-    F_mag = measureObs.mag(sed['wave'], flux_dusty, band='galex_fuv') 
-    N_mag = measureObs.mag(sed['wave'], flux_dusty, band='galex_nuv') 
-    R_mag = measureObs.mag(sed['wave'], flux_dusty, band='r_sdss') 
+    F_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_fuv') 
+    N_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_nuv') 
+    R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='r_sdss') 
     # noise model somewhere here
     a_fuv = measureObs.A_FUV(F_mag, N_mag, R_mag) 
 
@@ -129,6 +129,7 @@ def fm_colormag(name):
     fig.savefig(ffig, bbox_inches='tight') 
     return None 
 
+
 if __name__=="__main__": 
-    fm_fuv('simba')
-    #fm_colormag('simba')
+    #fm_fuv('simba')
+    fm_colormag('simba')
