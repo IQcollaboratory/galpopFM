@@ -6,6 +6,7 @@
 import os 
 import h5py 
 import numpy as np 
+np.seterr(divide='ignore', invalid='ignore')
 # -- abcpmc -- 
 import abcpmc
 from abcpmc import mpi_util
@@ -16,7 +17,7 @@ from . import measure_obs as measureObs
 dat_dir = os.environ['GALPOPFM_DIR']
 
 
-def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, Nthread=1):
+def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None):
     '''
     '''
     # read in observations 
@@ -45,21 +46,15 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     import time
 
     def Sim(tt): 
-        t0 = time.time() 
         sumstat = sumstat_model(tt, sim_sed_wlim, dem=dem)
-        print('sumstat model takes %f' % (time.time() - t0))
         return sumstat
     
-    def Rho(sumsim, obssim): 
-        _rho = distance_metric(sumsim, obssim) 
-        print(_rho) 
-        return _rho
+    def Rho(sumobs, sumsim): 
+        _rho = distance_metric(sumobs, sumsim, method='L2') 
+        print(u"    ", _rho) 
+        return _rho 
 
     #--- inference with ABC-PMC below ---
-
-    # threshold 
-    eps = abcpmc.ConstEps(T, eps0) 
-    
     # prior 
     prior_min = prior_range[0] 
     prior_max = prior_range[1] 
@@ -69,57 +64,73 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     abcpmc_sampler = abcpmc.Sampler(
             N=N_p,                  # N_particles
             Y=x_obs,                # data
-            postfn=Sim,   # simulator 
-            dist=Rho, 
-            threads=Nthread
-            )       # distance function  
+            postfn=Sim,             # simulator 
+            dist=Rho                # distance metric 
+            )      
 
-    # particle proposal 
-    abcpmc_sampler.particle_proposal_cls = abcpmc.ParticleProposal
+    # threshold 
+    eps = abcpmc.ConstEps(T, eps0) 
+    print('eps0', eps.eps)
 
-    pools = [] 
-    print('----------------------------------------')
-    for pool in abcpmc_sampler.sample(prior, eps):#, pool=init_pool):
-        print("T:{0},ratio: {1:>.4f}".format(pool.t, pool.ratio))
-        print('eps ', eps(pool.t))
-        writeABC('eps', pool, abc_dir=abc_dir)
+    pools = []
+    for pool in abcpmc_sampler.sample(prior, eps):
+        eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
+        print("T: {0}, eps: [{1}], ratio: {2:>.4f}".format(pool.t, eps_str, pool.ratio))
 
+        for i, (mean, std) in enumerate(zip(*abcpmc.weighted_avg_and_std(pool.thetas, pool.ws, axis=0))):
+            print(u"    theta[{0}]: {1:>.4f} \u00B1 {2:>.4f}".format(i, mean,std))
+        print('dist', pool.dists)
+        
         # write out theta, weights, and distances to file 
+        writeABC('eps', pool, abc_dir=abc_dir)
         writeABC('theta', pool, abc_dir=abc_dir) 
         writeABC('w', pool, abc_dir=abc_dir) 
         writeABC('rho', pool, abc_dir=abc_dir) 
 
         # update epsilon based on median thresholding 
-        eps.eps = np.median(np.atleast_2d(pool.dists), axis=0)
-        print('----------------------------------------')
+        eps.eps = np.median(pool.dists, axis=0)
         pools.append(pool)
+        print('eps%i' % pool.t, eps.eps)
+        print('----------------------------------------')
+        if pool.ratio <0.2:
+            break
+    abcpmc_sampler.close()
+    return None 
 
-    return pools 
 
+def distance_metric(x_obs, x_model, method='L2'): 
+    ''' distance metric between forward model m(theta) and observations
 
-def distance_metric(x_model, x_obs): 
-    '''
-    '''
+    notes
+    -----
+    * we have implemented the simplest L2 Norm 
+    ''' 
     med_fnuv_obs, med_balmer_obs = x_obs
     med_fnuv_mod, med_balmer_mod = x_model
+    
+    if method == 'L2': 
+        # L2 norm of the median balmer ratio measurement log( (Ha/Hb)/(Ha/Hb)I )
+        _finite = np.isfinite(med_balmer_mod) & np.isfinite(med_balmer_obs)
+        if np.sum(_finite) == 0: 
+            rho_balmer = np.Inf
+        else: 
+            rho_balmer = np.sum((med_balmer_mod[_finite] - med_balmer_obs[_finite])**2)/float(np.sum(_finite))
 
-    # L2 norm of the median balmer ratio measurement log( (Ha/Hb)/(Ha/Hb)I )
-    _finite = np.isfinite(med_balmer_mod) & np.isfinite(med_balmer_obs)
-    if np.sum(_finite) == 0: 
-        rho_balmer = np.Inf
-    else: 
-        rho_balmer = np.sum((med_balmer_mod[_finite] - med_balmer_obs[_finite])**2)/float(np.sum(_finite))
-    # L2 norm of median FUV-NUV color 
-    _finite = np.isfinite(med_fnuv_mod) & np.isfinite(med_fnuv_obs)
-    if np.sum(_finite) == 0: 
-        rho_fnuv = np.Inf
-    else: 
-        rho_fnuv = np.sum((med_fnuv_mod[_finite] - med_fnuv_obs[_finite])**2)/float(np.sum(_finite))
+        # L2 norm of median FUV-NUV color 
+        _finite = np.isfinite(med_fnuv_mod) & np.isfinite(med_fnuv_obs)
+        if np.sum(_finite) == 0: 
+            rho_fnuv = np.Inf
+        else: 
+            rho_fnuv = np.sum((med_fnuv_mod[_finite] - med_fnuv_obs[_finite])**2)/float(np.sum(_finite))
 
-    return [rho_balmer, rho_fnuv] 
+        return [rho_balmer, rho_fnuv] 
+    else: 
+        raise NotImplemented 
 
 
 def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z): 
+    ''' calculate summary statistics for SDSS observations  
+    '''
     FUV_NUV =  Fmag - Nmag
     Ha_sdss = Haflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
     Hb_sdss = Hbflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
@@ -133,6 +144,12 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
 
 
 def sumstat_model(theta, sed, dem='slab_calzetti'): 
+    ''' calculate summary statistics for forward model m(theta) 
+
+    notes
+    -----
+    * still need to implement noise model
+    '''
     sed_dusty = dustFM.Attenuate(
             theta, 
             sed['wave'], 
@@ -149,6 +166,8 @@ def sumstat_model(theta, sed, dem='slab_calzetti'):
     # balmer measurements 
     Ha_dust, Hb_dust = measureObs.L_em(['halpha', 'hbeta'], sed['wave'], sed_dusty) 
     balmer_ratio = Ha_dust/Hb_dust
+    # noise model somewhere here
+    # noise model somewhere here
     # noise model somewhere here
 
     # calculate the distance 

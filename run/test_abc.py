@@ -35,7 +35,7 @@ dustInfer.dust_abc(
         'simba', 
         3, 
         eps0=[0.5, 1.], 
-        N_p=2, 
+        N_p=3, 
         prior_range=[prior_min, prior_max], 
         dem='slab_calzetti', 
         abc_dir=abc_dir)
