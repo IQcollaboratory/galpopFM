@@ -4,6 +4,7 @@
 
 '''
 import os 
+import sys 
 import h5py 
 import numpy as np 
 np.seterr(divide='ignore', invalid='ignore')
@@ -17,7 +18,7 @@ from . import measure_obs as measureObs
 dat_dir = os.environ['GALPOPFM_DIR']
 
 
-def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None):
+def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, nthread=1):
     '''
     '''
     # read in observations 
@@ -31,28 +32,20 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     Hbflux_sdss = sdss['HBFLUX'][...]
     
     x_obs = sumstat_obs(F_mag_sdss, N_mag_sdss, R_mag_sdss, Haflux_sdss, Hbflux_sdss, sdss['Z'][...])
-
+    
     # read SED for sims 
     sim_sed = _read_sed(name) 
 
     # pass through the minimal amount of memory 
     wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 1e4) 
-    sim_sed_wlim = {}
-    sim_sed_wlim['mstar']   = sim_sed['mstar'] 
-    sim_sed_wlim['wave']    = sim_sed['wave'][wlim] 
-    for k in ['sed_noneb', 'sed_onlyneb']: 
-        sim_sed_wlim[k] = sim_sed[k][:,wlim]
     
-    import time
-
-    def Sim(tt): 
-        sumstat = sumstat_model(tt, sim_sed_wlim, dem=dem)
-        return sumstat
-    
-    def Rho(sumobs, sumsim): 
-        _rho = distance_metric(sumobs, sumsim, method='L2') 
-        print(u"    ", _rho) 
-        return _rho 
+    # save as global variable that can be accessed by multiprocess 
+    global shared_sim_sed
+    shared_sim_sed = {} 
+    shared_sim_sed['mstar'] = sim_sed['mstar'].copy()
+    shared_sim_sed['wave']  = sim_sed['wave'][wlim].copy()
+    shared_sim_sed['sed_noneb'] = sim_sed['sed_noneb'][:,wlim].copy() 
+    shared_sim_sed['sed_onlyneb'] = sim_sed['sed_onlyneb'][:,wlim].copy() 
 
     #--- inference with ABC-PMC below ---
     # prior 
@@ -64,8 +57,11 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     abcpmc_sampler = abcpmc.Sampler(
             N=N_p,                  # N_particles
             Y=x_obs,                # data
-            postfn=Sim,             # simulator 
-            dist=Rho                # distance metric 
+            postfn=_sumstat_model_shared,   # simulator 
+            dist=distance_metric,   # distance metric 
+            threads=nthread,
+            postfn_kwargs={'dem': dem},
+            dist_kwargs={'method': 'L2'}
             )      
 
     # threshold 
@@ -143,7 +139,13 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
     return [med_fnuv, med_balmer]
 
 
-def sumstat_model(theta, sed, dem='slab_calzetti'): 
+def _sumstat_model_shared(theta, dem='slab_calzetti'): 
+    ''' wrapper for sumstat_model that works with shared memory? 
+    '''
+    return sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
+
+
+def sumstat_model(theta, sed=None, dem='slab_calzetti'): 
     ''' calculate summary statistics for forward model m(theta) 
 
     notes
