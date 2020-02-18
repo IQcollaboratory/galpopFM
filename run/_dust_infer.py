@@ -143,6 +143,7 @@ def explore_distances(name):
     #print(div_knn[0][0][0][1]) 
     return None 
 
+
 def test_distance(name): 
     # read in observations 
     dat_dir = os.environ['GALPOPFM_DIR']
@@ -175,7 +176,11 @@ def test_distance(name):
     for i in range(10): 
         t0 = time.time()
         theta = np.array([0.1, 0.2+0.05*float(i), 1./0.44]) 
-        print(dustInfer.distance_metric(theta, sim_sed_wlim, x_obs, dem='slab_calzetti')) 
+        x_model = dustInfr.sumstat_model(theta, sim_sed_wlim, dem='slab_calzetti')
+        print('summary sstatitics takes %.f' % (time.time() - t0))
+
+        t0 = time.time()
+        print(dustInfer.distance_metric(x_model, x_obs)) 
         print('distance takes %.f' % (time.time() - t0))
     return None 
 
