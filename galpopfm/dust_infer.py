@@ -18,7 +18,7 @@ from . import measure_obs as measureObs
 dat_dir = os.environ['GALPOPFM_DIR']
 
 
-def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, nthread=1):
+def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, mpi=False, nthread=1):
     '''
     '''
     # read in observations 
@@ -54,15 +54,28 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     prior = abcpmc.TophatPrior(prior_min, prior_max) 
     
     # sampler 
-    abcpmc_sampler = abcpmc.Sampler(
-            N=N_p,                  # N_particles
-            Y=x_obs,                # data
-            postfn=_sumstat_model_shared,   # simulator 
-            dist=distance_metric,   # distance metric 
-            threads=nthread,
-            postfn_kwargs={'dem': dem},
-            dist_kwargs={'method': 'L2'}
-            )      
+    if mpi: 
+        mpi_pool = mpi_util.MpiPool()
+        
+        abcpmc_sampler = abcpmc.Sampler(
+                N=N_p,                  # N_particles
+                Y=x_obs,                # data
+                postfn=_sumstat_model_shared,   # simulator 
+                dist=distance_metric,   # distance metric 
+                pool=mpi_pool, 
+                postfn_kwargs={'dem': dem},
+                dist_kwargs={'method': 'L2'}
+                )      
+    else: 
+        abcpmc_sampler = abcpmc.Sampler(
+                N=N_p,                  # N_particles
+                Y=x_obs,                # data
+                postfn=_sumstat_model_shared,   # simulator 
+                dist=distance_metric,   # distance metric 
+                threads=nthread,
+                postfn_kwargs={'dem': dem},
+                dist_kwargs={'method': 'L2'}
+                )      
 
     # threshold 
     eps = abcpmc.ConstEps(T, eps0) 
