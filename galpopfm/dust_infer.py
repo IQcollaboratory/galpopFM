@@ -19,7 +19,7 @@ dat_dir = os.environ['GALPOPFM_DIR']
 
 
 def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, mpi=False, nthread=1):
-    '''
+    ''' run ABC-PMC to infer posteriors for dust empirical model parameters 
     '''
     # read in observations 
     fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
@@ -38,14 +38,16 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
 
     # pass through the minimal amount of memory 
     wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 1e4) 
+    # only keep centrals
+    cens = sim_sed['censat'].astype(bool) 
     
     # save as global variable that can be accessed by multiprocess 
     global shared_sim_sed
     shared_sim_sed = {} 
-    shared_sim_sed['mstar'] = sim_sed['mstar'].copy()
-    shared_sim_sed['wave']  = sim_sed['wave'][wlim].copy()
-    shared_sim_sed['sed_noneb'] = sim_sed['sed_noneb'][:,wlim].copy() 
-    shared_sim_sed['sed_onlyneb'] = sim_sed['sed_onlyneb'][:,wlim].copy() 
+    shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
+    shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
+    shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
+    shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
 
     #--- inference with ABC-PMC below ---
     # prior 
@@ -95,6 +97,8 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
         writeABC('theta', pool, abc_dir=abc_dir) 
         writeABC('w', pool, abc_dir=abc_dir) 
         writeABC('rho', pool, abc_dir=abc_dir) 
+        # plot ABC particles 
+        plotABC(pool, prior=prior, dem=dem, abc_dir=abc_dir)
 
         # update epsilon based on median thresholding 
         eps.eps = np.median(pool.dists, axis=0)
@@ -170,7 +174,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti'):
             sed['wave'], 
             sed['sed_noneb'], 
             sed['sed_onlyneb'], 
-            np.log10(sed['mstar']),
+            sed['logmstar'],
             dem='slab_calzetti') 
     
     # observational measurements 
@@ -221,7 +225,8 @@ def _read_sed(name):
     sed['sed_neb']      = f['sed_neb'][...]
     sed['sed_noneb']    = f['sed_noneb'][...]
     sed['sed_onlyneb']  = sed['sed_neb'] - sed['sed_noneb'] # only nebular emissoins 
-    sed['mstar']        = f['mstar'][...] 
+    sed['logmstar']     = f['logmstar'][...] 
+    sed['censat']       = f['censat'][...] 
     f.close() 
     return sed
 
@@ -248,7 +253,6 @@ def writeABC(type, pool, prior=None, abc_dir=None):
         f.write('Prior Min = [%s] \n' % ','.join([str(prior_obj.min[i]) for i in range(len(prior_obj.min))]))
         f.write('Prior Max = [%s] \n' % ','.join([str(prior_obj.max[i]) for i in range(len(prior_obj.max))]))
         f.close()
-
     elif type == 'eps': # threshold writeout 
         if pool is None: # write or overwrite threshold writeout
             f = open(os.path.join(abc_dir, 'epsilon.dat'), "w")
@@ -264,4 +268,52 @@ def writeABC(type, pool, prior=None, abc_dir=None):
         np.savetxt(os.path.join(abc_dir, 'rho.t%i.dat' % (pool.t)), pool.dists)
     else: 
         raise ValueError
+    return None 
+
+
+def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None): 
+    ''' Given abcpmc pool object plot the particles 
+    '''
+    import corner as DFM 
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt 
+    try: 
+        # sometimes this formatting fails 
+        mpl.rcParams['text.usetex'] = True
+        mpl.rcParams['font.family'] = 'serif'
+        mpl.rcParams['axes.linewidth'] = 1.5
+        mpl.rcParams['axes.xmargin'] = 1
+        mpl.rcParams['xtick.labelsize'] = 'x-large'
+        mpl.rcParams['xtick.major.size'] = 5
+        mpl.rcParams['xtick.major.width'] = 1.5
+        mpl.rcParams['ytick.labelsize'] = 'x-large'
+        mpl.rcParams['ytick.major.size'] = 5
+        mpl.rcParams['ytick.major.width'] = 1.5
+        mpl.rcParams['legend.frameon'] = False
+    except: 
+        pass 
+
+    # prior range
+    prior_range = [(_min, _max) for _min, _max in zip(prior.min, prior.max)]
+
+    # theta labels 
+    if dem == 'slab_calzetti': 
+        lbls = [r'$m_{\tau_V}$', r'$c_{\tau_V}$', r'$f_{\rm neb}$'] 
+    else: 
+        raise NotImplementedError
+
+    if abc_dir is None: 
+        abc_dir = os.path.join(dat_dir, 'abc') 
+        
+    fig = DFM.corner(
+            pool.thetas, 
+            range=prior_range,
+            weights=pool.ws,
+            quantiles=[0.16, 0.5, 0.84], 
+            levels=[0.68, 0.95],
+            nbin=20, 
+            smooth=True, 
+            labels=lbls, 
+            label_kwargs={'fontsize': 20}) 
+    fig.savefig(os.path.join(abc_dir, 'abc.t%i.png' % pool.t) , bbox_inches='tight') 
     return None 
