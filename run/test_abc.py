@@ -33,7 +33,7 @@ prior_max = np.array([1., 1., 4.])
 
 dustInfer.dust_abc(
         'simba', 
-        3, 
+        5, 
         eps0=[0.5, 1.], 
         N_p=5, 
         prior_range=[prior_min, prior_max], 
