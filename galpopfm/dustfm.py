@@ -84,7 +84,7 @@ def slab_calzetti(lam, tauV, mag, sec_incl, factor=1.):
     ##use a slab model, with average (constant) inclination
     #T_V = (1.0-np.exp(-tauV/cosi_ave))/(tauV/cosi_ave)
     ##use a slab model, with randomly assigned inclination
-    T_V = (1.0 - np.exp(-tauV/sec_incl)) / (tauV/sec_incl)
+    T_V = (1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl) # Eq. 14 of Somerville+(1999) 
 
     AV = -2.5 * np.log10(T_V)
 
