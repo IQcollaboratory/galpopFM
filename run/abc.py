@@ -14,8 +14,8 @@ abc_dir = os.path.join(dat_dir, 'abc', 'test')
 def run_test(T, Np): 
     ''' simplest ABC setup 
     '''
-    prior_min = np.array([0.0, 0.0, 2.]) 
-    prior_max = np.array([1., 1., 4.]) 
+    prior_min = np.array([0., 0., 2.]) 
+    prior_max = np.array([5., 4., 4.]) 
 
     dustInfer.dust_abc(
             'simba', 
@@ -30,6 +30,24 @@ def run_test(T, Np):
     return None 
 
 
+def run_test_mbp(T, Np, nthread): 
+    ''' simplest ABC setup 
+    '''
+    prior_min = np.array([0., 0., 2.]) 
+    prior_max = np.array([5., 4., 4.]) 
+
+    dustInfer.dust_abc(
+            'simba', 
+            T, 
+            eps0=[0.5, 1.], 
+            N_p=Np, 
+            prior_range=[prior_min, prior_max], 
+            dem='slab_calzetti', 
+            abc_dir=abc_dir, 
+            nthread=nthread
+            )
+    return None 
+
 if __name__=="__main__": 
 
     name = sys.argv[1] # name of ABC run
@@ -43,5 +61,14 @@ if __name__=="__main__":
         print('%i particles' % npart)
 
         run_test(niter, npar) 
+    elif name == 'test_mbp': 
+        nthrd = int(sys.argv[4]) 
+
+        print('Runnin test ABC with ...') 
+        print('%i iterations' % niter)
+        print('%i particles' % npart)
+        print('%i threads' % nthrd) 
+
+        run_test_mbp(niter, npart, nthrd) 
     else: 
         raise NotImplementedError

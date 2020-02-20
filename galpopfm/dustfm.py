@@ -7,9 +7,8 @@ attenuation curves for forward modeled galaxies
 import numpy as np 
 
 
-
 def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'): 
-    '''
+    ''' 
     '''
     nspec = spec_noneb.shape[0] 
     assert spec_neb.shape[0] == nspec
@@ -38,8 +37,8 @@ def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=True):
     parameterization with inclinations randomly sampled 
     
     :param theta: 
-        parameter of the DEM model that specifies the M* dep. slope, offset
-        at nebular flux attenuatoin fraction
+        parameter of the DEM model that specifies the M* dep. V-band optical depth (slope, offset) 
+        as well as the nebular flux attenuatoin fraction
     :param lam: 
         wavelength in angstrom
     :param flux: 
@@ -50,7 +49,7 @@ def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=True):
     '''
     logmstar = np.atleast_1d(logmstar) 
 
-    tauV = theta[0] * (logmstar - 10.) + theta[1] 
+    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 0., None) 
     
     # randomly sample the inclinatiion angle from 0 - pi/2 
     incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
@@ -84,7 +83,7 @@ def slab_calzetti(lam, tauV, mag, sec_incl, factor=1.):
     ##use a slab model, with average (constant) inclination
     #T_V = (1.0-np.exp(-tauV/cosi_ave))/(tauV/cosi_ave)
     ##use a slab model, with randomly assigned inclination
-    T_V = (1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl) # Eq. 14 of Somerville+(1999) 
+    T_V = (1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl) #Eq. 14 of Somerville+(1999) 
 
     AV = -2.5 * np.log10(T_V)
 
