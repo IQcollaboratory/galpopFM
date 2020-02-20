@@ -130,6 +130,100 @@ def fm_colormag(name):
     return None 
 
 
+def fm_AV(name): 
+    ''' examine slab dust model V-band attenuation A_V(Mstar) which is used in
+    forward model and compare it to A_V from SDSS.
+    '''
+    # read data 
+    dat_dir = os.environ['GALPOPFM_DIR']
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    # get SDSS attenuation A_V 
+    AV_sdss     = sdss['AV'][...] 
+    mstar_sdss  = sdss['MASS'][...] * 0.7**2 
+    
+    cut_sdss = (AV_sdss > 0.) 
+    
+    # read simulation 
+    if name == 'simba': 
+        fhdf5 = os.path.join(dat_dir, 'sed', 'simba.hdf5') 
+    else: 
+        raise NotImplementedError
+    f = h5py.File(fhdf5, 'r') 
+    logmstar_sim   = f['logmstar'][...] 
+    f.close() 
+
+    tauv = np.clip((logmstar_sim - 10.) + 1.5, 0., None) 
+
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar_sim.shape[0])
+    sec_incl = 1./np.cos(incl) 
+    T_V = (1.0 - np.exp(-tauv * sec_incl)) / (tauv * sec_incl) #Eq. 14 of Somerville+(1999) 
+    AV_sim = -2.5 * np.log10(T_V)
+
+    import corner as DFM 
+    fig = plt.figure(figsize=(5,5))
+    sub = fig.add_subplot(111) 
+    DFM.hist2d(np.log10(mstar_sdss)[cut_sdss], AV_sdss[cut_sdss], color='k', 
+            levels=[0.68, 0.95], range=[[8.5, 11.], [0., 4.]], 
+            plot_datapoints=True, fill_contours=False, plot_density=False, 
+            ax=sub) 
+    DFM.hist2d(logmstar_sim, AV_sim, color='C1', 
+            levels=[0.68, 0.95], range=[[8.5, 11.], [0., 4.]], 
+            plot_datapoints=True, fill_contours=False, plot_density=False, 
+            ax=sub) 
+
+    #marr = np.linspace(8, 12, 20) 
+    #_tauv = (marr-10.) + 1.5
+    #sub.plot(marr, 1.086 * _tauv, c='C0', ls='--') 
+    sub.set_xlabel(r'$\log\,M_*$', fontsize=20) 
+    sub.set_ylabel(r'$A_V$', fontsize=20) 
+    ffig = fhdf5.replace('.hdf5', '.AV_mstar.png')
+    fig.savefig(ffig, bbox_inches='tight') 
+    return None 
+
+
+def obs_tauV(): 
+    ''' examine optical depth tauV(Mstar) for SDSS data assuming face on (theta=0) slab dust model
+    tau_V = A_V / 1.086
+    '''
+    # read data 
+    dat_dir = os.environ['GALPOPFM_DIR']
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    # get attenuation A_V 
+    AV_sdss     = sdss['AV'][...] 
+    mstar_sdss  = sdss['MASS'][...] * 0.7**2 
+
+    # there should be some cut here 
+    cut = AV_sdss > 0. 
+    AV_sdss     = AV_sdss[cut]
+    mstar_sdss  = mstar_sdss[cut]
+    
+    # get tauV 
+    tauV = AV_sdss/1.086     
+    sensible_tau = (tauV > 0.) & (tauV < 10.) 
+
+    import corner as DFM 
+    fig = plt.figure()
+    sub = fig.add_subplot(111) 
+    DFM.hist2d(np.log10(mstar_sdss)[sensible_tau], tauV[sensible_tau], color='k', 
+            levels=[0.68, 0.95], range=[[8.5, 11.], [0., 4.]], 
+            plot_datapoints=True, fill_contours=False, plot_density=True, 
+            ax=sub) 
+    # overplot tauV(msta) within our prior 
+    marr = np.linspace(8, 12, 20) 
+    _tauv = (marr-10.) + 1.5
+    sub.plot(marr, _tauv, c='C1', ls='--') 
+
+    sub.set_xlabel(r'$\log\,M_*$', fontsize=20) 
+    sub.set_ylabel(r'$\tau_V = A_V/1.086$', fontsize=20) 
+    fig.savefig(os.path.join(dat_dir, 'obs', 'sdss.tauV_mstar.png'), bbox_inches='tight') 
+    return None 
+
+
 if __name__=="__main__": 
     #fm_fuv('simba')
-    fm_colormag('simba')
+    #fm_colormag('simba')
+    fm_AV('simba') 
+    #obs_tauV()

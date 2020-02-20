@@ -38,16 +38,20 @@ def explore_distances(name):
     sed['sed_neb']      = f['sed_neb'][...]
     sed['sed_noneb']    = f['sed_noneb'][...]
     sed['sed_onlyneb']  = sed['sed_neb'] - sed['sed_noneb'] # only nebular emissoins 
-    sed['mstar']        = f['mstar'][...]
+    sed['logmstar']     = f['logmstar'][...]
+    sed['censat']       = f['censat'][...]
     f.close() 
 
-    theta = np.array([0.1, 0.2, 1./0.44]) 
+    # only keep centrals
+    cens = sed['censat'].astype(bool) 
+
+    theta = np.array([1., 1.5, 1./0.44]) 
     sed_dusty = dustFM.Attenuate(
             theta, 
             sed['wave'], 
-            sed['sed_noneb'], 
-            sed['sed_onlyneb'], 
-            np.log10(sed['mstar']),
+            sed['sed_noneb'][cens,:], 
+            sed['sed_onlyneb'][cens,:], 
+            sed['logmstar'][cens],
             dem='slab_calzetti') 
     
     # magnitudes
@@ -186,5 +190,5 @@ def test_distance(name):
 
 
 if __name__=="__main__": 
-    #explore_distances('simba')
-    test_distance('simba')
+    explore_distances('simba')
+    #test_distance('simba')
