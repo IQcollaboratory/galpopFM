@@ -11,9 +11,6 @@ from abcpmc import mpi_util
 # -- galpopfm --
 from galpopfm import dust_infer as dustInfer
 
-
-dat_dir = os.environ['GALPOPFM_DIR']
-abc_dir = os.path.join(dat_dir, 'abc', 'test') 
 ####################### inputs #######################
 print('Runnin test ABC with ...') 
 name    = sys.argv[1] # name of ABC run
@@ -21,13 +18,12 @@ niter   = int(sys.argv[2]) # number of iterations
 npart   = int(sys.argv[3]) # number of particles 
 print('%i iterations' % niter)
 print('%i particles' % npart)
-if name == 'test_mp': 
-    nthrd = int(sys.argv[4]) 
-    print('%i threads' % nthrd) 
-    mpi = False
-elif name == 'test_mpi': 
-    mpi = True
+nthrd = int(sys.argv[4]) 
+print('%i threads' % nthrd) 
 ######################################################
+dat_dir = os.environ['GALPOPFM_DIR']
+abc_dir = os.path.join(dat_dir, 'abc', name) 
+
 prior_min = np.array([0., 0., 2.]) 
 prior_max = np.array([5., 4., 4.]) 
 
@@ -67,9 +63,7 @@ shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy()
 def _sumstat_model_wrap(theta, dem='slab_calzetti'): 
     ''' wrapper for sumstat_model that works with shared memory? 
     '''
-    #t0 = time.time() 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
-    #print('     %s sec' % (time.time()-t0))
     return x_mod 
 
 #--- inference with ABC-PMC below ---
@@ -77,34 +71,20 @@ def _sumstat_model_wrap(theta, dem='slab_calzetti'):
 prior = abcpmc.TophatPrior(prior_min, prior_max) 
 
 # sampler 
-if mpi: 
-    mpi_pool = mpi_util.MpiPool()
-    
-    abcpmc_sampler = abcpmc.Sampler(
-            N=npart,                  # N_particles
-            Y=x_obs,                # data
-            postfn=_sumstat_model_wrap,   # simulator 
-            dist=dustInfer.distance_metric,   # distance metric 
-            pool=mpi_pool, 
-            postfn_kwargs={'dem': dem},
-            dist_kwargs={'method': 'L2'}
-            )      
-else: 
-    abcpmc_sampler = abcpmc.Sampler(
-            N=npart,                # N_particles
-            Y=x_obs,                # data
-            postfn=_sumstat_model_wrap,   # simulator 
-            dist=dustInfer.distance_metric,   # distance metric 
-            threads=nthrd,
-            postfn_kwargs={'dem': dem},
-            dist_kwargs={'method': 'L2'}
-            )      
+abcpmc_sampler = abcpmc.Sampler(
+        N=npart,                # N_particles
+        Y=x_obs,                # data
+        postfn=_sumstat_model_wrap,   # simulator 
+        dist=dustInfer.distance_metric,   # distance metric 
+        threads=nthrd,
+        postfn_kwargs={'dem': dem},
+        dist_kwargs={'method': 'L2'}
+        )      
 
 # threshold 
 eps = abcpmc.ConstEps(niter, eps0) 
 print('eps0', eps.eps)
 
-pools = []
 for pool in abcpmc_sampler.sample(prior, eps):
     eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
     print("T: {0}, eps: [{1}], ratio: {2:>.4f}".format(pool.t, eps_str, pool.ratio))
@@ -119,13 +99,14 @@ for pool in abcpmc_sampler.sample(prior, eps):
     dustInfer.writeABC('w', pool, abc_dir=abc_dir) 
     dustInfer.writeABC('rho', pool, abc_dir=abc_dir) 
     # plot ABC particles 
-    dustInfer.plotABC(pool, prior=prior, dem=dem, abc_dir=abc_dir)
+    #try: 
+    #    dustInfer.plotABC(pool, prior=prior, dem=dem, abc_dir=abc_dir)
+    #except: 
+    #    pass 
 
     # update epsilon based on median thresholding 
     eps.eps = np.median(pool.dists, axis=0)
-    pools.append(pool)
     print('eps%i' % pool.t, eps.eps)
     print('----------------------------------------')
-    if pool.ratio <0.2:
-        break
+    #if pool.ratio <0.2: break
 abcpmc_sampler.close()

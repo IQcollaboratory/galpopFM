@@ -135,7 +135,6 @@ def distance_metric(x_obs, x_model, method='L2'):
             rho_fnuv = np.Inf
         else: 
             rho_fnuv = np.sum((med_fnuv_mod[_finite] - med_fnuv_obs[_finite])**2)/float(np.sum(_finite))
-        print([rho_balmer, rho_fnuv]) 
         return [rho_balmer, rho_fnuv] 
     else: 
         raise NotImplemented 
