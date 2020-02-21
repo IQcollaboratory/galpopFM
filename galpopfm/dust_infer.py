@@ -135,7 +135,6 @@ def distance_metric(x_obs, x_model, method='L2'):
             rho_fnuv = np.Inf
         else: 
             rho_fnuv = np.sum((med_fnuv_mod[_finite] - med_fnuv_obs[_finite])**2)/float(np.sum(_finite))
-
         return [rho_balmer, rho_fnuv] 
     else: 
         raise NotImplemented 
@@ -154,12 +153,6 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
     _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-16., rmax=-24., nbins=16)
 
     return [med_fnuv, med_balmer]
-
-
-def _sumstat_model_shared(theta, dem='slab_calzetti', shared_sim_sed=None): 
-    ''' wrapper for sumstat_model that works with shared memory? 
-    '''
-    return sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti'): 
