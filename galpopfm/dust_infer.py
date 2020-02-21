@@ -42,7 +42,7 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     cens = sim_sed['censat'].astype(bool) 
     
     # save as global variable that can be accessed by multiprocess 
-    global shared_sim_sed
+    #global shared_sim_sed
     shared_sim_sed = {} 
     shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
     shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
@@ -65,7 +65,7 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
                 postfn=_sumstat_model_shared,   # simulator 
                 dist=distance_metric,   # distance metric 
                 pool=mpi_pool, 
-                postfn_kwargs={'dem': dem},
+                postfn_kwargs={'dem': dem, 'shared_sim_sed': shared_sim_sed},
                 dist_kwargs={'method': 'L2'}
                 )      
     else: 
@@ -75,7 +75,7 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
                 postfn=_sumstat_model_shared,   # simulator 
                 dist=distance_metric,   # distance metric 
                 threads=nthread,
-                postfn_kwargs={'dem': dem},
+                postfn_kwargs={'dem': dem, 'shared_sim_sed': shared_sim_sed},
                 dist_kwargs={'method': 'L2'}
                 )      
 
@@ -156,7 +156,7 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
     return [med_fnuv, med_balmer]
 
 
-def _sumstat_model_shared(theta, dem='slab_calzetti'): 
+def _sumstat_model_shared(theta, dem='slab_calzetti', shared_sim_sed=None): 
     ''' wrapper for sumstat_model that works with shared memory? 
     '''
     return sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
