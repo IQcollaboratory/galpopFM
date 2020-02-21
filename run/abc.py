@@ -60,7 +60,7 @@ if __name__=="__main__":
         print('%i iterations' % niter)
         print('%i particles' % npart)
 
-        run_test(niter, npar) 
+        run_test(niter, npart) 
     elif name == 'test_mbp': 
         nthrd = int(sys.argv[4]) 
 
