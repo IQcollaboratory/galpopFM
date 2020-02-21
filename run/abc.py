@@ -31,7 +31,7 @@ elif name == 'test_mpi':
 prior_min = np.array([0., 0., 2.]) 
 prior_max = np.array([5., 4., 4.]) 
 
-eps0 = [0.5, 1.] 
+eps0 = [10., 10.] 
 
 dem = 'slab_calzetti'
 ######################################################
@@ -53,20 +53,24 @@ sim_sed = dustInfer._read_sed('simba')
 
 # pass through the minimal amount of memory 
 wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 1e4) 
-# only keep centrals
-cens = sim_sed['censat'].astype(bool) 
+# only keep centrals and impose mass limit as well 
+cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 8.5) 
 
-# save as global variable that can be accessed by multiprocess 
+# global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
 shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
 
+#import time
 def _sumstat_model_wrap(theta, dem='slab_calzetti'): 
     ''' wrapper for sumstat_model that works with shared memory? 
     '''
-    return dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
+    #t0 = time.time() 
+    x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
+    #print('     %s sec' % (time.time()-t0))
+    return x_mod 
 
 #--- inference with ABC-PMC below ---
 # prior 
