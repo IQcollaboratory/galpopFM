@@ -13,6 +13,8 @@ from abcpmc import mpi_util
 # -- galpopfm --
 from galpopfm import dust_infer as dustInfer
 
+os.environ["OMP_NUM_THREADS"] = "1"
+
 ####################### inputs #######################
 print('Runnin test ABC with ...') 
 name    = sys.argv[1] # name of ABC run
