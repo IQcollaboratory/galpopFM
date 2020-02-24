@@ -10,8 +10,10 @@ export PATH="/home/users/hahn/anaconda3/bin:$PATH"
 source /home/users/hahn/.bashrc
 source activate iq 
 
-mpirun -np 1 --bind-to none python /home/users/hahn/projects/galpopFM/run/abc.py "test_mp" 20 1000 20 &> /home/users/hahn/projects/galpopFM/run/siro/test_abc.o
+name="test"
 
+mpirun -n 1 --bind-to none python /home/users/hahn/projects/galpopFM/run/abc.py $name 20 1000 24 &> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
+#python /home/users/hahn/projects/galpopFM/run/abc.py $name 5 40 24 &> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
 
-#mpirun -np 20 python /home/users/hahn/projects/galpopFM/run/abc_mpi.py "test" 2 50 &> /home/users/hahn/projects/galpopFM/run/siro/test_abc.o
+#mpirun -n 10 --bind-to none python /home/users/hahn/projects/galpopFM/run/abc_mpi.py "test1" 20 500 &> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
 #python /home/users/hahn/projects/galpopFM/run/abc.py "test_mp" 2 50 20 >> /home/users/hahn/projects/galpopFM/run/siro/test_abc.o
