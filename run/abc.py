@@ -5,6 +5,7 @@ import os
 import sys 
 import h5py 
 import numpy as np 
+import multiprocessing as mp 
 # -- abcpmc -- 
 import abcpmc
 from abcpmc import mpi_util
@@ -31,7 +32,6 @@ eps0 = [10., 10.]
 
 dem = 'slab_calzetti'
 ######################################################
-
 # read in observations 
 fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
 sdss = h5py.File(fsdss, 'r') 
@@ -58,6 +58,7 @@ shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
+print(sys.getsizeof(shared_sim_sed))
 
 #import time
 def _sumstat_model_wrap(theta, dem='slab_calzetti'): 
