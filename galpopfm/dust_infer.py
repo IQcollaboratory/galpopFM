@@ -156,7 +156,7 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
     return [med_fnuv, med_balmer]
 
 
-def sumstat_model(theta, sed=None, dem='slab_calzetti'): 
+def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False): 
     ''' calculate summary statistics for forward model m(theta) 
 
     notes
@@ -182,7 +182,8 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti'):
     # noise model somewhere here
     # noise model somewhere here
     # noise model somewhere here
-
+    
+    if _model: return R_mag, FUV_NUV, balmer_ratio
     # calculate the distance 
     HaHb_I = 2.86 # intrinsic balmer ratio 
     _, med_fnuv = median_alongr(R_mag, FUV_NUV, rmin=-16., rmax=-24., nbins=16)
