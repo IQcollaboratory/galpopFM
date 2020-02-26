@@ -1,5 +1,8 @@
 #!/bin/python
 '''
+
+script to run ABC with MPI through schwimmbad. 
+
 '''
 import os 
 import sys 
