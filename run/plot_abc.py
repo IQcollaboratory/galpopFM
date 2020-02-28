@@ -149,6 +149,48 @@ def abc_sumstat(T, dem='slab_calzetti', abc_dir=None):
     return None 
 
 
+def abc_attenuationt(T, dem='slab_calzetti', abc_dir=None):
+    '''
+    '''
+    # read pool 
+    theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
+    rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
+    w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
+    theta_med = np.median(theta_T, axis=0) 
+
+    wave = np.linspace(1e3, 1e4, 101) 
+    flux = np.ones(len(wave))
+    i3000 = (np.abs(wave - 3000.)).argmin()  # index at 3000A
+    
+    # read simulations 
+    _sim_sed = dustInfer._read_sed('simba') 
+    cens = _sim_sed['censat'].astype(bool) & (_sim_sed['logmstar'] > 8.5) 
+    logmstar = _sim_sed['logmstar'][cens].copy()
+    
+    A_lambdas = [] 
+    for lms in logmstar[::100]:  
+        A_lambda = -2.5 * np.log10(dustFM.DEM_slabcalzetti(theta_med, wave,
+            flux, lms, nebular=False)) 
+        A_lambdas.append(A_lambda) 
+
+    fig = plt.figure(figsize=(10,10))
+    sub = fig.add_subplot(211)
+    for A_lambda in A_lambdas: 
+        sub.plot(wave, A_lambda, c='k', lw=0.1) 
+    sub.set_xlim(1.5e3, 1e4) 
+    sub.set_xticklabels([]) 
+    sub.set_ylabel(r'$A_\lambda$', fontsize=25) 
+    #sub.set_ylim(0., None) 
+    sub = fig.add_subplot(212)
+    for A_lambda in A_lambdas: 
+        sub.plot(wave, A_lambda/A_lambda[i3000], c='k', lw=0.1) 
+    sub.set_xlabel('Wavelength [$A$]', fontsize=25) 
+    sub.set_xlim(1.5e3, 1e4) 
+    sub.set_ylabel(r'$A_\lambda/A_{3000}$', fontsize=25) 
+    fig.savefig(os.path.join(abc_dir, 'abc_attenuation.t%i.png' % T), bbox_inches='tight') 
+    return None 
+
+
 if __name__=="__main__": 
     ####################### inputs #######################
     name    = sys.argv[1] # name of ABC run
@@ -167,4 +209,6 @@ if __name__=="__main__":
     # plot the pools 
     plot_pool(niter, prior=prior, dem=dem, abc_dir=abc_dir)
     # plot ABCC summary statistics  
-    abc_sumstat(niter, dem=dem, abc_dir=abc_dir)
+    #abc_sumstat(niter, dem=dem, abc_dir=abc_dir)
+    # plot attenuation 
+    #abc_attenuationt(niter, dem=dem, abc_dir=abc_dir)
