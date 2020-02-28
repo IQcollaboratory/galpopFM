@@ -18,6 +18,8 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'):
 
     if dem == 'slab_calzetti': 
         mdust = DEM_slabcalzetti
+    elif dem == 'slab_noll': 
+        mdust = DEM_slab_noll 
     else: 
         raise NotImplementedError
 
@@ -32,20 +34,84 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'):
     return spec_dusty 
 
 
-def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=True): 
+def DEM_slab_noll(theta, lam, flux_i, logmstar, nebular=True): 
+    ''' Dust empirical model that combines the slab model with Noll+(2009)
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    tauV    = m_tau (log M* - 10.) + c_tau
+    delta   = m_delta  (log M* - 10.) + c_delta         -2.2 < delta < 0.4
+    E_b     = m_E delta + c_E
+
+    :param theta: 
+        6 free parameter of the slab + Noll+(2009) model
+        theta[0]: m_tau
+        theta[1]: c_tau
+        theta[2]: m_delta
+        theta[3]: c_delta
+        theta[4]: m_E
+        theta[5]: c_E
+    :param lam: 
+        wavelength in angstrom
+    :param flux_i: 
+        intrinsic flux of sed (units don't matter) 
+    :param nebular: 
+        if True nebular flux has an attenuation that is scaled from the
+        continuum attenuation.
+    '''
+    logmstar = np.atleast_1d(logmstar) 
+
+    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 0., None) 
+
+    delta = theta[2] * (logmstar - 10.) + theta[3] 
+
+    E_b = theta[4] * delta + theta[5] 
+    
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
+    sec_incl = 1./np.cos(incl) 
+
+    #Eq. 14 of Somerville+(1999) 
+    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    
+    dlam = 350. # width of bump from Noll+(2009)
+    lam0 = 2175. # wavelength of bump 
+    k_V_calzetti = 4.87789
+    
+    # bump 
+    D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
+
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
+            (lam / 5500.)**delta 
+
+    T_lam = 10.0**(-0.4 * A_lambda * factor)
+
+    return flux_i * T_lam 
+
+
+def DEM_slabcalzetti(theta, lam, flux_i, logmstar, nebular=True): 
     ''' Dust Empirical Model that uses the slab model with tauV(theta, mstar)
     parameterization with inclinations randomly sampled 
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                (k'(lambda) / k_V)
     
     :param theta: 
         parameter of the DEM model that specifies the M* dep. V-band optical depth (slope, offset) 
         as well as the nebular flux attenuatoin fraction
     :param lam: 
         wavelength in angstrom
-    :param flux: 
-        flux of sed (units don't matter) 
+    :param flux_i: 
+        intrinsic flux of sed (units don't matter) 
     :param nebular: 
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
+
+    notes
+    -----
+    *    slab model to apply dust attenuation Eq.14 (Somerville+1999) 
     '''
     logmstar = np.atleast_1d(logmstar) 
 
@@ -56,44 +122,16 @@ def DEM_slabcalzetti(theta, lam, flux, logmstar, nebular=True):
     sec_incl = 1./np.cos(incl) 
     #cosis = 1.0 - np.cos(np.random.uniform(low=0, high=0.5*np.pi, size=mstar.shape[0]))
     
-    if not nebular: 
-        return slab_calzetti(lam, tauV, flux, sec_incl, factor=1.) 
-    else: 
-        return slab_calzetti(lam, tauV, flux, sec_incl, factor=theta[2]) 
+    if not nebular: factor = 1.
+    else: factor = theta[2] 
 
+    #Eq. 14 of Somerville+(1999) 
+    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    # minimum attenuation from Romeel's paper (which one?) 
+    A_V = np.clip(A_V, 0.1, None) 
 
-def slab_calzetti(lam, tauV, mag, sec_incl, factor=1.):
-    ''' slab model to apply dust attenuation Eq.14 (Somerville+1999) 
-
-    :param lam: 
-        wavelength in angstrom 
-    :param tauV: 
-        attenuation in V (to be parameterized as a function of stellar mass) 
-        in Rachel's model this is parametrized by Mgas, gas metallicity and galaxy size, which all depend
-        on stellar mass.
-    :param mag: 
-        flux 
-    :param sec_incl: 
-        sec(inclination), which should be randomly sampled 
-    :param factor: 
-        scale factor for the attenuation for the nebular emission 
-    '''
-    #cosi_ave = np.sqrt(3.0)/2.0
-    #fraction of light transmitted in V-band (slab)
-    ##use a slab model, with average (constant) inclination
-    #T_V = (1.0-np.exp(-tauV/cosi_ave))/(tauV/cosi_ave)
-    ##use a slab model, with randomly assigned inclination
-    T_V = (1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl) #Eq. 14 of Somerville+(1999) 
-
-    AV = -2.5 * np.log10(T_V)
-
-    if tauV == 0 or AV == 0:
-        AV = 0.1 # this can be a free parameters (0.1 is from Romeel's paper as the minimum attenuation) 
-        newmag = mag
-    else:
-        T_lam = 10.0**(AV * -0.4 * calzetti_absorption(lam) * factor)
-        newmag = mag * T_lam
-    return newmag
+    T_lam = 10.0**(A_V * -0.4 * calzetti_absorption(lam) * factor)
+    return flux_i * T_lam
 
 
 def slab_salim(lam, tauV, mag, sec_incl, mstar, factor=1.):
