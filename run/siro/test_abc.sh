@@ -10,8 +10,6 @@ source activate iq
 
 name="test"
 
-#mpirun -n 1 --bind-to none python /home/users/hahn/projects/galpopFM/run/abc.py $name 20 500 12 &> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
-#mpirun -n 1 --bind-to none python /home/users/hahn/projects/galpopFM/run/abc_restart.py $name 20 20 0 &>> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
 #mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/abc_schwimmbad.py $name 20 1000 
 mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/abc_schwimmbad_restart.py $name 20 0 &>> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
 
