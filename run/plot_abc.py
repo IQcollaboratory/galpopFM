@@ -191,6 +191,25 @@ def abc_attenuationt(T, dem='slab_calzetti', abc_dir=None):
     return None 
 
 
+def run_params(name):
+    ''' parameters for abc set up given name  
+    '''
+    params = {} 
+    if name == 'test' : 
+        params['dem'] = 'slab_calzetti'
+        params['prior_min'] = np.array([0., 0., 2.]) 
+        params['prior_max'] = np.array([5., 4., 4.]) 
+    elif name == 'slabnoll_m': 
+        params['dem'] = 'slab_noll_m'
+        params['prior_min'] = np.array([-5., 0., -5., -2.2, -4., 0.]) 
+        params['prior_max'] = np.array([5., 4., 5., 0.4, 0., 2.]) 
+    elif name == 'slabnoll_msfr': 
+        params['dem'] = 'slab_noll_msfr'
+        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0.]) 
+        params['prior_max'] = np.array([5., 5., 4., 4., 4., 0.4, 0., 2.]) 
+    return params 
+
+
 if __name__=="__main__": 
     ####################### inputs #######################
     name    = sys.argv[1] # name of ABC run
@@ -199,11 +218,11 @@ if __name__=="__main__":
     ######################################################
     dat_dir = os.environ['GALPOPFM_DIR']
     abc_dir = os.path.join(dat_dir, 'abc', name) 
-    dem = 'slab_calzetti'
-
-    if name == 'test': 
-        prior_min = np.array([0., 0., 2.]) 
-        prior_max = np.array([5., 4., 4.]) 
+    
+    params = run_params(name)
+    dem = params['dem'] 
+    prior_min = params['prior_min'] 
+    prior_max = params['prior_max'] 
     prior = abcpmc.TophatPrior(prior_min, prior_max) 
     
     # plot the pools 

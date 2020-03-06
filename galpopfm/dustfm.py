@@ -57,6 +57,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
         theta[5]: c_delta
         theta[6]: m_E
         theta[7]: c_E
+        theta[8]: f_nebular
     :param lam: 
         wavelength in angstrom
     :param flux_i: 
@@ -65,6 +66,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
+    assert theta.shape == 9
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
 
@@ -91,6 +93,9 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
             (lam / 5500.)**delta 
 
+    if not nebular: factor = 1.
+    else: factor = theta[8] 
+
     T_lam = 10.0**(-0.4 * A_lambda * factor)
 
     return flux_i * T_lam 
@@ -115,6 +120,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, nebular=True):
         theta[3]: c_delta
         theta[4]: m_E
         theta[5]: c_E
+        theta[6]: f_nebular
     :param lam: 
         wavelength in angstrom
     :param flux_i: 
@@ -123,6 +129,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, nebular=True):
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
+    assert theta.shape == 7
     logmstar = np.atleast_1d(logmstar) 
 
     tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 0., None) 
@@ -147,6 +154,9 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, nebular=True):
 
     A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
             (lam / 5500.)**delta 
+
+    if not nebular: factor = 1.
+    else: factor = theta[6] 
 
     T_lam = 10.0**(-0.4 * A_lambda * factor)
 

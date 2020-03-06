@@ -293,7 +293,14 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
 
     # theta labels 
     if dem == 'slab_calzetti': 
-        lbls = [r'$m_{\tau_V}$', r'$c_{\tau_V}$', r'$f_{\rm neb}$'] 
+        lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$f_{\rm neb}$'] 
+    elif dem == 'slab_noll_m': 
+        lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$m_\delta$', r'$c_\delta$',
+                r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+    elif dem == 'slab_noll_m': 
+        lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
+                r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+                r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
     else: 
         raise NotImplementedError
 
