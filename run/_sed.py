@@ -27,17 +27,16 @@ def compile_seds(name):
     # add meta data 
     data = {} 
     if name == 'simba': 
-        fprop = os.path.join(dat_dir, 'prop', 'SIMBA-mstar-posvel-cen.txt') # ID, Mstar[Msun], central(True)/satellite(False), pos x 3 (kpc), vel x 3 (km/s)
-        _id, mstar, censat, pos0, pos1, pos2, vel0, vel1, vel2 = np.loadtxt(fprop, skiprows=1, unpack=True, usecols=range(9))
+        fprop = os.path.join(dat_dir, 'prop', 'SIMBAz0.txt') #  Mstar[Msun], SFR_inst[Msun/yr], SFR_100Myr[Msun/yr], cen(1)/sat(0)
+        mstar, sfr_inst, sfr_100, censat = np.loadtxt(fprop, skiprows=1,
+                unpack=True, usecols=range(4)) 
 
-        ngal = len(_id) 
-        data['id']          = _id.astype(int)
+        ngal = len(mstar) 
         data['logmstar']    = np.log10(mstar) 
+        data['logsfr.inst'] = np.log10(sfr_inst) 
+        data['logsfr.100']  = np.log10(sfr_100)
         data['censat']      = censat.astype(int)
-        data['pos']         = np.vstack([pos0, pos1, pos2]).T
-        data['vel']         = np.vstack([vel0, vel1, vel2]).T
-        assert data['pos'].shape[0] == ngal 
-        assert data['vel'].shape[0] == ngal 
+
     elif name == 'tng': 
         fprop0 = os.path.join(dat_dir, 'prop', 'IQSFSdata_TNG_99.txt') # SubhaloID, log10(total stellar mass)[Msun], log10(total gas mass)[Msun], log10(total SFR)[Msun/yr], log10(SFR over100Myr)[Msun/yr], satellite? (1:yes, 0: central)
         _id, logmstar, logmgas, logsfrtot, logsfr100, censat = np.loadtxt(fprop0, skiprows=1, unpack=True, usecols=range(6))
@@ -50,25 +49,15 @@ def compile_seds(name):
         data['logsfr.tot']  = logsfrtot
         data['logsfr.100']  = logsfr100
         data['censat']      = (np.abs(censat - 1)).astype(int)
-        data['pos']         = np.vstack([pos0, pos1, pos2]).T
-        data['vel']         = np.vstack([vel0, vel1, vel2]).T
-        assert data['pos'].shape[0] == ngal 
-        assert data['vel'].shape[0] == ngal 
     elif name == 'eagle':
         fprop0 = os.path.join(dat_dir, 'prop', 'EAGLE_RefL0100_MstarSFR_allabove1.8e8Msun.txt') # GroupNr, SubGroupNr, log10(StellarMass)[Msun], SFR10Myr[Msun/yr], SFR1Gyr[Msun/yr], Central_SUBFIND
         logmstar, logsfr10, logsfr1gyr, censat = np.loadtxt(fprop0, skiprows=1, unpack=True, usecols=[2,3,4,5])
-        fprop1 = os.path.join(dat_dir, 'prop', 'EAGLE_RefL0100_PosVelMstar_allabove1.8e8Msun.txt') # pos[Mpc], vel[km/s], Mstar[Msun]
-        pos0, pos1, pos2, vel0, vel1, vel2 = np.loadtxt(fprop1, skiprows=1, unpack=True, usecols=range(6))
 
         ngal = len(logmstar) 
         data['logmstar']    = logmstar
         data['logsfr.10']   = logsfr10
         data['logsfr.1g']   = logsfr1gyr
         data['censat']      = censat.astype(int)
-        data['pos']         = np.vstack([pos0, pos1, pos2]).T
-        data['vel']         = np.vstack([vel0, vel1, vel2]).T
-        assert data['pos'].shape[0] == ngal 
-        assert data['vel'].shape[0] == ngal 
     else: 
         raise NotImplementedError
 
@@ -78,6 +67,7 @@ def compile_seds(name):
 
     sed_neb, sed_noneb = [], [] 
     for ifile in range(nfile): 
+        print('%i of %i' % (ifile, nfile))
         sed_neb_i   = np.loadtxt(fneb(ifile)) 
         sed_noneb_i = np.loadtxt(fnoneb(ifile)) 
 
@@ -99,6 +89,6 @@ def compile_seds(name):
 
 
 if __name__=="__main__": 
-    #compile_seds('simba')  
+    compile_seds('simba')  
     #compile_seds('tng') 
-    compile_seds('eagle') 
+    #compile_seds('eagle') 
