@@ -47,7 +47,7 @@ def _sumstat_model_wrap(theta, dem=dem):
     return x_mod 
 
 
-def abc(pewl, restart=None): 
+def abc(pewl, name=None, niter=None, npart=None, restart=None): 
     # read in observations 
     fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
     sdss = h5py.File(fsdss, 'r') 
@@ -130,7 +130,7 @@ if __name__=="__main__":
     # >>> mpiexec -n 2 python abc_slabnoll.py slabnoll 3 False 5
     name    = sys.argv[1] # name of ABC run
     niter   = int(sys.argv[2]) # number of iterations
-    restart = sys.argv[3] == 'True' 
+    restart = (sys.argv[3] == 'True')
     print('Runnin test ABC with ...') 
     print('%i iterations' % niter)
     if not restart: 
@@ -143,4 +143,4 @@ if __name__=="__main__":
     ######################################################
     abc_dir = os.path.join(dat_dir, 'abc', name) 
 
-    abc(pewl, restart=trest) 
+    abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 
