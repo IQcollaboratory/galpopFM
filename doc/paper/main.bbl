@@ -1,0 +1,52 @@
+\begin{thebibliography}{}
+\makeatletter
+\relax
+\def\mn@urlcharsother{\let\do\@makeother \do\$\do\&\do\#\do\^\do\_\do\%\do\~}
+\def\mn@doi{\begingroup\mn@urlcharsother \@ifnextchar [ {\mn@doi@}
+  {\mn@doi@[]}}
+\def\mn@doi@[#1]#2{\def\@tempa{#1}\ifx\@tempa\@empty \href
+  {http://dx.doi.org/#2} {doi:#2}\else \href {http://dx.doi.org/#2} {#1}\fi
+  \endgroup}
+\def\mn@eprint#1#2{\mn@eprint@#1:#2::\@nil}
+\def\mn@eprint@arXiv#1{\href {http://arxiv.org/abs/#1} {{\tt arXiv:#1}}}
+\def\mn@eprint@dblp#1{\href {http://dblp.uni-trier.de/rec/bibtex/#1.xml}
+  {dblp:#1}}
+\def\mn@eprint@#1:#2:#3:#4\@nil{\def\@tempa {#1}\def\@tempb {#2}\def\@tempc
+  {#3}\ifx \@tempc \@empty \let \@tempc \@tempb \let \@tempb \@tempa \fi \ifx
+  \@tempb \@empty \def\@tempb {arXiv}\fi \@ifundefined
+  {mn@eprint@\@tempb}{\@tempb:\@tempc}{\expandafter \expandafter \csname
+  mn@eprint@\@tempb\endcsname \expandafter{\@tempc}}}
+
+\bibitem[\protect\citeauthoryear{Calzetti}{Calzetti}{2001}]{calzetti2001}
+Calzetti D.,  2001, \mn@doi [New Astronomy Reviews]
+  {10.1016/S1387-6473(01)00144-0}, 45, 601
+
+\bibitem[\protect\citeauthoryear{Hahn, Vakili, Walsh, Hearin, Hogg  \&
+  Campbell}{Hahn et~al.}{2017}]{hahn2017a}
+Hahn C.,  Vakili M.,  Walsh K.,  Hearin A.~P.,  Hogg D.~W.,   Campbell D.,
+  2017, \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  {10.1093/mnras/stx894}, 469, 2791
+
+\bibitem[\protect\citeauthoryear{Ishida et~al.,}{Ishida
+  et~al.}{2015}]{ishida2015}
+Ishida E. E.~O.,  et~al., 2015, \mn@doi [Astronomy and Computing]
+  {10.1016/j.ascom.2015.09.001}, 13, 1
+
+\bibitem[\protect\citeauthoryear{Kriek \& Conroy}{Kriek \&
+  Conroy}{2013}]{kriek2013}
+Kriek M.,  Conroy C.,  2013, \mn@doi [The Astrophysical Journal Letters]
+  {10.1088/2041-8205/775/1/L16}, 775, L16
+
+\bibitem[\protect\citeauthoryear{Noll, Burgarella, Giovannoli, Buat, Marcillac
+  \& {Mu{\~n}oz-Mateos}}{Noll et~al.}{2009}]{noll2009}
+Noll S.,  Burgarella D.,  Giovannoli E.,  Buat V.,  Marcillac D.,
+  {Mu{\~n}oz-Mateos} J.~C.,  2009, \mn@doi [Astronomy and Astrophysics]
+  {10.1051/0004-6361/200912497}, 507, 1793
+
+\bibitem[\protect\citeauthoryear{Somerville \& Primack}{Somerville \&
+  Primack}{1999}]{somerville1999}
+Somerville R.~S.,  Primack J.~R.,  1999, \mn@doi [Monthly Notices of the Royal
+  Astronomical Society] {10.1046/j.1365-8711.1999.03032.x}, 310, 1087
+
+\makeatother
+\end{thebibliography}
