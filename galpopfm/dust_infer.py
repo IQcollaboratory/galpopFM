@@ -150,8 +150,8 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
     balmer_ratio = Ha_sdss/Hb_sdss 
     
     HaHb_I = 2.86 # intrinsic balmer ratio 
-    _, med_fnuv = median_alongr(Rmag, FUV_NUV, rmin=-16., rmax=-24., nbins=16)
-    _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-16., rmax=-24., nbins=16)
+    _, med_fnuv = median_alongr(Rmag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
+    _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-20., rmax=-24., nbins=16)
 
     return [med_fnuv, med_balmer]
 
@@ -169,6 +169,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False):
             sed['sed_noneb'], 
             sed['sed_onlyneb'], 
             sed['logmstar'],
+            sed['logsfr.100'],
             dem='slab_calzetti') 
     
     # observational measurements 
@@ -186,13 +187,14 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False):
     if _model: return R_mag, FUV_NUV, balmer_ratio
     # calculate the distance 
     HaHb_I = 2.86 # intrinsic balmer ratio 
-    _, med_fnuv = median_alongr(R_mag, FUV_NUV, rmin=-16., rmax=-24., nbins=16)
-    _, med_balmer = median_alongr(R_mag, np.log10(balmer_ratio/HaHb_I), rmin=-16., rmax=-24., nbins=16)
+    _, med_fnuv = median_alongr(R_mag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
+    _, med_balmer = median_alongr(R_mag, np.log10(balmer_ratio/HaHb_I),
+            rmin=-20., rmax=-24., nbins=16)
     
     return [med_fnuv, med_balmer]
 
 
-def median_alongr(rmag, values, rmin=-16., rmax=-24., nbins=16): 
+def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
     ''' find the median of specified values as a function of rmag  
     '''
     dr = (rmin - rmax)/float(nbins) 

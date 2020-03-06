@@ -38,14 +38,17 @@ sim_sed = dustInfer._read_sed(sim)
 
 # pass through the minimal amount of memory 
 wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 8e3) 
-# only keep centrals and impose mass limit as well 
+# only keep centrals and impose mass limit as well.
+# the lower limit log M* > 9.2 is padded by 0.5 dex to conservatively account
+# for log M* and R magnitude scatter  
 downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
-cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 8.5) & downsample
+cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 9.2) & downsample
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
 shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
+shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy() 
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
