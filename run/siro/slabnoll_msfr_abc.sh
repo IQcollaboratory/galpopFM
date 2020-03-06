@@ -8,7 +8,7 @@ export PATH="/home/users/hahn/anaconda3/bin:$PATH"
 source /home/users/hahn/.bashrc
 source activate iq 
 
-name="slabnoll"
+name="slabnoll_msfr"
 
-mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/abc_slabnoll.py \
+mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/abc_slabnoll_msfr.py \
     $name 20 False 1000 &>> "/home/users/hahn/projects/galpopFM/run/siro/abc_"$name".o"
