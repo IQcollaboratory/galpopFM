@@ -34,6 +34,66 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'):
     return spec_dusty 
 
 
+def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
+    ''' Dust empirical model that combines the slab model with Noll+(2009)
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    tauV    = m_tau1 (log M* - 10.) + m_tau2 logSFR + c_tau
+    delta   = m_delta1  (log M* - 10.) + m_delta2 logSFR + c_delta         -2.2 < delta < 0.4
+    E_b     = m_E delta + c_E
+
+    :param theta: 
+        6 free parameter of the slab + Noll+(2009) model
+        theta[0]: m_tau1
+        theta[1]: m_tau2
+        theta[2]: c_tau
+        theta[3]: m_delta1
+        theta[4]: m_delta2
+        theta[5]: c_delta
+        theta[6]: m_E
+        theta[7]: c_E
+    :param lam: 
+        wavelength in angstrom
+    :param flux_i: 
+        intrinsic flux of sed (units don't matter) 
+    :param nebular: 
+        if True nebular flux has an attenuation that is scaled from the
+        continuum attenuation.
+    '''
+    logmstar = np.atleast_1d(logmstar) 
+    logsfr = np.atleast_1d(logsfr) 
+
+    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1] * logsfr + theta[2], 0., None) 
+
+    delta = theta[3] * (logmstar - 10.) + theta[4] * logsfr + theta[5] 
+
+    E_b = theta[6] * delta + theta[7] 
+    
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
+    sec_incl = 1./np.cos(incl) 
+
+    #Eq. 14 of Somerville+(1999) 
+    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    
+    dlam = 350. # width of bump from Noll+(2009)
+    lam0 = 2175. # wavelength of bump 
+    k_V_calzetti = 4.87789
+    
+    # bump 
+    D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
+
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
+            (lam / 5500.)**delta 
+
+    T_lam = 10.0**(-0.4 * A_lambda * factor)
+
+    return flux_i * T_lam 
+
+
 def DEM_slab_noll(theta, lam, flux_i, logmstar, nebular=True): 
     ''' Dust empirical model that combines the slab model with Noll+(2009)
 
