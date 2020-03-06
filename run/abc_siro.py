@@ -3,12 +3,12 @@
 script to run abc on sirocco with MPI
 
 to run ABC from scratch the inputs are: 
-    sim edm_model abc_name n_iter False n_part
+    sim dem_model abc_name n_iter False n_part
 
  >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 False 1000
 
 to restart ABC from existing pool the inputs are: 
-    sim edm_model abc_name n_iter True t_restart
+    sim dem_model abc_name n_iter True t_restart
 
  >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 True 5
 
@@ -24,24 +24,13 @@ from schwimmbad import MPIPool
 # -- galpopfm --
 from galpopfm import dust_infer as dustInfer
 
-#################### fixed params  ###################
+####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
 eps0 = [10., 10.] 
-####################### inputs #######################
+
 sim     = sys.argv[1] # name of simulation
-edm     = sys.argv[2] # name of EDM model to use 
-name    = sys.argv[3] # name of ABC run
-niter   = int(sys.argv[4]) # number of iterations
-restart = (sys.argv[5] == 'True')
-print('Runnin test ABC with ...') 
-print('%i iterations' % niter)
-if not restart: 
-    npart   = int(sys.argv[6]) # number of particles 
-    print('%i particles' % npart)
-    trest = None 
-else: 
-    trest = int(sys.argv[7]) 
-    print('T=%i restart' % trest) 
+dem     = sys.argv[2] # name of EDM model to use 
+
 ######################################################
 # this will run on all processes =X
 # read SED for sims 
@@ -60,27 +49,10 @@ shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
-
-prior_min, prior_max = edm_prior(edm)
-    
-abc_dir = os.path.join(dat_dir, 'abc', name) 
-
-pewl = MPIPool()
-
-if not pewl.is_master(): 
-    pewl.wait()
-    sys.exit(0)
-else: 
-    is not os.path.isdir(abc_dir): 
-        os.system('mkdir %s' % abc_dir)
-######################################################
-# run abc
-###################################################### 
-abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 
 ######################################################
 # functions  
 ###################################################### 
-def edm_prior(edm_name): 
+def dem_prior(dem_name): 
     '''
     Noll attenuation curve 
     A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
@@ -115,15 +87,15 @@ def edm_prior(edm_name):
     9 free parameters:  
         theta = m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E f_nebular 
     '''
-    if edm_name == 'slab_calzetti': 
+    if dem_name == 'slab_calzetti': 
         # m_tau, c_tau, fneb 
         prior_min = np.array([0., 0., 2.]) 
         prior_max = np.array([5., 4., 4.]) 
-    elif edm_name == 'slab_noll_m' 
+    elif dem_name == 'slab_noll_m':
         #m_tau c_tau m_delta c_delta m_E c_E fneb
         prior_min = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
         prior_max = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
-    elif edm_name == 'slab_noll_msfr' 
+    elif dem_name == 'slab_noll_msfr':
         #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
         prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
         prior_max = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
@@ -205,3 +177,32 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
         print('----------------------------------------')
         #if pool.ratio <0.2: break
     abcpmc_sampler.close()
+
+
+if __name__=="__main__": 
+    pewl = MPIPool()
+
+    if not pewl.is_master(): 
+        pewl.wait()
+        sys.exit(0)
+
+    name    = sys.argv[3] # name of ABC run
+    niter   = int(sys.argv[4]) # number of iterations
+    restart = (sys.argv[5] == 'True')
+    print('Runnin test ABC with ...') 
+    print('%i iterations' % niter)
+    if not restart: 
+        npart   = int(sys.argv[6]) # number of particles 
+        print('%i particles' % npart)
+        trest = None 
+    else: 
+        trest = int(sys.argv[6]) 
+        print('T=%i restart' % trest) 
+
+    abc_dir = os.path.join(dat_dir, 'abc', name) 
+    if not os.path.isdir(abc_dir): 
+        os.system('mkdir %s' % abc_dir)
+
+    prior_min, prior_max = dem_prior(dem)
+
+    abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 
