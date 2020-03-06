@@ -18,8 +18,10 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, mstar, dem='slab_calzetti'):
 
     if dem == 'slab_calzetti': 
         mdust = DEM_slabcalzetti
-    elif dem == 'slab_noll': 
+    elif dem == 'slab_noll_m': 
         mdust = DEM_slab_noll 
+    elif dem == 'slab_noll_msfr': 
+        mdust = DEM_slab_noll_m
     else: 
         raise NotImplementedError
 
@@ -46,7 +48,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     E_b     = m_E delta + c_E
 
     :param theta: 
-        6 free parameter of the slab + Noll+(2009) model
+        8 free parameter of the slab + Noll+(2009) model
         theta[0]: m_tau1
         theta[1]: m_tau2
         theta[2]: c_tau
@@ -94,7 +96,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     return flux_i * T_lam 
 
 
-def DEM_slab_noll(theta, lam, flux_i, logmstar, nebular=True): 
+def DEM_slab_noll_m(theta, lam, flux_i, logmstar, nebular=True): 
     ''' Dust empirical model that combines the slab model with Noll+(2009)
 
     A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 

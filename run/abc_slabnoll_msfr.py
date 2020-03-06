@@ -1,7 +1,25 @@
 #!/bin/python
 '''
 ABC for slab model + Noll attenuation curve EDM that has linear log M*
-dependence  
+and linear log SFR dependence  
+
+A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                (k'(lambda) + D(lambda, E_b))/k_V x 
+                (lambda / lambda_V)^delta
+
+tauV    = m_tau1 (log M* - 10.) + m_tau2 logSFR + c_tau
+delta   = m_delta1  (log M* - 10.) + m_delta2 logSFR + c_delta         -2.2 < delta < 0.4
+E_b     = m_E delta + c_E
+
+8 free parameter 
+theta[0]: m_tau1
+theta[1]: m_tau2
+theta[2]: c_tau
+theta[3]: m_delta1
+theta[4]: m_delta2
+theta[5]: c_delta
+theta[6]: m_E
+theta[7]: c_E
 '''
 import os 
 import sys 
@@ -17,12 +35,13 @@ from galpopfm import dust_infer as dustInfer
 ######################################################
 dat_dir = os.environ['GALPOPFM_DIR']
 
-prior_min = np.array([-5., 0., -5., -2.2, -4., 0.]) 
-prior_max = np.array([5., 4., 5., 0.4, 0., 2.]) 
+#m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E 
+prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0.]) 
+prior_max = np.array([5., 5., 4., 4., 4., 0.4, 0., 2.]) 
 
 eps0 = [10., 10.] 
 
-dem = 'slab_noll_m'
+dem = 'slab_noll_msfr'
 ######################################################
 
 # this will run on all processes =X
@@ -61,6 +80,8 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
     Hbflux_sdss = sdss['HBFLUX'][...]
 
     x_obs = dustInfer.sumstat_obs(F_mag_sdss, N_mag_sdss, R_mag_sdss, Haflux_sdss, Hbflux_sdss, sdss['Z'][...])
+
+    #_sumstat_model_wrap = Sumstat_model_wrap() 
     
     if restart is not None:
         # read pool 
