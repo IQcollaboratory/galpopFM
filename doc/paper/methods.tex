@@ -1,0 +1,85 @@
+\section{Empirical Dust Modeling} \label{sec:methods}
+
+\begin{equation} 
+    F_o (\lambda) = F_i (\lambda) 10^{-0.4 A(\lambda)}
+\end{equation}
+where $F_o$ is the observed flux, $F_i$ is the intrinsic flux, and $A(\lambda)$
+is the attenuation curve. 
+
+
+\begin{equation} 
+    A(\lambda) = A_V \frac{k(\lambda)}{k_V} 
+\end{equation}
+Throughout we use the slab model \citep{somerville1999} for the $V$ band
+attenuation:  
+\begin{equation} 
+    A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right]
+\end{equation}
+$i$ is the inclication, which we uniformly sample 
+
+\subsection{Naive Model} 
+We use \cite{calzetti2001} 
+\[
+    k_{\rm Cal}(\lambda) = 
+    \begin{cases} 
+        2.659 (-1.857 + 1.040/\lambda) + R_V, & 6300 \AA \le \lambda \le
+        22000 \AA \\ 
+        2.659 (-2.156 + 1.509/\lambda - 0.198/\lambda^2 + 0.011/\lambda^3) +
+        R_V & 1200 \AA \le \lambda \le 6300 \AA
+    \end{cases}
+\]
+
+and 
+
+\begin{equation}
+    \tau_V = m_\tau \log \left(\frac{M_*}{10^{10} M_\odot}\right) + c_\tau
+\end{equation} 
+
+\subsection{Less Naive Model} 
+We use the attenuation curve from \cite{noll2009} 
+\begin{equation}
+    k(\lambda) = \left(k_{\rm Cal}(\lambda) + D(\lambda)\right) \left(
+    \frac{\lambda}{\lambda_V} \right)^\delta
+\end{equation}
+$\lambda_V$ is the $V$ band wavelength. $D(\lambda)$ is the bump. 
+\begin{equation}
+    D(\lambda) = \frac{E_b(\lambda \Delta \lambda)^2}{(\lambda^2 -
+    \lambda_0^2)^2 + (\lambda \Delta \lambda)^2}
+\end{equation}
+we assume fixed $\lambda_0 = 2175 \AA$ and $\Delta \lambda = 350\AA$. $E_b$ is
+the strength of the bump.
+$\delta$, the slope of the attenuation curve, also correlates with galaxy
+properties.
+\cite{kriek2013}, and \cite{naranyanan2018} more recently with simulations, 
+demonstrated $E_b$ correlates with the slope of the attenuation curve.
+So we parameterize $\delta$ and $E_b$: 
+\begin{align}
+    \delta(M_*) &= m_\delta \log \left(\frac{M_*}{10^{10}
+    M_\odot}\right) + c_\delta \\
+    E_b &= m_E~\delta + c_E
+\end{align}
+
+\subsection{Less Less Naive Model} 
+We use the attenuation curve from \cite{noll2009} 
+
+
+\begin{align}
+    \tau_V &= m_{\tau,1} \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
+    m_{\tau,2} \log\,{\rm SFR} + c_\tau \\ 
+    \delta(M_*, {\rm SFR}) &= m_{\delta,2} \log \left(\frac{M_*}{10^{10}
+    M_\odot}\right) + m_{\delta,2} \log\,{\rm SFR} + c_\delta \\
+    E_b &= m_E~\delta + c_E
+\end{align}
+
+
+\begin{table}
+    table of free parameters 
+\end{table} 
+
+
+\subsection{Likelihood-Free Inference} 
+Approximate Bayesian Computation with Population Monte Carlo \cite{hahn2017a},
+
+discussion of observables and distance metric 
+\cite{ishida2015} 
+
