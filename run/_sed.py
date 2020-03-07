@@ -38,10 +38,13 @@ def compile_seds(name):
         data['censat']      = censat.astype(int)
 
     elif name == 'tng': 
-        fprop0 = os.path.join(dat_dir, 'prop', 'IQSFSdata_TNG_99.txt') # SubhaloID, log10(total stellar mass)[Msun], log10(total gas mass)[Msun], log10(total SFR)[Msun/yr], log10(SFR over100Myr)[Msun/yr], satellite? (1:yes, 0: central)
+        # SubhaloID, log10(total stellar mass)[Msun], log10(total gas
+        # mass)[Msun], log10(total SFR)[Msun/yr], log10(SFR
+        # over100Myr)[Msun/yr], satellite? (1:yes, 0: central)
+        fprop0 = os.path.join(dat_dir, 'prop', 'IQSFSdata_TNG_99-corrected.txt') 
         _id, logmstar, logmgas, logsfrtot, logsfr100, censat = np.loadtxt(fprop0, skiprows=1, unpack=True, usecols=range(6))
-        fprop1 = os.path.join(dat_dir, 'prop', 'IQSFSdataTNG-MstarPosVelSat.txt') # SubhaloID, Mstar[Msun], Pos0[kpc], Pos1[kpc], Pos2[kpc], Vel0[km/s], Vel1[km/s], Vel2[km/s], icentral(0)/satellite(1)
-        pos0, pos1, pos2, vel0, vel1, vel2 = np.loadtxt(fprop1, skiprows=1, unpack=True, usecols=[2,3,4,5,6,7])
+        #fprop1 = os.path.join(dat_dir, 'prop', 'IQSFSdataTNG-MstarPosVelSat.txt') # SubhaloID, Mstar[Msun], Pos0[kpc], Pos1[kpc], Pos2[kpc], Vel0[km/s], Vel1[km/s], Vel2[km/s], icentral(0)/satellite(1)
+        #pos0, pos1, pos2, vel0, vel1, vel2 = np.loadtxt(fprop1, skiprows=1, unpack=True, usecols=[2,3,4,5,6,7])
 
         ngal = len(_id) 
         data['id']          = _id.astype(int)
@@ -67,7 +70,7 @@ def compile_seds(name):
 
     sed_neb, sed_noneb = [], [] 
     for ifile in range(nfile): 
-        print('%i of %i' % (ifile, nfile))
+        print('%i of %i' % (ifile+1, nfile))
         sed_neb_i   = np.loadtxt(fneb(ifile)) 
         sed_noneb_i = np.loadtxt(fnoneb(ifile)) 
 
@@ -79,7 +82,7 @@ def compile_seds(name):
 
     data['sed_neb'] = np.concatenate(sed_neb, axis=0) 
     data['sed_noneb'] = np.concatenate(sed_noneb, axis=0) 
-    assert data['sed_noneb'].shape[0] == ngal 
+    assert data['sed_noneb'].shape[0] == ngal, print('%i SEDs, %i galaxies' % (data['sed_noneb'].shape[0],ngal))
     
     f = h5py.File(fhdf5, 'w') 
     for k in data.keys(): 
@@ -89,6 +92,6 @@ def compile_seds(name):
 
 
 if __name__=="__main__": 
-    compile_seds('simba')  
-    #compile_seds('tng') 
+    #compile_seds('simba')  
+    compile_seds('tng') 
     #compile_seds('eagle') 

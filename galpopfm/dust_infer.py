@@ -150,8 +150,8 @@ def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z):
     balmer_ratio = Ha_sdss/Hb_sdss 
     
     HaHb_I = 2.86 # intrinsic balmer ratio 
-    _, med_fnuv = median_alongr(Rmag, FUV_NUV, rmin=-16., rmax=-24., nbins=16)
-    _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-16., rmax=-24., nbins=16)
+    _, med_fnuv = median_alongr(Rmag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
+    _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-20., rmax=-24., nbins=16)
 
     return [med_fnuv, med_balmer]
 
@@ -169,7 +169,8 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False):
             sed['sed_noneb'], 
             sed['sed_onlyneb'], 
             sed['logmstar'],
-            dem='slab_calzetti') 
+            sed['logsfr.100'],
+            dem=dem) 
     
     # observational measurements 
     F_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_fuv') 
@@ -186,13 +187,14 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False):
     if _model: return R_mag, FUV_NUV, balmer_ratio
     # calculate the distance 
     HaHb_I = 2.86 # intrinsic balmer ratio 
-    _, med_fnuv = median_alongr(R_mag, FUV_NUV, rmin=-16., rmax=-24., nbins=16)
-    _, med_balmer = median_alongr(R_mag, np.log10(balmer_ratio/HaHb_I), rmin=-16., rmax=-24., nbins=16)
+    _, med_fnuv = median_alongr(R_mag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
+    _, med_balmer = median_alongr(R_mag, np.log10(balmer_ratio/HaHb_I),
+            rmin=-20., rmax=-24., nbins=16)
     
     return [med_fnuv, med_balmer]
 
 
-def median_alongr(rmag, values, rmin=-16., rmax=-24., nbins=16): 
+def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
     ''' find the median of specified values as a function of rmag  
     '''
     dr = (rmin - rmax)/float(nbins) 
@@ -206,13 +208,11 @@ def median_alongr(rmag, values, rmin=-16., rmax=-24., nbins=16):
     return rmid, np.array(medians) 
 
 
-def _read_sed(name): 
+def _read_sed(name, seed=0): 
     ''' read in sed files 
     '''
-    if name == 'simba': 
-        fhdf5 = os.path.join(dat_dir, 'sed', 'simba.hdf5') 
-    else: 
-        raise NotImplementedError
+    if name not in ['simba', 'tng']: raise NotImplementedError
+    fhdf5 = os.path.join(dat_dir, 'sed', '%s.hdf5' % name) 
 
     f = h5py.File(fhdf5, 'r') 
     sed = {} 
@@ -221,8 +221,20 @@ def _read_sed(name):
     sed['sed_noneb']    = f['sed_noneb'][...]
     sed['sed_onlyneb']  = sed['sed_neb'] - sed['sed_noneb'] # only nebular emissoins 
     sed['logmstar']     = f['logmstar'][...] 
+    sed['logsfr.100']   = f['logsfr.100'][...] 
     sed['censat']       = f['censat'][...] 
     f.close() 
+
+    # deal with SFR resolution effect by unifromly sampling the SFR 
+    # over 0 to resolution limit 
+    if name == 'simba': 
+        res_sfr = 0.182
+    elif name == 'tng': 
+        res_sfr = 0.005142070183729021 # THIS IS WRONG!!!
+    
+    np.random.seed(seed)
+    isnan = (~np.isfinite(sed['logsfr.100']))
+    sed['logsfr.100'][isnan] = np.log10(np.random.uniform(0., res_sfr, size=np.sum(isnan))) 
     return sed
 
 
@@ -293,7 +305,14 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
 
     # theta labels 
     if dem == 'slab_calzetti': 
-        lbls = [r'$m_{\tau_V}$', r'$c_{\tau_V}$', r'$f_{\rm neb}$'] 
+        lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$f_{\rm neb}$'] 
+    elif dem == 'slab_noll_m': 
+        lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$m_\delta$', r'$c_\delta$',
+                r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+    elif dem == 'slab_noll_m': 
+        lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
+                r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+                r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
     else: 
         raise NotImplementedError
 

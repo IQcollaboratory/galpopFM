@@ -1,7 +1,17 @@
 #!/bin/python
 '''
-ABC for slab model + Noll attenuation curve EDM that has linear log M*
-dependence  
+script to run abc on sirocco with MPI
+
+to run ABC from scratch the inputs are: 
+    sim dem_model abc_name n_iter False n_part
+
+ >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 False 1000
+
+to restart ABC from existing pool the inputs are: 
+    sim dem_model abc_name n_iter True t_restart
+
+ >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 True 5
+
 '''
 import os 
 import sys 
@@ -14,34 +24,86 @@ from schwimmbad import MPIPool
 # -- galpopfm --
 from galpopfm import dust_infer as dustInfer
 
-######################################################
+####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-
-prior_min = np.array([-5., 0., -5., -2.2, -4., 0.]) 
-prior_max = np.array([5., 4., 5., 0.4, 0., 2.]) 
-
 eps0 = [10., 10.] 
 
-dem = 'slab_noll_m'
-######################################################
+sim     = sys.argv[1] # name of simulation
+dem     = sys.argv[2] # name of EDM model to use 
 
+######################################################
 # this will run on all processes =X
 # read SED for sims 
-sim_sed = dustInfer._read_sed('simba') 
+sim_sed = dustInfer._read_sed(sim) 
 
 # pass through the minimal amount of memory 
 wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 8e3) 
-# only keep centrals and impose mass limit as well 
+# only keep centrals and impose mass limit as well.
+# the lower limit log M* > 9.2 is padded by 0.5 dex to conservatively account
+# for log M* and R magnitude scatter  
 downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
-cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 8.5) & downsample
+cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 9.2) & downsample
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
 shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
+shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy() 
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
+
+######################################################
+# functions  
+###################################################### 
+def dem_prior(dem_name): 
+    '''
+    Noll attenuation curve 
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    slab_noll_m: 
+    -----------
+    ABC for slab model + Noll attenuation curve EDM that has linear log M*
+    dependence  
+
+    tauV    = m_tau (log M* - 10.) + c_tau
+    delta   = m_delta  (log M* - 10.) + c_delta -2.2 < delta < 0.4
+    E_b     = m_E delta + c_E
+
+    7 free parameters:  
+        theta = m_tau c_tau m_delta c_delta m_E c_E f_nebular 
+
+    slab_noll_msfr: 
+    --------------
+    ABC for slab model + Noll attenuation curve EDM that has linear log M*
+    and linear log SFR dependence  
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    tauV    = m_tau1 (log M* - 10.) + m_tau2 logSFR + c_tau
+    delta   = m_delta1  (log M* - 10.) + m_delta2 logSFR + c_delta         -2.2 < delta < 0.4
+    E_b     = m_E delta + c_E
+
+    9 free parameters:  
+        theta = m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E f_nebular 
+    '''
+    if dem_name == 'slab_calzetti': 
+        # m_tau, c_tau, fneb 
+        prior_min = np.array([0., 0., 2.]) 
+        prior_max = np.array([5., 4., 4.]) 
+    elif dem_name == 'slab_noll_m':
+        #m_tau c_tau m_delta c_delta m_E c_E fneb
+        prior_min = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
+        prior_max = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
+    elif dem_name == 'slab_noll_msfr':
+        #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
+        prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
+        prior_max = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
+    return prior_min, prior_max 
 
 
 def _sumstat_model_wrap(theta, dem=dem): 
@@ -61,6 +123,8 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
     Hbflux_sdss = sdss['HBFLUX'][...]
 
     x_obs = dustInfer.sumstat_obs(F_mag_sdss, N_mag_sdss, R_mag_sdss, Haflux_sdss, Hbflux_sdss, sdss['Z'][...])
+
+    #_sumstat_model_wrap = Sumstat_model_wrap() 
     
     if restart is not None:
         # read pool 
@@ -126,21 +190,23 @@ if __name__=="__main__":
         pewl.wait()
         sys.exit(0)
 
-    ####################### inputs #######################
-    # >>> mpiexec -n 2 python abc_slabnoll.py slabnoll 3 False 5
-    name    = sys.argv[1] # name of ABC run
-    niter   = int(sys.argv[2]) # number of iterations
-    restart = (sys.argv[3] == 'True')
+    name    = sys.argv[3] # name of ABC run
+    niter   = int(sys.argv[4]) # number of iterations
+    restart = (sys.argv[5] == 'True')
     print('Runnin test ABC with ...') 
     print('%i iterations' % niter)
     if not restart: 
-        npart   = int(sys.argv[4]) # number of particles 
+        npart   = int(sys.argv[6]) # number of particles 
         print('%i particles' % npart)
         trest = None 
     else: 
-        trest = int(sys.argv[4]) 
+        trest = int(sys.argv[6]) 
         print('T=%i restart' % trest) 
-    ######################################################
+
     abc_dir = os.path.join(dat_dir, 'abc', name) 
+    if not os.path.isdir(abc_dir): 
+        os.system('mkdir %s' % abc_dir)
+
+    prior_min, prior_max = dem_prior(dem)
 
     abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 
