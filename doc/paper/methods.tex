@@ -6,11 +6,11 @@
 where $F_o$ is the observed flux, $F_i$ is the intrinsic flux, and $A(\lambda)$
 is the attenuation curve. 
 
-
+We normalize the attenuation at the $V$ band, 
 \begin{equation} 
-    A(\lambda) = A_V \frac{k(\lambda)}{k_V} 
+    A(\lambda) = A_V \frac{k(\lambda)}{k_V}. 
 \end{equation}
-Throughout we use the slab model \citep{somerville1999} for the $V$ band
+Throughout we use the slab model \citep{somerville1999, somerville2012} for the $V$ band
 attenuation:  
 \begin{equation} 
     A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right]
@@ -72,7 +72,7 @@ So we parameterize $\delta$ and $E_b$:
 \subsection{Less Less Naive Model} 
 We use the attenuation curve from \cite{noll2009} 
 
-
+\cite{salim2020} finds SFR dependence in $A_V$
 \begin{align}
     \tau_V &= m_{\tau,1} \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
     m_{\tau,2} \log\,{\rm SFR} + c_\tau \\ 
