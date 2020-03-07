@@ -86,7 +86,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
-    assert theta.shape == 9
+    assert theta.shape[0] == 9, print(theta) 
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
 
@@ -147,7 +147,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
-    assert theta.shape == 7
+    assert theta.shape[0] == 7, print(theta)
     logmstar = np.atleast_1d(logmstar) 
 
     tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 0., None) 

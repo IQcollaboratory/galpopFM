@@ -1,6 +1,6 @@
 # !/bin/bash
 #PBS -l nodes=1:ppn=24
-#PBS -N sim_slabnollmsfr 
+#PBS -N tng_slabnollmsfr
 cd $PBS_O_WORKDIR
 export NPROCS=`wc -l $PBS_NODEFILE |gawk '//{print $1}'`
 export PATH="/home/users/hahn/anaconda3/bin:$PATH"
@@ -8,7 +8,7 @@ export PATH="/home/users/hahn/anaconda3/bin:$PATH"
 source /home/users/hahn/.bashrc
 source activate iq 
 
-sim='simba' 
+sim='tng' 
 ################################################################################ 
 #edm="slab_noll_msfr"
 #mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/abc_siro.py \

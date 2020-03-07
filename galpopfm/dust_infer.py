@@ -170,7 +170,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False):
             sed['sed_onlyneb'], 
             sed['logmstar'],
             sed['logsfr.100'],
-            dem='slab_calzetti') 
+            dem=dem) 
     
     # observational measurements 
     F_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_fuv') 
@@ -208,13 +208,11 @@ def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16):
     return rmid, np.array(medians) 
 
 
-def _read_sed(name): 
+def _read_sed(name, seed=0): 
     ''' read in sed files 
     '''
-    if name == 'simba': 
-        fhdf5 = os.path.join(dat_dir, 'sed', 'simba.hdf5') 
-    else: 
-        raise NotImplementedError
+    if name not in ['simba', 'tng']: raise NotImplementedError
+    fhdf5 = os.path.join(dat_dir, 'sed', '%s.hdf5' % name) 
 
     f = h5py.File(fhdf5, 'r') 
     sed = {} 
@@ -223,8 +221,20 @@ def _read_sed(name):
     sed['sed_noneb']    = f['sed_noneb'][...]
     sed['sed_onlyneb']  = sed['sed_neb'] - sed['sed_noneb'] # only nebular emissoins 
     sed['logmstar']     = f['logmstar'][...] 
+    sed['logsfr.100']   = f['logsfr.100'][...] 
     sed['censat']       = f['censat'][...] 
     f.close() 
+
+    # deal with SFR resolution effect by unifromly sampling the SFR 
+    # over 0 to resolution limit 
+    if name == 'simba': 
+        res_sfr = 0.182
+    elif name == 'tng': 
+        res_sfr = 0.005142070183729021 # THIS IS WRONG!!!
+    
+    np.random.seed(seed)
+    isnan = (~np.isfinite(sed['logsfr.100']))
+    sed['logsfr.100'][isnan] = np.log10(np.random.uniform(0., res_sfr, size=np.sum(isnan))) 
     return sed
 
 
