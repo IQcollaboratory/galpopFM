@@ -224,7 +224,8 @@ def _read_sed(name, seed=0):
     sed['logsfr.100']   = f['logsfr.100'][...] 
     sed['censat']       = f['censat'][...] 
     f.close() 
-
+    
+    '''
     # deal with SFR resolution effect by unifromly sampling the SFR 
     # over 0 to resolution limit 
     if name == 'simba': 
@@ -235,6 +236,8 @@ def _read_sed(name, seed=0):
     np.random.seed(seed)
     isnan = (~np.isfinite(sed['logsfr.100']))
     sed['logsfr.100'][isnan] = np.log10(np.random.uniform(0., res_sfr, size=np.sum(isnan))) 
+    '''
+    sed['logsfr.100'][isnan] = -999.
     return sed
 
 
@@ -309,7 +312,7 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
     elif dem == 'slab_noll_m': 
         lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$m_\delta$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
-    elif dem == 'slab_noll_m': 
+    elif dem == 'slab_noll_msfr': 
         lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
