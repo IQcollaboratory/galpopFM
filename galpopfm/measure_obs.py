@@ -18,6 +18,7 @@ H0  = 2.2685455e-18 # 1/s (70. km/s/Mpc)
 c   = 2.9979e10 # cm/s
 cinA= 2.9979e18 # A/s
 
+
 def mag(wave, spec, redshift=0.05, band='r_sdss'):
     ''' **THIS DOES NOT WORK YET!**
     **THIS DOES NOT WORK YET!**
@@ -85,6 +86,39 @@ def AbsMag_sed(wave, sed, band='r_sdss'):
 
     _mag = -2.5 * np.log10(tsum(wave[wlim], sed[:,wlim] * trans / wave[wlim])) - 48.60 - 2.5 * mag2cgs
     return _mag  
+
+
+def LumFunc(mr, name=None, mr_bin=None): 
+    ''' luminosity function 
+
+    :param mr: 
+        array of r-band luminosities
+    :param name: 
+        string specifying data set, which is used to get comoving volume in
+        units of (Mpc/h)^3
+
+    :return mr_bin_mid: 
+        middle values of M_r bins 
+    :return phi: 
+        luminosity function (Mpc/h)^-3
+    '''
+    assert name is not None, "specify name for comoving volume" 
+    if mr_bin is None: 
+        mr_bin = np.linspace(-25., -20., 11)  
+    dmr = mr_bin[1:] - mr_bin[:-1]
+    
+    if name == 'sdss': # volume of SDSS 
+        from astropy.cosmology import Planck13 as cosmo
+        vol = (cosmo.comoving_volume(0.033390).value -
+                cosmo.comoving_volume(0.01069).value) * \
+                        (7966./41253.) * cosmo.h**3 # (Mpc/h)^3
+    else: 
+        vol = {'simba': 100.**3, 'tng': 75.**3}[name]  
+
+    Ngal, _ = np.histogram(mr, bins=mr_bin)
+    phi     = Ngal.astype(float) / vol / dmr
+
+    return 0.5*(mr_bin[1:] + mr_bin[:-1]), phi 
 
 
 def A_FUV(fmag, nmag, rmag):

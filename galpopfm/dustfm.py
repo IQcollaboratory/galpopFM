@@ -87,6 +87,10 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
         continuum attenuation.
     '''
     assert theta.shape[0] == 9, print(theta) 
+
+    if logsfr == -999.: # if SFR = 0 no attenuation
+        return flux_i 
+
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
 

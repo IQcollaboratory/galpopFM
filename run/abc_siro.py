@@ -26,7 +26,7 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = [10., 10.] 
+eps0 = [10., 10., 1e5] 
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
@@ -39,19 +39,26 @@ sim_sed = dustInfer._read_sed(sim)
 # pass through the minimal amount of memory 
 wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 8e3) 
 # only keep centrals and impose mass limit as well.
-# the lower limit log M* > 9.2 is padded by 0.5 dex to conservatively account
+# the lower limit log M* > 9.4 is padded by >0.25 dex to conservatively account
 # for log M* and R magnitude scatter  
 downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
-cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 9.2) & downsample
+f_downsample = 0.1
+cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 9.4) & downsample
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
+shared_sim_sed['sim']           = sim 
 shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
 shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy() 
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
+    
+fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
+phi_err = np.loadtxt(fphi, unpack=True, usecols=[3]) 
+# this is to ensure that the distance metric penalizes the high abs mag bins 
+phi_err = np.clip(phi_err, 1e-7, None) 
 
 ######################################################
 # functions  
@@ -107,24 +114,18 @@ def dem_prior(dem_name):
 
 
 def _sumstat_model_wrap(theta, dem=dem): 
-    x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem) 
+    x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
+            f_downsample=f_downsample) 
     return x_mod 
+
+
+def _distance_metric_wrap(x_obs, x_model): 
+    return dustInfer.distance_metric(x_obs, x_model, method='L2', phi_err=phi_err)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
     # read in observations 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
-
-    F_mag_sdss = sdss['ABSMAG'][...][:,0]
-    N_mag_sdss = sdss['ABSMAG'][...][:,1]
-    R_mag_sdss = sdss['ABSMAG'][...][:,4]
-    Haflux_sdss = sdss['HAFLUX'][...]
-    Hbflux_sdss = sdss['HBFLUX'][...]
-
-    x_obs = dustInfer.sumstat_obs(F_mag_sdss, N_mag_sdss, R_mag_sdss, Haflux_sdss, Hbflux_sdss, sdss['Z'][...])
-
-    #_sumstat_model_wrap = Sumstat_model_wrap() 
+    x_obs = dustInfer.sumstat_obs(name='sdss')
     
     if restart is not None:
         # read pool 
@@ -150,10 +151,9 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
             N=npart,                # N_particles
             Y=x_obs,                # data
             postfn=_sumstat_model_wrap,   # simulator 
-            dist=dustInfer.distance_metric,   # distance metric 
+            dist=_distance_metric_wrap,   # distance metric 
             pool=pewl,
-            postfn_kwargs={'dem': dem},
-            dist_kwargs={'method': 'L2'}
+            postfn_kwargs={'dem': dem}#, dist_kwargs={'method': 'L2', 'phi_err': phi_err}
             )      
 
     # threshold 
@@ -181,6 +181,7 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
         print('----------------------------------------')
         #if pool.ratio <0.2: break
     abcpmc_sampler.close()
+    return None 
 
 
 if __name__=="__main__": 
@@ -193,7 +194,9 @@ if __name__=="__main__":
     name    = sys.argv[3] # name of ABC run
     niter   = int(sys.argv[4]) # number of iterations
     restart = (sys.argv[5] == 'True')
-    print('Runnin test ABC with ...') 
+    print('Runnin ABC with ...') 
+    print('%s simulation' % sim) 
+    print('%s DEM' % dem)
     print('%i iterations' % niter)
     if not restart: 
         npart   = int(sys.argv[6]) # number of particles 
