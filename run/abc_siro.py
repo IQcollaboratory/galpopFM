@@ -26,7 +26,7 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = [10., 10.] 
+eps0 = [10., 10., 1e5] 
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
@@ -54,6 +54,11 @@ shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy()
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
+    
+fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
+phi_err = np.loadtxt(fphi, unpack=True, usecols=[3]) 
+# this is to ensure that the distance metric penalizes the high abs mag bins 
+phi_err = np.clip(phi_err, 1e-7, None) 
 
 ######################################################
 # functions  
@@ -114,15 +119,13 @@ def _sumstat_model_wrap(theta, dem=dem):
     return x_mod 
 
 
+def _distance_metric_wrap(x_obs, x_model): 
+    return dustInfer.distance_metric(x_obs, x_model, method='L2', phi_err=phi_err)
+
+
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
     # read in observations 
     x_obs = dustInfer.sumstat_obs(name='sdss')
-
-    fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-    phi_err = np.loadtxt(fphi, unpack=True, usecols=[3]) 
-    # this is to ensure that the distance metric penalizes the high abs mag
-    # bins 
-    phi_err = np.clip(phi_err, 1e-7, None) 
     
     if restart is not None:
         # read pool 
@@ -148,10 +151,9 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
             N=npart,                # N_particles
             Y=x_obs,                # data
             postfn=_sumstat_model_wrap,   # simulator 
-            dist=dustInfer.distance_metric,   # distance metric 
+            dist=_distance_metric_wrap,   # distance metric 
             pool=pewl,
-            postfn_kwargs={'dem': dem},
-            dist_kwargs={'method': 'L2', 'phi_err': phi_err}
+            postfn_kwargs={'dem': dem}#, dist_kwargs={'method': 'L2', 'phi_err': phi_err}
             )      
 
     # threshold 
@@ -179,6 +181,7 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
         print('----------------------------------------')
         #if pool.ratio <0.2: break
     abcpmc_sampler.close()
+    return None 
 
 
 if __name__=="__main__": 

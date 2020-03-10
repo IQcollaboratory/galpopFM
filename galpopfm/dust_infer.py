@@ -139,7 +139,7 @@ def distance_metric(x_obs, x_model, method='L2', phi_err=None):
         rho_phi = np.sum(((phi_obs - phi_mod)/phi_err)**2)
 
         print('     (%.5f, %.5f, %.5f)' % (rho_balmer, rho_fnuv, rho_phi))
-        return [rho_balmer, rho_fnuv] 
+        return [rho_balmer, rho_fnuv, rho_phi] 
     else: 
         raise NotImplemented 
 
@@ -154,7 +154,7 @@ def sumstat_obs(name='sdss'):
     data = h5py.File(fdata, 'r') 
 
     # Mr complete
-    mr_complete = (data['mr_tinker'][...] > -20.) 
+    mr_complete = (data['mr_tinker'][...] < -20.) 
 
     Fmag    = data['ABSMAG'][...][:,0][mr_complete]
     Nmag    = data['ABSMAG'][...][:,1][mr_complete]
@@ -219,7 +219,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False,
             rmin=-20., rmax=-24., nbins=16)
     
     # get luminosity function 
-    _, phi = LumFunc(R_mag, name=sed['sim'], mr_bin=None)
+    _, phi = measureObs.LumFunc(R_mag, name=sed['sim'], mr_bin=None)
     phi /= f_downsample # in case you downsample 
     
     return [med_fnuv, med_balmer, phi]
@@ -268,6 +268,7 @@ def _read_sed(name, seed=0):
     isnan = (~np.isfinite(sed['logsfr.100']))
     sed['logsfr.100'][isnan] = np.log10(np.random.uniform(0., res_sfr, size=np.sum(isnan))) 
     '''
+    isnan = (~np.isfinite(sed['logsfr.100']))
     sed['logsfr.100'][isnan] = -999.
     return sed
 

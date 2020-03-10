@@ -87,6 +87,7 @@ def AbsMag_sed(wave, sed, band='r_sdss'):
     _mag = -2.5 * np.log10(tsum(wave[wlim], sed[:,wlim] * trans / wave[wlim])) - 48.60 - 2.5 * mag2cgs
     return _mag  
 
+
 def LumFunc(mr, name=None, mr_bin=None): 
     ''' luminosity function 
 
