@@ -193,7 +193,9 @@ if __name__=="__main__":
     name    = sys.argv[3] # name of ABC run
     niter   = int(sys.argv[4]) # number of iterations
     restart = (sys.argv[5] == 'True')
-    print('Runnin test ABC with ...') 
+    print('Runnin ABC with ...') 
+    print('%s simulation' % sim) 
+    print('%s DEM' % dem)
     print('%i iterations' % niter)
     if not restart: 
         npart   = int(sys.argv[6]) # number of particles 
