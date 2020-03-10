@@ -111,15 +111,15 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     return None 
 
 
-def distance_metric(x_obs, x_model, method='L2'): 
+def distance_metric(x_obs, x_model, method='L2', phi_err=None): 
     ''' distance metric between forward model m(theta) and observations
 
     notes
     -----
     * we have implemented the simplest L2 Norm 
     ''' 
-    med_fnuv_obs, med_balmer_obs = x_obs
-    med_fnuv_mod, med_balmer_mod = x_model
+    med_fnuv_obs, med_balmer_obs, phi_obs = x_obs
+    med_fnuv_mod, med_balmer_mod, phi_mod = x_model
     
     if method == 'L2': 
         # L2 norm of the median balmer ratio measurement log( (Ha/Hb)/(Ha/Hb)I )
@@ -135,29 +135,56 @@ def distance_metric(x_obs, x_model, method='L2'):
             rho_fnuv = np.Inf
         else: 
             rho_fnuv = np.sum((med_fnuv_mod[_finite] - med_fnuv_obs[_finite])**2)/float(np.sum(_finite))
-        print('     (%.5f, %.5f)' % (rho_balmer, rho_fnuv))
+
+        rho_phi = np.sum(((phi_obs - phi_mod)/phi_err)**2)
+
+        print('     (%.5f, %.5f, %.5f)' % (rho_balmer, rho_fnuv, rho_phi))
         return [rho_balmer, rho_fnuv] 
     else: 
         raise NotImplemented 
 
 
-def sumstat_obs(Fmag, Nmag, Rmag, Haflux, Hbflux, z): 
+def sumstat_obs(name='sdss'): 
     ''' calculate summary statistics for SDSS observations  
     '''
+    if name == 'sdss': 
+        fdata = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    else: 
+        raise NotImplementedError
+    data = h5py.File(fdata, 'r') 
+
+    # Mr complete
+    mr_complete = (data['mr_tinker'][...] > -20.) 
+
+    Fmag    = data['ABSMAG'][...][:,0][mr_complete]
+    Nmag    = data['ABSMAG'][...][:,1][mr_complete]
+    Rmag    = data['mr_tinker'][...][mr_complete]
+    Haflux  = data['HAFLUX'][...][mr_complete]
+    Hbflux  = data['HBFLUX'][...][mr_complete]
+
     FUV_NUV =  Fmag - Nmag
-    Ha_sdss = Haflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
-    Hb_sdss = Hbflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
-    balmer_ratio = Ha_sdss/Hb_sdss 
+    #Ha_sdss = Haflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
+    #Hb_sdss = Hbflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
+    #balmer_ratio = Ha_sdss/Hb_sdss 
+    balmer_ratio = Haflux / Hbflux
     
     HaHb_I = 2.86 # intrinsic balmer ratio 
     _, med_fnuv = median_alongr(Rmag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
     _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-20., rmax=-24., nbins=16)
+    
+    # read in sdss luminosity function 
+    fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
+    phi = np.loadtxt(fphi, unpack=True, usecols=[2]) 
 
-    return [med_fnuv, med_balmer]
+    return [med_fnuv, med_balmer, phi]
 
 
-def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False): 
+def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False,
+        f_downsample=1.): 
     ''' calculate summary statistics for forward model m(theta) 
+
+    :param sed: 
+        dictionary with SEDs of **central** galaxies  
 
     notes
     -----
@@ -191,7 +218,11 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False):
     _, med_balmer = median_alongr(R_mag, np.log10(balmer_ratio/HaHb_I),
             rmin=-20., rmax=-24., nbins=16)
     
-    return [med_fnuv, med_balmer]
+    # get luminosity function 
+    _, phi = LumFunc(R_mag, name=sed['sim'], mr_bin=None)
+    phi /= f_downsample # in case you downsample 
+    
+    return [med_fnuv, med_balmer, phi]
 
 
 def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
@@ -224,7 +255,8 @@ def _read_sed(name, seed=0):
     sed['logsfr.100']   = f['logsfr.100'][...] 
     sed['censat']       = f['censat'][...] 
     f.close() 
-
+    
+    '''
     # deal with SFR resolution effect by unifromly sampling the SFR 
     # over 0 to resolution limit 
     if name == 'simba': 
@@ -235,6 +267,8 @@ def _read_sed(name, seed=0):
     np.random.seed(seed)
     isnan = (~np.isfinite(sed['logsfr.100']))
     sed['logsfr.100'][isnan] = np.log10(np.random.uniform(0., res_sfr, size=np.sum(isnan))) 
+    '''
+    sed['logsfr.100'][isnan] = -999.
     return sed
 
 
@@ -309,7 +343,7 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
     elif dem == 'slab_noll_m': 
         lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$m_\delta$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
-    elif dem == 'slab_noll_m': 
+    elif dem == 'slab_noll_msfr': 
         lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 

@@ -3,48 +3,52 @@ Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
+Warning--I didn't find a database entry for "shivaei2015"
+Warning--I didn't find a database entry for "reddy2015"
+Warning--I didn't find a database entry for "trayford2020"
+Warning--I didn't find a database entry for "somerville2012"
 Warning--I didn't find a database entry for "naranyanan2018"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 6 entries,
+You've used 8 entries,
             2881 wiz_defined-function locations,
-            769 strings with 7498 characters,
-and the built_in function-call counts, 2913 in all, are:
-= -- 242
-> -- 214
-< -- 16
-+ -- 92
-- -- 34
-* -- 348
-:= -- 465
+            787 strings with 7928 characters,
+and the built_in function-call counts, 3853 in all, are:
+= -- 301
+> -- 302
+< -- 22
++ -- 134
+- -- 48
+* -- 461
+:= -- 624
 add.period$ -- 0
-call.type$ -- 6
-change.case$ -- 12
-chr.to.int$ -- 6
-cite$ -- 6
-duplicate$ -- 134
-empty$ -- 133
-format.name$ -- 56
-if$ -- 501
+call.type$ -- 8
+change.case$ -- 16
+chr.to.int$ -- 8
+cite$ -- 8
+duplicate$ -- 179
+empty$ -- 176
+format.name$ -- 78
+if$ -- 653
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 6
-newline$ -- 31
-num.names$ -- 42
-pop$ -- 24
+missing$ -- 8
+newline$ -- 37
+num.names$ -- 58
+pop$ -- 35
 preamble$ -- 1
-purify$ -- 24
+purify$ -- 32
 quote$ -- 0
-skip$ -- 83
+skip$ -- 110
 stack$ -- 0
-substring$ -- 174
-swap$ -- 66
-text.length$ -- 24
+substring$ -- 204
+swap$ -- 94
+text.length$ -- 32
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 54
+type$ -- 72
 warning$ -- 0
-while$ -- 46
+while$ -- 60
 width$ -- 0
-write$ -- 72
-(There was 1 warning)
+write$ -- 91
+(There were 5 warnings)
