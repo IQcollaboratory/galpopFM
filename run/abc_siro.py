@@ -56,9 +56,12 @@ shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy()
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
     
 fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-phi_err = np.loadtxt(fphi, unpack=True, usecols=[3]) 
+mr_low, mr_high, phi_err = np.loadtxt(fphi, unpack=True, usecols=[0,1,3]) 
+d_mr = mr_high - mr_low 
+vol = {'simba': 100.**3, 'tng': 75.**3}[sim]  
+err_poisson = 1./d_mr/vol 
 # this is to ensure that the distance metric penalizes the high abs mag bins 
-phi_err = np.clip(phi_err, 1e-7, None) 
+phi_err = np.clip(phi_err, err_poisson, None) 
 
 ######################################################
 # functions  
