@@ -94,7 +94,8 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
 
-    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1] * logsfr + theta[2], 0., None) 
+    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1] * logsfr + theta[2],
+            1e-3, None) 
 
     delta = theta[3] * (logmstar - 10.) + theta[4] * logsfr + theta[5] 
 
@@ -106,6 +107,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
 
     #Eq. 14 of Somerville+(1999) 
     A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    assert np.isfinite(A_V), print(tauV, _slab, logmstar, logsfr) 
     
     dlam = 350. # width of bump from Noll+(2009)
     lam0 = 2175. # wavelength of bump 
@@ -113,8 +115,9 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     
     # bump 
     D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
-
-    A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
+    
+    # calzetti is already normalized to k_V
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
             (lam / 5500.)**delta 
 
     if not nebular: factor = 1.
@@ -154,7 +157,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     assert theta.shape[0] == 7, print(theta)
     logmstar = np.atleast_1d(logmstar) 
 
-    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 0., None) 
+    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 1e-3, None) 
 
     delta = theta[2] * (logmstar - 10.) + theta[3] 
 
@@ -165,7 +168,8 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     sec_incl = 1./np.cos(incl) 
 
     #Eq. 14 of Somerville+(1999) 
-    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl))
+    assert np.isfinite(A_V), print(tauV, _slab, logmstar, logsfr) 
     
     dlam = 350. # width of bump from Noll+(2009)
     lam0 = 2175. # wavelength of bump 
@@ -174,7 +178,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     # bump 
     D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
 
-    A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
             (lam / 5500.)**delta 
 
     if not nebular: factor = 1.
@@ -185,7 +189,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     return flux_i * T_lam 
 
 
-def DEM_slabcalzetti(theta, lam, flux_i, logmstar, nebular=True): 
+def DEM_slabcalzetti(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
     ''' Dust Empirical Model that uses the slab model with tauV(theta, mstar)
     parameterization with inclinations randomly sampled 
 
@@ -209,7 +213,7 @@ def DEM_slabcalzetti(theta, lam, flux_i, logmstar, nebular=True):
     '''
     logmstar = np.atleast_1d(logmstar) 
 
-    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 0., None) 
+    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1], 1e-3, None) 
     
     # randomly sample the inclinatiion angle from 0 - pi/2 
     incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
@@ -221,6 +225,7 @@ def DEM_slabcalzetti(theta, lam, flux_i, logmstar, nebular=True):
 
     #Eq. 14 of Somerville+(1999) 
     A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    assert np.isfinite(A_V), print(tauV, _slab, logmstar, logsfr) 
     # minimum attenuation from Romeel's paper (which one?) 
     A_V = np.clip(A_V, 0.1, None) 
 

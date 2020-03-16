@@ -5,12 +5,12 @@ script to run abc on sirocco with MPI
 to run ABC from scratch the inputs are: 
     sim dem_model abc_name n_iter False n_part
 
- >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 False 1000
+ >>> python abc_mbp.py simba slabnoll_m simba_slabnoll_m 20 False 1000
 
 to restart ABC from existing pool the inputs are: 
     sim dem_model abc_name n_iter True t_restart
 
- >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 True 5
+ >>> python abc_mbp.py simba slabnoll_m simba_slabnoll_m 20 True 5
 
 '''
 import os 
@@ -19,8 +19,6 @@ import h5py
 import numpy as np 
 # -- abcpmc -- 
 import abcpmc
-from mpi4py import MPI 
-from schwimmbad import MPIPool
 # -- galpopfm --
 from galpopfm import dust_infer as dustInfer
 
@@ -30,9 +28,21 @@ eps0 = [10., 10., 1e5]
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
-
+name    = sys.argv[3] # name of ABC run
+niter   = int(sys.argv[4]) # number of iterations
+restart = (sys.argv[5] == 'True')
+print('Runnin ABC with ...') 
+print('%s simulation' % sim) 
+print('%s DEM' % dem)
+print('%i iterations' % niter)
+if not restart: 
+    npart   = int(sys.argv[6]) # number of particles 
+    print('%i particles' % npart)
+    trest = None 
+else: 
+    trest = int(sys.argv[6]) 
+    print('T=%i restart' % trest) 
 ######################################################
-# this will run on all processes =X
 # read SED for sims 
 sim_sed = dustInfer._read_sed(sim) 
 
@@ -123,10 +133,13 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 
 def _distance_metric_wrap(x_obs, x_model): 
+    print(x_obs[-1]) 
+    print(x_model[-1]) 
+    print('-----------------------------------') 
     return dustInfer.distance_metric(x_obs, x_model, method='L2', phi_err=phi_err)
 
 
-def abc(pewl, name=None, niter=None, npart=None, restart=None): 
+def abc(name=None, niter=None, npart=None, restart=None): 
     # read in observations 
     x_obs = dustInfer.sumstat_obs(name='sdss')
     
@@ -155,7 +168,6 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
             Y=x_obs,                # data
             postfn=_sumstat_model_wrap,   # simulator 
             dist=_distance_metric_wrap,   # distance metric 
-            pool=pewl,
             postfn_kwargs={'dem': dem}#, dist_kwargs={'method': 'L2', 'phi_err': phi_err}
             )      
 
@@ -186,33 +198,11 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
     abcpmc_sampler.close()
     return None 
 
-
-if __name__=="__main__": 
-    pewl = MPIPool()
-
-    if not pewl.is_master(): 
-        pewl.wait()
-        sys.exit(0)
-
-    name    = sys.argv[3] # name of ABC run
-    niter   = int(sys.argv[4]) # number of iterations
-    restart = (sys.argv[5] == 'True')
-    print('Runnin ABC with ...') 
-    print('%s simulation' % sim) 
-    print('%s DEM' % dem)
-    print('%i iterations' % niter)
-    if not restart: 
-        npart   = int(sys.argv[6]) # number of particles 
-        print('%i particles' % npart)
-        trest = None 
-    else: 
-        trest = int(sys.argv[6]) 
-        print('T=%i restart' % trest) 
-
+if __name__=='__main__': 
     abc_dir = os.path.join(dat_dir, 'abc', name) 
     if not os.path.isdir(abc_dir): 
         os.system('mkdir %s' % abc_dir)
 
     prior_min, prior_max = dem_prior(dem)
 
-    abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 
+    abc(name=name, niter=niter, npart=npart, restart=trest) 
