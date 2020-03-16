@@ -115,8 +115,9 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     
     # bump 
     D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
-
-    A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
+    
+    # calzetti is already normalized to k_V
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
             (lam / 5500.)**delta 
 
     if not nebular: factor = 1.
@@ -177,7 +178,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     # bump 
     D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
 
-    A_lambda = A_V * (calzetti_absorption(lam) + D_bump) / k_V_calzetti * \
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
             (lam / 5500.)**delta 
 
     if not nebular: factor = 1.
@@ -188,7 +189,7 @@ def DEM_slab_noll_m(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     return flux_i * T_lam 
 
 
-def DEM_slabcalzetti(theta, lam, flux_i, logmstar, nebular=True): 
+def DEM_slabcalzetti(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
     ''' Dust Empirical Model that uses the slab model with tauV(theta, mstar)
     parameterization with inclinations randomly sampled 
 
