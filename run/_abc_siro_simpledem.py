@@ -123,8 +123,7 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    full_distance = dustInfer.distance_metric(x_obs, x_model, method='L2', phi_err=phi_err)
-    return [full_distance[1], full_distance[2]] 
+    return dustInfer.distance_metric(x_obs, x_model, method='L2', x_err=x_obs_err)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
