@@ -26,7 +26,7 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = [100., 1e5] 
+eps0 = [1e5] 
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
@@ -55,14 +55,10 @@ shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
     
-fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-mr_low, mr_high, phi_err = np.loadtxt(fphi, unpack=True, usecols=[0,1,3]) 
-d_mr = mr_high - mr_low 
-vol = {'simba': 100.**3, 'tng': 75.**3}[sim]  
-err_poisson = 1./d_mr/vol 
-# this is to ensure that the distance metric penalizes the high abs mag bins 
-phi_err = np.clip(phi_err, err_poisson, None) 
-
+# read SDSS observable
+mag_edges, balmer_edges, fuvnuv_edges, x_obs, x_obs_err = np.load(os.path.join(dat_dir, 'obs',
+        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_Balmer_FUVNUV.npy'),
+        allow_pickle=True)
 ######################################################
 # functions  
 ###################################################### 
@@ -132,9 +128,6 @@ def _distance_metric_wrap(x_obs, x_model):
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
-    # read in observations 
-    x_obs = dustInfer.sumstat_obs(name='sdss')
-    
     if restart is not None:
         # read pool 
         theta_init  = np.loadtxt(

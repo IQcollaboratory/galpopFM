@@ -111,76 +111,40 @@ def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calze
     return None 
 
 
-def distance_metric(x_obs, x_model, method='L2', phi_err=None): 
+def distance_metric(x_obs, x_model, method='L2', x_err=None): 
     ''' distance metric between forward model m(theta) and observations
 
     notes
     -----
-    * we have implemented the simplest L2 Norm 
+    * simple L2 norm between the 3D histogram of [Rmag, Balmer, FUV-NUV]
     ''' 
-    med_fnuv_obs, med_balmer_obs, phi_obs = x_obs
-    med_fnuv_mod, med_balmer_mod, phi_mod = x_model
-    
-    if method == 'L2': 
-        # L2 norm of the median balmer ratio measurement log( (Ha/Hb)/(Ha/Hb)I )
-        _finite = np.isfinite(med_balmer_mod) & np.isfinite(med_balmer_obs)
-        if np.sum(_finite) == 0: 
-            rho_balmer = np.Inf
-        else: 
-            rho_balmer = np.sum((med_balmer_mod[_finite] - med_balmer_obs[_finite])**2)/float(np.sum(_finite))
+    if method == 'L2': # L2 norm  
+        if x_err is None: 
+            x_err = 1. 
 
-        # L2 norm of median FUV-NUV color 
-        _finite = np.isfinite(med_fnuv_mod) & np.isfinite(med_fnuv_obs)
-        if np.sum(_finite) == 0: 
-            rho_fnuv = np.Inf
-        else: 
-            rho_fnuv = np.sum((med_fnuv_mod[_finite] - med_fnuv_obs[_finite])**2)/float(np.sum(_finite))
+        rho = np.sum((x_obs - x_model)**2/x_err**2)
 
-        rho_phi = np.sum(((phi_obs - phi_mod)/phi_err)**2)
-
-        print('     (%.5f, %.5f, %.5f)' % (rho_balmer, rho_fnuv, rho_phi))
-        return [rho_balmer, rho_fnuv, rho_phi] 
+        print('     (%.5f)' % rho)
+        return rho 
     else: 
         raise NotImplemented 
 
 
 def sumstat_obs(name='sdss'): 
-    ''' calculate summary statistics for SDSS observations  
+    ''' summary statistics for SDSS observations is the 3D histgram of 
+    [M_r, log10( (HA/HB)/(HA/HB)_I ), FUV - NUV]. 
+
+    notes
+    -----
+    * see `nb/observables.ipynb` to see exactly how the summary statistic is
+    calculated. 
     '''
-    if name == 'sdss': 
-        fdata = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    else: 
-        raise NotImplementedError
-    data = h5py.File(fdata, 'r') 
-
-    # Mr complete
-    mr_complete = (data['mr_tinker'][...] < -20.) 
-
-    Fmag    = data['ABSMAG'][...][:,0][mr_complete]
-    Nmag    = data['ABSMAG'][...][:,1][mr_complete]
-    Rmag    = data['mr_tinker'][...][mr_complete]
-    Haflux  = data['HAFLUX'][...][mr_complete]
-    Hbflux  = data['HBFLUX'][...][mr_complete]
-
-    FUV_NUV =  Fmag - Nmag
-    #Ha_sdss = Haflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
-    #Hb_sdss = Hbflux * (4.*np.pi * (z * 2.9979e10/2.2685e-18)**2) * 1e-17
-    #balmer_ratio = Ha_sdss/Hb_sdss 
-    balmer_ratio = Haflux / Hbflux
-    
-    HaHb_I = 2.86 # intrinsic balmer ratio 
-    _, med_fnuv = median_alongr(Rmag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
-    _, med_balmer = median_alongr(Rmag, np.log10(balmer_ratio/HaHb_I), rmin=-20., rmax=-24., nbins=16)
-    
-    # read in sdss luminosity function 
-    fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-    phi = np.loadtxt(fphi, unpack=True, usecols=[2]) 
-
-    return [med_fnuv, med_balmer, phi]
+    _, _, _, x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
+            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_Balmer_FUVNUV.npy'))
+    return x_obs 
 
 
-def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False,
-        f_downsample=1.): 
+def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.): 
     ''' calculate summary statistics for forward model m(theta) 
 
     :param sed: 
@@ -204,25 +168,28 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', _model=False,
     N_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_nuv') 
     R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='r_sdss') 
     FUV_NUV = F_mag - N_mag 
+
     # balmer measurements 
     Ha_dust, Hb_dust = measureObs.L_em(['halpha', 'hbeta'], sed['wave'], sed_dusty) 
     balmer_ratio = Ha_dust/Hb_dust
-    # noise model somewhere here
-    # noise model somewhere here
-    # noise model somewhere here
-    
-    if _model: return R_mag, FUV_NUV, balmer_ratio
-    # calculate the distance 
+
     HaHb_I = 2.86 # intrinsic balmer ratio 
-    _, med_fnuv = median_alongr(R_mag, FUV_NUV, rmin=-20., rmax=-24., nbins=16)
-    _, med_balmer = median_alongr(R_mag, np.log10(balmer_ratio/HaHb_I),
-            rmin=-20., rmax=-24., nbins=16)
     
-    # get luminosity function 
-    _, phi = measureObs.LumFunc(R_mag, name=sed['sim'], mr_bin=None)
-    phi /= f_downsample # in case you downsample 
+    # don't touch these values!
+    nbins = [8, 10, 10]
+    ranges = [(20, 24), (-1, 1.), (-1, 4.)]
+    dRmag   = 0.5 
+    dbalmer = 0.2
+    dfuvnuv = 0.5
+
+    data_vector = np.array([-1.*R_mag, np.log10(balmer_ratio/HaHb_I), FUV_NUV]).T
+    Nbins, _ = np.histogramdd(data_vector, bins=nbins, range=ranges)
     
-    return [med_fnuv, med_balmer, phi]
+    # volume of simulation 
+    vol = {'simba': 100.**3, 'tng': 75.**3}[sed['sim']]  
+
+    rho = Nbins.astype(float) / vol / dRmag / dbalmer / dfuvnuv
+    return rho
 
 
 def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
@@ -341,6 +308,8 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
     # theta labels 
     if dem == 'slab_calzetti': 
         lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$f_{\rm neb}$'] 
+    elif dem == 'slab_noll_simple': 
+        lbls = [r'$c_{\tau}$', r'$c_{\delta}$'] 
     elif dem == 'slab_noll_m': 
         lbls = [r'$m_{\tau}$', r'$c_{\tau}$', r'$m_\delta$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
