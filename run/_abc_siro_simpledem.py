@@ -200,7 +200,7 @@ if __name__=="__main__":
         sys.exit(0)
 
     name    = sys.argv[3] # name of ABC run
-    assert name == 'slab_noll_simple' 
+    assert dem == 'slab_noll_simple' 
     niter   = int(sys.argv[4]) # number of iterations
     restart = (sys.argv[5] == 'True')
     print('Runnin ABC with ...') 

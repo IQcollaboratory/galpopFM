@@ -264,6 +264,9 @@ def DEM_slab_noll_simple(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     '''
     assert theta.shape[0] == 2, print(theta) 
 
+    logmstar = np.atleast_1d(logmstar) 
+    logsfr = np.atleast_1d(logsfr) 
+
     tauV = np.clip(theta[0], 1e-3, None) 
     delta = theta[1] 
     E_b = 0.85 
