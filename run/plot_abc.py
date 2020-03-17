@@ -113,9 +113,11 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     fig = plt.figure(figsize=(16,5))
     # luminosity function 
     sub = fig.add_subplot(131)
-    sub.plot(0.5*(mr_low + mr_high), phi_sim, c='C0')
+    sub.plot(0.5*(mr_low + mr_high), phi_sim, c='C1',
+            label=r'Sim. w/ dust($\theta_{\rm median}$)')
     sub.errorbar(0.5*(mr_low + mr_high), phi_sdss, yerr=phi_sdss_err,
-            fmt='.k')
+            fmt='.k', label='SDSS centrals')
+    sub.legend(loc='lower left', fontsize=20, handletextpad=0.2) 
     sub.set_xlabel(r'$M_r$', fontsize=20) 
     sub.set_xlim(-20, -23) 
     sub.set_yscale('log') 
@@ -124,11 +126,11 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     # Mr - Balmer ratio
     sub = fig.add_subplot(132)
     DFM.hist2d(R_mag_sdss, np.log10(balmer_ratio_sdss/HaHb_I), color='k', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-0.1, 0.5]], 
+            levels=[0.68, 0.95], range=[[-20, -24], [-0.1, 0.5]], bins=10,
             plot_datapoints=False, fill_contours=False, plot_density=False, 
             ax=sub) 
     DFM.hist2d(R_mag_med, np.log10(balmer_ratio_med/HaHb_I), color='C1', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-0.1, 0.5]], 
+            levels=[0.68, 0.95], range=[[-20, -24], [-0.1, 0.5]], bins=10, 
             plot_datapoints=False, fill_contours=False, plot_density=False, 
             ax=sub) 
     rmid_sdss, med_sdss = dustInfer.median_alongr(R_mag_sdss,
@@ -138,8 +140,6 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     sub.scatter(rmid_sdss, med_sdss, c='k', s=30, marker='x', label='SDSS')
     sub.scatter(rmid_med, med_med, c='C1', s=30, marker='x', 
             label=r'SIMBA dust($\theta_{\rm median}$)') 
-
-    sub.legend(loc='upper left', fontsize=15, handletextpad=0.2) 
     sub.set_xlabel(r'$M_r$', fontsize=20) 
     sub.set_xlim(-20, -24) 
     sub.set_ylabel(r'$\log (H_\alpha/H_\beta)/(H_\alpha/H_\beta)_I$', fontsize=20) 
