@@ -26,7 +26,7 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = [1e5] 
+eps0 = 1e5 
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
@@ -162,8 +162,8 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
     print('eps0', eps.eps)
 
     for pool in abcpmc_sampler.sample(prior, eps, pool=init_pool):
-        eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
-        print("T: {0}, eps: [{1}], ratio: {2:>.4f}".format(pool.t, eps_str, pool.ratio))
+        print(pool.t, pool.eps, pool.ratio)
+        print("T: %i, eps: [%.4f], ratio: %.4f" % (pool.t, pool.eps, pool.ratio))
 
         for i, (mean, std) in enumerate(zip(*abcpmc.weighted_avg_and_std(pool.thetas, pool.ws, axis=0))):
             print(u"    theta[{0}]: {1:>.4f} \u00B1 {2:>.4f}".format(i, mean,std))
