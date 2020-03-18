@@ -32,6 +32,9 @@ eps0 = [0.01, 0.001]
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
 
+# c_tau c_delta
+prior_min = np.array([0., -4]) 
+prior_max = np.array([6., 4.]) 
 ######################################################
 # this will run on all processes =X
 # read SED for sims 
@@ -65,59 +68,6 @@ x_obs_err = [1., _x_obs_err]
 ######################################################
 # functions  
 ###################################################### 
-def dem_prior(dem_name): 
-    '''
-    Noll attenuation curve 
-    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
-                    (k'(lambda) + D(lambda, E_b))/k_V x 
-                    (lambda / lambda_V)^delta
-
-    slab_noll_m: 
-    -----------
-    ABC for slab model + Noll attenuation curve EDM that has linear log M*
-    dependence  
-
-    tauV    = m_tau (log M* - 10.) + c_tau
-    delta   = m_delta  (log M* - 10.) + c_delta -2.2 < delta < 0.4
-    E_b     = m_E delta + c_E
-
-    7 free parameters:  
-        theta = m_tau c_tau m_delta c_delta m_E c_E f_nebular 
-
-    slab_noll_msfr: 
-    --------------
-    ABC for slab model + Noll attenuation curve EDM that has linear log M*
-    and linear log SFR dependence  
-
-    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
-                    (k'(lambda) + D(lambda, E_b))/k_V x 
-                    (lambda / lambda_V)^delta
-
-    tauV    = m_tau1 (log M* - 10.) + m_tau2 logSFR + c_tau
-    delta   = m_delta1  (log M* - 10.) + m_delta2 logSFR + c_delta         -2.2 < delta < 0.4
-    E_b     = m_E delta + c_E
-
-    9 free parameters:  
-        theta = m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E f_nebular 
-    '''
-    if dem_name == 'slab_calzetti': 
-        # m_tau, c_tau, fneb 
-        prior_min = np.array([0., 0., 2.]) 
-        prior_max = np.array([5., 4., 4.]) 
-    elif dem_name == 'slab_noll_m':
-        #m_tau c_tau m_delta c_delta m_E c_E fneb
-        prior_min = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
-        prior_max = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
-    elif dem_name == 'slab_noll_msfr':
-        #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
-        prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
-        prior_max = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
-    elif dem_name == 'slab_noll_simple':
-        #c_tau c_delta m_E c_E fneb
-        prior_min = np.array([0., -4]) 
-        prior_max = np.array([10., 4.]) 
-    return prior_min, prior_max 
-
 
 def _sumstat_model_wrap(theta, dem=dem): 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
@@ -126,7 +76,7 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    return dustInfer.distance_metric(x_obs, x_model, method=distance_methd, x_err=x_obs_err)
+    return dustInfer.distance_metric(x_obs, x_model, method=distance_method, x_err=x_obs_err)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
@@ -213,7 +163,5 @@ if __name__=="__main__":
     abc_dir = os.path.join(dat_dir, 'abc', name) 
     if not os.path.isdir(abc_dir): 
         os.system('mkdir %s' % abc_dir)
-
-    prior_min, prior_max = dem_prior(dem)
 
     abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 

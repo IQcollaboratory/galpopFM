@@ -15,6 +15,6 @@ ofile="/home/users/hahn/projects/galpopFM/run/_siro/abc_"$sim"_"$edm".o"
 >$ofile 
 
 mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/_abc_siro_simpledem.py \
-    $sim $edm $sim"_"$edm 20 False 1000 \
+    simba slab_noll_simple simba_slab_noll_simple 20 False 1000 \
     &>> $ofile
 ################################################################################ 
