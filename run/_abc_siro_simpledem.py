@@ -26,7 +26,8 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = 1e5 
+distance_method = 'L2'
+eps0 = [0.01, 0.001]
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
@@ -56,9 +57,11 @@ shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy()
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
     
 # read SDSS observable
-mag_edges, balmer_edges, fuvnuv_edges, x_obs, x_obs_err = np.load(os.path.join(dat_dir, 'obs',
-        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_Balmer_FUVNUV.npy'),
+_, _, _, _x_obs, _x_obs_err = np.load(os.path.join(dat_dir, 'obs',
+        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'),
         allow_pickle=True)
+x_obs = [np.sum(_x_obs), _x_obs]
+x_obs_err = [1., _x_obs_err]
 ######################################################
 # functions  
 ###################################################### 
@@ -123,7 +126,7 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    return dustInfer.distance_metric(x_obs, x_model, method='L2', x_err=x_obs_err)
+    return dustInfer.distance_metric(x_obs, x_model, method=distance_methd, x_err=x_obs_err)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
@@ -162,8 +165,8 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
     print('eps0', eps.eps)
 
     for pool in abcpmc_sampler.sample(prior, eps, pool=init_pool):
-        print(pool.t, pool.eps, pool.ratio)
-        print("T: %i, eps: [%.4f], ratio: %.4f" % (pool.t, pool.eps, pool.ratio))
+        eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
+        print("T: {0}, eps: [{1}], ratio: {2:>.4f}".format(pool.t, eps_str, pool.ratio))
 
         for i, (mean, std) in enumerate(zip(*abcpmc.weighted_avg_and_std(pool.thetas, pool.ws, axis=0))):
             print(u"    theta[{0}]: {1:>.4f} \u00B1 {2:>.4f}".format(i, mean,std))

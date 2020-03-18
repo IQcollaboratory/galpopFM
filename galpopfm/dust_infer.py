@@ -18,121 +18,43 @@ from . import measure_obs as measureObs
 dat_dir = os.environ['GALPOPFM_DIR']
 
 
-def dust_abc(name, T, eps0=[0.1, 1.], N_p=100, prior_range=None, dem='slab_calzetti', abc_dir=None, mpi=False, nthread=1):
-    ''' run ABC-PMC to infer posteriors for dust empirical model parameters 
-    '''
-    # read in observations 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
-    
-    F_mag_sdss = sdss['ABSMAG'][...][:,0]
-    N_mag_sdss = sdss['ABSMAG'][...][:,1]
-    R_mag_sdss = sdss['ABSMAG'][...][:,4]
-    Haflux_sdss = sdss['HAFLUX'][...]
-    Hbflux_sdss = sdss['HBFLUX'][...]
-    
-    x_obs = sumstat_obs(F_mag_sdss, N_mag_sdss, R_mag_sdss, Haflux_sdss, Hbflux_sdss, sdss['Z'][...])
-    
-    # read SED for sims 
-    sim_sed = _read_sed(name) 
-
-    # pass through the minimal amount of memory 
-    wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 1e4) 
-    # only keep centrals
-    cens = sim_sed['censat'].astype(bool) 
-    
-    # save as global variable that can be accessed by multiprocess 
-    #global shared_sim_sed
-    shared_sim_sed = {} 
-    shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
-    shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
-    shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
-    shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
-
-    #--- inference with ABC-PMC below ---
-    # prior 
-    prior_min = prior_range[0] 
-    prior_max = prior_range[1] 
-    prior = abcpmc.TophatPrior(prior_min, prior_max) 
-    
-    # sampler 
-    if mpi: 
-        mpi_pool = mpi_util.MpiPool()
-        
-        abcpmc_sampler = abcpmc.Sampler(
-                N=N_p,                  # N_particles
-                Y=x_obs,                # data
-                postfn=_sumstat_model_shared,   # simulator 
-                dist=distance_metric,   # distance metric 
-                pool=mpi_pool, 
-                postfn_kwargs={'dem': dem, 'shared_sim_sed': shared_sim_sed},
-                dist_kwargs={'method': 'L2'}
-                )      
-    else: 
-        abcpmc_sampler = abcpmc.Sampler(
-                N=N_p,                  # N_particles
-                Y=x_obs,                # data
-                postfn=_sumstat_model_shared,   # simulator 
-                dist=distance_metric,   # distance metric 
-                threads=nthread,
-                postfn_kwargs={'dem': dem, 'shared_sim_sed': shared_sim_sed},
-                dist_kwargs={'method': 'L2'}
-                )      
-
-    # threshold 
-    eps = abcpmc.ConstEps(T, eps0) 
-    print('eps0', eps.eps)
-
-    pools = []
-    for pool in abcpmc_sampler.sample(prior, eps):
-        eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
-        print("T: {0}, eps: [{1}], ratio: {2:>.4f}".format(pool.t, eps_str, pool.ratio))
-
-        for i, (mean, std) in enumerate(zip(*abcpmc.weighted_avg_and_std(pool.thetas, pool.ws, axis=0))):
-            print(u"    theta[{0}]: {1:>.4f} \u00B1 {2:>.4f}".format(i, mean,std))
-        print('dist', pool.dists)
-        
-        # write out theta, weights, and distances to file 
-        writeABC('eps', pool, abc_dir=abc_dir)
-        writeABC('theta', pool, abc_dir=abc_dir) 
-        writeABC('w', pool, abc_dir=abc_dir) 
-        writeABC('rho', pool, abc_dir=abc_dir) 
-        # plot ABC particles 
-        plotABC(pool, prior=prior, dem=dem, abc_dir=abc_dir)
-
-        # update epsilon based on median thresholding 
-        eps.eps = np.median(pool.dists, axis=0)
-        pools.append(pool)
-        print('eps%i' % pool.t, eps.eps)
-        print('----------------------------------------')
-        if pool.ratio <0.2:
-            break
-    abcpmc_sampler.close()
-    return None 
-
-
-def distance_metric(x_obs, x_model, method='L2', x_err=None): 
+def distance_metric(x_obs, x_model, method='chi2', x_err=None): 
     ''' distance metric between forward model m(theta) and observations
 
     notes
     -----
     * simple L2 norm between the 3D histogram of [Rmag, Balmer, FUV-NUV]
     ''' 
-    if method == 'L2': # L2 norm  
-        if x_err is None: 
-            x_err = 1. 
+    nbar_obs = x_obs[0]
+    nbar_mod = x_model[0]
+    
+    hist_obs = x_obs[1] 
+    hist_mod = x_model[1]
 
-        rho = np.sum((x_obs - x_model)**2/x_err**2)
+    if x_err is None: 
+        x_err = [1., 1.]
 
-        print('     (%.5f)' % rho)
-        return rho 
+    if method == 'chi2': # chi-squared
+        rho = [np.sum((nbar_obs - nbar_mod)**2/x_err[0]**2), 
+                np.sum((hist_obs - hist_mod)**2/x_err[1]**2)]
+
+    elif method == 'L2': # chi-squared
+        rho = [np.sum((nbar_obs - nbar_mod)**2), 
+                np.sum((hist_obs - hist_mod)**2)]
+
+    elif method == 'L1': # L1 morm 
+        rho = [np.sum(np.abs(nbar_obs - nbar_mod)), 
+                np.sum(np.abs(hist_obs - hist_mod))]
+
     else: 
-        raise NotImplemented 
+        raise NotImplementedError
+    print('     (%s)' % ', '.join([str(_rho) for _rho in rho]))
+    return rho
 
 
 def sumstat_obs(name='sdss'): 
     ''' summary statistics for SDSS observations is the 3D histgram of 
-    [M_r, log10( (HA/HB)/(HA/HB)_I ), FUV - NUV]. 
+    [M_r, G-R, FUV - NUV]. 
 
     notes
     -----
@@ -140,20 +62,36 @@ def sumstat_obs(name='sdss'):
     calculated. 
     '''
     _, _, _, x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
-            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_Balmer_FUVNUV.npy'))
-    return x_obs 
+        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'), 
+        allow_pickle=True)
+    nbar = np.sum(x_obs)
+    return [nbar, x_obs]
 
 
-def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.): 
+def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
+        return_datavector=False): 
     ''' calculate summary statistics for forward model m(theta) 
-
+    
+    :param theta: 
+        array of input parameters
     :param sed: 
         dictionary with SEDs of **central** galaxies  
+    :param dem: 
+        string specifying the dust empirical model
+    :param f_downsample: 
+        if f_downsample > 1., then the SED dictionary is downsampled. 
 
     notes
     -----
     * still need to implement noise model
     '''
+    # don't touch these values!
+    nbins = [8, 200, 100]
+    ranges = [(20, 24), (-5., 45.), (-5, 45.)]
+    dRmag   = 0.5
+    dGR     = 0.25
+    dfuvnuv = 0.5
+
     sed_dusty = dustFM.Attenuate(
             theta, 
             sed['wave'], 
@@ -166,30 +104,24 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.):
     # observational measurements 
     F_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_fuv') 
     N_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='galex_nuv') 
+    G_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='g_sdss') 
     R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='r_sdss') 
+
     FUV_NUV = F_mag - N_mag 
+    G_R = G_mag - R_mag
 
-    # balmer measurements 
-    Ha_dust, Hb_dust = measureObs.L_em(['halpha', 'hbeta'], sed['wave'], sed_dusty) 
-    balmer_ratio = Ha_dust/Hb_dust
+    data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
+    if return_datavector: 
+        return data_vector
 
-    HaHb_I = 2.86 # intrinsic balmer ratio 
-    
-    # don't touch these values!
-    nbins = [8, 10, 10]
-    ranges = [(20, 24), (-1, 1.), (-1, 4.)]
-    dRmag   = 0.5 
-    dbalmer = 0.2
-    dfuvnuv = 0.5
-
-    data_vector = np.array([-1.*R_mag, np.log10(balmer_ratio/HaHb_I), FUV_NUV]).T
     Nbins, _ = np.histogramdd(data_vector, bins=nbins, range=ranges)
     
     # volume of simulation 
     vol = {'simba': 100.**3, 'tng': 75.**3}[sed['sim']]  
 
-    rho = Nbins.astype(float) / vol / dRmag / dbalmer / dfuvnuv
-    return rho
+    x_model = Nbins.astype(float) / vol / dRmag / dGR / dfuvnuv / f_downsample
+    nbar = np.sum(x_model)
+    return [nbar, x_model]
 
 
 def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
