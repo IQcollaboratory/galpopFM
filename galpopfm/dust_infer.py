@@ -25,34 +25,25 @@ def distance_metric(x_obs, x_model, method='chi2', x_err=None):
     -----
     * simple L2 norm between the 3D histogram of [Rmag, Balmer, FUV-NUV]
     ''' 
-    nbar_obs = x_obs[0]
-    nbar_mod = x_model[0]
-    
-    hist_obs = x_obs[1] 
-    hist_mod = x_model[1]
-
     if x_err is None: 
-        x_err = [1., 1.]
+        x_err = [1. for _x in x_obs]
 
     if method == 'chi2': # chi-squared
-        rho = [np.sum((nbar_obs - nbar_mod)**2/x_err[0]**2), 
-                np.sum((hist_obs - hist_mod)**2/x_err[1]**2)]
-
+        rho = [np.sum((_obs - _mod)**2/_err**2) 
+                for _obs, _mod, _err in zip(x_obs, x_model, x_err)]
     elif method == 'L2': # chi-squared
-        rho = [np.sum((nbar_obs - nbar_mod)**2), 
-                np.sum((hist_obs - hist_mod)**2)]
-
+        rho = [np.sum((_obs - _mod)**2) 
+                for _obs, _mod, _err in zip(x_obs, x_model, x_err)]
     elif method == 'L1': # L1 morm 
-        rho = [np.sum(np.abs(nbar_obs - nbar_mod)), 
-                np.sum(np.abs(hist_obs - hist_mod))]
-
+        rho = [np.sum(np.abs(_obs - _mod))
+                for _obs, _mod, _err in zip(x_obs, x_model, x_err)]
     else: 
         raise NotImplementedError
     print('     (%s)' % ', '.join([str(_rho) for _rho in rho]))
     return rho
 
 
-def sumstat_obs(name='sdss'): 
+def sumstat_obs(name='sdss', statistic='2d'): 
     ''' summary statistics for SDSS observations is the 3D histgram of 
     [M_r, G-R, FUV - NUV]. 
 
@@ -61,15 +52,33 @@ def sumstat_obs(name='sdss'):
     * see `nb/observables.ipynb` to see exactly how the summary statistic is
     calculated. 
     '''
-    _, _, _, x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
-        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'), 
-        allow_pickle=True)
-    nbar = np.sum(x_obs)
-    return [nbar, x_obs]
+    if statistic == '1d': 
+        _, gr_edges, _, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
+            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr.GR.FUVNUV.npy'), 
+            allow_pickle=True)
+        dgr = gr_edges[1] - gr_edges[0]
+        nbar = dgr * np.sum(x_gr)
+        return [nbar, x_gr, x_fn]
+
+    elif statistic == '2d': 
+        r_edges, gr_edges, _, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
+            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR.Mr_FUVNUV.npy'), 
+            allow_pickle=True) 
+        dr = r_edges[1] - r_edges[0]
+        dgr = gr_edges[1] - gr_edges[0]
+        nbar = dr * dgr * np.sum(x_gr),
+        return [nbar, x_gr, x_fn]
+
+    elif statistic == '3d': 
+        _, _, _, x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
+            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'), 
+            allow_pickle=True)
+        nbar = np.sum(x_obs)
+        return [nbar, x_obs]
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
-        return_datavector=False): 
+        statistic='2d', return_datavector=False): 
     ''' calculate summary statistics for forward model m(theta) 
     
     :param theta: 
@@ -112,7 +121,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
 
     data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
     if return_datavector: 
-        return data_vector
+        return data_vector.T
 
     Nbins, _ = np.histogramdd(data_vector, bins=nbins, range=ranges)
     
@@ -120,8 +129,18 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     vol = {'simba': 100.**3, 'tng': 75.**3}[sed['sim']]  
 
     x_model = Nbins.astype(float) / vol / dRmag / dGR / dfuvnuv / f_downsample
-    nbar = np.sum(x_model)
-    return [nbar, x_model]
+    nbar = dRmag * dGR * dfuvnuv * np.sum(x_model)
+    
+    if statistic == '3d': 
+        return [nbar, x_model]
+    elif statistic == '2d': 
+        x_r_gr = dfuvnuv * np.sum(x_model, axis=2)
+        x_r_fn = dGR * np.sum(x_model, axis=1)
+        return [nbar, x_r_gr, x_r_fn]
+    elif statistic == '1d': 
+        x_gr = dRmag * np.sum(dfuvnuv * np.sum(x_model, axis=2), axis=0)
+        x_fn = dRmag * np.sum(dGR * np.sum(x_model, axis=1), axis=0) 
+        return [nbar, x_gr, x_fn]
 
 
 def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
