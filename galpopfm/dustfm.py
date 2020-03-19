@@ -44,6 +44,8 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, logmstar, logsfr, dem='slab_calz
         mdust = DEM_slab_noll_m
     elif dem == 'slab_noll_msfr': 
         mdust = DEM_slab_noll_msfr
+    elif dem == 'slab_noll_simple': 
+        mdust = DEM_slab_noll_simple
     else: 
         raise NotImplementedError
 
@@ -231,6 +233,66 @@ def DEM_slabcalzetti(theta, lam, flux_i, logmstar, logsfr, nebular=True):
 
     T_lam = 10.0**(A_V * -0.4 * calzetti_absorption(lam) * factor)
     return flux_i * T_lam
+
+
+def DEM_slab_noll_simple(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
+    ''' simplified version of the Dust empirical model that combines the slab
+    model with Noll+(2009). This is to better understand the distance metrics
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    tauV    = c_tau
+    delta   = c_delta         -2.2 < delta < 0.4
+    E_b     = constant 
+
+    :param theta: 
+        2 free parameter of the simplified slab + Noll+(2009) model
+        theta: c_tau c_delta f_nebular
+    :param lam: 
+        wavelength in angstrom
+    :param flux_i: 
+        intrinsic flux of sed (units don't matter) 
+    :param logmstar: 
+        log M* of galaxies 
+    :param logsfr: 
+        log SFR of galaxies
+    :param nebular: 
+        if True nebular flux has an attenuation that is scaled from the
+        continuum attenuation.
+    '''
+    assert theta.shape[0] == 2, print(theta) 
+
+    logmstar = np.atleast_1d(logmstar) 
+    logsfr = np.atleast_1d(logsfr) 
+
+    tauV = np.clip(theta[0], 1e-3, None) 
+    delta = theta[1] 
+    E_b = 0.85 
+    
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
+    sec_incl = 1./np.cos(incl) 
+
+    #Eq. 14 of Somerville+(1999) 
+    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    assert np.isfinite(A_V), print(tauV, _slab, logmstar, logsfr) 
+    
+    dlam = 350. # width of bump from Noll+(2009)
+    lam0 = 2175. # wavelength of bump 
+    k_V_calzetti = 4.87789
+    
+    # bump 
+    D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
+    
+    # calzetti is already normalized to k_V
+    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
+            (lam / 5500.)**delta 
+
+    T_lam = 10.0**(-0.4 * A_lambda)
+
+    return flux_i * T_lam 
 
 
 def calzetti_absorption(lam):
