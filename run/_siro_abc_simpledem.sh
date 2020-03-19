@@ -8,13 +8,11 @@ export PATH="/home/users/hahn/anaconda3/bin:$PATH"
 source /home/users/hahn/.bashrc
 source activate iq 
 
-sim='simba' 
-edm="slab_noll_simple"
 ################################################################################ 
 ofile="/home/users/hahn/projects/galpopFM/run/_siro/abc_"$sim"_"$edm".o"
 >$ofile 
 
 mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/_abc_siro_simpledem.py \
-    simba slab_noll_simple simba_slab_noll_simple 20 False 1000 \
+    simba slab_noll_simple L2 1d simba.slab_noll_simple.L2.1d 20 False 1000 \
     &>> $ofile
 ################################################################################ 

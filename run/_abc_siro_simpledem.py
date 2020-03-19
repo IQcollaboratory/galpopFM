@@ -26,11 +26,15 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-distance_method = 'L2'
-eps0 = [0.01, 0.001]
-
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
+
+distance_method = sys.argv[3]
+statistic = sys.argv[4]
+if statistic == '1d': 
+    eps0 = [0.01, 0.0005, 0.0002]
+elif statistic == '2d': 
+    eps0 = [0.01, 0.005, 0.0005]
 
 # c_tau c_delta
 prior_min = np.array([0., -4]) 
@@ -144,20 +148,20 @@ if __name__=="__main__":
         pewl.wait()
         sys.exit(0)
 
-    name    = sys.argv[3] # name of ABC run
+    name    = sys.argv[5] # name of ABC run
     assert dem == 'slab_noll_simple' 
-    niter   = int(sys.argv[4]) # number of iterations
-    restart = (sys.argv[5] == 'True')
+    niter   = int(sys.argv[6]) # number of iterations
+    restart = (sys.argv[7] == 'True')
     print('Runnin ABC with ...') 
     print('%s simulation' % sim) 
     print('%s DEM' % dem)
     print('%i iterations' % niter)
     if not restart: 
-        npart   = int(sys.argv[6]) # number of particles 
+        npart   = int(sys.argv[8]) # number of particles 
         print('%i particles' % npart)
         trest = None 
     else: 
-        trest = int(sys.argv[6]) 
+        trest = int(sys.argv[8]) 
         print('T=%i restart' % trest) 
 
     abc_dir = os.path.join(dat_dir, 'abc', name) 
