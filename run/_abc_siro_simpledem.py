@@ -32,9 +32,20 @@ dem     = sys.argv[2] # name of EDM model to use
 distance_method = sys.argv[3]
 statistic = sys.argv[4]
 if statistic == '1d': 
-    eps0 = [0.01, 0.0005, 0.0002]
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.0005, 0.0002]
+    elif distance_method == 'L1':
+        eps0 = [0.01, 0.05, 0.02]
 elif statistic == '2d': 
-    eps0 = [0.01, 0.005, 0.0005]
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.002, 0.0005]
+    elif distance_method == 'L1': 
+        eps0 = [0.01, 0.2, 0.1]
+elif statistic == '3d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.002]
+    elif distance_method == 'L1': 
+        eps0 = [0.01, 0.2]
 
 # c_tau c_delta
 prior_min = np.array([0., -4]) 
@@ -64,23 +75,19 @@ shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy()
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
     
 # read SDSS observable
-_, _, _, _x_obs, _x_obs_err = np.load(os.path.join(dat_dir, 'obs',
-        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'),
-        allow_pickle=True)
-x_obs = [np.sum(_x_obs), _x_obs]
-x_obs_err = [1., _x_obs_err]
+x_obs = dustInfer.sumstat_obs(name='sdss', statistic=statistic)
 ######################################################
 # functions  
 ###################################################### 
 
 def _sumstat_model_wrap(theta, dem=dem): 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
-            f_downsample=f_downsample) 
+            f_downsample=f_downsample, statistic=statistic) 
     return x_mod 
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    return dustInfer.distance_metric(x_obs, x_model, method=distance_method, x_err=x_obs_err)
+    return dustInfer.distance_metric(x_obs, x_model, method=distance_method)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
