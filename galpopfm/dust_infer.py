@@ -73,8 +73,11 @@ def sumstat_obs(name='sdss', statistic='2d', return_bins=False):
         r_edges, gr_edges, fn_edges, _x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
             'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'), 
             allow_pickle=True)
-        nbar = np.sum(x_obs)
-        x_obs [nbar, _x_obs]
+        dr = r_edges[1] - r_edges[0]
+        dgr = gr_edges[1] - gr_edges[0]
+        dfn = fn_edges[1] - fn_edges[0]
+        nbar = dr * dgr * dfn * np.sum(_x_obs)
+        x_obs = [nbar, _x_obs]
     
     if return_bins: 
         return r_edges, gr_edges, fn_edges, x_obs

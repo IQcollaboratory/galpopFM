@@ -73,6 +73,7 @@ shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy()
 
 # read SDSS observable
 x_obs = dustInfer.sumstat_obs(name='sdss', statistic=statistic)
+print('sdss nbar=%.4e' % x_obs[0])
 ######################################################
 # functions  
 ###################################################### 
@@ -207,6 +208,8 @@ if __name__=="__main__":
     print('Runnin ABC with ...') 
     print('%s simulation' % sim) 
     print('%s DEM' % dem)
+    print('%s distance' % distance_method)
+    print('%s summary statistic' % statistic)
     print('%i iterations' % niter)
     if not restart: 
         npart   = int(sys.argv[8]) # number of particles 
