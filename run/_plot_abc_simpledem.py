@@ -55,8 +55,9 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     dRmag   = Rmag_edges[1] - Rmag_edges[0]
     dGR     = gr_edges[1] - gr_edges[0]
     dfuvnuv = fuvnuv_edges[1] - fuvnuv_edges[0]
-    ranges = [(Rmag_edges[0], Rmag_edges[-1]), (gr_edges[0], gr_edges[-1]),
-            (fuvnuv_edges[0], fuvnuv_edges[-1])]
+    #ranges = [(Rmag_edges[0], Rmag_edges[-1]), (gr_edges[0], gr_edges[-1]),
+    #        (fuvnuv_edges[0], fuvnuv_edges[-1])]
+    ranges = [(Rmag_edges[0], Rmag_edges[-1]), (-1., 3.), (-1., 10.)]
     nbar_obs = np.sum(x_obs)
     x_obs = [nbar_obs, x_obs]
     ####################################################################################
@@ -65,8 +66,6 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
     w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
     theta_med = np.median(theta_T, axis=0) 
-    #theta_med = np.array([2., 2.]) 
-    #theta_med = np.array([1., 1.]) 
     print('median ABC theta', theta_med)
 
     # read simulations 
@@ -86,19 +85,12 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
 
     x_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
-            f_downsample=f_downsample)
-    rho = dustInfer.distance_metric(x_obs, x_mod, method='chi2', 
-            x_err=[1., x_obs_err])
-    rho = dustInfer.distance_metric(x_obs, x_mod, method='L2', 
-            x_err=[1., x_obs_err])
-    rho = dustInfer.distance_metric(x_obs, x_mod, method='L1',
-            x_err=[1., x_obs_err])
-    if (np.sum(x_mod[0]) == 0.): 
-        data_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
-                f_downsample=f_downsample, return_datavector=True)
-        print('%f < R < %f' % (-1*data_mod[0].max(), -1*data_mod[0].min()))
-        print('%f < G-R < %f' % (data_mod[1].min(), data_mod[1].max()))
-        print('%f < FUV-NUV < %f' % (data_mod[2].min(), data_mod[2].max()))
+            f_downsample=f_downsample, statistic='3d')
+    data_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
+            f_downsample=f_downsample, return_datavector=True)
+    print('%f < R < %f' % (-1*data_mod[0].max(), -1*data_mod[0].min()))
+    print('%f < G-R < %f' % (data_mod[1].min(), data_mod[1].max()))
+    print('%f < FUV-NUV < %f' % (data_mod[2].min(), data_mod[2].max()))
     ########################################################################
     fig = plt.figure(figsize=(10,10))
     sub = fig.add_subplot(221)
@@ -185,7 +177,9 @@ def _examine_distance(T, sim='simba', dem='slab_calzetti'):
     x_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
             f_downsample=f_downsample) 
     rho = dustInfer.distance_metric(x_obs, x_mod, method='L2', x_err=err_x)
-    print(rho)
+    print('L2', rho)
+    rho = dustInfer.distance_metric(x_obs, x_mod, method='L1', x_err=err_x)
+    print('L1', rho)
     data_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
             f_downsample=f_downsample, return_datavector=True)
     print('%f < R < %f' % (-1*data_mod[0].max(), -1*data_mod[0].min()))
@@ -195,7 +189,9 @@ def _examine_distance(T, sim='simba', dem='slab_calzetti'):
     x_mod = dustInfer.sumstat_model(np.array([2., 2.]), sed=sim_sed, dem=dem,
             f_downsample=f_downsample) 
     rho = dustInfer.distance_metric(x_obs, x_mod, method='L2', x_err=err_x)
-    print(rho)
+    print('L2', rho)
+    rho = dustInfer.distance_metric(x_obs, x_mod, method='L1', x_err=err_x)
+    print('L1', rho)
     data_mod = dustInfer.sumstat_model(np.array([2., 2.]), sed=sim_sed, dem=dem,
             f_downsample=f_downsample, return_datavector=True)
     print('%f < R < %f' % (-1*data_mod[0].max(), -1*data_mod[0].min()))
@@ -311,7 +307,7 @@ if __name__=="__main__":
     prior = abcpmc.TophatPrior(prior_min, prior_max) 
     
     # plot the pools 
-    #plot_pool(niter, prior=prior, dem=dem, abc_dir=abc_dir)
+    plot_pool(niter, prior=prior, dem=dem, abc_dir=abc_dir)
     # plot ABCC summary statistics  
-    #abc_sumstat(niter, sim=sim, dem=dem, abc_dir=abc_dir)
-    _examine_distance(niter, sim=sim, dem=dem)
+    abc_sumstat(niter, sim=sim, dem=dem, abc_dir=abc_dir)
+    #_examine_distance(niter, sim=sim, dem=dem)

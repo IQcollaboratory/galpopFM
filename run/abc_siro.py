@@ -26,7 +26,8 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = [10., 10., 1e5] 
+distance_method = 'L2'
+eps0 = [0.01, 0.001]
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
@@ -54,15 +55,13 @@ shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy()
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
-    
-fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-mr_low, mr_high, phi_err = np.loadtxt(fphi, unpack=True, usecols=[0,1,3]) 
-d_mr = mr_high - mr_low 
-vol = {'simba': 100.**3, 'tng': 75.**3}[sim]  
-err_poisson = 1./d_mr/vol 
-# this is to ensure that the distance metric penalizes the high abs mag bins 
-phi_err = np.clip(phi_err, err_poisson, None) 
 
+# read SDSS observables
+_, _, _, _x_obs, _x_obs_err = np.load(os.path.join(dat_dir, 'obs',
+        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'),
+        allow_pickle=True)
+x_obs = [np.sum(_x_obs), _x_obs]
+x_obs_err = [1., _x_obs_err]
 ######################################################
 # functions  
 ###################################################### 
@@ -103,16 +102,16 @@ def dem_prior(dem_name):
     '''
     if dem_name == 'slab_calzetti': 
         # m_tau, c_tau, fneb 
-        prior_min = np.array([0., 0., 2.]) 
-        prior_max = np.array([5., 4., 4.]) 
+        prior_min = np.array([0., 0., 1.]) 
+        prior_max = np.array([5., 6., 4.]) 
     elif dem_name == 'slab_noll_m':
         #m_tau c_tau m_delta c_delta m_E c_E fneb
-        prior_min = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
-        prior_max = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
+        prior_min = np.array([-5., 0., -5., -4., -4., 0., 1.]) 
+        prior_max = np.array([5., 6., 5., 4., 0., 4., 4.]) 
     elif dem_name == 'slab_noll_msfr':
         #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
-        prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
-        prior_max = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
+        prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 1.]) 
+        prior_max = np.array([5., 5., 6., 4., 4., 0.4, 0., 4., 4.]) 
     return prior_min, prior_max 
 
 
@@ -123,7 +122,7 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    return dustInfer.distance_metric(x_obs, x_model, method='L2', phi_err=phi_err)
+    return dustInfer.distance_metric(x_obs, x_model, method=distance_method, phi_err=phi_err)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
