@@ -43,7 +43,7 @@ def distance_metric(x_obs, x_model, method='chi2', x_err=None):
     return rho
 
 
-def sumstat_obs(name='sdss', statistic='2d'): 
+def sumstat_obs(name='sdss', statistic='2d', return_bins=False): 
     ''' summary statistics for SDSS observations is the 3D histgram of 
     [M_r, G-R, FUV - NUV]. 
 
@@ -53,28 +53,33 @@ def sumstat_obs(name='sdss', statistic='2d'):
     calculated. 
     '''
     if statistic == '1d': 
-        _, gr_edges, _, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
+        r_edges, gr_edges, fn_edges, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
             'tinker_SDSS_centrals_M9.7.Mr_complete.Mr.GR.FUVNUV.npy'), 
             allow_pickle=True)
         dgr = gr_edges[1] - gr_edges[0]
         nbar = dgr * np.sum(x_gr)
-        return [nbar, x_gr, x_fn]
+        x_obs = [nbar, x_gr, x_fn]
 
     elif statistic == '2d': 
-        r_edges, gr_edges, _, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
+        r_edges, gr_edges, fn_edges, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
             'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR.Mr_FUVNUV.npy'), 
             allow_pickle=True) 
         dr = r_edges[1] - r_edges[0]
         dgr = gr_edges[1] - gr_edges[0]
         nbar = dr * dgr * np.sum(x_gr),
-        return [nbar, x_gr, x_fn]
+        x_obs = [nbar, x_gr, x_fn]
 
     elif statistic == '3d': 
-        _, _, _, x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
+        r_edges, gr_edges, fn_edges, _x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
             'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'), 
             allow_pickle=True)
         nbar = np.sum(x_obs)
-        return [nbar, x_obs]
+        x_obs [nbar, _x_obs]
+    
+    if return_bins: 
+        return r_edges, gr_edges, fn_edges, x_obs
+
+    return x_obs 
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
