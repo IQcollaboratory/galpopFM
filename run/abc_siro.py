@@ -26,12 +26,27 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-distance_method = 'L2'
-eps0 = [0.01, 0.001]
 
 sim     = sys.argv[1] # name of simulation
 dem     = sys.argv[2] # name of EDM model to use 
 
+distance_method = sys.argv[3]
+statistic = sys.argv[4]
+if statistic == '1d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.0005, 0.0002]
+    elif distance_method == 'L1':
+        eps0 = [0.01, 0.05, 0.02]
+elif statistic == '2d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.002, 0.0005]
+    elif distance_method == 'L1': 
+        eps0 = [0.01, 0.2, 0.1]
+elif statistic == '3d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.002]
+    elif distance_method == 'L1': 
+        eps0 = [0.01, 0.2]
 ######################################################
 # this will run on all processes =X
 # read SED for sims 
@@ -56,12 +71,8 @@ shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
 
-# read SDSS observables
-_, _, _, _x_obs, _x_obs_err = np.load(os.path.join(dat_dir, 'obs',
-        'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'),
-        allow_pickle=True)
-x_obs = [np.sum(_x_obs), _x_obs]
-x_obs_err = [1., _x_obs_err]
+# read SDSS observable
+x_obs = dustInfer.sumstat_obs(name='sdss', statistic=statistic)
 ######################################################
 # functions  
 ###################################################### 
@@ -107,28 +118,25 @@ def dem_prior(dem_name):
     elif dem_name == 'slab_noll_m':
         #m_tau c_tau m_delta c_delta m_E c_E fneb
         prior_min = np.array([-5., 0., -5., -4., -4., 0., 1.]) 
-        prior_max = np.array([5., 6., 5., 4., 0., 4., 4.]) 
+        prior_max = np.array([5.0, 6., 5.0, 4.0, 0.0, 4., 4.]) 
     elif dem_name == 'slab_noll_msfr':
         #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
-        prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 1.]) 
-        prior_max = np.array([5., 5., 6., 4., 4., 0.4, 0., 4., 4.]) 
+        prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
+        prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
     return prior_min, prior_max 
 
 
 def _sumstat_model_wrap(theta, dem=dem): 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
-            f_downsample=f_downsample) 
+            f_downsample=f_downsample, statistic=statistic) 
     return x_mod 
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    return dustInfer.distance_metric(x_obs, x_model, method=distance_method, phi_err=phi_err)
+    return dustInfer.distance_metric(x_obs, x_model, method=distance_method)
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
-    # read in observations 
-    x_obs = dustInfer.sumstat_obs(name='sdss')
-    
     if restart is not None:
         # read pool 
         theta_init  = np.loadtxt(
@@ -193,19 +201,19 @@ if __name__=="__main__":
         pewl.wait()
         sys.exit(0)
 
-    name    = sys.argv[3] # name of ABC run
-    niter   = int(sys.argv[4]) # number of iterations
-    restart = (sys.argv[5] == 'True')
+    name    = sys.argv[5] # name of ABC run
+    niter   = int(sys.argv[6]) # number of iterations
+    restart = (sys.argv[7] == 'True')
     print('Runnin ABC with ...') 
     print('%s simulation' % sim) 
     print('%s DEM' % dem)
     print('%i iterations' % niter)
     if not restart: 
-        npart   = int(sys.argv[6]) # number of particles 
+        npart   = int(sys.argv[8]) # number of particles 
         print('%i particles' % npart)
         trest = None 
     else: 
-        trest = int(sys.argv[6]) 
+        trest = int(sys.argv[8]) 
         print('T=%i restart' % trest) 
 
     abc_dir = os.path.join(dat_dir, 'abc', name) 
