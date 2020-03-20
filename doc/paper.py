@@ -70,7 +70,7 @@ def SDSS():
 
 def SMFs():
     ''' figure comparing the stellar mass fucntions of SDSS and the simulations
-    to show that SMFs, which are matched more or less agree 
+    to show that SMFs, which more or less agree
     '''
     #########################################################################
     # read in SDSS 
@@ -131,117 +131,91 @@ def Observables():
     ''' Figure presenting the observables along with simulations without any
     attenuation.
     '''
+    # don't touch these values!
+    nbins = [8, 10, 10]
+    ranges = [(20, 24), (-1, 1.), (-1, 4.)]
+    dRmag   = 0.5 
+    dbalmer = 0.2
+    dfuvnuv = 0.5
     #########################################################################
     # read in SDSS measurements
     #########################################################################
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5')
-    sdss = h5py.File(fsdss, 'r')
-
-    mr_complete = (sdss['mr_tinker'][...] < -20.)
-    F_mag_sdss = sdss['ABSMAG'][...][:,0][mr_complete]
-    N_mag_sdss = sdss['ABSMAG'][...][:,1][mr_complete]
-    R_mag_sdss = sdss['mr_tinker'][...][mr_complete] #sdss['ABSMAG'][...][:,4]
-    FUV_NUV_sdss = F_mag_sdss - N_mag_sdss
-
-    Haflux_sdss = sdss['HAFLUX'][...][mr_complete]
-    Hbflux_sdss = sdss['HBFLUX'][...][mr_complete]
-    balmer_ratio_sdss = Haflux_sdss/Hbflux_sdss
-    sdss.close() 
-
-    # read in SDSS LF
-    fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat')
-    mr_low, mr_high, phi_sdss, phi_sdss_err = np.loadtxt(fphi, unpack=True, usecols=[0,1,2,3])
-    mr_mid = 0.5 * (mr_low + mr_high) 
-    HaHb_I = 2.86
+    Rmag_edges, balmer_edges, fuvnuv_edges, x_obs, x_obs_err = np.load(os.path.join(dat_dir, 'obs',
+                'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_Balmer_FUVNUV.npy'),
+                allow_pickle=True)
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    R_mag_simba, FUV_NUV_simba, balmer_ratio_simba, _, phi_simba =\
+    R_mag_simba, balmer_ratio_simba, FUV_NUV_simba =\
             _sim_observables('simba', downsample=False) 
-    R_mag_tng, FUV_NUV_tng, balmer_ratio_tng, _, phi_tng =\
+    R_mag_tng, balmer_ratio_tng, FUV_NUV_tng =\
             _sim_observables('tng', downsample=False) 
+
+    Nbins_simba, _ = np.histogramdd(
+            np.array([-1.*R_mag_simba, balmer_ratio_simba, FUV_NUV_simba]).T, 
+            bins=nbins, range=ranges)
+    Nbins_tng, _ = np.histogramdd(
+            np.array([-1.*R_mag_tng, balmer_ratio_tng, FUV_NUV_tng]).T, 
+            bins=nbins, range=ranges)
+    
+    # volume of simulation 
+    vol_simba = 100.**3
+    vol_tng = 75.**3
+
+    x_simba = Nbins_simba.astype(float) / vol_simba / dRmag / dbalmer / dfuvnuv
+    x_tng = Nbins_tng.astype(float) / vol_tng / dRmag / dbalmer / dfuvnuv
     #########################################################################
     # plotting 
     #########################################################################
-    fig = plt.figure(figsize=(18,5))
-    # luminosity function 
-    sub = fig.add_subplot(131)
-    _plt0, = sub.plot(mr_mid, phi_simba, c='C0', label='SIMBA (no dust)')
-    _plt1, = sub.plot(mr_mid, phi_tng, c='C1', label='TNG (no dust)')
-    _plt2 = sub.errorbar(mr_mid, phi_sdss, yerr=phi_sdss_err,
-            fmt='.k', label='SDSS centrals')
-    sub.legend([_plt2, _plt0, _plt1], ['SDSS Centrals', 'SIMBA (no dust)', 'TNG (no dust)'],
-            loc='lower left', handletextpad=0.15, fontsize=18)
-    sub.set_xlim(-20, -23.) 
-    sub.set_xticks([-20., -21., -22., -23.]) 
-    sub.set_ylabel('Luminosity Function ($\Phi$)', fontsize=20)
-    sub.set_yscale('log') 
-    sub.set_ylim(5e-6, 1e-2) 
+    xs      = [x_obs, x_simba, x_tng]
+    names   = ['SDSS', 'SIMBA', 'TNG']
+    clrs    = ['Greys', 'Oranges', 'Blues'] 
 
-    # Mr - Balmer ratio
-    sub = fig.add_subplot(132)
-    DFM.hist2d(R_mag_sdss, np.log10(balmer_ratio_sdss/HaHb_I), color='k', 
-            levels=[0.68, 0.95], range=[[-20, -23], [-0.3, 0.6]], bins=20, 
-            plot_datapoints=False, fill_contours=True, plot_density=False,
-            contour_kwargs={'colors': 'none'}, #contourf_kwargs={'alpha': 0.5},
-            ax=sub) 
-    DFM.hist2d(R_mag_simba, np.log10(balmer_ratio_simba/HaHb_I), color='C0', 
-            smooth=True,
-            levels=[0.68, 0.95], range=[[-20, -23], [-0.3, 0.6]], bins=20, 
-            plot_datapoints=False, fill_contours=False, plot_density=False,
-            no_fill_contours=True,
-            ax=sub) 
-    DFM.hist2d(R_mag_tng, np.log10(balmer_ratio_tng/HaHb_I), color='C1',
-            smooth=True,
-            levels=[0.68, 0.95], range=[[-20, -23], [-0.3, 0.6]], bins=20, 
-            plot_datapoints=False, fill_contours=False, plot_density=False,
-            no_fill_contours=True,
-            ax=sub) 
-    sub.set_xlim(-20, -23.) 
-    sub.set_xticks([-20., -21., -22., -23.]) 
-    sub.set_ylabel(r'log[ $(H\alpha/H\beta)/(H\alpha/H\beta)_I$ ]', fontsize=20) 
-    sub.set_ylim(-0.4, 0.6) 
-    sub.set_yticks([-0.4, -0.2, 0., 0.2, 0.4, 0.6]) 
+    fig = plt.figure(figsize=(5*len(xs),10))
 
-    # Mr - A_FUV
-    sub = fig.add_subplot(133)
-    DFM.hist2d(R_mag_sdss, FUV_NUV_sdss, color='k', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-1.5, 4.5]], bins=20, 
-            plot_datapoints=False, fill_contours=True, plot_density=False, 
-            contour_kwargs={'colors': 'none'}, #contourf_kwargs={'alpha': 0.5},
-            ax=sub) 
-    DFM.hist2d(R_mag_simba, FUV_NUV_simba, color='C0', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-1.5, 4.5]], bins=20, smooth=True,
-            plot_datapoints=False, fill_contours=False, plot_density=False, 
-            no_fill_contours=True,
-            ax=sub) 
-    DFM.hist2d(R_mag_tng, FUV_NUV_tng, color='C1', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-1.5, 4.5]], bins=20, smooth=True,
-            plot_datapoints=False, fill_contours=False, plot_density=False, 
-            no_fill_contours=True,
-            ax=sub) 
-    sub.set_xlim(-20, -23.) 
-    sub.set_xticks([-20., -21., -22., -23.]) 
-    sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
-    sub.set_ylim(-1.5, 4.5) 
-    sub.set_yticks([-1., 0., 1., 2., 3., 4.])
-    
-    bkgd = fig.add_subplot(111, frameon=False)
-    bkgd.set_xlabel(r'$M_r$', labelpad=15, fontsize=25) 
-    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    # Rmag - Balmer
+    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+        sub = fig.add_subplot(2,len(xs),i+1)
+        sub.pcolormesh(Rmag_edges, balmer_edges, dfuvnuv * np.sum(_x, axis=2).T,
+                vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap=clr)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$\log (H_\alpha/H_\beta)/(H_\alpha/H_\beta)_I$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(-1., 1.) 
 
-    fig.subplots_adjust(wspace=0.3)
+    # Rmag - FUV-NUV
+    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+        sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
+        h = sub.pcolormesh(Rmag_edges, fuvnuv_edges, dbalmer * np.sum(_x, axis=1).T,
+                vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap=clr)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        sub.set_yticks([-0.8, -0.4, 0., 0.4, 0.8]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(-1., 4.) 
+
+    fig.subplots_adjust(wspace=0.1, hspace=0.1, right=0.85)
+    cbar_ax = fig.add_axes([0.875, 0.15, 0.02, 0.7])
+    fig.colorbar(h, cax=cbar_ax)
 
     ffig = os.path.join(fig_dir, 'observables.png') 
     fig.savefig(ffig, bbox_inches='tight') 
-
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
 
 
 def _sim_observables(sim, downsample=True): 
-    ''' read the observables for specified simulations 
+    ''' read specified simulations and return data vector 
     '''
     # read simulations 
     _sim_sed = dustInfer._read_sed(sim) 
@@ -272,12 +246,10 @@ def _sim_observables(sim, downsample=True):
     # balmer measurements 
     Ha_dust, Hb_dust = measureObs.L_em(['halpha', 'hbeta'], sim_sed['wave'], sim_sed['sed']) 
     balmer_ratio = Ha_dust/Hb_dust
+
+    HaHb_I = 2.86 # intrinsic balmer ratio 
     
-    # get luminosity function 
-    mr_mid, phi_sim = measureObs.LumFunc(R_mag, name=sim_sed['sim'], mr_bin=None)
-    phi_sim /= f_downsample # in case you downsample 
-    
-    return R_mag, FUV_NUV, balmer_ratio, mr_mid, phi_sim
+    return R_mag, np.log10(balmer_ratio/HaHb_I), FUV_NUV
 
 
 def fig_tex(ffig, pdf=False):
@@ -294,5 +266,5 @@ def fig_tex(ffig, pdf=False):
 
 if __name__=="__main__": 
     #SDSS()
-    SMFs() 
-    #Observables()
+    #SMFs() 
+    Observables()

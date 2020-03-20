@@ -56,7 +56,6 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     # read simulations 
     _sim_sed = dustInfer._read_sed(sim) 
     wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
-    #cens = _sim_sed['censat'].astype(bool) & (_sim_sed['logmstar'] > 8.5) 
     downsample = np.zeros(len(_sim_sed['logmstar'])).astype(bool)
     downsample[::10] = True
     f_downsample = 0.1
@@ -78,94 +77,69 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
             sim_sed['logmstar'],
             sim_sed['logsfr.100'],
             dem=dem) 
-     
-    R_mag_med, FUV_NUV_med, balmer_ratio_med =\
-            dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
-                    _model=True, f_downsample=f_downsample) 
-
-    # get luminosity function 
-    _, phi_sim = measureObs.LumFunc(R_mag_med, name=sim_sed['sim'], mr_bin=None)
-    phi_sim /= f_downsample # in case you downsample 
-
-    # read in SDSS measurements 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
     
-    mr_complete = (sdss['mr_tinker'][...] < -20.) 
-    F_mag_sdss = sdss['ABSMAG'][...][:,0][mr_complete]
-    N_mag_sdss = sdss['ABSMAG'][...][:,1][mr_complete]
-    R_mag_sdss = sdss['mr_tinker'][...][mr_complete] #sdss['ABSMAG'][...][:,4]
-    FUV_NUV_sdss = F_mag_sdss - N_mag_sdss
-
-    Haflux_sdss = sdss['HAFLUX'][...][mr_complete]
-    Hbflux_sdss = sdss['HBFLUX'][...][mr_complete]
-    balmer_ratio_sdss = Haflux_sdss/Hbflux_sdss 
-
-    # read in SDSS LF 
-    fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-    mr_low, mr_high, phi_sdss, phi_sdss_err = np.loadtxt(fphi, unpack=True,
-            usecols=[0,1,2,3]) 
+    x_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
+            f_downsample=f_downsample)
+    ####################################################################################
+    # read in SDSS measurements 
+    ####################################################################################
+    Rmag_edges, balmer_edges, fuvnuv_edges, x_obs, x_obs_err = np.load(os.path.join(dat_dir, 'obs',
+                'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_Balmer_FUVNUV.npy'),
+                allow_pickle=True)
+    Rmag_mesh, balmer_mesh = np.meshgrid(0.5*(Rmag_edges[1:]+Rmag_edges[:-1]),
+            0.5*(balmer_edges[1:]+balmer_edges[:-1]))
+    dRmag, dbalmer, dfuvnuv = 0.5, 0.2, 0.5
     ########################################################################
     HaHb_I = 2.86 # intrinsic balmer ratio 
     
     kwargs_median = {'rmin': -20, 'rmax': -24, 'nbins': 8} 
     ########################################################################
-    fig = plt.figure(figsize=(16,5))
+    fig = plt.figure(figsize=(10,10))
     # luminosity function 
-    sub = fig.add_subplot(131)
-    sub.plot(0.5*(mr_low + mr_high), phi_sim, c='C1',
-            label=r'Sim. w/ dust($\theta_{\rm median}$)')
-    sub.errorbar(0.5*(mr_low + mr_high), phi_sdss, yerr=phi_sdss_err,
-            fmt='.k', label='SDSS centrals')
-    sub.legend(loc='lower left', fontsize=20, handletextpad=0.2) 
-    sub.set_xlabel(r'$M_r$', fontsize=20) 
-    sub.set_xlim(-20, -23) 
-    sub.set_yscale('log') 
-    sub.set_ylim(5e-6, 1e-2) 
-
-    # Mr - Balmer ratio
-    sub = fig.add_subplot(132)
-    DFM.hist2d(R_mag_sdss, np.log10(balmer_ratio_sdss/HaHb_I), color='k', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-0.1, 0.5]], bins=10,
-            plot_datapoints=False, fill_contours=False, plot_density=False, 
-            ax=sub) 
-    DFM.hist2d(R_mag_med, np.log10(balmer_ratio_med/HaHb_I), color='C1', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-0.1, 0.5]], bins=10, 
-            plot_datapoints=False, fill_contours=False, plot_density=False, 
-            ax=sub) 
-    rmid_sdss, med_sdss = dustInfer.median_alongr(R_mag_sdss,
-            np.log10(balmer_ratio_sdss/HaHb_I), **kwargs_median) 
-    rmid_med, med_med = dustInfer.median_alongr(R_mag_med,
-            np.log10(balmer_ratio_med/HaHb_I), **kwargs_median)
-    sub.scatter(rmid_sdss, med_sdss, c='k', s=30, marker='x', label='SDSS')
-    sub.scatter(rmid_med, med_med, c='C1', s=30, marker='x', 
-            label=r'SIMBA dust($\theta_{\rm median}$)') 
-    sub.set_xlabel(r'$M_r$', fontsize=20) 
-    sub.set_xlim(-20, -24) 
+    sub = fig.add_subplot(221)
+    sub.pcolormesh(Rmag_edges, balmer_edges, dfuvnuv * np.sum(x_obs, axis=2).T,
+            vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap='Greys')
+    sub.text(0.95, 0.95, r'SDSS', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([])
     sub.set_ylabel(r'$\log (H_\alpha/H_\beta)/(H_\alpha/H_\beta)_I$', fontsize=20) 
-    sub.set_ylim(-0.1, 0.5) 
-    
-    # Mr - A_FUV
-    sub = fig.add_subplot(133)
-    DFM.hist2d(R_mag_sdss, FUV_NUV_sdss, color='k', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-0.5, 2.5]], 
-            plot_datapoints=False, fill_contours=False, plot_density=False, 
-            ax=sub) 
-    DFM.hist2d(R_mag_med, FUV_NUV_med, color='C1', 
-            levels=[0.68, 0.95], range=[[-20, -24], [-0.5, 2.5]], 
-            plot_datapoints=False, fill_contours=False, plot_density=False, 
-            ax=sub) 
-    rmid_sdss, med_sdss = dustInfer.median_alongr(R_mag_sdss, FUV_NUV_sdss,
-            **kwargs_median) 
-    rmid_med, med_med = dustInfer.median_alongr(R_mag_med, FUV_NUV_med,
-            **kwargs_median) 
-    sub.scatter(rmid_sdss, med_sdss, c='k', s=30, marker='x')
-    sub.scatter(rmid_med, med_med, c='C1', s=30, marker='x')
+    sub.set_ylim(-1., 1.) 
 
+    sub = fig.add_subplot(222)
+    sub.text(0.95, 0.95, r'SIMBA', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.pcolormesh(Rmag_edges, balmer_edges, dfuvnuv * np.sum(x_mod, axis=2).T, 
+            vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap='Oranges')
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([])
+    sub.set_ylim(-1., 1.) 
+    sub.set_yticklabels([])
+
+    sub = fig.add_subplot(223)
+    h = sub.pcolormesh(Rmag_edges, fuvnuv_edges, dbalmer * np.sum(x_obs, axis=1).T,
+            vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap='Greys')
     sub.set_xlabel(r'$M_r$', fontsize=20) 
-    sub.set_xlim(-20, -24) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
     sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
-    sub.set_ylim(-0.5, 2.5) 
+    sub.set_ylim(-1., 4.) 
+
+    sub = fig.add_subplot(224)
+    sub.pcolormesh(Rmag_edges, fuvnuv_edges, dbalmer * np.sum(x_mod, axis=1).T,
+            vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap='Oranges')
+    sub.set_xlabel(r'$M_r$', fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
+    sub.set_ylim(-1., 4.) 
+    sub.set_yticklabels([])
+
+    fig.subplots_adjust(wspace=0.1, hspace=0.1, right=0.85)
+    cbar_ax = fig.add_axes([0.875, 0.15, 0.02, 0.7])
+    fig.colorbar(h, cax=cbar_ax)
+
     fig.savefig(os.path.join(abc_dir, 'abc_sumstat.t%i.png' % T), bbox_inches='tight') 
     return None 
 
