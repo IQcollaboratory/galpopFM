@@ -127,6 +127,104 @@ def SMFs():
     return None 
 
 
+def DEM(): 
+    ''' comparison of DEM attenuation curve to standard attenuation curves in
+    the literature.
+    '''
+    k_V_calzetti = 4.87789
+
+    def _dem(lam, logm, logsfr): 
+        tauV = np.clip(1.*(logm - 10.) + 1. * logsfr + 2., 1e-3, None) 
+        delta = -0.1 * (logm - 10.) + -0.1 * logsfr + -0.2 
+        E_b =  -1.9 * delta + 0.85
+    
+        # randomly sample the inclinatiion angle from 0 - pi/2 
+        incl = 0.
+        sec_incl = 1./np.cos(incl) 
+        #Eq. 14 of Somerville+(1999) 
+        A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+        dlam = 350. # width of bump from Noll+(2009)
+        lam0 = 2175. # wavelength of bump 
+        # bump 
+        D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
+        # calzetti is already normalized to k_V
+        A_lambda = A_V * (dustFM.calzetti_absorption(lam) + D_bump / k_V_calzetti) * (lam / 5500.)**delta 
+        return A_lambda
+
+    def _salim2018(_lam, logm, logsfr): 
+        lam = _lam/10000. 
+        if logsfr < -0.5:  # quiescent
+            RV = 3.15
+            B = 1.57
+            a0 = -4.30
+            a1 = 2.71
+            a2 = -0.191
+            a3 = 0.0121
+        else: 
+            RV = 2.61
+            B = 2.21
+            a0 = -3.72
+            a1 = 2.20
+            a2 = -0.062
+            a3 = 0.0080
+
+        Dl = B * lam**2 * 0.035**2 / ((lam**2 - 0.2175**2)**2 + lam**2 * 0.035**2)
+        kl = a0 + a1/lam + a2 / lam**2 + a3/lam**3 + Dl + RV
+        return kl / RV
+
+    def _calzetti(lam): 
+        return dustFM.calzetti_absorption(lam)
+
+    wave = np.linspace(1e3, 1e4, 1e3) 
+
+    fig = plt.figure(figsize=(11,4))
+    
+    # SFing galaxies
+    logSFR = 0.5
+    sub = fig.add_subplot(121) 
+    sub.plot(wave, _dem(wave, 9.5, logSFR), c='k', ls='--')
+    sub.plot(wave, _dem(wave, 11.0, logSFR), c='k', ls='-')
+    sub.plot(wave, _salim2018(wave, 11.0, logSFR), c='C0')
+    sub.plot(wave, _calzetti(wave), c='C1') 
+    #sub.text(0.95, 0.95, r'Star-Forming ($\log {\rm SFR} = 0.5$)', ha='right', va='top', transform=sub.transAxes, fontsize=20)
+    sub.text(0.95, 0.95, r'Star-Forming', ha='right', va='top', transform=sub.transAxes, fontsize=20)
+    sub.set_xlim(1.2e3, 1e4)
+    sub.set_ylabel('$A(\lambda)$', fontsize=20)
+    sub.set_ylim(0., 7.) 
+
+    # Quiescent galaxies
+    logSFR = -2 
+    sub = fig.add_subplot(122) 
+    sub.plot(wave, _dem(wave, 9.5, logSFR), lw=5, c='k', ls='--')
+    _plt_lowm, = sub.plot(wave, _dem(wave, 9.5, logSFR), c='k', ls='--')
+    _plt_highm, = sub.plot(wave, _dem(wave, 11.0, logSFR), c='k')
+    _plt_salim, = sub.plot(wave, _salim2018(wave, 11.0, logSFR), c='C0')
+    _plt_cal, = sub.plot(wave, _calzetti(wave), c='C1') 
+
+    sub.legend([_plt_highm, _plt_lowm, _plt_cal, _plt_salim], 
+            ['DEM ($M_*=10^{11}M_\odot$)', 'DEM ($M_*=10^{9.5}M_\odot$)',
+                'Calzetti+(2001)', 'Salim+(2018)'], loc='lower right',
+            bbox_to_anchor=(1., 0.3), handletextpad=0.25, fontsize=16) 
+    #sub.text(0.95, 0.95, r'Quiescent ($\log {\rm SFR} = -2.$)', ha='right', va='top', transform=sub.transAxes, fontsize=20)
+    sub.text(0.95, 0.95, r'Quiescent', ha='right', va='top', transform=sub.transAxes, fontsize=20)
+    sub.set_xlim(1.2e3, 1e4)
+    sub.set_yticklabels([]) 
+    sub.set_ylim(0., 7.) 
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
+    #bkgd.set_ylabel(r'$P_0/P^{\rm fid}_0$', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'dems.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def Observables(): 
     ''' Figure presenting the observables along with simulations without any
     attenuation.
@@ -267,4 +365,5 @@ def fig_tex(ffig, pdf=False):
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
-    Observables()
+    DEM()
+    #Observables()

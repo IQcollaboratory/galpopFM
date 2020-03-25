@@ -17,9 +17,28 @@
   {mn@eprint@\@tempb}{\@tempb:\@tempc}{\expandafter \expandafter \csname
   mn@eprint@\@tempb\endcsname \expandafter{\@tempc}}}
 
+\bibitem[\protect\citeauthoryear{Abazajian et~al.,}{Abazajian
+  et~al.}{2009}]{abazajian2009}
+Abazajian K.~N.,  et~al., 2009, \mn@doi [The Astrophysical Journal Supplement
+  Series] {10.1088/0067-0049/182/2/543}, 182, 543
+
+\bibitem[\protect\citeauthoryear{Blanton \& Roweis}{Blanton \&
+  Roweis}{2007}]{blanton2007a}
+Blanton M.~R.,  Roweis S.,  2007, \mn@doi [The Astronomical Journal]
+  {10.1086/510127}, 133, 734
+
+\bibitem[\protect\citeauthoryear{Blanton et~al.,}{Blanton
+  et~al.}{2005}]{blanton2005}
+Blanton M.~R.,  et~al., 2005, \mn@doi [The Astronomical Journal]
+  {10.1086/429803}, 129, 2562
+
 \bibitem[\protect\citeauthoryear{Calzetti}{Calzetti}{2001}]{calzetti2001}
 Calzetti D.,  2001, \mn@doi [New Astronomy Reviews]
   {10.1016/S1387-6473(01)00144-0}, 45, 601
+
+\bibitem[\protect\citeauthoryear{Chabrier}{Chabrier}{2003}]{chabrier2003}
+Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
+  Pacific] {10.1086/376392}, 115, 763
 
 \bibitem[\protect\citeauthoryear{Hahn, Vakili, Walsh, Hearin, Hogg  \&
   Campbell}{Hahn et~al.}{2017}]{hahn2017a}
@@ -56,6 +75,32 @@ Salim S.,  Narayanan D.,  2020, arXiv:2001.03181 [astro-ph]
   Primack}{1999}]{somerville1999}
 Somerville R.~S.,  Primack J.~R.,  1999, \mn@doi [Monthly Notices of the Royal
   Astronomical Society] {10.1046/j.1365-8711.1999.03032.x}, 310, 1087
+
+\bibitem[\protect\citeauthoryear{Somerville, Gilmore, Primack  \&
+  Dom{\'i}nguez}{Somerville et~al.}{2012}]{somerville2012}
+Somerville R.~S.,  Gilmore R.~C.,  Primack J.~R.,   Dom{\'i}nguez A.,  2012,
+  \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  {10.1111/j.1365-2966.2012.20490.x}, 423, 1992
+
+\bibitem[\protect\citeauthoryear{Tinker, Wetzel  \& Conroy}{Tinker
+  et~al.}{2011}]{tinker2011}
+Tinker J.,  Wetzel A.,   Conroy C.,  2011, preprint, 1107, arXiv:1107.5046
+
+\bibitem[\protect\citeauthoryear{Tinker, Hahn, Mao, Wetzel  \& Conroy}{Tinker
+  et~al.}{2018}]{tinker2018}
+Tinker J.~L.,  Hahn C.,  Mao Y.-Y.,  Wetzel A.~R.,   Conroy C.,  2018, \mn@doi
+  [Monthly Notices of the Royal Astronomical Society] {10.1093/mnras/sty666},
+  477, 935
+
+\bibitem[\protect\citeauthoryear{Trayford, Lagos, Robotham  \&
+  Obreschkow}{Trayford et~al.}{2020}]{trayford2020}
+Trayford J.~W.,  Lagos C. d.~P.,  Robotham A. S.~G.,   Obreschkow D.,  2020,
+  \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  {10.1093/mnras/stz3234}, 491, 3937
+
+\bibitem[\protect\citeauthoryear{Tress et~al.,}{Tress et~al.}{2018}]{tress2018}
+Tress M.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
+  Society] {10.1093/mnras/stx3334}, 475, 2363
 
 \makeatother
 \end{thebibliography}
