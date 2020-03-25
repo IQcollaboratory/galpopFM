@@ -1,24 +1,40 @@
-\section{Empirical Dust Modeling} \label{sec:methods}
+\section{Dust Empirical Modeling} \label{sec:methods}
+\todo{motivation for the DEM model} 
 
+We begin by defining the dust attenuation curve $A(\lambda)$ as 
 \begin{equation} 
     F_o (\lambda) = F_i (\lambda) 10^{-0.4 A(\lambda)}
 \end{equation}
-where $F_o$ is the observed flux, $F_i$ is the intrinsic flux, and $A(\lambda)$
-is the attenuation curve. 
-
-We normalize the attenuation at the $V$ band, 
+where $F_o$ is the observed flux and $F_i$ is the intrinsic flux. We normalize the attenuation at the $V$ band, 
 \begin{equation} 
     A(\lambda) = A_V \frac{k(\lambda)}{k_V}. 
 \end{equation}
-Throughout we use the slab model \citep{somerville1999, somerville2012} for the $V$ band
-attenuation:  
+
+
+For the normalization of the attenuation curve, $A_V$, we use the slab model
+from~\cite{somerville1999, somerville2012}. In the slab model the amplitude of
+attuenuation depends on the inclination angle, $i$, and the optical depth,
+$\tau_V$: 
 \begin{equation} 
     A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right]
 \end{equation}
-$i$ is the inclication, which we uniformly sample 
+\todo{justification of why this is enough}. We sample $i$ uniformly.
 
-\subsection{Naive Model} 
-We use \cite{calzetti2001} 
+Recently, \cite{salim2020} find significant dependence in $A_V$ on both $M_*$
+and SFR. We include this dependence through $\tau_V$, which we flexibly
+parameterize as 
+\begin{equation}
+    \tau_V(M_*, {\rm SFR}) = m_{\tau,1} \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
+    m_{\tau,2} \log\,{\rm SFR} + c_\tau.
+\end{equation}
+
+Next, for the wavelength dependence of the attenuation curve, we use $k(\lambda)$ from 
+\cite{noll2009}: 
+\begin{equation}
+    k(\lambda) = \left(k_{\rm Cal}(\lambda) + D(\lambda)\right) \left(
+    \frac{\lambda}{\lambda_V} \right)^\delta.
+\end{equation}
+Here $k_{\rm Cal}(\lambda)$ is the \cite{calzetti2001} curve: 
 \[
     k_{\rm Cal}(\lambda) = 
     \begin{cases} 
@@ -28,12 +44,31 @@ We use \cite{calzetti2001}
         R_V & 1200 \AA \le \lambda \le 6300 \AA
     \end{cases}
 \]
+where $\lambda_V$ is the $V$ band wavelength. $\delta$, the slope of the attenuation curve.
+also correlates with galaxy
+properties.
+So we parameterize $\delta$ and 
+\begin{align}
+    \delta(M_*, {\rm SFR}) &= m_{\delta,2} \log \left(\frac{M_*}{10^{10}
+    M_\odot}\right) + m_{\delta,2} \log\,{\rm SFR} + c_\delta 
+\end{align}
 
-and 
-
+$D(\lambda)$ is the UV dust bump, which we
+parameter using the standard Lorentzian-like Drude profile:
 \begin{equation}
-    \tau_V = m_\tau \log \left(\frac{M_*}{10^{10} M_\odot}\right) + c_\tau
-\end{equation} 
+    D(\lambda) = \frac{E_b(\lambda \Delta \lambda)^2}{(\lambda^2 -
+    \lambda_0^2)^2 + (\lambda \Delta \lambda)^2}
+\end{equation}
+where $\lambda_0$, $\Delta \lambda$, and $E_b$ are the central wavelength,
+FWHM, and strength of the bump, respecitvely. In our DEM, we assume fixed 
+$\lambda_0 = 2175 \AA$ and $\Delta \lambda = 350\AA$. 
+
+\cite{kriek2013} and \cite{tress2018} found evidence that $E_b$ correlates with
+the slope of the attenuation curve for star-forming galaxies $z\sim2$. This was
+dependence was confirmed with simulations in \cite{naranyanan2018}. $E_b$: 
+\begin{align}
+    E_b &= m_E~\delta + c_E
+\end{align}
 
 We also split the attenuation on the star light and nebular emission 
 \begin{equation} 
@@ -45,47 +80,29 @@ where we parameterize
     A_{\rm neb}(\lambda) = f_{\rm neb}  A(\lambda) 
 \end{equation} 
 
-\subsection{Less Naive Model} 
-We use the attenuation curve from \cite{noll2009} 
-\begin{equation}
-    k(\lambda) = \left(k_{\rm Cal}(\lambda) + D(\lambda)\right) \left(
-    \frac{\lambda}{\lambda_V} \right)^\delta
-\end{equation}
-$\lambda_V$ is the $V$ band wavelength. $D(\lambda)$ is the bump. 
-\begin{equation}
-    D(\lambda) = \frac{E_b(\lambda \Delta \lambda)^2}{(\lambda^2 -
-    \lambda_0^2)^2 + (\lambda \Delta \lambda)^2}
-\end{equation}
-we assume fixed $\lambda_0 = 2175 \AA$ and $\Delta \lambda = 350\AA$. $E_b$ is
-the strength of the bump.
-$\delta$, the slope of the attenuation curve, also correlates with galaxy
-properties.
-\cite{kriek2013}, and \cite{naranyanan2018} more recently with simulations, 
-demonstrated $E_b$ correlates with the slope of the attenuation curve.
-So we parameterize $\delta$ and $E_b$: 
-\begin{align}
-    \delta(M_*) &= m_\delta \log \left(\frac{M_*}{10^{10}
-    M_\odot}\right) + c_\delta \\
-    E_b &= m_E~\delta + c_E
-\end{align}
 
-\subsection{Less Less Naive Model} 
-We use the attenuation curve from \cite{noll2009} 
-
-\cite{salim2020} finds SFR dependence in $A_V$
-\begin{align}
-    \tau_V &= m_{\tau,1} \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
-    m_{\tau,2} \log\,{\rm SFR} + c_\tau \\ 
-    \delta(M_*, {\rm SFR}) &= m_{\delta,2} \log \left(\frac{M_*}{10^{10}
-    M_\odot}\right) + m_{\delta,2} \log\,{\rm SFR} + c_\delta \\
-    E_b &= m_E~\delta + c_E
-\end{align}
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% table of free parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table}
-    table of free parameters 
-\end{table} 
-
+    \caption{Free Parameters of the Dust Empirical Model} 
+    \begin{center}
+        \begin{tabular}{cc} \toprule
+            Parameter & Description \\[3pt] \hline\hline
+            $m_{\tau,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
+            $m_{\tau,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
+            $c_{\tau}$ & amplitude of the optical depth, $\tau_V$\\
+            $m_{\delta,1}$ & Slope of the $\log M_*$ dependence of the attenuation curve slope, $\delta$\\
+            $m_{\delta,2}$ & Slope of the $\log {\rm SFR}$ dependence of the attenuation curve slope, $\delta$\\
+            $c_{\delta}$ & amplitude of the attenuation curve slope, $\delta$\\
+            $m_{E}$ & slope of the $\delta$ dependence of UV dust bump strength, $E_b$\\
+            $c_{E}$ & amplitude of UV dust bump strength, $\delta$\\
+            $f_{\rm neb}$ & fraction of nebular attenuation curve\\
+            \hline
+        \end{tabular} \label{tab:free_param}
+    \end{center}
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Likelihood-Free Inference} 
 Approximate Bayesian Computation with Population Monte Carlo \cite{hahn2017a},
