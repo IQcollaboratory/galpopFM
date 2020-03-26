@@ -103,7 +103,7 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     sub = fig.add_subplot(222)
     sub.pcolormesh(r_edges, gr_edges, x_mod_gr.T, 
             vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap='Oranges')
-    sub.text(0.95, 0.95, r'SIMBA', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.text(0.95, 0.95, sim_sed['sim'].upper(), ha='right', va='top', transform=sub.transAxes, fontsize=25)
     sub.set_xlim(20., 23) 
     sub.set_xticks([20., 21., 22., 23]) 
     sub.set_xticklabels([])
@@ -219,36 +219,28 @@ def run_params(name):
     ''' parameters for abc set up given name  
     '''
     params = {} 
+    
     if name == 'test' : 
         params['sim'] = 'simba'
         params['dem'] = 'slab_calzetti'
         params['prior_min'] = np.array([0., 0., 2.]) 
         params['prior_max'] = np.array([5., 4., 4.]) 
-    elif name == 'simba_slab_noll_m': 
-        params['sim'] = 'simba'
-        params['dem'] = 'slab_noll_m'
-        params['prior_min'] = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
-        params['prior_max'] = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
-    elif name == 'simba_slab_noll_msfr': 
-        params['sim'] = 'simba'
-        params['dem'] = 'slab_noll_msfr'
-        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
-        params['prior_max'] = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
-    elif name == 'tng_slab_noll_m': 
-        params['sim'] = 'tng'
-        params['dem'] = 'slab_noll_m'
-        params['prior_min'] = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
-        params['prior_max'] = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
-    elif name == 'tng_slab_noll_msfr': 
-        params['sim'] = 'tng'
-        params['dem'] = 'slab_noll_msfr'
-        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
-        params['prior_max'] = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
-    elif name in ['simba.slab_noll_simple.L2.3d',
-            'simba.slab_noll_simple.L2.2d', 
-            'simba.slab_noll_simple.L2.1d']: 
-        params['sim'] = 'simba'
-        params['dem'] = 'slab_noll_simple'
+        return params 
+    
+    params['sim'] = name.split('.')[0]
+    params['dem'] = name.split('.')[1] 
+    params['distance'] = name.split('.')[2]
+    params['statistic'] = name.split('.')[3] 
+
+    if params['dem'] == 'slab_noll_m':
+        #m_tau c_tau m_delta c_delta m_E c_E fneb
+        params['prior_min'] = np.array([-5., 0., -5., -4., -4., 0., 1.]) 
+        params['prior_max'] = np.array([5.0, 6., 5.0, 4.0, 0.0, 4., 4.]) 
+    elif params['dem'] == 'slab_noll_msfr':
+        #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
+        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    elif params['dem'] == 'slab_noll_simple': 
         params['prior_min'] = np.array([0., -4]) 
         params['prior_max'] = np.array([10., 4.]) 
     else: 
