@@ -102,12 +102,13 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     -----
     * still need to implement noise model
     '''
-    # don't touch these values!
-    nbins = [8, 200, 100]
-    ranges = [(20, 24), (-5., 45.), (-5, 45.)]
+    # don't touch these values! they are set to agree with the binning of
+    # obersvable
+    nbins = [8, 400, 200]
+    ranges = [(20, 24), (-5., 20.), (-5, 45.)]
     dRmag   = 0.5
-    dGR     = 0.25
-    dfuvnuv = 0.5
+    dGR     = 0.0625
+    dfuvnuv = 0.25
 
     sed_dusty = dustFM.Attenuate(
             theta, 
