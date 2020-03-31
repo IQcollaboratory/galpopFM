@@ -485,7 +485,7 @@ def fig_tex(ffig, pdf=False):
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
-    #DEM()
+    DEM()
     #Observables()
     #ABC_corner() 
-    ABC_Observables()
+    #ABC_Observables()
