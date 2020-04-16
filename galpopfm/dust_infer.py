@@ -116,7 +116,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
             sed['sed_noneb'], 
             sed['sed_onlyneb'], 
             sed['logmstar'],
-            sed['logsfr.100'],
+            sed['logsfr.inst'],
             dem=dem) 
     
     # observational measurements 
@@ -180,6 +180,7 @@ def _read_sed(name, seed=0):
     sed['sed_onlyneb']  = sed['sed_neb'] - sed['sed_noneb'] # only nebular emissoins 
     sed['logmstar']     = f['logmstar'][...] 
     sed['logsfr.100']   = f['logsfr.100'][...] 
+    sed['logsfr.inst']  = f['logsfr.inst'][...]
     sed['censat']       = f['censat'][...] 
     f.close() 
     
@@ -197,6 +198,8 @@ def _read_sed(name, seed=0):
     '''
     isnan = (~np.isfinite(sed['logsfr.100']))
     sed['logsfr.100'][isnan] = -999.
+    isnan = (~np.isfinite(sed['logsfr.inst']))
+    sed['logsfr.inst'][isnan] = -999.
     return sed
 
 
