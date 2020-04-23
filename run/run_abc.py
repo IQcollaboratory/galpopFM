@@ -5,12 +5,12 @@ script to run abc on sirocco with MPI
 to run ABC from scratch the inputs are: 
     sim dem_model abc_name n_iter False n_part
 
- >>> python abc_mbp.py simba slabnoll_m simba_slabnoll_m 20 False 1000
+ >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 False 1000
 
 to restart ABC from existing pool the inputs are: 
     sim dem_model abc_name n_iter True t_restart
 
- >>> python abc_mbp.py simba slabnoll_m simba_slabnoll_m 20 True 5
+ >>> mpiexec -n 2 python abc_slabnoll.py simba slabnoll_m simba_slabnoll_m 20 True 5
 
 '''
 import os 
@@ -24,25 +24,30 @@ from galpopfm import dust_infer as dustInfer
 
 ####################  params  ###################
 dat_dir = os.environ['GALPOPFM_DIR']
-eps0 = [10., 10., 1e5] 
 
-sim     = sys.argv[1] # name of simulation
-dem     = sys.argv[2] # name of EDM model to use 
-name    = sys.argv[3] # name of ABC run
-niter   = int(sys.argv[4]) # number of iterations
-restart = (sys.argv[5] == 'True')
-print('Runnin ABC with ...') 
-print('%s simulation' % sim) 
-print('%s DEM' % dem)
-print('%i iterations' % niter)
-if not restart: 
-    npart   = int(sys.argv[6]) # number of particles 
-    print('%i particles' % npart)
-    trest = None 
-else: 
-    trest = int(sys.argv[6]) 
-    print('T=%i restart' % trest) 
+machine = sys.argv[1]
+sim     = sys.argv[2] # name of simulation
+dem     = sys.argv[3] # name of EDM model to use 
+
+distance_method = sys.argv[4]
+statistic = sys.argv[5]
+if statistic == '1d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.0005, 0.0002]
+    elif distance_method == 'L1':
+        eps0 = [0.01, 0.05, 0.02]
+elif statistic == '2d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.002, 0.0005]
+    elif distance_method == 'L1': 
+        eps0 = [0.01, 0.2, 0.1]
+elif statistic == '3d': 
+    if distance_method == 'L2': 
+        eps0 = [4.e-5, 0.002]
+    elif distance_method == 'L1': 
+        eps0 = [0.01, 0.2]
 ######################################################
+# this will run on all processes =X
 # read SED for sims 
 sim_sed = dustInfer._read_sed(sim) 
 
@@ -54,25 +59,32 @@ wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 8e3)
 downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
 f_downsample = 0.1
-cens = sim_sed['censat'].astype(bool) & (sim_sed['logmstar'] > 9.4) & downsample
+
+cens    = sim_sed['censat'].astype(bool) # centrals
+mlim    = (sim_sed['logmstar'] > 9.4) # mass limit 
+zerosfr = sim_sed['logsfr.inst'] == -999
+
+cuts = cens & mlim & ~zerosfr & downsample 
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
 shared_sim_sed['sim']           = sim 
-shared_sim_sed['logmstar']      = sim_sed['logmstar'][cens].copy()
-shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy() 
+shared_sim_sed['logmstar']      = sim_sed['logmstar'][cuts].copy()
+shared_sim_sed['logsfr.inst']   = sim_sed['logsfr.inst'][cuts].copy() 
+#shared_sim_sed['logsfr.100']    = sim_sed['logsfr.100'][cens].copy() 
 shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
-shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
-shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
-    
-fphi = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
-mr_low, mr_high, phi_err = np.loadtxt(fphi, unpack=True, usecols=[0,1,3]) 
-d_mr = mr_high - mr_low 
-vol = {'simba': 100.**3, 'tng': 75.**3}[sim]  
-err_poisson = 1./d_mr/vol 
-# this is to ensure that the distance metric penalizes the high abs mag bins 
-phi_err = np.clip(phi_err, err_poisson, None) 
+shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
+shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
 
+# observables for SFR = 0 simulated galaxies are directly sampled from SDSS
+# distribution 
+zerosfr_obs = dustInfer._observable_zeroSFR(
+        sim_sed['wave'][wlim], 
+        sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
+
+# read SDSS observable
+x_obs = dustInfer.sumstat_obs(name='sdss', statistic=statistic)
+print('sdss nbar=%.4e' % x_obs[0])
 ######################################################
 # functions  
 ###################################################### 
@@ -113,36 +125,31 @@ def dem_prior(dem_name):
     '''
     if dem_name == 'slab_calzetti': 
         # m_tau, c_tau, fneb 
-        prior_min = np.array([0., 0., 2.]) 
-        prior_max = np.array([5., 4., 4.]) 
+        prior_min = np.array([0., 0., 1.]) 
+        prior_max = np.array([5., 6., 4.]) 
     elif dem_name == 'slab_noll_m':
         #m_tau c_tau m_delta c_delta m_E c_E fneb
-        prior_min = np.array([-5., 0., -5., -2.2, -4., 0., 2.]) 
-        prior_max = np.array([5., 4., 5., 0.4, 0., 2., 4.]) 
+        prior_min = np.array([-5., 0., -5., -4., -4., 0., 1.]) 
+        prior_max = np.array([5.0, 6., 5.0, 4.0, 0.0, 4., 4.]) 
     elif dem_name == 'slab_noll_msfr':
         #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E fneb
-        prior_min = np.array([-5., -5., 0., -4., -4., -2.2, -4., 0., 2.]) 
-        prior_max = np.array([5., 5., 4., 4., 4., 0.4, 0., 2., 4.]) 
+        prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
+        prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
     return prior_min, prior_max 
 
 
 def _sumstat_model_wrap(theta, dem=dem): 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
-            f_downsample=f_downsample) 
+            f_downsample=f_downsample, statistic=statistic, 
+            extra_data=zerosfr_obs) 
     return x_mod 
 
 
 def _distance_metric_wrap(x_obs, x_model): 
-    print(x_obs[-1]) 
-    print(x_model[-1]) 
-    print('-----------------------------------') 
-    return dustInfer.distance_metric(x_obs, x_model, method='L2', phi_err=phi_err)
+    return dustInfer.distance_metric(x_obs, x_model, method=distance_method)
 
 
-def abc(name=None, niter=None, npart=None, restart=None): 
-    # read in observations 
-    x_obs = dustInfer.sumstat_obs(name='sdss')
-    
+def abc(pewl, name=None, niter=None, npart=None, restart=None): 
     if restart is not None:
         # read pool 
         theta_init  = np.loadtxt(
@@ -168,6 +175,7 @@ def abc(name=None, niter=None, npart=None, restart=None):
             Y=x_obs,                # data
             postfn=_sumstat_model_wrap,   # simulator 
             dist=_distance_metric_wrap,   # distance metric 
+            pool=pewl,
             postfn_kwargs={'dem': dem}#, dist_kwargs={'method': 'L2', 'phi_err': phi_err}
             )      
 
@@ -198,11 +206,42 @@ def abc(name=None, niter=None, npart=None, restart=None):
     abcpmc_sampler.close()
     return None 
 
-if __name__=='__main__': 
+
+if __name__=="__main__": 
+    if machine == 'siro': 
+        # run with MPI 
+        from mpi4py import MPI 
+        from schwimmbad import MPIPool
+
+        pewl = MPIPool()
+
+        if not pewl.is_master(): 
+            pewl.wait()
+            sys.exit(0)
+    else: 
+        pewl = None 
+
+    name    = sys.argv[6] # name of ABC run
+    niter   = int(sys.argv[7]) # number of iterations
+    restart = (sys.argv[8] == 'True')
+    print('Runnin ABC with ...') 
+    print('%s simulation' % sim) 
+    print('%s DEM' % dem)
+    print('%s distance' % distance_method)
+    print('%s summary statistic' % statistic)
+    print('%i iterations' % niter)
+    if not restart: 
+        npart   = int(sys.argv[9]) # number of particles 
+        print('%i particles' % npart)
+        trest = None 
+    else: 
+        trest = int(sys.argv[9]) 
+        print('T=%i restart' % trest) 
+
     abc_dir = os.path.join(dat_dir, 'abc', name) 
     if not os.path.isdir(abc_dir): 
         os.system('mkdir %s' % abc_dir)
 
     prior_min, prior_max = dem_prior(dem)
 
-    abc(name=name, niter=niter, npart=npart, restart=trest) 
+    abc(pewl, name=name, niter=niter, npart=npart, restart=trest) 

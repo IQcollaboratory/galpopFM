@@ -137,8 +137,8 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
 
     if extra_data is not None: #append extra data to data vector
         # assumes extra_data = [R_mag, G-R, FUV-NUV]
-        extra_data[0] = -1. * extra_data
-        data_vector = np.concatenate([data_vector, extra_data.T], axis=0) 
+        extra_data[0] = -1. * extra_data[0]
+        data_vector = np.concatenate([data_vector, np.array(extra_data).T], axis=0) 
 
     if return_datavector: 
         return data_vector.T
