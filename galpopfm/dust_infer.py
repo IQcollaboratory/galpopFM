@@ -86,7 +86,7 @@ def sumstat_obs(name='sdss', statistic='2d', return_bins=False):
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
-        statistic='2d', return_datavector=False): 
+        statistic='2d', return_datavector=False, extra_data=None): 
     ''' calculate summary statistics for forward model m(theta) 
     
     :param theta: 
@@ -97,10 +97,15 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
         string specifying the dust empirical model
     :param f_downsample: 
         if f_downsample > 1., then the SED dictionary is downsampled. 
+    :param extra_data: 
+        fixed extra data to be included in the data_vector. Has to be
+        of the form [Rmag, G-R, FUV-NUV] (see note below) 
 
     notes
     -----
     * still need to implement noise model
+    * 4/22/2020: extra_data kwarg added. This is to pass pre-sampled
+    observables for SFR = 0 galaxies 
     '''
     # don't touch these values! they are set to agree with the binning of
     # obersvable
@@ -129,6 +134,12 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     G_R = G_mag - R_mag
 
     data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
+
+    if extra_data is not None: #append extra data to data vector
+        # assumes extra_data = [R_mag, G-R, FUV-NUV]
+        extra_data[0] = -1. * extra_data
+        data_vector = np.concatenate([data_vector, extra_data.T], axis=0) 
+
     if return_datavector: 
         return data_vector.T
 
@@ -150,6 +161,44 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
         x_gr = dRmag * np.sum(dfuvnuv * np.sum(x_model, axis=2), axis=0)
         x_fn = dRmag * np.sum(dGR * np.sum(x_model, axis=1), axis=0) 
         return [nbar, x_gr, x_fn]
+
+
+def _observable_zeroSFR(wave, sed): 
+    ''' for SFR = 0 galaxies, sample G-R and FUV-NUV color directly from G-R
+    and FUV-NUV distributions of quiescent SDSS galaxies. This is to remove
+    these galaxies from consideration in the inference. 
+
+    notes
+    -----
+    * in principle, the G-R and FUV-NUV sampling can done for R bins, but at
+    the moment it does not. 
+    * this only runs once so its not optimized in any way 
+    '''
+    ngal = sed.shape[0]  
+    # read in G-R and FUV-NUV distributions of SDSS quiescent galaxies 
+    gr_edges, gr_nbins = np.load(os.path.join(dat_dir, 'obs',
+        'tinker_SDSS_centrals_M9.7.Mr_complete.quiescent.G_R_dist.npy'), 
+        allow_pickle=True)
+
+    fn_edges, fn_nbins = np.load(os.path.join(dat_dir, 'obs',
+        'tinker_SDSS_centrals_M9.7.Mr_complete.quiescent.FUV_NUV_dist.npy'), 
+        allow_pickle=True)
+    
+    # calculate Mr from SEDs 
+    R_mag = measureObs.AbsMag_sed(wave, sed, band='r_sdss') 
+    
+    # now sample from SDSS distribution using inverse transform sampling  
+    gr_cdf = np.cumsum(gr_nbins)/np.sum(gr_nbins) # calculate CDFs for both distributions
+    fn_cdf = np.cumsum(fn_nbins)/np.sum(fn_nbins) 
+
+    us      = np.random.rand(ngal) 
+    G_R     = np.empty(ngal) 
+    FUV_NUV = np.empty(ngal)
+    for i, u in enumerate(us): 
+        G_R[i] = 0.5*(gr_edges[:-1] + gr_edges[1:])[np.abs(u - gr_cdf).argmin()]
+        FUV_NUV[i] = 0.5*(fn_edges[:-1] + fn_edges[1:])[np.abs(u - fn_cdf).argmin()]
+    
+    return [R_mag, G_R, FUV_NUV]
 
 
 def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16): 
