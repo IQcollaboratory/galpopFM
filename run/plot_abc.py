@@ -30,6 +30,13 @@ mpl.rcParams['ytick.major.size'] = 5
 mpl.rcParams['ytick.major.width'] = 1.5
 mpl.rcParams['legend.frameon'] = False
 
+def get_abc(T, name, abc_dir=None):
+    ''' scp ABC files from sirocco
+    '''
+    cmd = ('scp sirocco:/home/users/hahn/data/galpopfm/abc/%s/*t%i.dat %s/' % 
+            (name, T, abc_dir))
+    os.system(cmd) 
+    return None 
 
 def plot_pool(T, prior=None, dem='slab_calzetti', abc_dir=None):
     ''' plot ABC pool 
@@ -72,18 +79,29 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     downsample = np.zeros(len(_sim_sed['logmstar'])).astype(bool)
     downsample[::10] = True
     f_downsample = 0.1
-    cens = _sim_sed['censat'].astype(bool) & (_sim_sed['logmstar'] > 9.4) & downsample
+
+    cens = _sim_sed['censat'].astype(bool) 
+    mlim = (_sim_sed['logmstar'] > 9.4)
+    zerosfr = (_sim_sed['logsfr.inst'] == -999)
+
+    cuts = cens & mlim & ~zerosfr & downsample 
 
     sim_sed = {} 
     sim_sed['sim']          = sim
-    sim_sed['logmstar']     = _sim_sed['logmstar'][cens].copy()
-    sim_sed['logsfr.100']   = _sim_sed['logsfr.100'][cens].copy() 
+    sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
+    sim_sed['logsfr.inst']   = _sim_sed['logsfr.inst'][cuts].copy() 
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
-    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
-    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
+    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
+    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+
+    # observables for SFR = 0 simulated galaxies are directly sampled from SDSS
+    # distribution 
+    zerosfr_obs = dustInfer._observable_zeroSFR(
+            _sim_sed['wave'][wlim], 
+            _sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
 
     x_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
-            f_downsample=f_downsample, statistic='2d')
+            f_downsample=f_downsample, statistic='2d', extra_data=zerosfr_obs) 
     nbar_mod, x_mod_gr, x_mod_fn = x_mod
     ########################################################################
     print('obs nbar = %.4e' % nbar_obs)
@@ -250,13 +268,17 @@ def run_params(name):
 
 if __name__=="__main__": 
     ####################### inputs #######################
-    name    = sys.argv[1] # name of ABC run
-    niter   = int(sys.argv[2]) # number of iterations
+    fetch   = sys.argv[1] == 'True'
+    name    = sys.argv[2] # name of ABC run
+    niter   = int(sys.argv[3]) # number of iterations
     print('plot %s ABC iteration %i' % (name, niter)) 
     ######################################################
     dat_dir = os.environ['GALPOPFM_DIR']
     abc_dir = os.path.join(dat_dir, 'abc', name) 
-    
+
+    if fetch: 
+         get_abc(niter, name, abc_dir=abc_dir)   
+
     params = run_params(name)
     sim = params['sim'] 
     dem = params['dem'] 

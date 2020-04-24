@@ -38,18 +38,18 @@ def compile_seds(name):
         data['censat']      = censat.astype(int)
 
     elif name == 'tng': 
-        # SubhaloID, log10(total stellar mass)[Msun], log10(total gas
+        # SubhaloID, log10(total inst. stellar mass)[Msun], log10(total gas
         # mass)[Msun], log10(total SFR)[Msun/yr], log10(SFR
         # over100Myr)[Msun/yr], satellite? (1:yes, 0: central)
         fprop0 = os.path.join(dat_dir, 'prop', 'IQSFSdata_TNG_99-corrected.txt') 
-        _id, logmstar, logmgas, logsfrtot, logsfr100, censat = np.loadtxt(fprop0, skiprows=1, unpack=True, usecols=range(6))
+        _id, logmstar, logmgas, logsfrinst, logsfr100, censat = np.loadtxt(fprop0, skiprows=1, unpack=True, usecols=range(6))
         #fprop1 = os.path.join(dat_dir, 'prop', 'IQSFSdataTNG-MstarPosVelSat.txt') # SubhaloID, Mstar[Msun], Pos0[kpc], Pos1[kpc], Pos2[kpc], Vel0[km/s], Vel1[km/s], Vel2[km/s], icentral(0)/satellite(1)
         #pos0, pos1, pos2, vel0, vel1, vel2 = np.loadtxt(fprop1, skiprows=1, unpack=True, usecols=[2,3,4,5,6,7])
 
         ngal = len(_id) 
         data['id']          = _id.astype(int)
         data['logmstar']    = logmstar
-        data['logsfr.tot']  = logsfrtot
+        data['logsfr.inst'] = logsfrinst
         data['logsfr.100']  = logsfr100
         data['censat']      = (np.abs(censat - 1)).astype(int)
     elif name == 'eagle':
