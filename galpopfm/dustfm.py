@@ -47,6 +47,8 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, logmstar, logsfr, dem='slab_calz
         mdust = DEM_slab_noll_msfr
     elif dem == 'slab_noll_simple': 
         mdust = DEM_slab_noll_simple
+    elif dem == 'tnorm_noll_msfr': 
+        mdust = DEM_tnorm_noll_msfr
     else: 
         raise NotImplementedError
 
@@ -296,7 +298,7 @@ def DEM_slab_noll_simple(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     return flux_i * T_lam 
 
 
-def DEM_tnorm_nol_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
+def DEM_tnorm_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
     ''' Dust empirical model that uses Av sampled from a truncated normal
     distribution (instead of the slab model) and with Noll+(2009)
     parameterization. 
@@ -335,24 +337,18 @@ def DEM_tnorm_nol_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
 
-
     m_mu1, m_mu2, c_mu = theta[0], theta[1], theta[2]
     m_sig1, m_sig2, c_sig = theta[3], theta[4], theta[5]
     m_delta1, m_delta2, c_delta = theta[6], theta[7], theta[8]
     m_E, c_E, f_nebular = theta[9], theta[10], theta[11]
     
     mu_Av = np.clip(m_mu1 * (logmstar - 10.) + m_mu2 * logsfr + c_mu, 0., None) 
-    sig_Av = np.clip(m_sig1 * (logmstar - 10.) + m_sig2 * logsfr + c_sig, 0., None) 
-
+    sig_Av = np.clip(m_sig1 * (logmstar - 10.) + m_sig2 * logsfr + c_sig, 0.1, None) # can't be too narrow
 
     delta = m_delta1 * (logmstar - 10.) + m_delta2 * logsfr + c_delta 
 
     E_b = m_E * delta + c_E
     
-    # randomly sample the inclinatiion angle from 0 - pi/2 
-    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
-    sec_incl = 1./np.cos(incl) 
-
     # truncated normal distribution 
     trunc_lim = (0. - mu_Av)/sig_Av
 
