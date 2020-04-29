@@ -329,6 +329,11 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
         lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+    elif dem == 'tnorm_noll_msfr': 
+        lbls = [r'$m_{\mu,1}$', r'$m_{\mu,2}$', r'$c_{\mu}$', 
+                r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
+                r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+                r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
     else: 
         raise NotImplementedError
 

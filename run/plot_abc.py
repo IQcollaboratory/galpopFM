@@ -188,6 +188,9 @@ def abc_attenuationt(T, sim='simba', dem='slab_calzetti', abc_dir=None):
         elif dem == 'slab_noll_simple': 
             A_lambda = -2.5 * np.log10(dustFM.DEM_slab_noll_simple(theta_med, wave, 
                 flux, logms[i], logsfr[i], nebular=False)) 
+        elif dem == 'tnorm_noll_msfr': 
+            A_lambda = -2.5 * np.log10(dustFM.DEM_tnorm_noll_msfr(theta_med, wave, 
+                flux, logms[i], logsfr[i], nebular=False)) 
         A_lambdas.append(A_lambda) 
 
         if logms[i] > 10.5: 
@@ -261,6 +264,9 @@ def run_params(name):
     elif params['dem'] == 'slab_noll_simple': 
         params['prior_min'] = np.array([0., -4]) 
         params['prior_max'] = np.array([10., 4.]) 
+    elif params['dem'] == 'tnorm_noll_msfr': 
+        params['prior_min'] = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., -4., 0., 1.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
     else: 
         raise NotImplementedError
     return params 
