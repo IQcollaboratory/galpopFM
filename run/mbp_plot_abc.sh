@@ -7,6 +7,6 @@
 dem=simba.tnorm_noll_msfr.L2.3d
 #dem=tng.tnorm_noll_msfr.L2.3d
 
-for i in {0..4}; do 
+for i in {6..6}; do 
     python /Users/ChangHoon/projects/galpopFM/run/plot_abc.py True $dem $i 
 done

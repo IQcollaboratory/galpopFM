@@ -1,4 +1,5 @@
 \section{Dust Empirical Modeling} \label{sec:methods}
+\subsection{Fiducial DEM} 
 \todo{motivation for the DEM model} 
 
 We begin by defining the dust attenuation curve $A(\lambda)$ as 
@@ -80,6 +81,7 @@ where we parameterize
     A_{\rm neb}(\lambda) = f_{\rm neb}  A(\lambda) 
 \end{equation} 
 
+\todo{mention of how we treat SFR = 0 galaxies} 
 
 \begin{figure}
 \begin{center}
@@ -88,6 +90,39 @@ where we parameterize
 \label{fig:dem}
 \end{center}
 \end{figure}
+
+
+\subsection{Beyond the Slab DEM}  \label{sec:nonslab} 
+A major assumption of our fiducial DEM is that we sample the amplitude of
+attenuation from the slab model. The slab model makes a strong simplifying 
+assumption that the dust in galaxies \todo{details}. \todo{sentence or two
+about how we know the slab model doesn't work}. 
+
+Furthermore, the slab model predicts $A_V$ distribution significantly different
+than $A_V$ distributions measured from observations. In Figure~\ref{fig:av_dist}, we compare the $A_V$
+distribution predicted by the slab model for $\tau_V = $ to the $A_V$ 
+distribution of SDSS galaxies from \cite{brinchmann2004}. The comparison clearly reveals the
+discrepancy between the SDSS $A_V$ distribution and the slab model prediction.
+The slab model predicts a sharp cutoff at lower $A_V$ end of the distribution,
+which is not found in observables. 
+The SDSS $A_V$ measurements can be negative in \cite{brinchmann2004} because 
+\todo{...}. 
+
+
+To ensure that our results do not depend significantly on the slab
+model, we implement a more flexible alternative model for sampling $A_V$ based on a
+truncated normal distribution: 
+\begin{equation}
+    A_V \sim \mathcal{N}_T(\mu_{A_V}, \sigma_{A_V}) =
+    \frac{\mathcal{N}(\mu_{A_V}, \sigma_{A_V})}{1 -
+    \Phi\left(-\frac{\mu_{A_V}}{\sigma_{A_V}}\right)}.
+\end{equation}
+$\mathcal{N}$ is the standard normal distribution and $\Phi$ is the cumulative
+distribution function of the standard normal distribution function.
+$\Phi(x) = \frac{1}{2}(1+{\rm erf}(x/\sqrt{2})$. $\mu_{A_V}$ and $\sigma_{A_V}$
+are the mean and variance of the truncated normal distribution. 
+\todo{There}
+
 
 
 
@@ -119,6 +154,8 @@ Approximate Bayesian Computation with Population Monte Carlo \cite{hahn2017a},
 
 discussion of observables and distance metric 
 \cite{ishida2015} 
+
+Paragraph on the priors we choose. 
 
 \begin{figure}
 \begin{center}
