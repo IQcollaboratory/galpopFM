@@ -275,7 +275,7 @@ def Observables():
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([])
         if i == 0: 
-            sub.set_ylabel(r'$G-R$', fontsize=20) 
+            sub.set_ylabel(r'$G-R$', fontsize=25) 
         else: 
             sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
@@ -286,16 +286,18 @@ def Observables():
         DFM.hist2d(_x[0][~_sfr0], _x[2][~_sfr0], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
-        sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
+        sfr0 = sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
         if i == 0: 
-            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=25) 
         else: 
             sub.set_yticklabels([]) 
         sub.set_ylim(ranges[2]) 
-    
+
+    sub.legend([sfr0], ['SFR = 0'], loc='lower right', handletextpad=0,
+            markerscale=7, fontsize=20) 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
@@ -490,6 +492,6 @@ if __name__=="__main__":
     #SDSS()
     #SMFs() 
     #DEM()
-    Observables()
+    #Observables()
     #ABC_corner() 
-    #ABC_Observables()
+    ABC_Observables()
