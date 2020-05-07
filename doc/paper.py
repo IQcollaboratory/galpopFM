@@ -247,29 +247,29 @@ def Observables():
     x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
             sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
             sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    x_simba = _sim_observables('simba', np.array([0. for i in range(9)]))
-    x_tng = _sim_observables('tng', np.array([0. for i in range(9)]))
+    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(9)]))
+    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(9)]))
     #########################################################################
     # plotting 
     #########################################################################
     xs      = [x_obs, x_simba, x_tng]
     names   = ['SDSS', 'SIMBA (no dust)', 'TNG (no dust)']
     clrs    = ['k', 'C1', 'C0']
-    #clrs    = ['Greys', 'Oranges', 'Blues'] 
+    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng] 
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
-    # R vs (G - R)
-    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+    for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
+        # R vs (G - R)
         sub = fig.add_subplot(2,len(xs),i+1)
-        #sub.pcolormesh(r_edges, gr_edges, _x[1].T,
-        #        vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap=clr)
-        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
+        DFM.hist2d(_x[0][~_sfr0], _x[1][~_sfr0], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
         sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
@@ -281,14 +281,12 @@ def Observables():
         sub.set_ylim(ranges[1]) 
         sub.set_yticks([0., 0.5, 1.])
 
-    # R vs FUV-NUV
-    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+        # R vs FUV-NUV
         sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
-        #h = sub.pcolormesh(r_edges, fn_edges, _x[2].T,
-        #        vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap=clr)
-        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
+        DFM.hist2d(_x[0][~_sfr0], _x[2][~_sfr0], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
@@ -319,20 +317,26 @@ def _sim_observables(sim, theta):
     #downsample[::10] = True
     downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
     f_downsample = 1.#0.1
-    cens = _sim_sed['censat'].astype(bool) & (_sim_sed['logmstar'] > 9.4) & downsample
+
+    cens    = _sim_sed['censat'].astype(bool) 
+    mlim    = (_sim_sed['logmstar'] > 9.4) 
+
+    cuts = cens & mlim & downsample 
 
     sim_sed = {} 
     sim_sed['sim']          = sim 
-    sim_sed['logmstar']     = _sim_sed['logmstar'][cens].copy()
-    sim_sed['logsfr.100']   = _sim_sed['logsfr.100'][cens].copy() 
+    sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
+    sim_sed['logsfr.inst']   = _sim_sed['logsfr.inst'][cuts].copy() 
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
-    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cens,:][:,wlim].copy() 
-    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cens,:][:,wlim].copy() 
+    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
+    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
 
     x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
             dem='slab_noll_msfr', f_downsample=f_downsample, statistic='2d',
             return_datavector=True)
-    return x_mod
+
+    zerosfr = (sim_sed['logsfr.inst'] == -999)
+    return x_mod, zerosfr
 
 
 def ABC_corner(): 
@@ -486,6 +490,6 @@ if __name__=="__main__":
     #SDSS()
     #SMFs() 
     #DEM()
-    #Observables()
+    Observables()
     #ABC_corner() 
     #ABC_Observables()
