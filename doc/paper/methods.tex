@@ -108,7 +108,6 @@ which is not found in observables.
 The SDSS $A_V$ measurements can be negative in \cite{brinchmann2004} because 
 \todo{...}. 
 
-
 To ensure that our results do not depend significantly on the slab
 model, we implement a more flexible alternative model for sampling $A_V$ based on a
 truncated normal distribution: 
@@ -122,6 +121,17 @@ distribution function of the standard normal distribution function.
 $\Phi(x) = \frac{1}{2}(1+{\rm erf}(x/\sqrt{2})$. $\mu_{A_V}$ and $\sigma_{A_V}$
 are the mean and variance of the truncated normal distribution. 
 \todo{There}
+
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{figs/slab_tnorm.pdf} 
+    \caption{Comparisons of $A_V$ distribution from slab model
+    (Eq.~\ref{eq:slab}, truncated normal model (Eq.~\ref{eq:tnorm}, and SDSS SF
+    galaxies.}
+\label{fig:dem}
+\end{center}
+\end{figure}
 
 
 

@@ -33,6 +33,9 @@ mpl.rcParams['legend.frameon'] = False
 dat_dir = os.environ['GALPOPFM_DIR']
 fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'figs') 
 
+vol_sdss = 766021.225579427
+vol_simba = 100.**3 # (Mpc/h)^3
+vol_tng = 75.**3 # (Mpc/h)^3
 
 def SDSS():
     ''' figure illustrating our SDSS 
@@ -83,12 +86,10 @@ def SMFs():
     fsimba = os.path.join(dat_dir, 'sed', 'simba.hdf5')
     simba = h5py.File(fsimba, 'r')
     cen_simba = simba['censat'][...].astype(bool)
-    vol_simba = 100.**3 # (Mpc/h)^3
 
     ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
     tng = h5py.File(ftng, 'r')
     cen_tng = tng['censat'][...].astype(bool)
-    vol_tng = 75.**3 # (Mpc/h)^3
     #########################################################################
     # calculate SMFs
     #########################################################################
@@ -251,8 +252,10 @@ def Observables():
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(9)]))
-    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(9)]))
+    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(9)]), 
+            zero_sfr_sample=False)
+    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(9)]),
+            zero_sfr_sample=False)
     #########################################################################
     # plotting 
     #########################################################################
@@ -310,8 +313,20 @@ def Observables():
     return None 
 
 
-def _sim_observables(sim, theta): 
+def _sim_observables(sim, theta, model='slab', zero_sfr_sample=False): 
     ''' read specified simulations and return data vector 
+
+    :param zero_sfr_sample: 
+        If False, observables for SFR=0 galaxies are run through the
+        regular model. 
+        If True, observables for SFR=0 galaxies are sampled to match the Q
+        population observables. 
+
+    :return x_mod: 
+        data vector of model(theta)  
+
+    :return _zero_sfr: 
+        indices of data vector that correspond to SFR=0 galaxies.  
     '''
     _sim_sed = dustInfer._read_sed(sim) 
     wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
@@ -322,8 +337,12 @@ def _sim_observables(sim, theta):
 
     cens    = _sim_sed['censat'].astype(bool) 
     mlim    = (_sim_sed['logmstar'] > 9.4) 
+    zerosfr = (_sim_sed['logsfr.inst'] == -999)
 
-    cuts = cens & mlim & downsample 
+    if not zero_sfr_sample: 
+        cuts = cens & mlim & downsample 
+    else: 
+        cuts = cens & mlim & ~zerosfr & downsample 
 
     sim_sed = {} 
     sim_sed['sim']          = sim 
@@ -332,13 +351,64 @@ def _sim_observables(sim, theta):
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
     sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
     sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+    
+    if not zero_sfr_sample: 
+        # SFR=0 observables are *not* sampled. Returns indices 
+        x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
+                dem='%s_noll_msfr' % model, f_downsample=f_downsample, statistic='2d',
+                return_datavector=True)
+        _zerosfr = sim_sed['logsfr.inst'] == -999
+    else: 
+        zerosfr_obs = dustInfer._observable_zeroSFR(
+                _sim_sed['wave'][wlim], 
+                _sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
 
-    x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-            dem='slab_noll_msfr', f_downsample=f_downsample, statistic='2d',
-            return_datavector=True)
+        x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
+                dem='%s_noll_msfr' % model, f_downsample=f_downsample, statistic='2d',
+                extra_data=zerosfr_obs, return_datavector=True)
+        _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
+        _zerosfr[np.sum(cuts):] = True
+    mr_cut = x_mod[0] > 20
+    return x_mod[:,mr_cut], (_zerosfr & mr_cut) 
 
-    zerosfr = (sim_sed['logsfr.inst'] == -999)
-    return x_mod, zerosfr
+
+def slab_tnorm_comparison(): 
+    ''' figure comparing the A_V distributions of the slab model, tnorm and
+    observed SDSS. 
+    '''
+    from scipy.stats import truncnorm
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=int(1e4))
+    sec_incl = 1./np.cos(incl) 
+
+    #Eq. 14 of Somerville+(1999) 
+    slab_AV = lambda tauV: -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl))
+
+    tnorm_AV = lambda mu_Av, sig_Av: truncnorm.rvs((0. - mu_Av)/sig_Av, np.inf, loc=mu_Av, scale=sig_Av,
+            size=int(1e4)) 
+    fake_sdss = 1. + 0.7 * np.random.randn(int(1e4))
+
+    fig = plt.figure(figsize=(10,5))
+    sub = fig.add_subplot(111) 
+    _ = sub.hist(np.array(fake_sdss), range=(0., 7), bins=50, density=True, 
+            color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
+    _ = sub.hist(np.array(slab_AV(2.)), range=(0., 7), bins=50, density=True, 
+            color='k', linestyle='--', linewidth=2, histtype='step', 
+            label=r'slab model')
+    _ = sub.hist(np.array(tnorm_AV(1., 0.8)), range=(0., 7), bins=50, density=True, 
+            color='C1', linestyle='--', linewidth=2, histtype='step', 
+            label=r'$\mathcal{N}_T$ model')
+    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+    sub.set_xlabel(r'$A_V$', fontsize=25) 
+    sub.set_ylabel(r'$p(A_V)$', fontsize=25) 
+    sub.set_xlim(-0.2, 5.) 
+    sub.set_ylim(0., 2.) 
+    
+    ffig = os.path.join(fig_dir, 'slab_tnorm.png')
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
 
 
 def ABC_corner(): 
@@ -384,6 +454,132 @@ def ABC_corner():
     return None 
 
 
+def _ABC_Observables(): 
+    ''' new idea for Figure presenting the observables of slab model ABC posteriors  
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(name='sdss',
+            statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.5), (-1., 4.)]
+
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    
+    mr_complete = (sdss['mr_tinker'][...] < -20.)
+
+    x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
+            sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
+            sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'simba.slab_noll_msfr.L2.3d', 'theta.t6.dat')) 
+    theta_simba = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'tng.slab_noll_msfr.L2.3d', 'theta.t4.dat')) 
+    theta_tng = np.median(theta_T, axis=0) 
+
+    x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
+            zero_sfr_sample=True)
+    x_tng, sfr0_tng = _sim_observables('tng', theta_tng,
+            zero_sfr_sample=True)
+
+    #########################################################################
+    # plotting 
+    #########################################################################
+    xs      = [x_obs, x_simba, x_tng]
+    names   = ['SDSS', 'SIMBA (w/ DEM)', 'TNG (w/ DEM)']
+    clrs    = ['k', 'C1', 'C0']
+    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng] 
+
+
+    obs_lims = [(20, 22.5), (-0.05, 1.5), (-1., 4)]
+    obs_lbls = [r'$M_r$ luminosity', '$G - R$', '$FUV - NUV$']
+
+    fig = plt.figure(figsize=(12, 12))
+    
+    for i in range(3): 
+        for j in range(3): 
+            sub = fig.add_subplot(3,3,3*j+i+1)
+            if i > j:
+                # compare SIMBA
+                DFM.hist2d(x_obs[i], x_obs[j], levels=[0.68, 0.95],
+                        range=[ranges[i], ranges[j]], bins=20, color='k', 
+                        plot_datapoints=False, fill_contours=False,
+                        plot_density=False, linestyle='--', ax=sub)
+                DFM.hist2d(x_simba[i], x_simba[j], levels=[0.68, 0.95],
+                        range=[ranges[i], ranges[j]], bins=20, color='C1', 
+                        plot_datapoints=False, fill_contours=False,
+                        plot_density=True, ax=sub)
+            elif i < j: 
+                # compare SIMBA
+                DFM.hist2d(x_obs[i], x_obs[j], levels=[0.68, 0.95],
+                        range=[ranges[i], ranges[j]], bins=20, color='k', 
+                        plot_datapoints=False, fill_contours=False,
+                        plot_density=False, linestyle='--', ax=sub)
+                DFM.hist2d(x_tng[i], x_tng[j], levels=[0.68, 0.95],
+                        range=[ranges[i], ranges[j]], bins=20, color='C0', 
+                        plot_datapoints=False, fill_contours=False,
+                        plot_density=True, ax=sub)
+            else: 
+                if i == 0: 
+                    mr_bin = np.linspace(20, 23, 7) 
+                    dmr = mr_bin[1:] - mr_bin[:-1]
+
+                    Ngal_simba, _ = np.histogram(x_simba[i], bins=mr_bin)
+                    Ngal_tng, _ = np.histogram(x_tng[i], bins=mr_bin)
+
+                    phi_simba   = Ngal_simba.astype(float) / vol_simba / dmr
+                    phi_tng     = Ngal_tng.astype(float) / vol_tng / dmr
+
+                    sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_simba, c='C1')
+                    sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_tng, c='C0')
+
+                    fsdss = os.path.join(dat_dir, 'obs',
+                            'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
+                    mr_low, mr_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
+                    sub.errorbar(-0.5*(mr_low + mr_high), phi_sdss, yerr=err_phi_sdss,
+                            fmt='.k', label='SDSS Centrals')
+                    sub.set_yscale('log') 
+                    sub.set_ylim(5e-5, 1e-2) 
+                    print('number densities')
+                    print('simba: %.5e' % (np.sum(Ngal_simba.astype(float))/vol_simba))
+                    print('tng: %.5e' % (np.sum(Ngal_tng.astype(float))/vol_tng))
+                    print('sdss: %.5e' % (float(len(x_obs[i]))/vol_sdss))
+                else: 
+                    _ = sub.hist(x_simba[i][x_simba[0] > 20], 
+                            weights=np.repeat(1./vol_simba, np.sum(x_simba[0] > 20)),
+                            range=ranges[i], bins=20, color='C1', histtype='step') 
+                    _ = sub.hist(x_tng[i][x_tng[0] > 20], 
+                            weights=np.repeat(1./vol_tng, np.sum(x_tng[0] > 20)),
+                            range=ranges[i], bins=20, color='C0', histtype='step') 
+                    _ = sub.hist(x_obs[i],
+                            weights=np.repeat(1./vol_sdss, len(x_obs[i])), 
+                            range=ranges[i], bins=20, color='k',
+                            linestyle='--', histtype='step') 
+
+            sub.set_xlim(obs_lims[i])
+            if i !=j: sub.set_ylim(obs_lims[j])
+
+            if i == 0: sub.set_ylabel(obs_lbls[j], fontsize=25) 
+            else: sub.set_yticklabels([]) 
+            if j == 2: sub.set_xlabel(obs_lbls[i], fontsize=25) 
+            else: sub.set_xticklabels([]) 
+
+    ffig = os.path.join(fig_dir, '_abc_observables.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def ABC_Observables(): 
     ''' Figure presenting the observables along with simulations without any
     attenuation.
@@ -406,36 +602,40 @@ def ABC_Observables():
     x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
             sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
             sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'simba.slab_noll_msfr.L2.3d', 'theta.t8.dat')) 
+        'simba.slab_noll_msfr.L2.3d', 'theta.t6.dat')) 
     theta_simba = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'tng.slab_noll_msfr.L2.3d', 'theta.t9.dat')) 
+        'tng.slab_noll_msfr.L2.3d', 'theta.t4.dat')) 
     theta_tng = np.median(theta_T, axis=0) 
 
-    x_simba = _sim_observables('simba', theta_simba)
-    x_tng = _sim_observables('tng', theta_tng)
+    x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
+            zero_sfr_sample=True)
+    x_tng, sfr0_tng = _sim_observables('tng', theta_tng,
+            zero_sfr_sample=True)
+
     #########################################################################
     # plotting 
     #########################################################################
     xs      = [x_obs, x_simba, x_tng]
     names   = ['SDSS', 'SIMBA (w/ DEM)', 'TNG (w/ DEM)']
     clrs    = ['k', 'C1', 'C0']
-    #clrs    = ['Greys', 'Oranges', 'Blues'] 
+    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng] 
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
-    # R vs (G - R)
-    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+    #for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+    for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
+        # R vs (G - R)
         sub = fig.add_subplot(2,len(xs),i+1)
-        #sub.pcolormesh(r_edges, gr_edges, _x[1].T,
-        #        vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap=clr)
         DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
         sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
@@ -447,14 +647,12 @@ def ABC_Observables():
         sub.set_ylim(ranges[1]) 
         sub.set_yticks([0., 0.5, 1.])
 
-    # R vs FUV-NUV
-    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+        # R vs FUV-NUV
         sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
-        #h = sub.pcolormesh(r_edges, fn_edges, _x[2].T,
-        #        vmin=1e-5, vmax=1e-2, norm=mpl.colors.LogNorm(), cmap=clr)
         DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        #sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
@@ -470,6 +668,198 @@ def ABC_Observables():
     fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
     ffig = os.path.join(fig_dir, 'abc_observables.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+
+    obs_lims = [(20, 22.5), (0., 1.5), (-0.5, 4)]
+    obs_lbls = [r'$M_r$ luminosity', '$G - R$', '$FUV - NUV$']
+    yobs_lbls = [r'$\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
+
+    fig = plt.figure(figsize=(15,4))
+    for i in range(3):
+        sub = fig.add_subplot(1,3,i+1)
+        
+        if i == 0: 
+            mr_bin = np.linspace(20, 23, 7) 
+            dmr = mr_bin[1:] - mr_bin[:-1]
+
+            Ngal_simba, _ = np.histogram(x_simba[i], bins=mr_bin)
+            Ngal_tng, _ = np.histogram(x_tng[i], bins=mr_bin)
+
+            phi_simba   = Ngal_simba.astype(float) / vol_simba / dmr
+            phi_tng     = Ngal_tng.astype(float) / vol_tng / dmr
+
+            sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_simba, c='C1')
+            sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_tng, c='C0')
+
+            fsdss = os.path.join(dat_dir, 'obs',
+                    'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
+            mr_low, mr_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
+            sub.errorbar(-0.5*(mr_low + mr_high), phi_sdss, yerr=err_phi_sdss,
+                    fmt='.k', label='SDSS Centrals')
+            sub.set_yscale('log') 
+            sub.set_ylim(5e-5, 8e-3) 
+        else: 
+            _ = sub.hist(x_simba[i], 
+                    weights=np.repeat(1./vol_simba, len(x_simba[i])),
+                    range=ranges[i], bins=20, color='C1', histtype='step') 
+            _ = sub.hist(x_tng[i][x_tng[0] > 20], 
+                    weights=np.repeat(1./vol_tng, len(x_tng[i])),
+                    range=ranges[i], bins=20, color='C0', histtype='step') 
+            _ = sub.hist(x_obs[i],
+                    weights=np.repeat(1./vol_sdss, len(x_obs[i])), 
+                    range=ranges[i], bins=20, color='k',
+                    linestyle='--', histtype='step') 
+    
+        sub.set_xlabel(obs_lbls[i], fontsize=20) 
+        sub.set_xlim(obs_lims[i]) 
+        sub.set_ylabel(yobs_lbls[i], fontsize=20)
+        
+    fig.subplots_adjust(wspace=0.4)
+    ffig = os.path.join(fig_dir, 'abc_observables.1d.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_tnorm_Observables(): 
+    ''' figure presenting the ABC posterior observables for tnorm models 
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(name='sdss',
+            statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.5), (-1., 4.)]
+
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    
+    mr_complete = (sdss['mr_tinker'][...] < -20.)
+
+    x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
+            sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
+            sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'simba.tnorm_noll_msfr.L2.3d', 'theta.t6.dat')) 
+    theta_simba = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'tng.tnorm_noll_msfr.L2.3d', 'theta.t5.dat')) 
+    theta_tng = np.median(theta_T, axis=0) 
+
+    x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
+            model='tnorm', zero_sfr_sample=True)
+    x_tng, sfr0_tng = _sim_observables('tng', theta_tng,
+            model='tnorm', zero_sfr_sample=True)
+    #########################################################################
+    # plotting 
+    #########################################################################
+    xs      = [x_obs, x_simba, x_tng]
+    names   = ['SDSS', 'SIMBA (w/ DEM)', 'TNG (w/ DEM)']
+    clrs    = ['k', 'C1', 'C0']
+    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng] 
+
+    fig = plt.figure(figsize=(5*len(xs),10))
+
+    #for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+    for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
+        # R vs (G - R)
+        sub = fig.add_subplot(2,len(xs),i+1)
+        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1.])
+
+        # R vs FUV-NUV
+        sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
+        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        #sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+    
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_tnorm_observables.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    
+    obs_lims = [(20, 22.5), (0., 1.5), (-0.5, 4)]
+    obs_lbls = [r'$M_r$ luminosity', '$G - R$', '$FUV - NUV$']
+    yobs_lbls = [r'$\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
+
+    fig = plt.figure(figsize=(15,4))
+    for i in range(3):
+        sub = fig.add_subplot(1,3,i+1)
+        
+        if i == 0: 
+            mr_bin = np.linspace(20, 23, 7) 
+            dmr = mr_bin[1:] - mr_bin[:-1]
+
+            Ngal_simba, _ = np.histogram(x_simba[i], bins=mr_bin)
+            Ngal_tng, _ = np.histogram(x_tng[i], bins=mr_bin)
+
+            phi_simba   = Ngal_simba.astype(float) / vol_simba / dmr
+            phi_tng     = Ngal_tng.astype(float) / vol_tng / dmr
+
+            sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_simba, c='C1')
+            sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_tng, c='C0')
+
+            fsdss = os.path.join(dat_dir, 'obs',
+                    'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
+            mr_low, mr_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
+            sub.errorbar(-0.5*(mr_low + mr_high), phi_sdss, yerr=err_phi_sdss,
+                    fmt='.k', label='SDSS Centrals')
+            sub.set_yscale('log') 
+            sub.set_ylim(5e-5, 8e-3) 
+        else: 
+            _ = sub.hist(x_simba[i], 
+                    weights=np.repeat(1./vol_simba, len(x_simba[i])),
+                    range=ranges[i], bins=20, color='C1', histtype='step') 
+            _ = sub.hist(x_tng[i][x_tng[0] > 20], 
+                    weights=np.repeat(1./vol_tng, len(x_tng[i])),
+                    range=ranges[i], bins=20, color='C0', histtype='step') 
+            _ = sub.hist(x_obs[i],
+                    weights=np.repeat(1./vol_sdss, len(x_obs[i])), 
+                    range=ranges[i], bins=20, color='k',
+                    linestyle='--', histtype='step') 
+    
+        sub.set_xlabel(obs_lbls[i], fontsize=20) 
+        sub.set_xlim(obs_lims[i]) 
+        sub.set_ylabel(yobs_lbls[i], fontsize=20)
+        
+    fig.subplots_adjust(wspace=0.6)
+    ffig = os.path.join(fig_dir, 'abc_tnorm_observables.1d.png') 
     fig.savefig(ffig, bbox_inches='tight') 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
@@ -493,5 +883,8 @@ if __name__=="__main__":
     #SMFs() 
     #DEM()
     #Observables()
+    #slab_tnorm_comparison()
     #ABC_corner() 
-    ABC_Observables()
+    #_ABC_Observables()
+    #ABC_Observables()
+    ABC_tnorm_Observables()
