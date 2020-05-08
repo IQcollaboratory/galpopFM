@@ -11,7 +11,6 @@ where $F_o$ is the observed flux and $F_i$ is the intrinsic flux. We normalize t
     A(\lambda) = A_V \frac{k(\lambda)}{k_V}. 
 \end{equation}
 
-
 For the normalization of the attenuation curve, $A_V$, we use the slab model
 from~\cite{somerville1999, somerville2012}. In the slab model the amplitude of
 attuenuation depends on the inclination angle, $i$, and the optical depth,
@@ -111,43 +110,53 @@ The SDSS $A_V$ measurements can be negative in \cite{brinchmann2004} because
 To ensure that our results do not depend significantly on the slab
 model, we implement a more flexible alternative model for sampling $A_V$ based on a
 truncated normal distribution: 
-\begin{equation}
+\begin{equation} \label{eq:tnorm}
     A_V \sim \mathcal{N}_T(\mu_{A_V}, \sigma_{A_V}) =
     \frac{\mathcal{N}(\mu_{A_V}, \sigma_{A_V})}{1 -
     \Phi\left(-\frac{\mu_{A_V}}{\sigma_{A_V}}\right)}.
 \end{equation}
-$\mathcal{N}$ is the standard normal distribution and $\Phi$ is the cumulative
-distribution function of the standard normal distribution function.
-$\Phi(x) = \frac{1}{2}(1+{\rm erf}(x/\sqrt{2})$. $\mu_{A_V}$ and $\sigma_{A_V}$
+$\mathcal{N}$ is the standard normal distribution and 
+$\Phi(x) = \frac{1}{2}\left(1+{\rm erf}(x/\sqrt{2})\right)$ is the cumulative
+distribution function of $\mathcal{N}$. $\mu_{A_V}$ and $\sigma_{A_V}$
 are the mean and variance of the truncated normal distribution. 
-\todo{There}
+
+There's evidence that $\mu_{A_V}$ and $\sigma_{A_V}$ depend on $M_*$ and SFR,
+so we parameterize them in a similar fashion as $\tau_V$ in Eq.~\ref{eq:balh}: 
+\begin{align}\label{eq:tnorm_param} 
+    \mu_{A_V}       &= m_{\mu,1} (\log~M_* - 10.) + m_{\mu,2} \log~{\rm SFR} + c_\mu \\
+    \sigma_{A_V}    &= m_{\sigma,1} (\log~M_* - 10.) + m_{\sigma,2} \log~{\rm SFR} + c_\sigma \\
+\end{align}
 
 
 \begin{figure}
-\begin{center}
-    \includegraphics[width=0.75\textwidth]{figs/slab_tnorm.pdf} 
-    \caption{Comparisons of $A_V$ distribution from slab model
-    (Eq.~\ref{eq:slab}, truncated normal model (Eq.~\ref{eq:tnorm}, and SDSS SF
-    galaxies.}
-\label{fig:dem}
-\end{center}
+    \begin{center}
+        \includegraphics[width=0.75\textwidth]{figs/slab_tnorm.pdf} 
+        \caption{Comparisons of $A_V$ distribution from slab model Eq.~\ref{eq:slab}, truncated normal model Eq.~\ref{eq:tnorm}, and SDSS SF galaxies.}
+        \label{fig:dem}
+    \end{center}
 \end{figure}
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % table of free parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table}
-    \caption{Free Parameters of the Dust Empirical Models \todo{separate
-    section for slab model vs tnorm model}}
+    \caption{Parameters of the Dust Empirical Models}
     \begin{center}
         \begin{tabular}{cc} \toprule
             Parameter & Definition \\[3pt] \hline\hline
+            \multicolumn{2}{c}{DEM with slab model}\\ \hline
             $m_{\tau,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
             $m_{\tau,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
             $c_{\tau}$ & amplitude of the optical depth, $\tau_V$\\
+            \hline
+            \multicolumn{2}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
+            $m_{\mu,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
+            $m_{\mu,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
+            $c_{\mu}$ & amplitude of the optical depth, $\tau_V$\\ 
+            $m_{\sigma,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
+            $m_{\sigma,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
+            $c_{\sigma}$ & amplitude of the optical depth, $\tau_V$\\ 
+            \hline
             $m_{\delta,1}$ & Slope of the $\log M_*$ dependence of the attenuation curve slope, $\delta$\\
             $m_{\delta,2}$ & Slope of the $\log {\rm SFR}$ dependence of the attenuation curve slope, $\delta$\\
             $c_{\delta}$ & amplitude of the attenuation curve slope, $\delta$\\
