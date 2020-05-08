@@ -390,12 +390,12 @@ def slab_tnorm_comparison():
 
     fig = plt.figure(figsize=(10,5))
     sub = fig.add_subplot(111) 
-    _ = sub.hist(np.array(fake_sdss), range=(0., 7), bins=50, density=True, 
+    _ = sub.hist(np.array(fake_sdss), range=(-3., 7), bins=51, density=True, 
             color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
-    _ = sub.hist(np.array(slab_AV(2.)), range=(0., 7), bins=50, density=True, 
+    _ = sub.hist(np.array(slab_AV(2.)), range=(-3., 7), bins=51, density=True, 
             color='k', linestyle='--', linewidth=2, histtype='step', 
             label=r'slab model')
-    _ = sub.hist(np.array(tnorm_AV(1., 0.8)), range=(0., 7), bins=50, density=True, 
+    _ = sub.hist(np.array(tnorm_AV(1., 0.8)), range=(-3., 7), bins=51, density=True, 
             color='C1', linestyle='--', linewidth=2, histtype='step', 
             label=r'$\mathcal{N}_T$ model')
     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
@@ -883,8 +883,8 @@ if __name__=="__main__":
     #SMFs() 
     #DEM()
     #Observables()
-    #slab_tnorm_comparison()
+    slab_tnorm_comparison()
     #ABC_corner() 
     #_ABC_Observables()
     #ABC_Observables()
-    ABC_tnorm_Observables()
+    #ABC_tnorm_Observables()
