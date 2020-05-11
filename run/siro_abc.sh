@@ -1,6 +1,6 @@
 # !/bin/bash
 #PBS -l nodes=1:ppn=24
-#PBS -N simba_slabnollmsfr.L2.3d
+#PBS -N tng_slabnollmsfr.L2.3d
 cd $PBS_O_WORKDIR
 export NPROCS=`wc -l $PBS_NODEFILE |gawk '//{print $1}'`
 export PATH="/home/users/hahn/anaconda3/bin:$PATH"
@@ -8,7 +8,8 @@ export PATH="/home/users/hahn/anaconda3/bin:$PATH"
 source /home/users/hahn/.bashrc
 conda activate iq 
 
-sim='simba'
+sim='tng'
+#dem='tnorm_noll_msfr'
 dem='slab_noll_msfr'
 dist='L2'
 stat='3d'
