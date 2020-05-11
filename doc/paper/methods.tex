@@ -1,5 +1,5 @@
 \section{Dust Empirical Modeling} \label{sec:methods}
-\subsection{Fiducial DEM} 
+\subsection{Fiducial DEM} \label{sec:dem}
 \todo{motivation for the DEM model} 
 
 We begin by defining the dust attenuation curve $A(\lambda)$ as 
@@ -15,7 +15,7 @@ For the normalization of the attenuation curve, $A_V$, we use the slab model
 from~\cite{somerville1999, somerville2012}. In the slab model the amplitude of
 attuenuation depends on the inclination angle, $i$, and the optical depth,
 $\tau_V$: 
-\begin{equation} 
+\begin{equation} \label{eq:slab}
     A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right]
 \end{equation}
 \todo{justification of why this is enough}. We sample $i$ uniformly.
@@ -85,7 +85,17 @@ where we parameterize
 \begin{figure}
 \begin{center}
     \includegraphics[width=0.9\textwidth]{figs/dems.pdf}
-    \caption{comparison of fiducial DEM to attenuation curve in the literature.}
+    \caption{Comparison of the attenuation curve for our fiducial dust empirical
+    model (DEM; black) to common attenuation curves in the
+    literature (\citealt{calzetti2001}, orange; \citealt{salim2018}, blue). We compare the curves for typical 
+    star-forming galaxies with ${\rm SFR}=10^{0.5}M_\odot/yr$ in the left panel
+    and for quiescent galaxies with ${\rm SFR}=10^{-2}M_\odot/yr$ in the right.
+    For our fiducial DEM, we use parameter values at {\color{red} the center of the priors
+    listed in Table~\ref{tab:free_param}} and include attenuation curves for $M_* = 10^{9.5}$
+    (dashed) and $10^{11} M_\odot$ (solid). {\em Our fiducial DEM is flexibly
+    parameterized to incorporate both $M_*$ and SFR dependence in the
+    attenuation curve} (Section~\ref{sec:dem}).
+    } 
 \label{fig:dem}
 \end{center}
 \end{figure}
@@ -94,8 +104,11 @@ where we parameterize
 \subsection{Beyond the Slab DEM}  \label{sec:nonslab} 
 A major assumption of our fiducial DEM is that we sample the amplitude of
 attenuation from the slab model. The slab model makes a strong simplifying 
-assumption that the dust in galaxies \todo{details}. \todo{sentence or two
+assumption that the dust in galaxies \todo{details}.
+and that the attenuation depends on the orientation of the galaxy
+\todo{sentence or two
 about how we know the slab model doesn't work}. 
+
 
 Furthermore, the slab model predicts $A_V$ distribution significantly different
 than $A_V$ distributions measured from observations. In Figure~\ref{fig:av_dist}, we compare the $A_V$
@@ -130,8 +143,16 @@ so we parameterize them in a similar fashion as $\tau_V$ in Eq.~\ref{eq:balh}:
 
 \begin{figure}
     \begin{center}
-        \includegraphics[width=0.75\textwidth]{figs/slab_tnorm.pdf} 
-        \caption{Comparisons of $A_V$ distribution from slab model Eq.~\ref{eq:slab}, truncated normal model Eq.~\ref{eq:tnorm}, and SDSS SF galaxies.}
+        \includegraphics[width=0.66\textwidth]{figs/slab_tnorm.pdf} 
+        \caption{Comparison of $A_V$ distribution of SDSS star-forming
+        galaxies (blue) to predictions from the slab model (Eq.~\ref{eq:slab};
+        black). {\color{red} detail on how SDSS SF galaxies are classified.} 
+        The slab model assumes that there's a slab of dust in front of a galaxy.
+        We use $\tau_V=2$ for the slab model above. Regardless of $\tau_V$,
+        however, the slab model predicts a significantly more asymmetric and peaked $A_V$ distribution
+        than observations. Given this disagreement, {\em we include in our
+        analysis a DEM with an empirical prescription for $A_V$ based on a truncated normal 
+        distribution, which better reproduce the observed $A_V$ distribution} (Section~\ref{sec:nonslab}). }
         \label{fig:dem}
     \end{center}
 \end{figure}
@@ -142,14 +163,14 @@ so we parameterize them in a similar fashion as $\tau_V$ in Eq.~\ref{eq:balh}:
 \begin{table}
     \caption{Parameters of the Dust Empirical Models}
     \begin{center}
-        \begin{tabular}{cc} \toprule
-            Parameter & Definition \\[3pt] \hline\hline
-            \multicolumn{2}{c}{DEM with slab model}\\ \hline
+        \begin{tabular}{ccc} \toprule
+            Parameter & Definition & prior\\[3pt] \hline\hline
+            \multicolumn{3}{c}{DEM with slab model}\\ \hline
             $m_{\tau,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
             $m_{\tau,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
             $c_{\tau}$ & amplitude of the optical depth, $\tau_V$\\
             \hline
-            \multicolumn{2}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
+            \multicolumn{3}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
             $m_{\mu,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
             $m_{\mu,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
             $c_{\mu}$ & amplitude of the optical depth, $\tau_V$\\ 
@@ -169,10 +190,20 @@ so we parameterize them in a similar fashion as $\tau_V$ in Eq.~\ref{eq:balh}:
 \end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Likelihood-Free Inference} 
+\subsection{Likelihood-Free Inference} \label{sec:abc}
 Approximate Bayesian Computation with Population Monte Carlo \cite{hahn2017a},
 
-discussion of observables and distance metric 
+To compare the outputs of our DEMs to observations, we first measure the color-magnitude
+observables ($G-R$, $FUV-NUV$, and $M_r$) as described in Section~\ref{sec:fm}
+consistent with SDSS measurements. Afterwards, we compare the forward modeled
+observables to SDSS using a L2 norm distance metric: 
+\begin{equation}
+    \bar{\rho}(\theta) = \sum\limits_{i=1}^{n} \left[X^{\rm SDSS}_i - X^{\rm model}_i(\theta) \right]^2.
+\end{equation}
+$X^{\rm SDSS}$ and $X^{\rm model}(\theta)$ are $n$-dimensional data vectors of
+the SDSS and model observables. In our case, we use a 3-dimensional histogram
+along $G-R$, $FUV-NUV$, 
+
 \cite{ishida2015} 
 
 Paragraph on the priors we choose. 
@@ -180,8 +211,18 @@ Paragraph on the priors we choose.
 \begin{figure}
 \begin{center}
     \includegraphics[width=\textwidth]{figs/abc.pdf}
-    \caption{Posterior of the DEM parameters.}
-\label{fig:dem}
+    \caption{Posterior distribution of our fidicuail DEM parameters derived
+    using Approximate Bayesian Computation (ABC). (Section~\ref{sec:abc})}
+\label{fig:abc}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/abc.pdf}
+    \caption{Posterior distribution of our fidicuail DEM parameters derived
+    using Approximate Bayesian Computation (ABC). (Section~\ref{sec:abc})}
+\label{fig:abc_nonslab}
 \end{center}
 \end{figure}
 

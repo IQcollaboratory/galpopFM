@@ -393,7 +393,7 @@ def slab_tnorm_comparison():
     _ = sub.hist(np.array(fake_sdss), range=(-3., 7), bins=51, density=True, 
             color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
     _ = sub.hist(np.array(slab_AV(2.)), range=(-3., 7), bins=51, density=True, 
-            color='k', linestyle='--', linewidth=2, histtype='step', 
+            color='k', linestyle='-', linewidth=2, histtype='step', 
             label=r'slab model')
     _ = sub.hist(np.array(tnorm_AV(1., 0.8)), range=(-3., 7), bins=51, density=True, 
             color='C1', linestyle='--', linewidth=2, histtype='step', 
@@ -417,6 +417,49 @@ def ABC_corner():
     import abcpmc
     # update these values as I see fit
     name = 'tng.slab_noll_msfr.L2.3d'
+    T = 9 
+
+    dat_dir = os.environ['GALPOPFM_DIR']
+    abc_dir = os.path.join(dat_dir, 'abc', name) 
+    # read pool 
+    theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
+    rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
+    w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
+    
+    prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
+    prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
+        
+    lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
+            r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+            r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+
+    fig = DFM.corner(
+            theta_T, 
+            range=prior_range,
+            weights=w_T,
+            quantiles=[0.16, 0.5, 0.84], 
+            levels=[0.68, 0.95],
+            nbin=20, 
+            smooth=True, 
+            color='C0', 
+            labels=lbls, 
+            label_kwargs={'fontsize': 25}) 
+
+    ffig = os.path.join(fig_dir, 'abc.png')
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_tnorm_corner(): 
+    ''' example corner plot of DEM parameters
+    '''
+    import abcpmc
+    # update these values as I see fit
+    name = 'tng.tnorm_noll_msfr.L2.3d'
     T = 9 
 
     dat_dir = os.environ['GALPOPFM_DIR']
