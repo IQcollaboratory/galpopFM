@@ -37,6 +37,7 @@ vol_sdss = 766021.225579427
 vol_simba = 100.**3 # (Mpc/h)^3
 vol_tng = 75.**3 # (Mpc/h)^3
 
+
 def SDSS():
     ''' figure illustrating our SDSS 
     '''
@@ -377,32 +378,51 @@ def slab_tnorm_comparison():
     observed SDSS. 
     '''
     from scipy.stats import truncnorm
-    # randomly sample the inclinatiion angle from 0 - pi/2 
-    incl = np.random.uniform(0., 0.5*np.pi, size=int(1e4))
-    sec_incl = 1./np.cos(incl) 
+    # MPA-JHU Av from SED fitting 
+    sdss_av, gal_type = np.loadtxt(os.path.join(dat_dir, 'obs', 'SDSS_Av.txt'),
+            unpack=True, usecols=[1, 2]) 
+    sdss_av = sdss_av[gal_type == 1]
+
+    # read in SDSS (Jeremy's catalog) 
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5')
+    sdss = h5py.File(fsdss, 'r')
+    
+    R_mag   = sdss['mr_tinker'][...]
+    
+    Rlim = (R_mag < -20.)
+    logms   = np.log10(sdss['ms_tinker'][...])[Rlim]
+    logsfr  = sdss['sfr_tinker'][...][Rlim] + logms
 
     #Eq. 14 of Somerville+(1999) 
-    slab_AV = lambda tauV: -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl))
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=np.sum(Rlim))
+    sec_incl = 1./np.cos(incl) 
 
-    tnorm_AV = lambda mu_Av, sig_Av: truncnorm.rvs((0. - mu_Av)/sig_Av, np.inf, loc=mu_Av, scale=sig_Av,
-            size=int(1e4)) 
-    fake_sdss = 1. + 0.7 * np.random.randn(int(1e4))
+    tauV = np.clip(2. * (logms - 10.) + 1 * logsfr + 0.5, 1e-3, None) 
+    slab_AV = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl))
+
+    # tnorm AV 
+    mu_Av   = np.clip(-1*(logms - 10.) + 2., 0., None) 
+    sig_Av  = np.clip(-0.5 * (logms - 10.) + 1., 0.1, None) # can't be too narrow
+
+    tnorm_AV = [truncnorm.rvs((0. - _mu_Av)/_sig_Av, np.inf, loc=_mu_Av,
+            scale=_sig_Av)  for _mu_Av, _sig_Av in zip(mu_Av, sig_Av)]
 
     fig = plt.figure(figsize=(10,5))
     sub = fig.add_subplot(111) 
-    _ = sub.hist(np.array(fake_sdss), range=(-3., 7), bins=51, density=True, 
+    _ = sub.hist(sdss_av, range=(-3., 7), bins=51, density=True, 
             color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
-    _ = sub.hist(np.array(slab_AV(2.)), range=(-3., 7), bins=51, density=True, 
+    _ = sub.hist(np.array(slab_AV), range=(-3., 7), bins=51, density=True, 
             color='k', linestyle='-', linewidth=2, histtype='step', 
             label=r'slab model')
-    _ = sub.hist(np.array(tnorm_AV(1., 0.8)), range=(-3., 7), bins=51, density=True, 
+    _ = sub.hist(np.array(tnorm_AV), range=(-3., 7), bins=51, density=True, 
             color='C1', linestyle='--', linewidth=2, histtype='step', 
             label=r'$\mathcal{N}_T$ model')
-    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+    sub.legend(loc='upper right', handletextpad=0.3, fontsize=20) 
     sub.set_xlabel(r'$A_V$', fontsize=25) 
     sub.set_ylabel(r'$p(A_V)$', fontsize=25) 
     sub.set_xlim(-0.2, 5.) 
-    sub.set_ylim(0., 2.) 
+    sub.set_ylim(0., 1.) 
     
     ffig = os.path.join(fig_dir, 'slab_tnorm.png')
     fig.savefig(ffig, bbox_inches='tight') 
