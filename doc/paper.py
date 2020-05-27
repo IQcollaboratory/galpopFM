@@ -378,10 +378,14 @@ def slab_tnorm_comparison():
     observed SDSS. 
     '''
     from scipy.stats import truncnorm
+    from pydl.pydlutils.spheregroup import spherematch
     # MPA-JHU Av from SED fitting 
-    sdss_av, gal_type = np.loadtxt(os.path.join(dat_dir, 'obs', 'SDSS_Av.txt'),
-            unpack=True, usecols=[1, 2]) 
-    sdss_av = sdss_av[gal_type == 1]
+    mpajhu_av, gal_type, mpajhu_ra, mpajhu_dec  = np.loadtxt(os.path.join(dat_dir, 'obs', 'SDSS_Av.txt'),
+            unpack=True, usecols=[1, 2, -2, -1]) 
+    starforming = (gal_type == 1) 
+    mpajhu_av = mpajhu_av[starforming]
+    mpajhu_ra = mpajhu_ra[starforming] 
+    mpajhu_dec = mpajhu_dec[starforming]
 
     # read in SDSS (Jeremy's catalog) 
     fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5')
@@ -389,28 +393,37 @@ def slab_tnorm_comparison():
     
     R_mag   = sdss['mr_tinker'][...]
     
-    Rlim = (R_mag < -20.)
-    logms   = np.log10(sdss['ms_tinker'][...])[Rlim]
-    logsfr  = sdss['sfr_tinker'][...][Rlim] + logms
+    Rlim = (R_mag < -20.) & (sdss['RA'][...] != -999.) & (sdss['DEC'][...] != -999.)
+    ra      = sdss['RA'][...][Rlim] 
+    dec     = sdss['DEC'][...][Rlim] 
+
+    # match MPAJHU star forming AV to SDSS  
+    match = spherematch(ra, dec, mpajhu_ra, mpajhu_dec, 0.000277778)
+    m_sdss = match[0] 
+    m_mpajhu = match[1] 
+    print('%i matches out of %i, %i SDSS R < -20.' % (len(m_sdss), np.sum(Rlim), np.sum(R_mag < -20.))) 
+
+    logms   = np.log10(sdss['ms_tinker'][...])[Rlim][m_sdss]
+    logsfr  = sdss['sfr_tinker'][...][Rlim][m_sdss] + logms
 
     #Eq. 14 of Somerville+(1999) 
     # randomly sample the inclinatiion angle from 0 - pi/2 
-    incl = np.random.uniform(0., 0.5*np.pi, size=np.sum(Rlim))
+    incl = np.random.uniform(0., 0.5*np.pi, size=len(m_sdss))#np.sum(Rlim))
     sec_incl = 1./np.cos(incl) 
 
-    tauV = np.clip(2. * (logms - 10.) + 1 * logsfr + 0.5, 1e-3, None) 
+    tauV = np.clip(2. * (logms - 10.) + 1 * logsfr + 0.15, 1e-3, None) 
     slab_AV = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl))
 
     # tnorm AV 
-    mu_Av   = np.clip(-1*(logms - 10.) + 2., 0., None) 
-    sig_Av  = np.clip(-0.5 * (logms - 10.) + 1., 0.1, None) # can't be too narrow
+    mu_Av   = np.clip(-1*(logms - 10.) + 1.75, 0., None) 
+    sig_Av  = np.clip(-0.5 * (logms - 10.) + 0.75, 0.1, None) # can't be too narrow
 
     tnorm_AV = [truncnorm.rvs((0. - _mu_Av)/_sig_Av, np.inf, loc=_mu_Av,
             scale=_sig_Av)  for _mu_Av, _sig_Av in zip(mu_Av, sig_Av)]
 
     fig = plt.figure(figsize=(10,5))
     sub = fig.add_subplot(111) 
-    _ = sub.hist(sdss_av, range=(-3., 7), bins=51, density=True, 
+    _ = sub.hist(mpajhu_av[m_mpajhu], range=(-3., 7), bins=51, density=True, 
             color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
     _ = sub.hist(np.array(slab_AV), range=(-3., 7), bins=51, density=True, 
             color='k', linestyle='-', linewidth=2, histtype='step', 
