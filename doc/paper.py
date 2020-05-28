@@ -205,8 +205,8 @@ def DEM():
     sub.plot(wave, _calzetti(wave), c='C1') 
     #sub.text(0.95, 0.95, r'Star-Forming', ha='right',
     #        va='top', transform=sub.transAxes, fontsize=20)
-    sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_low, ha='left',
-            va='top', transform=sub.transAxes, fontsize=20)
+    #sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_low, ha='left',
+    #        va='top', transform=sub.transAxes, fontsize=20)
 
     sub.set_xlim(1.2e3, 1e4)
     sub.set_xticklabels([]) 
@@ -230,13 +230,15 @@ def DEM():
     sub.set_yticklabels([]) 
     sub.set_ylim(0., 7.) 
     sub.set_title('Quiescent', fontsize=20)
+    sub.text(1.01, 0.5, r'$M_*\sim 10^{%.f}M_\odot$' % M_low, 
+            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
     
     sub = fig.add_subplot(223) 
     sub.plot(wave, _dem(wave, M_high, logSFR_sf), c='k')
     sub.plot(wave, _salim2018(wave, M_high, logSFR_sf), c='C0')
     sub.plot(wave, _calzetti(wave), c='C1') 
-    sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_high, ha='left',
-            va='top', transform=sub.transAxes, fontsize=20)
+    #sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_high, ha='left',
+    #        va='top', transform=sub.transAxes, fontsize=20)
 
     sub.set_xlim(1.2e3, 1e4)
     sub.set_ylim(0., 7.) 
@@ -250,12 +252,14 @@ def DEM():
     sub.set_xlim(1.2e3, 1e4)
     sub.set_yticklabels([]) 
     sub.set_ylim(0., 7.) 
+    sub.text(1.01, 0.5, r'$M_*\sim 10^{%.f}M_\odot$' % M_high,
+            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
     bkgd.set_ylabel(r'$A(\lambda)$', labelpad=10, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    fig.subplots_adjust(wspace=0.1)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
     ffig = os.path.join(fig_dir, 'dems.png') 
     fig.savefig(ffig, bbox_inches='tight') 
