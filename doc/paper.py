@@ -132,6 +132,13 @@ def SMFs():
 def DEM(): 
     ''' comparison of DEM attenuation curve to standard attenuation curves in
     the literature.
+
+    todo: 
+    * compile the following attenuation curves: 
+        * Cardelli+(1989) MW
+        * Wild+(2011)
+        * Kriek & Conroy (2013)
+        * Reddy+(2015)    
     '''
     k_V_calzetti = 4.87789
 
@@ -152,6 +159,11 @@ def DEM():
         # calzetti is already normalized to k_V
         A_lambda = A_V * (dustFM.calzetti_absorption(lam) + D_bump / k_V_calzetti) * (lam / 5500.)**delta 
         return A_lambda
+
+    def _cardelli89_mw(_lam): 
+        x = 10000./_lam
+        y = x - 1.82
+        return None  
 
     def _salim2018(_lam, logm, logsfr): 
         lam = _lam/10000. 
@@ -177,45 +189,71 @@ def DEM():
     def _calzetti(lam): 
         return dustFM.calzetti_absorption(lam)
 
-    wave = np.linspace(1e3, 1e4, 1e3) 
+    wave = np.linspace(1000, 10000, 1000) 
 
-    fig = plt.figure(figsize=(11,4))
+    fig = plt.figure(figsize=(11,8))
     
-    # SFing galaxies
-    logSFR = 0.5
-    sub = fig.add_subplot(121) 
-    sub.plot(wave, _dem(wave, 9.5, logSFR), c='k', ls='--')
-    sub.plot(wave, _dem(wave, 11.0, logSFR), c='k', ls='-')
-    sub.plot(wave, _salim2018(wave, 11.0, logSFR), c='C0')
+    logSFR_sf = 0.5
+    logSFR_q = -2.
+    M_low = 10.
+    M_high = 11.
+
+    # low mass SFing galaxies
+    sub = fig.add_subplot(221) 
+    sub.plot(wave, _dem(wave, M_low, logSFR_sf), c='k')
+    sub.plot(wave, _salim2018(wave, M_low, logSFR_sf), c='C0')
     sub.plot(wave, _calzetti(wave), c='C1') 
-    #sub.text(0.95, 0.95, r'Star-Forming ($\log {\rm SFR} = 0.5$)', ha='right', va='top', transform=sub.transAxes, fontsize=20)
-    sub.text(0.95, 0.95, r'Star-Forming', ha='right', va='top', transform=sub.transAxes, fontsize=20)
+    #sub.text(0.95, 0.95, r'Star-Forming', ha='right',
+    #        va='top', transform=sub.transAxes, fontsize=20)
+    sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_low, ha='left',
+            va='top', transform=sub.transAxes, fontsize=20)
+
     sub.set_xlim(1.2e3, 1e4)
-    sub.set_ylabel('$A(\lambda)$', fontsize=20)
+    sub.set_xticklabels([]) 
+    sub.set_ylim(0., 7.) 
+    sub.set_title('Star-Forming', fontsize=20)
+
+    # low mass Quiescent galaxies
+    logSFR = -2 
+    sub = fig.add_subplot(222) 
+    _plt_dem, = sub.plot(wave, _dem(wave, M_low, logSFR_q), c='k')
+    _plt_salim, = sub.plot(wave, _salim2018(wave, M_low, logSFR_q), c='C0')
+    _plt_cal, = sub.plot(wave, _calzetti(wave), c='C1') 
+
+    sub.legend([_plt_dem, _plt_cal, _plt_salim], 
+            ['DEM', 'Calzetti+(2001)', 'Salim+(2018)'], loc='lower right',
+            bbox_to_anchor=(1., 0.5), handletextpad=0.25, fontsize=16) 
+    #sub.text(0.95, 0.95, r'Quiescent', ha='right',
+    #        va='top', transform=sub.transAxes, fontsize=20)
+    sub.set_xlim(1.2e3, 1e4)
+    sub.set_xticklabels([]) 
+    sub.set_yticklabels([]) 
+    sub.set_ylim(0., 7.) 
+    sub.set_title('Quiescent', fontsize=20)
+    
+    sub = fig.add_subplot(223) 
+    sub.plot(wave, _dem(wave, M_high, logSFR_sf), c='k')
+    sub.plot(wave, _salim2018(wave, M_high, logSFR_sf), c='C0')
+    sub.plot(wave, _calzetti(wave), c='C1') 
+    sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_high, ha='left',
+            va='top', transform=sub.transAxes, fontsize=20)
+
+    sub.set_xlim(1.2e3, 1e4)
     sub.set_ylim(0., 7.) 
 
     # Quiescent galaxies
     logSFR = -2 
-    sub = fig.add_subplot(122) 
-    sub.plot(wave, _dem(wave, 9.5, logSFR), lw=5, c='k', ls='--')
-    _plt_lowm, = sub.plot(wave, _dem(wave, 9.5, logSFR), c='k', ls='--')
-    _plt_highm, = sub.plot(wave, _dem(wave, 11.0, logSFR), c='k')
-    _plt_salim, = sub.plot(wave, _salim2018(wave, 11.0, logSFR), c='C0')
-    _plt_cal, = sub.plot(wave, _calzetti(wave), c='C1') 
-
-    sub.legend([_plt_highm, _plt_lowm, _plt_cal, _plt_salim], 
-            ['DEM ($M_*=10^{11}M_\odot$)', 'DEM ($M_*=10^{9.5}M_\odot$)',
-                'Calzetti+(2001)', 'Salim+(2018)'], loc='lower right',
-            bbox_to_anchor=(1., 0.3), handletextpad=0.25, fontsize=16) 
-    #sub.text(0.95, 0.95, r'Quiescent ($\log {\rm SFR} = -2.$)', ha='right', va='top', transform=sub.transAxes, fontsize=20)
-    sub.text(0.95, 0.95, r'Quiescent', ha='right', va='top', transform=sub.transAxes, fontsize=20)
+    sub = fig.add_subplot(224) 
+    sub.plot(wave, _dem(wave, M_high, logSFR_q), c='k')
+    sub.plot(wave, _salim2018(wave, M_high, logSFR_q), c='C0')
+    sub.plot(wave, _calzetti(wave), c='C1') 
     sub.set_xlim(1.2e3, 1e4)
     sub.set_yticklabels([]) 
     sub.set_ylim(0., 7.) 
 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
-    #bkgd.set_ylabel(r'$P_0/P^{\rm fid}_0$', labelpad=10, fontsize=25) 
+    bkgd.set_ylabel(r'$A(\lambda)$', labelpad=10, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
     fig.subplots_adjust(wspace=0.1)
 
@@ -957,9 +995,9 @@ def fig_tex(ffig, pdf=False):
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
-    #DEM()
+    DEM()
     #Observables()
-    slab_tnorm_comparison()
+    #slab_tnorm_comparison()
     #ABC_corner() 
     #_ABC_Observables()
     #ABC_Observables()
