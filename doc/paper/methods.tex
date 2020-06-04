@@ -181,24 +181,29 @@ it in our analysis.
         \begin{tabular}{ccc} \toprule
             Parameter & Definition & prior\\[3pt] \hline\hline
             \multicolumn{3}{c}{DEM with slab model}\\ \hline
-            $m_{\tau,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
-            $m_{\tau,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
-            $c_{\tau}$ & amplitude of the optical depth, $\tau_V$\\
+            $m_{\tau,1}$ & Slope of the $\log M_*$ dependence of optical depth,
+            $\tau_V$ & flat $\[-5., 5.\]$\\
+            $m_{\tau,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $\[-5., 5.\]$\\
+            $c_{\tau}$ & amplitude of the optical depth, $\tau_V$ & flat $\[0., 6.\]$\\
             \hline
             \multicolumn{3}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
-            $m_{\mu,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
-            $m_{\mu,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
-            $c_{\mu}$ & amplitude of the optical depth, $\tau_V$\\ 
-            $m_{\sigma,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$\\
-            $m_{\sigma,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$\\
-            $c_{\sigma}$ & amplitude of the optical depth, $\tau_V$\\ 
+            $m_{\mu,1}$ & Slope of the $\log M_*$ dependence of optical depth,
+            $\tau_V$ & flat $\[-5., 5.\]$\\
+            $m_{\mu,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical
+            depth, $\tau_V$ & flat $\[-5., 5.\]$\\
+            $c_{\mu}$ & amplitude of the optical depth, $\tau_V$ & flat $\[0., 6.\]$\\ 
+            $m_{\sigma,1}$ & Slope of the $\log M_*$ dependence of optical depth, $\tau_V$ & flat $\[-5., 5.\]$\\
+            $m_{\sigma,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $\[-5., 5.\]$\\
+            $c_{\sigma}$ & amplitude of the optical depth, $\tau_V$ & flat $\[0.1, 3.\]$\\ 
             \hline
-            $m_{\delta,1}$ & Slope of the $\log M_*$ dependence of the attenuation curve slope, $\delta$\\
-            $m_{\delta,2}$ & Slope of the $\log {\rm SFR}$ dependence of the attenuation curve slope, $\delta$\\
-            $c_{\delta}$ & amplitude of the attenuation curve slope, $\delta$\\
-            $m_{E}$ & slope of the $\delta$ dependence of UV dust bump strength, $E_b$\\
-            $c_{E}$ & amplitude of UV dust bump strength, $\delta$\\
-            $f_{\rm neb}$ & fraction of nebular attenuation curve\\
+            $m_{\delta,1}$ & Slope of the $\log M_*$ dependence of the
+            attenuation curve slope, $\delta$ & flat $\[-4., 4.\]$\\
+            $m_{\delta,2}$ & Slope of the $\log {\rm SFR}$ dependence of the
+            attenuation curve slope, $\delta$ & flat $\[-4., 4.\]$\\
+            $c_{\delta}$ & amplitude of the attenuation curve slope, $\delta$ & flat $\[-4., 4.\]$\\
+            $m_{E}$ & slope of the $\delta$ dependence of UV dust bump strength, $E_b$ & flat $\[-4., 0.\]$\\
+            $c_{E}$ & amplitude of UV dust bump strength, $\delta$ & flat $\[0., 4.\]$\\
+            $f_{\rm neb}$ & fraction of nebular attenuation curve & flat $\[1., 4.\]$\\
             \hline
         \end{tabular} \label{tab:free_param}
     \end{center}
@@ -222,6 +227,14 @@ along $G-R$, $FUV-NUV$,
 \cite{ishida2015} 
 
 Paragraph on the priors we choose. 
+\begin{itemize}
+    \item flat priors on everything. We might want to note that this doesn't
+        give flat priors on $\tau_V$ or $\mu_{A_V}$ and $\sigma_{A_V}$ for NT
+        but we're ultimately interested in the dependence. 
+    \item priors were chosen to be uniformative and encompass constraints in
+        the literature:
+    \item $m_E$ and $c_E$ were chosen to be include \cite{kriek2013, narayanan2018, tress2018} 
+\end{itemize}
 
 \begin{figure}
 \begin{center}

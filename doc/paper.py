@@ -491,16 +491,10 @@ def ABC_corner():
     '''
     import abcpmc
     # update these values as I see fit
-    name = 'tng.slab_noll_msfr.L2.3d'
-    T = 9 
-
-    dat_dir = os.environ['GALPOPFM_DIR']
-    abc_dir = os.path.join(dat_dir, 'abc', name) 
-    # read pool 
-    theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
-    rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
-    w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
-    
+    sims = ['SIMBA', 'TNG']
+    names = ['simba.slab_noll_msfr.L2.3d', 'tng.slab_noll_msfr.L2.3d']
+    Ts = [12, 9]
+        
     prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
     prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
     prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
@@ -509,17 +503,48 @@ def ABC_corner():
             r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
             r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
 
-    fig = DFM.corner(
-            theta_T, 
-            range=prior_range,
-            weights=w_T,
-            quantiles=[0.16, 0.5, 0.84], 
-            levels=[0.68, 0.95],
-            nbin=20, 
-            smooth=True, 
-            color='C0', 
-            labels=lbls, 
-            label_kwargs={'fontsize': 25}) 
+    for i, name, T in zip(range(len(names)), names, Ts):
+        dat_dir = os.environ['GALPOPFM_DIR']
+        abc_dir = os.path.join(dat_dir, 'abc', name) 
+
+        # read pool 
+        theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
+        rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
+        w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
+        
+        # we have no constraints on m_E, c_E, and fneb so we ignore 
+        keep_cols = np.zeros(len(lbls)).astype(bool) 
+        keep_cols[:6] = True
+            
+        if i == 0: 
+            fig = DFM.corner(
+                    theta_T[:,keep_cols], 
+                    range=np.array(prior_range)[keep_cols],
+                    weights=w_T,# quantiles=[0.16, 0.5, 0.84], 
+                    levels=[0.68, 0.95],
+                    nbin=20, 
+                    smooth=True, 
+                    color='C%i' % i, 
+                    labels=np.array(lbls)[keep_cols], 
+                    label_kwargs={'fontsize': 25}) 
+        else: 
+            DFM.corner(
+                    theta_T[:,keep_cols], 
+                    range=np.array(prior_range)[keep_cols],
+                    weights=w_T, #quantiles=[0.16, 0.5, 0.84], 
+                    levels=[0.68, 0.95],
+                    nbin=20, 
+                    smooth=True, 
+                    color='C%i' % i, 
+                    labels=np.array(lbls)[keep_cols], 
+                    label_kwargs={'fontsize': 25}, 
+                    fig = fig) 
+    
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    for i, sim in enumerate(sims): 
+        bkgd.fill_between([],[],[], color='C%i' % i, label=sim) 
+    bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
 
     ffig = os.path.join(fig_dir, 'abc.png')
     fig.savefig(ffig, bbox_inches='tight') 
@@ -534,37 +559,65 @@ def ABC_tnorm_corner():
     '''
     import abcpmc
     # update these values as I see fit
-    name = 'tng.tnorm_noll_msfr.L2.3d'
-    T = 9 
-
-    dat_dir = os.environ['GALPOPFM_DIR']
-    abc_dir = os.path.join(dat_dir, 'abc', name) 
-    # read pool 
-    theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
-    rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
-    w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
+    sims = ['SIMBA', 'TNG']
+    names = ['simba.tnorm_noll_msfr.L2.3d', 'tng.tnorm_noll_msfr.L2.3d']
+    Ts = [8, 7]
     
-    prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
-    prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    # priors 
+    prior_min = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., -4., 0., 1.]) 
+    prior_max = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
     prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
-        
-    lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
+
+    lbls = [r'$m_{\mu,1}$', r'$m_{\mu,2}$', r'$c_{\mu}$', 
+            r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
             r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
             r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
 
-    fig = DFM.corner(
-            theta_T, 
-            range=prior_range,
-            weights=w_T,
-            quantiles=[0.16, 0.5, 0.84], 
-            levels=[0.68, 0.95],
-            nbin=20, 
-            smooth=True, 
-            color='C0', 
-            labels=lbls, 
-            label_kwargs={'fontsize': 25}) 
+    for i, name, T in zip(range(len(names)), names, Ts):
+        dat_dir = os.environ['GALPOPFM_DIR']
+        abc_dir = os.path.join(dat_dir, 'abc', name) 
 
-    ffig = os.path.join(fig_dir, 'abc.png')
+        # read pool 
+        theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
+        rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
+        w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
+        
+        # we have no constraints on m_E, c_E, and fneb so we ignore 
+        keep_cols = np.zeros(len(lbls)).astype(bool) 
+        keep_cols[:9] = True
+            
+        if i == 0: 
+            fig = DFM.corner(
+                    theta_T[:,keep_cols], 
+                    range=np.array(prior_range)[keep_cols],
+                    weights=w_T,# quantiles=[0.16, 0.5, 0.84], 
+                    levels=[0.68, 0.95],
+                    nbin=20, 
+                    smooth=True, 
+                    color='C%i' % i, 
+                    labels=np.array(lbls)[keep_cols], 
+                    label_kwargs={'fontsize': 25}) 
+        else: 
+            DFM.corner(
+                    theta_T[:,keep_cols], 
+                    range=np.array(prior_range)[keep_cols],
+                    weights=w_T, #quantiles=[0.16, 0.5, 0.84], 
+                    levels=[0.68, 0.95],
+                    nbin=20, 
+                    smooth=True, 
+                    color='C%i' % i, 
+                    labels=np.array(lbls)[keep_cols], 
+                    label_kwargs={'fontsize': 25}, 
+                    fig = fig) 
+    
+    # legend
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    for i, sim in enumerate(sims): 
+        bkgd.fill_between([],[],[], color='C%i' % i, label=sim) 
+    bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
+
+    ffig = os.path.join(fig_dir, 'abc_tnorm.png')
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
@@ -725,10 +778,10 @@ def ABC_Observables():
     # read in simulations without dust attenuation
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'simba.slab_noll_msfr.L2.3d', 'theta.t6.dat')) 
+        'simba.slab_noll_msfr.L2.3d', 'theta.t12.dat')) 
     theta_simba = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'tng.slab_noll_msfr.L2.3d', 'theta.t4.dat')) 
+        'tng.slab_noll_msfr.L2.3d', 'theta.t9.dat')) 
     theta_tng = np.median(theta_T, axis=0) 
 
     x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
@@ -833,7 +886,13 @@ def ABC_Observables():
         sub.set_xlabel(obs_lbls[i], fontsize=20) 
         sub.set_xlim(obs_lims[i]) 
         sub.set_ylabel(yobs_lbls[i], fontsize=20)
-        
+
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    _plth1, = sub.plot([], [], c='C1')
+    _plth2, = sub.plot([], [], c='C0')
+
+    sub.legend([_plth0, _plth1, _plth2], names, loc='upper right',
+            handletextpad=0.2, fontsize=15) 
     fig.subplots_adjust(wspace=0.4)
     ffig = os.path.join(fig_dir, 'abc_observables.1d.png') 
     fig.savefig(ffig, bbox_inches='tight') 
@@ -999,10 +1058,11 @@ def fig_tex(ffig, pdf=False):
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
-    DEM()
+    #DEM()
     #Observables()
     #slab_tnorm_comparison()
     #ABC_corner() 
+    #ABC_tnorm_corner()
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     #ABC_tnorm_Observables()
