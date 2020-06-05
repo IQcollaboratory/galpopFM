@@ -91,7 +91,41 @@ def compile_seds(name):
     return None 
 
 
+def _eagle_append_sfrinst(): 
+    ''' postprocessing hack to add in instantaneous SFR to preprocessed
+    eagle.hdf5 file.
+
+    notes
+    -----
+    * There's a one element mismatch between EAGLE_mstar_sfr_RefL0100N1504.txt
+      and EAGLE_RefL0100_PosVelMstar_allabove1.8e8Msun.txt where the former has
+      an extra element (index 29807)  
+    '''
+    # read Ms and inst. SFR
+    fprop1 = os.path.join(dat_dir, 'prop', 'EAGLE_mstar_sfr_RefL0100N1504.txt') # M* and SFR inst
+    ms, sfr_inst = np.loadtxt(fprop1, skiprows=1, unpack=True, usecols=[0, 1]) 
+    # read in file used for rest of the galaxy properties to ensure line match 
+    fprop2 = os.path.join(dat_dir, 'prop', 'EAGLE_RefL0100_MstarSFR_allabove1.8e8Msun.txt')
+    logm_ref = np.loadtxt(fprop2, skiprows=1, unpack=True, usecols=[2])
+    
+    # mass cut 
+    masscut = (ms > 1.8e8) 
+    logms = np.log10(ms[masscut]) 
+    # skip extra row in full EAGELdata
+    extrarow = (np.arange(np.sum(masscut)) == 29807)
+    assert np.allclose(logms[~extrarow], logm_ref, rtol=1e-4), "M* don't match"
+
+    logsfr_inst = np.log10(sfr_inst)[masscut][~extrarow]
+
+    fhdf5 = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
+    f = h5py.File(fhdf5, 'a') 
+    f.create_dataset('logsfr.inst', data=logsfr_inst) 
+    f.close()
+    return None
+
+
 if __name__=="__main__": 
     #compile_seds('simba')  
-    compile_seds('tng') 
+    #compile_seds('tng') 
     #compile_seds('eagle') 
+    _eagle_append_sfrinst()
