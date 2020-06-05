@@ -96,7 +96,7 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
-    assert theta.shape[0] == 9, print(theta) 
+    assert theta.shape[0] == 7, print(theta) 
 
     if logsfr == -999.: # if SFR = 0 no attenuation
         return flux_i 
@@ -404,7 +404,7 @@ def DEM_tnorm_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tr
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
-    assert theta.shape[0] == 12, print(theta) 
+    assert theta.shape[0] == 10, print(theta) 
 
     if logsfr == -999.: # if SFR = 0 no attenuation
         return flux_i 

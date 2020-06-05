@@ -146,7 +146,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     Nbins, _ = np.histogramdd(data_vector, bins=nbins, range=ranges)
     
     # volume of simulation 
-    vol = {'simba': 100.**3, 'tng': 75.**3}[sed['sim']]  
+    vol = {'simba': 100.**3, 'tng': 75.**3, 'eagle': 67.77**3}[sed['sim']]  
 
     x_model = Nbins.astype(float) / vol / dRmag / dGR / dfuvnuv / f_downsample
     nbar = dRmag * dGR * dfuvnuv * np.sum(x_model)
