@@ -218,7 +218,7 @@ def median_alongr(rmag, values, rmin=-20., rmax=-24., nbins=16):
 def _read_sed(name, seed=0): 
     ''' read in sed files 
     '''
-    if name not in ['simba', 'tng']: raise NotImplementedError
+    if name not in ['simba', 'tng', 'eagle']: raise NotImplementedError
     fhdf5 = os.path.join(dat_dir, 'sed', '%s.hdf5' % name) 
 
     f = h5py.File(fhdf5, 'r') 
@@ -228,7 +228,8 @@ def _read_sed(name, seed=0):
     sed['sed_noneb']    = f['sed_noneb'][...]
     sed['sed_onlyneb']  = sed['sed_neb'] - sed['sed_noneb'] # only nebular emissoins 
     sed['logmstar']     = f['logmstar'][...] 
-    sed['logsfr.100']   = f['logsfr.100'][...] 
+    if 'logsfr.100' in f.keys(): 
+        sed['logsfr.100']   = f['logsfr.100'][...] 
     sed['logsfr.inst']  = f['logsfr.inst'][...]
     sed['censat']       = f['censat'][...] 
     f.close() 
@@ -245,8 +246,9 @@ def _read_sed(name, seed=0):
     isnan = (~np.isfinite(sed['logsfr.100']))
     sed['logsfr.100'][isnan] = np.log10(np.random.uniform(0., res_sfr, size=np.sum(isnan))) 
     '''
-    isnan = (~np.isfinite(sed['logsfr.100']))
-    sed['logsfr.100'][isnan] = -999.
+    if 'logsfr.100' in f.keys(): 
+        isnan = (~np.isfinite(sed['logsfr.100']))
+        sed['logsfr.100'][isnan] = -999.
     isnan = (~np.isfinite(sed['logsfr.inst']))
     sed['logsfr.inst'][isnan] = -999.
     return sed
@@ -334,6 +336,15 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
                 r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
                 r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+    elif dem == 'slab_noll_msfr_fixbump': 
+        lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
+                r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+                r'$f_{\rm neb}$'] 
+    elif dem == 'tnorm_noll_msfr_fixbump': 
+        lbls = [r'$m_{\mu,1}$', r'$m_{\mu,2}$', r'$c_{\mu}$', 
+                r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
+                r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+                r'$f_{\rm neb}$'] 
     else: 
         raise NotImplementedError
 

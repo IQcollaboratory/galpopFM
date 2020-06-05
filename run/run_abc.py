@@ -122,6 +122,22 @@ def dem_prior(dem_name):
 
     9 free parameters:  
         theta = m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta m_E c_E f_nebular 
+    
+    slab_noll_msfr_fixbump: 
+    ----------------------
+    ABC for slab model + Noll attenuation curve EDM that has linear log M*
+    and linear log SFR dependence. **UV bump to delta relation fixed**
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    tauV    = m_tau1 (log M* - 10.) + m_tau2 logSFR + c_tau
+    delta   = m_delta1  (log M* - 10.) + m_delta2 logSFR + c_delta         -2.2 < delta < 0.4
+    E_b     =  -1.9 * delta + 0.85 (Kriek & Conroy 2013) 
+
+    7 free parameters:  
+        theta = m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta f_nebular 
     '''
     if dem_name == 'slab_calzetti': 
         # m_tau, c_tau, fneb 
@@ -139,6 +155,14 @@ def dem_prior(dem_name):
         # m_mu1, m_mu2, c_mu, m_sig1, m_sig2, c_sig,  m_delta1, m_delta2, c_delta, m_E, c_E, f_nebular
         prior_min = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., -4., 0., 1.]) 
         prior_max = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    elif dem_name == 'slab_noll_msfr_fixbump':
+        #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta fneb
+        prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
+        prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+    elif dem_name == 'tnorm_noll_msfr_fixbump': 
+        # m_mu1, m_mu2, c_mu, m_sig1, m_sig2, c_sig,  m_delta1, m_delta2, c_delta, f_nebular
+        prior_min = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., 1.]) 
+        prior_max = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 4.]) 
     return prior_min, prior_max 
 
 
