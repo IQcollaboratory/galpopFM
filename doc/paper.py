@@ -34,8 +34,9 @@ dat_dir = os.environ['GALPOPFM_DIR']
 fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'figs') 
 
 vol_sdss = 766021.225579427
-vol_simba = 100.**3 # (Mpc/h)^3
-vol_tng = 75.**3 # (Mpc/h)^3
+vol_simba   = 100.**3 # (Mpc/h)^3
+vol_tng     = 75.**3 # (Mpc/h)^3
+vol_eagle   = 67.77**3 # (Mpc/h)^3  Lbox 100 Mpc h = 0.6777
 
 
 def SDSS():
@@ -91,6 +92,10 @@ def SMFs():
     ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
     tng = h5py.File(ftng, 'r')
     cen_tng = tng['censat'][...].astype(bool)
+
+    feag = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
+    eag = h5py.File(feag, 'r')
+    cen_eag = eag['censat'][...].astype(bool)
     #########################################################################
     # calculate SMFs
     #########################################################################
@@ -99,9 +104,11 @@ def SMFs():
 
     Ngal_simba, _   = np.histogram(simba['logmstar'][...][cen_simba], bins=logms_bin)
     Ngal_tng, _     = np.histogram(tng['logmstar'][...][cen_tng], bins=logms_bin)
+    Ngal_eag, _     = np.histogram(eag['logmstar'][...][cen_eag], bins=logms_bin)
 
     phi_simba   = Ngal_simba.astype(float) / vol_simba / dlogms
     phi_tng     = Ngal_tng.astype(float) / vol_tng / dlogms
+    phi_eag     = Ngal_eag.astype(float) / vol_eagle / dlogms
     #########################################################################
     # plot SMFs
     #########################################################################
@@ -113,6 +120,8 @@ def SMFs():
             label='SIMBA')
     sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c='C1', 
             label='TNG')
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_eag, c='C2', 
+            label='EAGLE')
     sub.legend(loc='lower left', handletextpad=0.3, fontsize=20)
     sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
     sub.set_xlim(9.7, 12.5)
@@ -299,13 +308,19 @@ def Observables():
             zero_sfr_sample=False)
     x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(9)]),
             zero_sfr_sample=False)
+    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(9)]),
+            zero_sfr_sample=False)
+    print('--- fraction of galaxies w/ 0 SFR ---') 
+    print('simba %.2f' % (np.sum(sfr0_simba)/len(sfr0_simba)))
+    print('tng %.2f' % (np.sum(sfr0_tng)/len(sfr0_tng)))
+    print('eagle %.2f' % (np.sum(sfr0_eag)/len(sfr0_eag)))
     #########################################################################
     # plotting 
     #########################################################################
-    xs      = [x_obs, x_simba, x_tng]
-    names   = ['SDSS', 'SIMBA (no dust)', 'TNG (no dust)']
-    clrs    = ['k', 'C1', 'C0']
-    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng] 
+    xs      = [x_obs, x_simba, x_tng, x_eag]
+    names   = ['SDSS', 'SIMBA (no dust)', 'TNG (no dust)', 'EAGLE (no dust)']
+    clrs    = ['k', 'C1', 'C0', 'C2']
+    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng, sfr0_eag] 
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
@@ -412,7 +427,7 @@ def _sim_observables(sim, theta, model='slab', zero_sfr_sample=False):
         _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
         _zerosfr[np.sum(cuts):] = True
     mr_cut = x_mod[0] > 20
-    return x_mod[:,mr_cut], (_zerosfr & mr_cut) 
+    return x_mod[:,mr_cut], _zerosfr[mr_cut]
 
 
 def slab_tnorm_comparison(): 
@@ -1059,10 +1074,10 @@ if __name__=="__main__":
     #SDSS()
     #SMFs() 
     #DEM()
-    #Observables()
+    Observables()
     #slab_tnorm_comparison()
     #ABC_corner() 
     #ABC_tnorm_corner()
     #_ABC_Observables()
-    ABC_Observables()
+    #ABC_Observables()
     #ABC_tnorm_Observables()
