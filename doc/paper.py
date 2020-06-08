@@ -371,7 +371,7 @@ def Observables():
     return None 
 
 
-def _sim_observables(sim, theta, model='slab', zero_sfr_sample=False): 
+def _sim_observables(sim, theta, model='slab', fixbump=True, zero_sfr_sample=False): 
     ''' read specified simulations and return data vector 
 
     :param zero_sfr_sample: 
@@ -413,7 +413,8 @@ def _sim_observables(sim, theta, model='slab', zero_sfr_sample=False):
     if not zero_sfr_sample: 
         # SFR=0 observables are *not* sampled. Returns indices 
         x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-                dem='%s_noll_msfr' % model, f_downsample=f_downsample, statistic='2d',
+                dem='%s_noll_msfr' % (model, ['', '_fixbump'][fixbump]), 
+                f_downsample=f_downsample, statistic='2d',
                 return_datavector=True)
         _zerosfr = sim_sed['logsfr.inst'] == -999
     else: 
@@ -422,7 +423,8 @@ def _sim_observables(sim, theta, model='slab', zero_sfr_sample=False):
                 _sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
 
         x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-                dem='%s_noll_msfr' % model, f_downsample=f_downsample, statistic='2d',
+                dem='%s_noll_msfr' % (model, ['', '_fixbump'][fixbump]), 
+                f_downsample=f_downsample, statistic='2d',
                 extra_data=zerosfr_obs, return_datavector=True)
         _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
         _zerosfr[np.sum(cuts):] = True
@@ -506,17 +508,19 @@ def ABC_corner():
     '''
     import abcpmc
     # update these values as I see fit
-    sims = ['SIMBA', 'TNG']
-    names = ['simba.slab_noll_msfr.L2.3d', 'tng.slab_noll_msfr.L2.3d']
-    Ts = [12, 9]
+    sims = ['SIMBA', 'TNG', 'EAGLE']
+    names = ['simba.slab_noll_msfr_fixbump.L2.3d',
+            'tng.slab_noll_msfr_fixbump.L2.3d', 
+            'eagle.slab_noll_msfr_fixbump.L2.3d']
+    Ts = [6, 5, 5]
         
-    prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
-    prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
+    prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
     prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
         
     lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
             r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
-            r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+            r'$f_{\rm neb}$'] 
 
     for i, name, T in zip(range(len(names)), names, Ts):
         dat_dir = os.environ['GALPOPFM_DIR']
@@ -562,6 +566,75 @@ def ABC_corner():
     bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
 
     ffig = os.path.join(fig_dir, 'abc.png')
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def _ABC_corner_flexbump(): 
+    ''' example corner plot of DEM parameters
+    '''
+    import abcpmc
+    # update these values as I see fit
+    sims = ['SIMBA', 'TNG', 'EAGLE']
+    names = ['simba.slab_noll_msfr.L2.3d', 'tng.slab_noll_msfr.L2.3d', 'eagle.slab_noll_msfr.L2.3d']
+    Ts = [5, 5, 5]
+        
+    prior_min = np.array([-5., -5., 0., -4., -4., -4., -4., 0., 1.]) 
+    prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
+        
+    lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
+            r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+            r'$m_{E}$', r'$c_E$',
+            r'$f_{\rm neb}$'] 
+
+    for i, name, T in zip(range(len(names)), names, Ts):
+        dat_dir = os.environ['GALPOPFM_DIR']
+        abc_dir = os.path.join(dat_dir, 'abc', name) 
+
+        # read pool 
+        theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
+        rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
+        w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
+        
+        # we have no constraints on m_E, c_E, and fneb so we ignore 
+        keep_cols = np.zeros(len(lbls)).astype(bool) 
+        keep_cols[:6] = True
+            
+        if i == 0: 
+            fig = DFM.corner(
+                    theta_T[:,keep_cols], 
+                    range=np.array(prior_range)[keep_cols],
+                    weights=w_T,# quantiles=[0.16, 0.5, 0.84], 
+                    levels=[0.68, 0.95],
+                    nbin=20, 
+                    smooth=True, 
+                    color='C%i' % i, 
+                    labels=np.array(lbls)[keep_cols], 
+                    label_kwargs={'fontsize': 25}) 
+        else: 
+            DFM.corner(
+                    theta_T[:,keep_cols], 
+                    range=np.array(prior_range)[keep_cols],
+                    weights=w_T, #quantiles=[0.16, 0.5, 0.84], 
+                    levels=[0.68, 0.95],
+                    nbin=20, 
+                    smooth=True, 
+                    color='C%i' % i, 
+                    labels=np.array(lbls)[keep_cols], 
+                    label_kwargs={'fontsize': 25}, 
+                    fig = fig) 
+    
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    for i, sim in enumerate(sims): 
+        bkgd.fill_between([],[],[], color='C%i' % i, label=sim) 
+    bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
+
+    ffig = os.path.join(fig_dir, 'abc.flexbump.png')
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
@@ -793,24 +866,28 @@ def ABC_Observables():
     # read in simulations without dust attenuation
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'simba.slab_noll_msfr.L2.3d', 'theta.t12.dat')) 
+        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t6.dat')) 
     theta_simba = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'tng.slab_noll_msfr.L2.3d', 'theta.t9.dat')) 
+        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t5.dat')) 
     theta_tng = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t5.dat')) 
+    theta_eagle = np.median(theta_T, axis=0) 
 
     x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
             zero_sfr_sample=True)
     x_tng, sfr0_tng = _sim_observables('tng', theta_tng,
             zero_sfr_sample=True)
-
+    x_eagle, sfr0_eagle = _sim_observables('eagle', theta_eagle,
+            zero_sfr_sample=True)
     #########################################################################
     # plotting 
     #########################################################################
-    xs      = [x_obs, x_simba, x_tng]
-    names   = ['SDSS', 'SIMBA (w/ DEM)', 'TNG (w/ DEM)']
-    clrs    = ['k', 'C1', 'C0']
-    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng] 
+    xs      = [x_obs, x_simba, x_tng, x_eagle]
+    names   = ['SDSS', 'SIMBA (w/ DEM)', 'TNG (w/ DEM)', 'EAGLE (w/ DEM)']
+    clrs    = ['k', 'C1', 'C0', 'C2']
+    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng, sfr0_eagle] 
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
@@ -872,12 +949,15 @@ def ABC_Observables():
 
             Ngal_simba, _ = np.histogram(x_simba[i], bins=mr_bin)
             Ngal_tng, _ = np.histogram(x_tng[i], bins=mr_bin)
+            Ngal_eagle, _ = np.histogram(x_eagle[i], bins=mr_bin)
 
             phi_simba   = Ngal_simba.astype(float) / vol_simba / dmr
             phi_tng     = Ngal_tng.astype(float) / vol_tng / dmr
+            phi_eagle   = Ngal_eagle.astype(float) / vol_eagle / dmr
 
             sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_simba, c='C1')
             sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_tng, c='C0')
+            sub.plot(0.5*(mr_bin[1:] + mr_bin[:-1]), phi_eagle, c='C2')
 
             fsdss = os.path.join(dat_dir, 'obs',
                     'tinker_SDSS_centrals_M9.7.phi_Mr.dat') 
@@ -893,6 +973,9 @@ def ABC_Observables():
             _ = sub.hist(x_tng[i][x_tng[0] > 20], 
                     weights=np.repeat(1./vol_tng, len(x_tng[i])),
                     range=ranges[i], bins=20, color='C0', histtype='step') 
+            _ = sub.hist(x_eagle[i], 
+                    weights=np.repeat(1./vol_eagle, len(x_eagle[i])),
+                    range=ranges[i], bins=20, color='C2', histtype='step') 
             _ = sub.hist(x_obs[i],
                     weights=np.repeat(1./vol_sdss, len(x_obs[i])), 
                     range=ranges[i], bins=20, color='k',
@@ -1074,10 +1157,12 @@ if __name__=="__main__":
     #SDSS()
     #SMFs() 
     #DEM()
-    Observables()
-    #slab_tnorm_comparison()
-    #ABC_corner() 
-    #ABC_tnorm_corner()
+    #Observables()
+    ABC_corner() 
+    _ABC_corner_flexbump() 
     #_ABC_Observables()
     #ABC_Observables()
+    
+    #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
+    #slab_tnorm_comparison()

@@ -7,6 +7,7 @@ script to plot ABC
 import os 
 import sys 
 import h5py 
+import getpass
 import numpy as np 
 import corner as DFM 
 # -- abcpmc -- 
@@ -31,12 +32,33 @@ mpl.rcParams['ytick.major.width'] = 1.5
 mpl.rcParams['legend.frameon'] = False
 
 
-def get_abc(T, name, abc_dir=None):
+def get_abc(T, name, pwd, abc_dir=None):
     ''' scp ABC files from sirocco
     '''
-    cmd = ('scp sirocco:/home/users/hahn/data/galpopfm/abc/%s/*t%i.dat %s/' % 
-            (name, T, abc_dir))
+    if not os.path.isdir(abc_dir): 
+        os.system('mkdir -p %s' % abc_dir) 
+
+    f = open('scp_abc.expect', 'w') 
+    cntnt = '\n'.join([
+        '#!/usr/bin/expect',
+        'spawn scp sirocco:/home/users/hahn/data/galpopfm/abc/%s/*t%i.dat %s/' % (name, T, abc_dir),
+        '', 
+        'expect "yes/no" {',
+        '       send "yes\r"'
+	'       expect "*?assword" { send "%s\r" }' % pwd, 
+        '       } "*?assword" { send "%s\r" }' % pwd, 
+        '', 
+        'expect "yes/no" {', 
+        '       send "yes\r"'
+	'       expect "*?assword" { send "%s\r" }' % pwd, 
+        '       } "*?assword" { send "%s\r" }' % pwd, 
+        '', 
+        'interact']) 
+    f.write(cntnt) 
+    f.close()
+    cmd = 'expect scp_abc.expect' 
     os.system(cmd) 
+    os.system('rm scp_abc.expect') 
     return None 
 
 
@@ -174,7 +196,8 @@ def abc_attenuationt(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     _sim_sed = dustInfer._read_sed(sim) 
     cens = _sim_sed['censat'].astype(bool) & (_sim_sed['logmstar'] > 9.4)#
     logms = _sim_sed['logmstar'][cens].copy()
-    logsfr = _sim_sed['logsfr.100'][cens].copy() 
+    #logsfr = _sim_sed['logsfr.100'][cens].copy() 
+    logsfr = _sim_sed['logsfr.inst'][cens].copy() 
     
     A_lambdas, highmass, sfing = [], [], [] 
     for i in np.arange(np.sum(cens))[::100]:  
@@ -193,6 +216,14 @@ def abc_attenuationt(T, sim='simba', dem='slab_calzetti', abc_dir=None):
         elif dem == 'tnorm_noll_msfr': 
             A_lambda = -2.5 * np.log10(dustFM.DEM_tnorm_noll_msfr(theta_med, wave, 
                 flux, logms[i], logsfr[i], nebular=False)) 
+        elif dem == 'slab_noll_msfr_fixbump': 
+            A_lambda = -2.5 * np.log10(dustFM.DEM_slab_noll_msfr_fixbump(theta_med, wave, 
+                flux, logms[i], logsfr[i], nebular=False)) 
+        elif dem == 'tnorm_noll_msfr_fixbump': 
+            A_lambda = -2.5 * np.log10(dustFM.DEM_tnorm_noll_msfr_fixbump(theta_med, wave, 
+                flux, logms[i], logsfr[i], nebular=False)) 
+        else:
+            raise NotImplementedError
         A_lambdas.append(A_lambda) 
 
         if logms[i] > 10.5: 
@@ -269,6 +300,12 @@ def run_params(name):
     elif params['dem'] == 'tnorm_noll_msfr': 
         params['prior_min'] = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., -4., 0., 1.]) 
         params['prior_max'] = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    elif params['dem'] == 'slab_noll_msfr_fixbump':
+        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+    elif params['dem'] == 'tnorm_noll_msfr_fixbump': 
+        params['prior_min'] = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., 1.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 4.]) 
     else: 
         raise NotImplementedError
     return params 
@@ -278,14 +315,13 @@ if __name__=="__main__":
     ####################### inputs #######################
     fetch   = sys.argv[1] == 'True'
     name    = sys.argv[2] # name of ABC run
-    niter   = int(sys.argv[3]) # number of iterations
-    print('plot %s ABC iteration %i' % (name, niter)) 
+    i0      = int(sys.argv[3])
+    i1      = int(sys.argv[4]) 
+    if fetch: 
+        pwd = getpass.getpass('sirocco password: ') 
     ######################################################
     dat_dir = os.environ['GALPOPFM_DIR']
     abc_dir = os.path.join(dat_dir, 'abc', name) 
-
-    if fetch: 
-         get_abc(niter, name, abc_dir=abc_dir)   
 
     params = run_params(name)
     sim = params['sim'] 
@@ -293,10 +329,16 @@ if __name__=="__main__":
     prior_min = params['prior_min'] 
     prior_max = params['prior_max'] 
     prior = abcpmc.TophatPrior(prior_min, prior_max) 
-    
-    # plot the pools 
-    plot_pool(niter, prior=prior, dem=dem, abc_dir=abc_dir)
-    # plot ABCC summary statistics  
-    abc_sumstat(niter, sim=sim, dem=dem, abc_dir=abc_dir)
-    # plot attenuation 
-    abc_attenuationt(niter, sim=sim, dem=dem, abc_dir=abc_dir)
+
+    for niter in range(i0, i1+1):
+        print('plot %s ABC iteration %i' % (name, niter)) 
+        if fetch: 
+            print('  downloading ABC %i' % niter) 
+            get_abc(niter, name, pwd, abc_dir=abc_dir)   
+
+        # plot the pools 
+        plot_pool(niter, prior=prior, dem=dem, abc_dir=abc_dir)
+        # plot ABCC summary statistics  
+        abc_sumstat(niter, sim=sim, dem=dem, abc_dir=abc_dir)
+        # plot attenuation 
+        abc_attenuationt(niter, sim=sim, dem=dem, abc_dir=abc_dir)
