@@ -6,11 +6,11 @@
 #dem=simba.tnorm_noll_msfr_fixbump.L2.3d
 #dem=tng.slab_noll_msfr.L2.3d
 #dem=tng.tnorm_noll_msfr.L2.3d
-#dem=tng.slab_noll_msfr_fixbump.L2.3d
+dem=tng.slab_noll_msfr_fixbump.L2.3d
 #dem=tng.tnorm_noll_msfr_fixbump.L2.3d
-dem=eagle.slab_noll_msfr.L2.3d
+#dem=eagle.slab_noll_msfr.L2.3d
 #dem=eagle.tnorm_noll_msfr.L2.3d
 #dem=eagle.slab_noll_msfr_fixbump.L2.3d
 #dem=eagle.tnorm_noll_msfr_fixbump.L2.3d
 
-python /Users/ChangHoon/projects/galpopFM/run/plot_abc.py True $dem 0 5
+python /Users/ChangHoon/projects/galpopFM/run/plot_abc.py True $dem 5 6

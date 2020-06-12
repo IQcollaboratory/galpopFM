@@ -290,7 +290,7 @@ def Observables():
     dr  = r_edges[1] - r_edges[0]
     dgr = gr_edges[1] - gr_edges[0]
     dfn = fn_edges[1] - fn_edges[0]
-    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.5), (-1., 4.)]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
 
     fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
     sdss = h5py.File(fsdss, 'r') 
@@ -304,11 +304,11 @@ def Observables():
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(9)]), 
+    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(7)]), 
             zero_sfr_sample=False)
-    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(9)]),
+    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(7)]),
             zero_sfr_sample=False)
-    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(9)]),
+    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(7)]),
             zero_sfr_sample=False)
     print('--- fraction of galaxies w/ 0 SFR ---') 
     print('simba %.2f' % (np.sum(sfr0_simba)/len(sfr0_simba)))
@@ -340,7 +340,7 @@ def Observables():
         else: 
             sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
-        sub.set_yticks([0., 0.5, 1.])
+        sub.set_yticks([0., 0.5, 1., 1.5])
 
         # R vs FUV-NUV
         sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
@@ -413,7 +413,7 @@ def _sim_observables(sim, theta, model='slab', fixbump=True, zero_sfr_sample=Fal
     if not zero_sfr_sample: 
         # SFR=0 observables are *not* sampled. Returns indices 
         x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-                dem='%s_noll_msfr' % (model, ['', '_fixbump'][fixbump]), 
+                dem='%s_noll_msfr%s' % (model, ['', '_fixbump'][fixbump]), 
                 f_downsample=f_downsample, statistic='2d',
                 return_datavector=True)
         _zerosfr = sim_sed['logsfr.inst'] == -999
@@ -423,7 +423,7 @@ def _sim_observables(sim, theta, model='slab', fixbump=True, zero_sfr_sample=Fal
                 _sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
 
         x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-                dem='%s_noll_msfr' % (model, ['', '_fixbump'][fixbump]), 
+                dem='%s_noll_msfr%s' % (model, ['', '_fixbump'][fixbump]), 
                 f_downsample=f_downsample, statistic='2d',
                 extra_data=zerosfr_obs, return_datavector=True)
         _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
@@ -512,7 +512,7 @@ def ABC_corner():
     names = ['simba.slab_noll_msfr_fixbump.L2.3d',
             'tng.slab_noll_msfr_fixbump.L2.3d', 
             'eagle.slab_noll_msfr_fixbump.L2.3d']
-    Ts = [6, 5, 5]
+    Ts = [7, 6, 9]
         
     prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
     prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
@@ -851,7 +851,7 @@ def ABC_Observables():
     dr  = r_edges[1] - r_edges[0]
     dgr = gr_edges[1] - gr_edges[0]
     dfn = fn_edges[1] - fn_edges[0]
-    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.5), (-1., 4.)]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
 
     fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
     sdss = h5py.File(fsdss, 'r') 
@@ -866,13 +866,13 @@ def ABC_Observables():
     # read in simulations without dust attenuation
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t6.dat')) 
+        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t7.dat')) 
     theta_simba = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t5.dat')) 
+        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t6.dat')) 
     theta_tng = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t5.dat')) 
+        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t9.dat')) 
     theta_eagle = np.median(theta_T, axis=0) 
 
     x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
@@ -885,7 +885,7 @@ def ABC_Observables():
     # plotting 
     #########################################################################
     xs      = [x_obs, x_simba, x_tng, x_eagle]
-    names   = ['SDSS', 'SIMBA (w/ DEM)', 'TNG (w/ DEM)', 'EAGLE (w/ DEM)']
+    names   = ['SDSS', 'SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
     clrs    = ['k', 'C1', 'C0', 'C2']
     sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng, sfr0_eagle] 
 
@@ -908,7 +908,7 @@ def ABC_Observables():
         else: 
             sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
-        sub.set_yticks([0., 0.5, 1.])
+        sub.set_yticks([0., 0.5, 1., 1.5])
 
         # R vs FUV-NUV
         sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
@@ -935,11 +935,11 @@ def ABC_Observables():
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
 
-    obs_lims = [(20, 22.5), (0., 1.5), (-0.5, 4)]
+    obs_lims = [(20, 22.5), (0.2, 1.5), (-0.5, 5)]
     obs_lbls = [r'$M_r$ luminosity', '$G - R$', '$FUV - NUV$']
-    yobs_lbls = [r'$\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
+    yobs_lbls = [r'central luminosity function, $\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
 
-    fig = plt.figure(figsize=(15,4))
+    fig = plt.figure(figsize=(16,4))
     for i in range(3):
         sub = fig.add_subplot(1,3,i+1)
         
@@ -969,17 +969,17 @@ def ABC_Observables():
         else: 
             _ = sub.hist(x_simba[i], 
                     weights=np.repeat(1./vol_simba, len(x_simba[i])),
-                    range=ranges[i], bins=20, color='C1', histtype='step') 
+                    range=ranges[i], bins=20, color='C1', linewidth=2.2, histtype='step') 
             _ = sub.hist(x_tng[i][x_tng[0] > 20], 
                     weights=np.repeat(1./vol_tng, len(x_tng[i])),
-                    range=ranges[i], bins=20, color='C0', histtype='step') 
+                    range=ranges[i], bins=20, color='C0', linewidth=2, histtype='step') 
             _ = sub.hist(x_eagle[i], 
                     weights=np.repeat(1./vol_eagle, len(x_eagle[i])),
-                    range=ranges[i], bins=20, color='C2', histtype='step') 
+                    range=ranges[i], bins=20, color='C2', linewidth=1.8, histtype='step') 
             _ = sub.hist(x_obs[i],
                     weights=np.repeat(1./vol_sdss, len(x_obs[i])), 
                     range=ranges[i], bins=20, color='k',
-                    linestyle='--', histtype='step') 
+                    linestyle='--', linewidth=2, histtype='step') 
     
         sub.set_xlabel(obs_lbls[i], fontsize=20) 
         sub.set_xlim(obs_lims[i]) 
@@ -988,9 +988,10 @@ def ABC_Observables():
     _plth0, = sub.plot([], [], c='k', ls='--')
     _plth1, = sub.plot([], [], c='C1')
     _plth2, = sub.plot([], [], c='C0')
+    _plth3, = sub.plot([], [], c='C2')
 
-    sub.legend([_plth0, _plth1, _plth2], names, loc='upper right',
-            handletextpad=0.2, fontsize=15) 
+    sub.legend([_plth0, _plth1, _plth2, _plth3], names, loc='upper right',
+            handletextpad=0.2, fontsize=14) 
     fig.subplots_adjust(wspace=0.4)
     ffig = os.path.join(fig_dir, 'abc_observables.1d.png') 
     fig.savefig(ffig, bbox_inches='tight') 
@@ -1089,9 +1090,9 @@ def ABC_tnorm_Observables():
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     
-    obs_lims = [(20, 22.5), (0., 1.5), (-0.5, 4)]
+    obs_lims = [(20, 22.5), (0.2, 1.5), (-0.5, 4)]
     obs_lbls = [r'$M_r$ luminosity', '$G - R$', '$FUV - NUV$']
-    yobs_lbls = [r'$\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
+    yobs_lbls = [r'central luminosity function, $\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
 
     fig = plt.figure(figsize=(15,4))
     for i in range(3):
@@ -1120,14 +1121,14 @@ def ABC_tnorm_Observables():
         else: 
             _ = sub.hist(x_simba[i], 
                     weights=np.repeat(1./vol_simba, len(x_simba[i])),
-                    range=ranges[i], bins=20, color='C1', histtype='step') 
+                    range=ranges[i], bins=20, color='C1', linewidth=2, histtype='step') 
             _ = sub.hist(x_tng[i][x_tng[0] > 20], 
                     weights=np.repeat(1./vol_tng, len(x_tng[i])),
-                    range=ranges[i], bins=20, color='C0', histtype='step') 
+                    range=ranges[i], bins=20, color='C0', linewidth=2, histtype='step') 
             _ = sub.hist(x_obs[i],
                     weights=np.repeat(1./vol_sdss, len(x_obs[i])), 
                     range=ranges[i], bins=20, color='k',
-                    linestyle='--', histtype='step') 
+                    linestyle='--', linewidth=2, histtype='step') 
     
         sub.set_xlabel(obs_lbls[i], fontsize=20) 
         sub.set_xlim(obs_lims[i]) 
@@ -1157,11 +1158,11 @@ if __name__=="__main__":
     #SDSS()
     #SMFs() 
     #DEM()
-    #Observables()
-    ABC_corner() 
-    _ABC_corner_flexbump() 
+    Observables()
+    #ABC_corner() 
+    #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
