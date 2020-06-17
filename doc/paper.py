@@ -138,6 +138,71 @@ def SMFs():
     return None 
 
 
+def M_SFR(): 
+    ''' M_* - SFR relation of the simulations to highlight their differences
+    '''
+    #########################################################################
+    # read in SDSS 
+    #########################################################################
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    sdss_ms = np.log10(sdss['ms_tinker'][...]) 
+    sdss_sfr = sdss['sfr_tinker'][...] + sdss_ms
+    #########################################################################
+    # read simulations 
+    #########################################################################
+    fsimba = os.path.join(dat_dir, 'sed', 'simba.hdf5')
+    simba = h5py.File(fsimba, 'r')
+    cen_simba = simba['censat'][...].astype(bool)
+    simba_ms  = simba['logmstar'][...][cen_simba]
+    simba_sfr = simba['logsfr.inst'][...][cen_simba]
+
+    ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
+    tng = h5py.File(ftng, 'r')
+    cen_tng = tng['censat'][...].astype(bool)
+    tng_ms  = tng['logmstar'][...][cen_tng]
+    tng_sfr = tng['logsfr.inst'][...][cen_tng]
+
+    feag = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
+    eag = h5py.File(feag, 'r')
+    cen_eag = eag['censat'][...].astype(bool)
+    eag_ms  = eag['logmstar'][...][cen_eag]
+    eag_sfr = eag['logsfr.inst'][...][cen_eag]
+    #########################################################################
+    # plot M*-SFR relations  
+    #########################################################################
+    names   = ['SDSS', 'SIMBA', 'TNG', 'EAGLE']
+    clrs    = ['k', 'C1', 'C0', 'C2']
+    ms      = [sdss_ms, simba_ms, tng_ms, eag_ms]
+    sfrs    = [sdss_sfr, simba_sfr, tng_sfr, eag_sfr]
+
+    fig = plt.figure(figsize=(20,5))
+    for i in range(len(names)): 
+        sub = fig.add_subplot(1,4,i+1)
+        DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
+                levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
+                plot_datapoints=True, fill_contours=False, plot_density=True, 
+                ax=sub) 
+        sub.text(0.05, 0.95, names[i], transform=sub.transAxes, ha='left', va='top', fontsize=25) 
+        sub.set_xlim([9., 12.]) 
+        sub.set_ylim([-3., 2.]) 
+        if i != 0: sub.set_yticklabels([]) 
+        sub.set_xticklabels([9., '', 10., '', 11.]) 
+
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    bkgd.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=15, fontsize=25) 
+    bkgd.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', labelpad=15, fontsize=25) 
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'm_sfr.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
 def DEM(): 
     ''' comparison of DEM attenuation curve to standard attenuation curves in
     the literature.
@@ -509,10 +574,11 @@ def ABC_corner():
     import abcpmc
     # update these values as I see fit
     sims = ['SIMBA', 'TNG', 'EAGLE']
+    clrs = ['C1', 'C0', 'C2']
     names = ['simba.slab_noll_msfr_fixbump.L2.3d',
             'tng.slab_noll_msfr_fixbump.L2.3d', 
             'eagle.slab_noll_msfr_fixbump.L2.3d']
-    Ts = [7, 6, 9]
+    Ts = [8, 8, 11]
         
     prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
     prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
@@ -543,7 +609,7 @@ def ABC_corner():
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
-                    color='C%i' % i, 
+                    color=clrs[i], 
                     labels=np.array(lbls)[keep_cols], 
                     label_kwargs={'fontsize': 25}) 
         else: 
@@ -554,7 +620,7 @@ def ABC_corner():
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
-                    color='C%i' % i, 
+                    color=clrs[i], 
                     labels=np.array(lbls)[keep_cols], 
                     label_kwargs={'fontsize': 25}, 
                     fig = fig) 
@@ -562,7 +628,7 @@ def ABC_corner():
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
     for i, sim in enumerate(sims): 
-        bkgd.fill_between([],[],[], color='C%i' % i, label=sim) 
+        bkgd.fill_between([],[],[], color=clrs[i], label=sim) 
     bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
 
     ffig = os.path.join(fig_dir, 'abc.png')
@@ -647,19 +713,22 @@ def ABC_tnorm_corner():
     '''
     import abcpmc
     # update these values as I see fit
-    sims = ['SIMBA', 'TNG']
-    names = ['simba.tnorm_noll_msfr.L2.3d', 'tng.tnorm_noll_msfr.L2.3d']
-    Ts = [8, 7]
+    sims = ['SIMBA', 'TNG', 'EAGLE']
+    clrs = ['C1', 'C0', 'C2']
+    names = ['simba.tnorm_noll_msfr_fixbump.L2.3d', 
+            'tng.tnorm_noll_msfr_fixbump.L2.3d', 
+            'eagle.tnorm_noll_msfr_fixbump.L2.3d']
+    Ts = [6, 6, 6]
     
     # priors 
-    prior_min = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., -4., 0., 1.]) 
-    prior_max = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
+    prior_min = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., 1.]) 
+    prior_max = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 4.]) 
     prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
 
     lbls = [r'$m_{\mu,1}$', r'$m_{\mu,2}$', r'$c_{\mu}$', 
             r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
             r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
-            r'$m_E$', r'$c_E$', r'$f_{\rm neb}$'] 
+            r'$f_{\rm neb}$'] 
 
     for i, name, T in zip(range(len(names)), names, Ts):
         dat_dir = os.environ['GALPOPFM_DIR']
@@ -682,7 +751,7 @@ def ABC_tnorm_corner():
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
-                    color='C%i' % i, 
+                    color=clrs[i], 
                     labels=np.array(lbls)[keep_cols], 
                     label_kwargs={'fontsize': 25}) 
         else: 
@@ -693,7 +762,7 @@ def ABC_tnorm_corner():
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
-                    color='C%i' % i, 
+                    color=clrs[i], 
                     labels=np.array(lbls)[keep_cols], 
                     label_kwargs={'fontsize': 25}, 
                     fig = fig) 
@@ -702,7 +771,7 @@ def ABC_tnorm_corner():
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
     for i, sim in enumerate(sims): 
-        bkgd.fill_between([],[],[], color='C%i' % i, label=sim) 
+        bkgd.fill_between([],[],[], color=clrs[i], label=sim) 
     bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
 
     ffig = os.path.join(fig_dir, 'abc_tnorm.png')
@@ -866,13 +935,13 @@ def ABC_Observables():
     # read in simulations without dust attenuation
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t7.dat')) 
+        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t8.dat')) 
     theta_simba = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t6.dat')) 
+        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t8.dat')) 
     theta_tng = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t9.dat')) 
+        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t11.dat')) 
     theta_eagle = np.median(theta_T, axis=0) 
 
     x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
@@ -1157,12 +1226,13 @@ def fig_tex(ffig, pdf=False):
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
+    M_SFR()
     #DEM()
-    Observables()
+    #Observables()
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    ABC_Observables()
+    #ABC_Observables()
     
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
