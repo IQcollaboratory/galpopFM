@@ -111,9 +111,9 @@ where we parameterize
         \begin{tabular}{ccc} \toprule
             Parameter & Definition & prior\\[3pt] \hline\hline
             %\multicolumn{3}{c}{DEM with slab model}\\ \hline
-            $m_{\tau,1}$ & Slope of the $\log M_*$ dependence of optical depth,
+            $m_{\tau,M_*}$ & Slope of the $\log M_*$ dependence of optical depth,
             $\tau_V$ & flat $[-5., 5.]$\\
-            $m_{\tau,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $[-5., 5.]$\\
+            $m_{\tau,{\rm SFR}}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $[-5., 5.]$\\
             $c_{\tau}$ & amplitude of the optical depth, $\tau_V$ & flat $[0., 6.]$\\
             %\hline
             %\multicolumn{3}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
@@ -127,10 +127,10 @@ where we parameterize
             %$c_{\sigma}$ & amplitude of the optical depth, $\tau_V$ & flat $[0.1, 3.]$\\ 
             %\hline
             $m_{\delta,1}$ & Slope of the $\log M_*$ dependence of the
-            attenuation curve slope, $\delta$ & flat $[-4., 4.]$\\
+            attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
             $m_{\delta,2}$ & Slope of the $\log {\rm SFR}$ dependence of the
-            attenuation curve slope, $\delta$ & flat $[-4., 4.]$\\
-            $c_{\delta}$ & amplitude of the attenuation curve slope, $\delta$ & flat $[-4., 4.]$\\
+            attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
+            $c_{\delta}$ & amplitude of the attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
             %$m_{E}$ & slope of the $\delta$ dependence of UV dust bump strength, $E_b$ & flat $[-4., 0.]$\\
             %$c_{E}$ & amplitude of UV dust bump strength, $\delta$ & flat $[0., 4.]$\\
             $f_{\rm neb}$ & fraction of nebular attenuation curve & flat $[1., 4.]$\\
@@ -165,12 +165,3 @@ Paragraph on the priors we choose.
         the literature:
     \item $m_E$ and $c_E$ were chosen to be include \cite{kriek2013, narayanan2018, tress2018} 
 \end{itemize}
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=\textwidth]{figs/abc.pdf}
-    \caption{Posterior distribution of our fidicuail DEM parameters derived
-    using Approximate Bayesian Computation (ABC). (Section~\ref{sec:abc})}
-\label{fig:abc}
-\end{center}
-\end{figure}
