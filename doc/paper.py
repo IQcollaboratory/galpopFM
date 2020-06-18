@@ -1223,10 +1223,291 @@ def fig_tex(ffig, pdf=False):
     return os.path.join(path, '.'.join([_ffig_name, ext]))
 
 
+def _SIMBA_oddities(): 
+    ''' SIMBA has a number of differences compared to TNG and EAGLE. This
+    script is to examine some of the oddities: 
+    * luminous blue galaxies 
+    '''
+    # read ABC posterior 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t8.dat')) 
+    theta_simba = np.median(theta_T, axis=0) 
+
+    # run through DEM  
+    _sim_sed = dustInfer._read_sed('simba') 
+    wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
+    downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
+    f_downsample = 1.#0.1
+
+    cens    = _sim_sed['censat'].astype(bool) 
+    mlim    = (_sim_sed['logmstar'] > 9.4) 
+    zerosfr = (_sim_sed['logsfr.inst'] == -999)
+    
+    # sample cut centrals, mass limit, non 0 SFR
+    cuts = cens & mlim & ~zerosfr & downsample 
+
+    sim_sed = {} 
+    sim_sed['sim']          = 'simba' 
+    sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
+    sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
+    sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
+    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
+    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+    
+    # get observables R, G-R, FUV-NUV
+    x_simba = dustInfer.sumstat_model(theta_simba, 
+            sed=sim_sed,
+            dem='slab_noll_msfr_fixbump',
+            f_downsample=f_downsample, 
+            statistic='2d',
+            extra_data=None, 
+            return_datavector=True)
+    
+    # galaxies with blue color but high Mr 
+    blue_lum = (x_simba[0] > 21) & (x_simba[1] < 0.75) 
+    
+    # get observables with no DEM  
+    x_nodust = dustInfer.sumstat_model(
+            np.array([0. for i in range(7)]),
+            sed=sim_sed,
+            dem='slab_noll_msfr_fixbump',
+            f_downsample=f_downsample, 
+            statistic='2d',
+            extra_data=None, 
+            return_datavector=True)
+
+    fig = plt.figure(figsize=(15,5))
+    # plot R vs (G - R)
+    sub = fig.add_subplot(131)
+    DFM.hist2d(x_simba[0], x_simba[1], levels=[0.68, 0.95],
+            range=[(20., 23.), (-0.05, 1.7)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(x_simba[0][blue_lum], x_simba[1][blue_lum], c='k', s=1)
+    
+    sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_ylabel(r'$G-R$', fontsize=20) 
+    sub.set_ylim((-0.05, 1.7)) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    sub.set_title('SIMBA + DEM', fontsize=20) 
+    
+    # plot (G-R)-Mr relation with no dust  
+    sub = fig.add_subplot(132)
+    DFM.hist2d(x_nodust[0], x_nodust[1], levels=[0.68, 0.95],
+            range=[(20., 23.), (-0.05, 1.7)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(x_nodust[0][blue_lum], x_nodust[1][blue_lum], c='k', s=1)
+    
+    sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_ylim((-0.05, 1.7)) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    sub.set_yticklabels([]) 
+    sub.set_title('SIMBA + no dust ', fontsize=20) 
+    
+    # plot where they lie on the M*-SFR relation 
+    sub = fig.add_subplot(133)
+    DFM.hist2d(sim_sed['logmstar'], sim_sed['logsfr.inst'], levels=[0.68, 0.95],
+            range=[(9.0, 12.), (-3., 2.)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(sim_sed['logmstar'][blue_lum],
+            sim_sed['logsfr.inst'][blue_lum], c='k', s=1)
+
+    sub.set_xlabel(r'$\log M_*$', fontsize=20) 
+    sub.set_xlim(9.0, 12) 
+    sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
+    sub.set_ylim((-3., 2.)) 
+
+    fig.subplots_adjust(wspace=0.3)
+    ffig = os.path.join(fig_dir, '_simba_oddities.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+
+    # what happens if we force m_\tau,SFR < 0 like the other simulations? 
+    # get observables R, G-R, FUV-NUV
+    theta_modified = theta_simba.copy()
+    theta_modified[1] = -1.
+    x_modified = dustInfer.sumstat_model(
+            theta_modified,
+            sed=sim_sed,
+            dem='slab_noll_msfr_fixbump',
+            f_downsample=f_downsample, 
+            statistic='2d',
+            extra_data=None, 
+            return_datavector=True)
+    
+    fig = plt.figure(figsize=(20,5))
+
+    blue_w_nodust = (x_nodust[0] > 20.2) & (x_nodust[1] < 0.15) 
+    # plot (G-R)-Mr relation with no dust  
+    sub = fig.add_subplot(141)
+    DFM.hist2d(x_nodust[0], x_nodust[1], levels=[0.68, 0.95],
+            range=[(20., 23.), (-0.05, 1.7)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(x_nodust[0][blue_lum], x_nodust[1][blue_lum], c='k', s=1)
+    sub.scatter(x_nodust[0][blue_w_nodust], x_nodust[1][blue_w_nodust], c='C0', s=2)
+    
+    sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_ylabel(r'$G-R$', fontsize=20) 
+    sub.set_ylim((-0.05, 1.7)) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    sub.set_title('SIMBA + no dust ', fontsize=20) 
+    
+    # plot R vs (G - R)
+    sub = fig.add_subplot(142)
+    DFM.hist2d(x_simba[0], x_simba[1], levels=[0.68, 0.95],
+            range=[(20., 23.), (-0.05, 1.7)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(x_simba[0][blue_lum], x_simba[1][blue_lum], c='k', s=1)
+    sub.scatter(x_simba[0][blue_w_nodust], x_simba[1][blue_w_nodust], c='C0', s=2)
+    
+    sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_ylim((-0.05, 1.7)) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    sub.set_title('SIMBA + DEM', fontsize=20) 
+    
+    # plot color-magnitude relation if we change m_tau,SFR 
+    sub = fig.add_subplot(143)
+    DFM.hist2d(x_modified[0], x_modified[1], levels=[0.68, 0.95],
+            range=[(20., 23.), (-0.05, 1.7)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(x_modified[0][blue_lum], x_modified[1][blue_lum], c='k', s=1)
+    sub.scatter(x_modified[0][blue_w_nodust], x_modified[1][blue_w_nodust], c='C0', s=2)
+    
+    sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_ylim((-0.05, 1.7)) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    sub.set_yticklabels([]) 
+    sub.set_title(r'SIMBA w/ $m_{\tau, {\rm SFR}} = -1$', fontsize=20) 
+    
+    # plot where they lie on the M*-SFR relation 
+    sub = fig.add_subplot(144)
+    DFM.hist2d(sim_sed['logmstar'], sim_sed['logsfr.inst'], levels=[0.68, 0.95],
+            range=[(9.0, 12.), (-3., 2.)], bins=20, color='C1', 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(sim_sed['logmstar'][blue_lum],
+            sim_sed['logsfr.inst'][blue_lum], c='k', s=1)
+    sub.scatter(sim_sed['logmstar'][blue_w_nodust],
+            sim_sed['logsfr.inst'][blue_w_nodust], c='C0', s=2)
+
+    sub.set_xlabel(r'$\log M_*$', fontsize=20) 
+    sub.set_xlim(9.0, 12) 
+    sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
+    sub.set_ylim((-3., 2.)) 
+
+    fig.subplots_adjust(wspace=0.3)
+    ffig = os.path.join(fig_dir, '_simba_oddities1.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None
+
+
+def _subpops(): 
+    ''' Where in color-magnitude space do the low M* high SFR galaxies lie? 
+    '''
+    sims = ['simba', 'tng', 'eagle']
+    iabc = [8, 6, 6] 
+    clrs = ['C1', 'C0', 'C2'] 
+
+    fig = plt.figure(figsize=(10,15))
+    for i in range(len(sims)): 
+        # read ABC posterior 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            '%s.slab_noll_msfr_fixbump.L2.3d' % sims[i], 
+            'theta.t%i.dat' % iabc[i])) 
+        theta_sim = np.median(theta_T, axis=0) 
+
+        # run through DEM  
+        _sim_sed = dustInfer._read_sed(sims[i]) 
+        wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
+        downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
+        f_downsample = 1.#0.1
+
+        cens    = _sim_sed['censat'].astype(bool) 
+        mlim    = (_sim_sed['logmstar'] > 9.4) 
+        zerosfr = (_sim_sed['logsfr.inst'] == -999)
+    
+        # sample cut centrals, mass limit, non 0 SFR
+        cuts = cens & mlim & ~zerosfr & downsample 
+
+        sim_sed = {} 
+        sim_sed['sim']          = sims[i] 
+        sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
+        sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
+        sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
+        sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
+        sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+    
+        # get observables R, G-R, FUV-NUV
+        x_sim = dustInfer.sumstat_model(
+                theta_sim, 
+                sed=sim_sed,
+                dem='slab_noll_msfr_fixbump',
+                f_downsample=f_downsample, 
+                statistic='2d',
+                extra_data=None, 
+                return_datavector=True)
+        
+        # galaxies with low M* and high SFR 
+        veryhighSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -9.75)
+        highSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -9.75) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -10.5))
+        lowSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -10.5)
+
+        subpops = [veryhighSFR, highSFR, lowSFR][::-1]
+        subclrs = ['C0', 'C2', 'C1'][::-1]
+
+        # plot where they lie on the M*-SFR relation 
+        sub = fig.add_subplot(3,2,2*i+1)
+        DFM.hist2d(sim_sed['logmstar'], sim_sed['logsfr.inst'], levels=[0.68, 0.95],
+                range=[(9.0, 12.), (-3., 2.)], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(sim_sed['logmstar'][subpop],
+                    sim_sed['logsfr.inst'][subpop], c=subclr, s=2)
+        sub.set_xlabel(r'$\log M_*$', fontsize=20) 
+        sub.set_xlim(9.0, 12) 
+        sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
+        sub.set_ylim((-3., 2.)) 
+        sub.text(0.05, 0.95, sims[i], 
+            transform=sub.transAxes, ha='left', va='top', fontsize=20)
+
+        # plot R vs (G - R)
+        sub = fig.add_subplot(3,2,2*i+2)
+        DFM.hist2d(x_sim[0], x_sim[1], levels=[0.68, 0.95],
+                range=[(20., 23.), (-0.05, 1.7)], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(x_sim[0][subpop], x_sim[1][subpop], c=subclr, s=2)
+        
+        sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_ylabel(r'$G-R$', fontsize=20) 
+        sub.set_ylim((-0.05, 1.7)) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+        
+    fig.subplots_adjust(wspace=0.3)
+    ffig = os.path.join(fig_dir, '_subpops.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None
+
+
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
-    M_SFR()
+    #M_SFR()
     #DEM()
     #Observables()
     #ABC_corner() 
@@ -1237,3 +1518,6 @@ if __name__=="__main__":
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
     #slab_tnorm_comparison()
+
+    _SIMBA_oddities()
+    #_subpops()
