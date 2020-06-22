@@ -154,8 +154,11 @@ understanding of dust in galaxies.
 
 Figures~\ref{fig:dem} and~\ref{fig:demcloseup} highlights two key points. First, any comparison of
 simulations must account for dust. Dust entirely changes the predictions of
-simulations in observables-space. Fortunately, the DEM provides a simple framework
-for including dust without the need for expensive ray-tracing methods. 
+simulations in observables-space. Without dust, we did not find bimodality in
+the color-magnitude relation.
+Fortunately, the DEM provides a simple framework
+for including dust motivated by attenuation laws and correlations with the
+physical properties of galaxies. 
 Second, the current limiations in our understanding of dust in galaxies 
 significant impedes our ability to understand galaxy formation from simulations. 
 To robustly interpret any comparison of simulations, we would need to
@@ -165,9 +168,15 @@ would leave little constraining power on the subgrid prescriptions (\emph{i.e.}
 galaxy physics) of the simulations. 
 
 % comparison across the simulations 
-\ch{What do the differences in DEM parameters say about the differences among
-the hydro sims?} 
-The whole SIMBA discrepancy
+So far we have focused on comparing the predict observables of the DEM models.
+However, the inferred posterior of the DEM parameters provide key insights into 
+the hydro simulations. Comparing the posteriors of the different simulations in
+Figure~\ref{fig:abc}, we find significant differences between the posteriors of TNG and EAGLE versus
+SIMBA. Unlike the others, SIMBA has $\mtaus > 0$ --- \ie galaxies with higher SFR
+have higher attenuation. With $\mtaus > 0$, star-forming galaxies in the SIMBA
+DEM model populate the red sequence, rather than the blue cloud. 
+
+
 % Salim calims that the slope is steeper for satr burst galaxies, does this do
 % anything for us? 
 

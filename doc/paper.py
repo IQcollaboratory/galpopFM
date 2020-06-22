@@ -504,18 +504,23 @@ def Observables():
     #########################################################################
     # plotting 
     #########################################################################
-    xs      = [x_obs, x_simba, x_tng, x_eag]
-    names   = ['SDSS', 'SIMBA (no dust)', 'TNG (no dust)', 'EAGLE (no dust)']
-    clrs    = ['k', 'C1', 'C0', 'C2']
-    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng, sfr0_eag] 
+    xs      = [x_simba, x_tng, x_eag]
+    names   = ['SIMBA (no dust)', 'TNG (no dust)', 'EAGLE (no dust)']
+    clrs    = ['C1', 'C0', 'C2']
+    sfr0s   = [sfr0_simba, sfr0_tng, sfr0_eag] 
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
     for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
         # R vs (G - R)
         sub = fig.add_subplot(2,len(xs),i+1)
+        DFM.hist2d(x_obs[0][~sfr0_obs], x_obs[1][~sfr0_obs], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(_x[0][~_sfr0], _x[1][~_sfr0], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
         sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
         sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
@@ -531,8 +536,13 @@ def Observables():
 
         # R vs FUV-NUV
         sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
+        DFM.hist2d(x_obs[0][~sfr0_obs], x_obs[2][~sfr0_obs], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(_x[0][~_sfr0], _x[2][~_sfr0], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
         sfr0 = sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
@@ -544,7 +554,8 @@ def Observables():
             sub.set_yticklabels([]) 
         sub.set_ylim(ranges[2]) 
 
-    sub.legend([sfr0], ['SFR = 0'], loc='lower right', handletextpad=0,
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([sfr0, _plth0], ['SFR = 0', 'SDSS'], loc='lower right', ncol=2, handletextpad=0,
             markerscale=7, fontsize=20) 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
@@ -1905,7 +1916,7 @@ if __name__=="__main__":
     #M_SFR()
     #SMF_MsSFR()
     #DEM()
-    #Observables()
+    Observables()
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
@@ -1918,4 +1929,4 @@ if __name__=="__main__":
     #_SIMBA_oddities()
     #_subpops()
     #_extra_luminous()
-    _abc_color_Ms()
+    #_abc_color_Ms()
