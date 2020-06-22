@@ -163,6 +163,10 @@ def dem_prior(dem_name):
         # m_mu1, m_mu2, c_mu, m_sig1, m_sig2, c_sig,  m_delta1, m_delta2, c_delta, f_nebular
         prior_min = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., 1.]) 
         prior_max = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 4.]) 
+    elif dem_name == 'slab_noll_msfr_kink_fixbump':
+        #m_tau,M*0 m_tau,M*1 m_tau,SFR0 m_tau,SFR1 c_tau m_delta1 m_delta2 c_delta fneb
+        prior_min = np.array([-5., -5., -5.,  -5., 0., -4., -4., -4., 1.]) 
+        prior_max = np.array([5.0, 5.0, 5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
     return prior_min, prior_max 
 
 
