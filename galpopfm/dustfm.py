@@ -53,20 +53,108 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, logmstar, logsfr, dem='slab_calz
         mdust = DEM_slab_noll_msfr_fixbump
     elif dem == 'tnorm_noll_msfr_fixbump': 
         mdust = DEM_tnorm_noll_msfr_fixbump
+    elif dem == 'slab_noll_msfr_kink_fixbump': 
+        mdust = DEM_slab_noll_msfr_kink_fixbump
     else: 
         raise NotImplementedError
 
     # apply attenuation curve to spectra without nebular emissoin
-    spec_noneb_dusty    = np.zeros(spec_noneb.shape) 
-    spec_neb_dusty      = np.zeros(spec_neb.shape) 
-    for i in range(nspec):  
-        spec_noneb_dusty[i,:]   = mdust(theta, lam, spec_noneb[i,:],
-                logmstar[i], logsfr[i], nebular=False) 
-        spec_neb_dusty[i,:]     = mdust(theta, lam, spec_neb[i,:], 
-                logmstar[i], logsfr[i], nebular=True)
+    spec_noneb_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr, nebular=False) 
+    spec_neb_dusty = mdust(theta, lam, spec_neb, logmstar, logsfr, nebular=True)
 
     spec_dusty = spec_noneb_dusty + spec_neb_dusty 
     return spec_dusty 
+
+
+def DEM_slab_noll_msfr_kink_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
+    ''' Dust empirical model that combines the slab model with Noll+(2009) but
+    keeps the **UV bump relation to delta fixed** 
+
+    A(lambda) = -2.5 log10( (1 - exp(-tauV sec(i))) / (tauV sec(i)) ) x 
+                    (k'(lambda) + D(lambda, E_b))/k_V x 
+                    (lambda / lambda_V)^delta
+
+    tauV    = m_tau,M* (log M* - 10.) + m_tau,SFR logSFR + c_tau
+                
+        except  m_tau,M* = m_tau,M*0 for log M* < 10
+                m_tau,M* = m_tau,M*1 for log M* > 10
+                m_tau,SFR = m_tau,SFR0 for log SFR < 0
+                m_tau,SFR = m_tau,SFR1 for log SFR > 0
+
+    delta   = m_delta1  (log M* - 10.) + m_delta2 logSFR + c_delta         -2.2 < delta < 0.4
+    E_b     =  -1.9 * delta + 0.85 (Kriek & Conroy 2013) 
+
+    :param theta: 
+        9 free parameter of the slab + Noll+(2009) model
+        theta: m_tau,M*0 m_tau,M*1 m_tau,SFR0 m_tau,SFR1 c_tau m_delta1 m_delta2 c_delta f_nebular
+    :param lam: 
+        wavelength in angstrom
+    :param flux_i: 
+        intrinsic flux of sed (units don't matter) 
+    :param logmstar: 
+        log M* of galaxies 
+    :param logsfr: 
+        log SFR of galaxies
+    :param nebular: 
+        if True nebular flux has an attenuation that is scaled from the
+        continuum attenuation.
+    '''
+    assert theta.shape[0] == 9, print(theta) 
+    
+    if isinstance(logsfr, float): 
+        if logsfr == -999.:  raise ValueError
+    else: 
+        if -999. in logsfr: raise ValueError
+
+    logmstar = np.atleast_1d(logmstar) 
+    logsfr = np.atleast_1d(logsfr) 
+    
+    # get m_tau, M* 
+    lowmass = (logmstar < 10.) 
+    m_tauMs = np.repeat(theta[1], logmstar.shape[0])
+    m_tauMs[lowmass] = theta[0] 
+
+    # get m_tau, SFR 
+    lowsfr = (logsfr < 0.) 
+    m_tauSFRs = np.repeat(theta[3], logmstar.shape[0])
+    m_tauSFRs[lowsfr] = theta[2] 
+    
+    tauV = np.clip(m_tauMs * (logmstar - 10.) + m_tauSFRs * logsfr + theta[4],
+            1e-3, None) 
+
+    delta = theta[5] * (logmstar - 10.) + theta[6] * logsfr + theta[7] 
+    
+    # Kriek & Conroy (2013) 
+    E_b = -1.9 * delta + 0.85
+    # Narayanan+(2018) 
+    # E_b = -0.46 * delta + 0.69 
+    
+    # randomly sample the inclinatiion angle from 0 - pi/2 
+    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
+    sec_incl = 1./np.cos(incl) 
+
+    #Eq. 14 of Somerville+(1999) 
+    A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+    assert np.all(np.isfinite(A_V)), print(tauV, logmstar, logsfr) 
+    
+    dlam = 350. # width of bump from Noll+(2009)
+    lam0 = 2175. # wavelength of bump 
+    k_V_calzetti = 4.87789
+    
+    # bump 
+    D_bump = E_b[:,None] * ((lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam *
+        dlam)**2))
+    
+    # calzetti is already normalized to k_V
+    A_lambda = A_V[:,None] * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
+            (lam / 5500.)**delta[:,None]
+
+    if not nebular: factor = 1.
+    else: factor = theta[8] 
+
+    T_lam = 10.0**(-0.4 * A_lambda * factor)
+
+    return flux_i * T_lam 
 
 
 def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
@@ -98,8 +186,10 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
     '''
     assert theta.shape[0] == 7, print(theta) 
 
-    if logsfr == -999.: # if SFR = 0 no attenuation
-        return flux_i 
+    if isinstance(logsfr, float): 
+        if logsfr == -999.:  raise ValueError
+    else: 
+        if -999. in logsfr: raise ValueError
 
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
@@ -127,11 +217,12 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
     k_V_calzetti = 4.87789
     
     # bump 
-    D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
+    D_bump = E_b[:,None] * ((lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam *
+        dlam)**2))
     
     # calzetti is already normalized to k_V
-    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
-            (lam / 5500.)**delta 
+    A_lambda = A_V[:,None] * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
+            (lam / 5500.)**delta[:,None]
 
     if not nebular: factor = 1.
     else: factor = theta[6] 
@@ -169,8 +260,10 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     '''
     assert theta.shape[0] == 9, print(theta) 
 
-    if logsfr == -999.: # if SFR = 0 no attenuation
-        return flux_i 
+    if isinstance(logsfr, float): 
+        if logsfr == -999.:  raise ValueError
+    else: 
+        if -999. in logsfr: raise ValueError
 
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
@@ -195,11 +288,12 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
     k_V_calzetti = 4.87789
     
     # bump 
-    D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
+    D_bump = E_b[:,None] * ((lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam *
+        dlam)**2))
     
     # calzetti is already normalized to k_V
-    A_lambda = A_V * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
-            (lam / 5500.)**delta 
+    A_lambda = A_V[:,None] * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
+            (lam / 5500.)**delta[:,None]
 
     if not nebular: factor = 1.
     else: factor = theta[8] 
