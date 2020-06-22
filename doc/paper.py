@@ -953,19 +953,23 @@ def ABC_Observables():
     #########################################################################
     # plotting 
     #########################################################################
-    xs      = [x_obs, x_simba, x_tng, x_eagle]
-    names   = ['SDSS', 'SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
-    clrs    = ['k', 'C1', 'C0', 'C2']
-    sfr0s   = [sfr0_obs, sfr0_simba, sfr0_tng, sfr0_eagle] 
+    xs      = [x_simba, x_tng, x_eagle]
+    names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
+    clrs    = ['C1', 'C0', 'C2']
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
     #for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
-    for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
+    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
         # R vs (G - R)
         sub = fig.add_subplot(2,len(xs),i+1)
+        DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
         #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
         sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
@@ -981,8 +985,13 @@ def ABC_Observables():
 
         # R vs FUV-NUV
         sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
+        DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
                 range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
         #sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
@@ -1059,10 +1068,74 @@ def ABC_Observables():
     _plth2, = sub.plot([], [], c='C0')
     _plth3, = sub.plot([], [], c='C2')
 
+    names   = ['SDSS', 'SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
     sub.legend([_plth0, _plth1, _plth2, _plth3], names, loc='upper right',
             handletextpad=0.2, fontsize=14) 
     fig.subplots_adjust(wspace=0.4)
     ffig = os.path.join(fig_dir, 'abc_observables.1d.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    
+    Mr_bins = [(20., 21.), (21., 22.5)]
+    obs_lims = [(0.0, 2.), (-0.5, 4)]
+    obs_lbls = ['$G - R$', '$FUV - NUV$']
+    yobs_lbls = ['$p(G - R)$', '$p(FUV - NUV)$']
+
+    fig = plt.figure(figsize=(12,8))
+    for i in range(len(Mr_bins)):
+        
+        simba_mrbin = (Mr_bins[i][0] < x_simba[0]) & (Mr_bins[i][1] >= x_simba[0])
+        tng_mrbin   = (Mr_bins[i][0] < x_tng[0]) & (Mr_bins[i][1] >= x_tng[0])
+        eagle_mrbin = (Mr_bins[i][0] < x_eagle[0]) & (Mr_bins[i][1] >= x_eagle[0])
+        obs_mrbin   = (Mr_bins[i][0] < x_obs[0]) & (Mr_bins[i][1] >= x_obs[0])
+        
+        for j in range(2): 
+            sub = fig.add_subplot(2,len(Mr_bins),2*i+j+1)
+
+            _ = sub.hist(x_obs[j+1][obs_mrbin],
+                    weights=np.repeat(1./vol_sdss, np.sum(obs_mrbin)), 
+                    range=ranges[j+1], bins=20, color='k', alpha=0.25, 
+                    histtype='stepfilled') 
+
+            _ = sub.hist(x_simba[j+1][simba_mrbin], 
+                    weights=np.repeat(1./vol_simba, np.sum(simba_mrbin)),
+                    range=ranges[j+1], bins=20, color='C1', linewidth=2.2, histtype='step') 
+            _ = sub.hist(x_tng[j+1][tng_mrbin], 
+                    weights=np.repeat(1./vol_tng, np.sum(tng_mrbin)),
+                    range=ranges[j+1], bins=20, color='C0', linewidth=2, histtype='step') 
+            _ = sub.hist(x_eagle[j+1][eagle_mrbin], 
+                    weights=np.repeat(1./vol_eagle, np.sum(eagle_mrbin)),
+                    range=ranges[j+1], bins=20, color='C2', linewidth=1.8, histtype='step') 
+
+            if i == 1:
+                sub.set_xlabel(obs_lbls[j], fontsize=20) 
+            else: 
+                sub.set_xticklabels([])
+            sub.set_xlim(obs_lims[j]) 
+            if j == 0: 
+                sub.text(0.05, 0.95, '$-%.1f > M_r > -%.1f$' % (Mr_bins[i][0], Mr_bins[i][1]), 
+                        transform=sub.transAxes, fontsize=20, ha='left', va='top')
+
+    _plth0 = sub.fill_between([], [], [], color='k', alpha=0.25, edgecolor='None')
+    _plth1, = sub.plot([], [], c='C1')
+    _plth2, = sub.plot([], [], c='C0')
+    _plth3, = sub.plot([], [], c='C2')
+
+    names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM', 'SDSS']
+    sub.legend([_plth1, _plth2, _plth3, _plth0], names, loc='upper right',
+            handletextpad=0.2, fontsize=14) 
+
+    bkgd = fig.add_subplot(121, frameon=False)
+    bkgd.set_ylabel('$p(G - R)$', labelpad=25, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    bkgd = fig.add_subplot(122, frameon=False)
+    bkgd.set_ylabel('$p(FUV - NUV)$', labelpad=25, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    fig.subplots_adjust(wspace=0.4)
+    ffig = os.path.join(fig_dir, 'abc_observables.mr_bin.png') 
     fig.savefig(ffig, bbox_inches='tight') 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
@@ -1513,11 +1586,11 @@ if __name__=="__main__":
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
     #slab_tnorm_comparison()
 
-    _SIMBA_oddities()
+    #_SIMBA_oddities()
     #_subpops()
