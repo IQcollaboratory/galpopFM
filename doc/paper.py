@@ -38,6 +38,9 @@ vol_simba   = 100.**3 # (Mpc/h)^3
 vol_tng     = 75.**3 # (Mpc/h)^3
 vol_eagle   = 67.77**3 # (Mpc/h)^3  Lbox 100 Mpc h = 0.6777
 
+simba_abc = 8
+tng_abc = 9 
+eagle_abc = 11 
 
 def SDSS():
     ''' figure illustrating our SDSS 
@@ -171,24 +174,31 @@ def M_SFR():
     #########################################################################
     # plot M*-SFR relations  
     #########################################################################
-    names   = ['SDSS', 'SIMBA', 'TNG', 'EAGLE']
-    clrs    = ['k', 'C1', 'C0', 'C2']
-    ms      = [sdss_ms, simba_ms, tng_ms, eag_ms]
-    sfrs    = [sdss_sfr, simba_sfr, tng_sfr, eag_sfr]
+    names   = ['SIMBA', 'TNG', 'EAGLE']
+    clrs    = ['C1', 'C0', 'C2']
+    ms      = [simba_ms, tng_ms, eag_ms]
+    sfrs    = [simba_sfr, tng_sfr, eag_sfr]
 
-    fig = plt.figure(figsize=(20,5))
+    fig = plt.figure(figsize=(15,5))
     for i in range(len(names)): 
-        sub = fig.add_subplot(1,4,i+1)
+        sub = fig.add_subplot(1,3,i+1)
+        DFM.hist2d(sdss_ms, sdss_sfr, levels=[0.68, 0.95],
+                range=[[7.8, 12.], [-4., 2.]], color='k', 
+                contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
                 levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
-                plot_datapoints=True, fill_contours=False, plot_density=True, 
-                ax=sub) 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
         sub.text(0.05, 0.95, names[i], transform=sub.transAxes, ha='left', va='top', fontsize=25) 
         sub.set_xlim([9., 12.]) 
         sub.set_ylim([-3., 2.]) 
         if i != 0: sub.set_yticklabels([]) 
         sub.set_xticklabels([9., '', 10., '', 11.]) 
-
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
+            fontsize=20) 
 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
@@ -202,6 +212,118 @@ def M_SFR():
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
+
+
+def SMF_MsSFR(): 
+    ''' figure comparing the stellar mass fucntions of SDSS and the simulations
+    and M*-SFR relation 
+    '''
+    #########################################################################
+    # read in SDSS 
+    #########################################################################
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_logMstar.dat') 
+    logms_low, logms_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
+
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    sdss_ms = np.log10(sdss['ms_tinker'][...]) 
+    sdss_sfr = sdss['sfr_tinker'][...] + sdss_ms
+    #########################################################################
+    # read simulations 
+    #########################################################################
+    fsimba = os.path.join(dat_dir, 'sed', 'simba.hdf5')
+    simba = h5py.File(fsimba, 'r')
+    cen_simba = simba['censat'][...].astype(bool)
+    simba_ms  = simba['logmstar'][...][cen_simba]
+    simba_sfr = simba['logsfr.inst'][...][cen_simba]
+
+    ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
+    tng = h5py.File(ftng, 'r')
+    cen_tng = tng['censat'][...].astype(bool)
+    tng_ms  = tng['logmstar'][...][cen_tng]
+    tng_sfr = tng['logsfr.inst'][...][cen_tng]
+
+    feag = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
+    eag = h5py.File(feag, 'r')
+    cen_eag = eag['censat'][...].astype(bool)
+    eag_ms  = eag['logmstar'][...][cen_eag]
+    eag_sfr = eag['logsfr.inst'][...][cen_eag]
+    #########################################################################
+    # calculate SMFs
+    #########################################################################
+    logms_bin = np.linspace(8., 13., 21)
+    dlogms = logms_bin[1:] - logms_bin[:-1]
+
+    Ngal_simba, _   = np.histogram(simba['logmstar'][...][cen_simba], bins=logms_bin)
+    Ngal_tng, _     = np.histogram(tng['logmstar'][...][cen_tng], bins=logms_bin)
+    Ngal_eag, _     = np.histogram(eag['logmstar'][...][cen_eag], bins=logms_bin)
+
+    phi_simba   = Ngal_simba.astype(float) / vol_simba / dlogms
+    phi_tng     = Ngal_tng.astype(float) / vol_tng / dlogms
+    phi_eag     = Ngal_eag.astype(float) / vol_eagle / dlogms
+    #########################################################################
+    # plot SMFs
+    #########################################################################
+    fig = plt.figure(figsize=(20,5))
+    outer = mpl.gridspec.GridSpec(1, 2, width_ratios=[1, 3], figure=fig) 
+    #make nested gridspecs
+    gs1 = mpl.gridspec.GridSpecFromSubplotSpec(1, 1, subplot_spec=outer[0])
+    gs2 = mpl.gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer[1],
+            wspace=0.05)
+
+    sub = plt.subplot(gs1[0])
+    sub.errorbar(0.5*(logms_low + logms_high), phi_sdss, yerr=err_phi_sdss,
+            fmt='.k', label='SDSS Centrals')
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_simba, c='C0',
+            label='SIMBA')
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c='C1', 
+            label='TNG')
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_eag, c='C2', 
+            label='EAGLE')
+    sub.legend(loc='lower left', handletextpad=0.3, fontsize=20)
+    sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
+    sub.set_xlim(9.7, 12.5)
+    sub.set_xticks([10., 11., 12.]) 
+    sub.set_ylabel(r'central SMF ($\Phi^{\rm cen}_{M_*}$)', fontsize=24)
+    sub.set_yscale("log")
+    sub.set_ylim(5e-6, 3e-2) 
+    
+    names   = ['SIMBA', 'TNG', 'EAGLE']
+    clrs    = ['C1', 'C0', 'C2']
+    ms      = [simba_ms, tng_ms, eag_ms]
+    sfrs    = [simba_sfr, tng_sfr, eag_sfr]
+
+    for i in range(len(names)): 
+        sub = plt.subplot(gs2[i]) 
+        DFM.hist2d(sdss_ms, sdss_sfr, levels=[0.68, 0.95],
+                range=[[7.8, 12.], [-4., 2.]], color='k', 
+                contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
+                levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        sub.text(0.05, 0.95, names[i], transform=sub.transAxes, ha='left', va='top', fontsize=25) 
+        sub.set_xlim([9., 12.]) 
+        sub.set_ylim([-3., 2.]) 
+        if i != 0: sub.set_yticklabels([]) 
+        else: sub.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', fontsize=25) 
+        if i == 1: sub.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', fontsize=25) 
+        sub.set_xticklabels([9., '', 10., '', 11.]) 
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
+            fontsize=20) 
+
+    fig.subplots_adjust(wspace=0.2, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'smf_m_sfr.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
 
 def DEM(): 
     ''' comparison of DEM attenuation curve to standard attenuation curves in
@@ -436,7 +558,8 @@ def Observables():
     return None 
 
 
-def _sim_observables(sim, theta, model='slab', fixbump=True, zero_sfr_sample=False): 
+def _sim_observables(sim, theta, model='slab', fixbump=True,
+        zero_sfr_sample=False, return_sim=False): 
     ''' read specified simulations and return data vector 
 
     :param zero_sfr_sample: 
@@ -494,7 +617,19 @@ def _sim_observables(sim, theta, model='slab', fixbump=True, zero_sfr_sample=Fal
         _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
         _zerosfr[np.sum(cuts):] = True
     mr_cut = x_mod[0] > 20
-    return x_mod[:,mr_cut], _zerosfr[mr_cut]
+    if not return_sim: 
+        return x_mod[:,mr_cut], _zerosfr[mr_cut]
+    else: 
+        _simsed = {} 
+        if not zero_sfr_sample: 
+            _simsed['logmstar'] = sim_sed['logmstar'][mr_cut]
+            _simsed['logsfr.inst'] = sim_sed['logsfr.inst'][mr_cut]
+        else: 
+            _simsed['logmstar'] = np.concatenate([sim_sed['logmstar'],
+                _sim_sed['logmstar'][cens & mlim & zerosfr & downsample]])[mr_cut]
+            _simsed['logsfr.inst'] = np.concatenate([sim_sed['logsfr.inst'], 
+                _sim_sed['logsfr.inst'][cens & mlim & zerosfr & downsample]])[mr_cut]
+        return x_mod[:,mr_cut], _zerosfr[mr_cut], _simsed
 
 
 def slab_tnorm_comparison(): 
@@ -1003,6 +1138,10 @@ def ABC_Observables():
             sub.set_yticklabels([]) 
         sub.set_ylim(ranges[2]) 
     
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.1,
+            fontsize=20)
+
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
@@ -1080,7 +1219,7 @@ def ABC_Observables():
     Mr_bins = [(20., 21.), (21., 22.5)]
     obs_lims = [(0.0, 2.), (-0.5, 4.5)]
     obs_lbls = ['$G - R$', '$FUV - NUV$']
-    yobs_lbls = ['$p(G - R)$', '$p(FUV - NUV)$']
+    obs_ylims = [(0., 1.5e-3), (0., 1.2e-3)]
 
     fig = plt.figure(figsize=(12,8))
     for i in range(len(Mr_bins)):
@@ -1113,24 +1252,23 @@ def ABC_Observables():
             else: 
                 sub.set_xticklabels([])
             sub.set_xlim(obs_lims[j]) 
+            sub.set_ylim(obs_ylims[j]) 
             if j == 0: 
                 sub.text(0.05, 0.95, '$-%.1f > M_r > -%.1f$' % (Mr_bins[i][0], Mr_bins[i][1]), 
                         transform=sub.transAxes, fontsize=20, ha='left', va='top')
 
-    _plth0 = sub.fill_between([], [], [], color='k', alpha=0.25, edgecolor='None')
-    _plth1, = sub.plot([], [], c='C1')
-    _plth2, = sub.plot([], [], c='C0')
-    _plth3, = sub.plot([], [], c='C2')
+            if i == 0 and j == 1: 
+                _plth0 = sub.fill_between([], [], [], color='k', alpha=0.25, edgecolor='None')
+                _plth1, = sub.plot([], [], c='C1')
+                _plth2, = sub.plot([], [], c='C0')
+                _plth3, = sub.plot([], [], c='C2')
 
-    names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM', 'SDSS']
-    sub.legend([_plth1, _plth2, _plth3, _plth0], names, loc='upper right',
-            handletextpad=0.2, fontsize=14) 
+                names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM', 'SDSS']
+                sub.legend([_plth1, _plth2, _plth3, _plth0], names, loc='upper right',
+                        handletextpad=0.2, fontsize=14) 
 
-    bkgd = fig.add_subplot(121, frameon=False)
-    bkgd.set_ylabel('$p(G - R)$', labelpad=25, fontsize=25) 
-    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    bkgd = fig.add_subplot(122, frameon=False)
-    bkgd.set_ylabel('$p(FUV - NUV)$', labelpad=25, fontsize=25) 
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_ylabel(r'number density $({\rm Mpc}/h)^{-3}$', labelpad=25, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
     fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
@@ -1577,16 +1715,201 @@ def _subpops():
     return None
 
 
+def _extra_luminous(): 
+    ''' Where in M*-SFR are the most luminous galaxies lie? DEM current
+    produces exceed luminous galaxies. 
+    '''
+    sims = ['simba', 'tng', 'eagle']
+    iabc = [8, 6, 6] 
+    clrs = ['C1', 'C0', 'C2'] 
+
+    fig = plt.figure(figsize=(10,15))
+    for i in range(len(sims)): 
+        # read ABC posterior 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            '%s.slab_noll_msfr_fixbump.L2.3d' % sims[i], 
+            'theta.t%i.dat' % iabc[i])) 
+        theta_sim = np.median(theta_T, axis=0) 
+
+        # run through DEM  
+        _sim_sed = dustInfer._read_sed(sims[i]) 
+        wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
+        downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
+        f_downsample = 1.#0.1
+
+        cens    = _sim_sed['censat'].astype(bool) 
+        mlim    = (_sim_sed['logmstar'] > 9.4) 
+        zerosfr = (_sim_sed['logsfr.inst'] == -999)
+    
+        # sample cut centrals, mass limit, non 0 SFR
+        cuts = cens & mlim & ~zerosfr & downsample 
+
+        sim_sed = {} 
+        sim_sed['sim']          = sims[i] 
+        sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
+        sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
+        sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
+        sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
+        sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+    
+        # get observables R, G-R, FUV-NUV
+        x_sim = dustInfer.sumstat_model(
+                theta_sim, 
+                sed=sim_sed,
+                dem='slab_noll_msfr_fixbump',
+                f_downsample=f_downsample, 
+                statistic='2d',
+                extra_data=None, 
+                return_datavector=True)
+        
+        # galaxies with low M* and high SFR 
+        luminous = x_sim[0] > 21.
+
+        subpops = [luminous]
+        subclrs = ['C0']
+
+        # plot where they lie on the M*-SFR relation 
+        sub = fig.add_subplot(3,2,2*i+1)
+        DFM.hist2d(sim_sed['logmstar'], sim_sed['logsfr.inst'], levels=[0.68, 0.95],
+                range=[(9.0, 12.), (-3., 2.)], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(sim_sed['logmstar'][subpop],
+                    sim_sed['logsfr.inst'][subpop], c=subclr, s=2)
+        sub.set_xlabel(r'$\log M_*$', fontsize=20) 
+        sub.set_xlim(9.0, 12) 
+        sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
+        sub.set_ylim((-3., 2.)) 
+        sub.text(0.05, 0.95, sims[i], 
+            transform=sub.transAxes, ha='left', va='top', fontsize=20)
+
+        # plot R vs (G - R)
+        sub = fig.add_subplot(3,2,2*i+2)
+        DFM.hist2d(x_sim[0], x_sim[1], levels=[0.68, 0.95],
+                range=[(20., 23.), (-0.05, 1.7)], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(x_sim[0][subpop], x_sim[1][subpop], c=subclr, s=2)
+        
+        sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_ylabel(r'$G-R$', fontsize=20) 
+        sub.set_ylim((-0.05, 1.7)) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+        
+    fig.subplots_adjust(wspace=0.3)
+    ffig = os.path.join(fig_dir, '_extra_luminous.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None
+
+
+def _abc_color_Ms(): 
+    ''' examine g-r color in bins of M* to compare with Trayford+(2015)
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(name='sdss',
+            statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
+    sdss = h5py.File(fsdss, 'r') 
+    
+    mr_complete = (sdss['mr_tinker'][...] < -20.)
+
+    x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
+            sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
+            sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    sdss_ms = np.log10(sdss['ms_tinker'][...][mr_complete])
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t%i.dat' % simba_abc)) 
+    theta_simba = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t%i.dat' % tng_abc)) 
+    theta_tng = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t%i.dat' % eagle_abc)) 
+    theta_eagle = np.median(theta_T, axis=0) 
+
+    x_simba, sfr0_simba, simba  = _sim_observables('simba', theta_simba,
+            zero_sfr_sample=True, return_sim=True)
+    x_tng, sfr0_tng, tng        = _sim_observables('tng', theta_tng,
+            zero_sfr_sample=True, return_sim=True)
+    x_eagle, sfr0_eagle, eagle  = _sim_observables('eagle', theta_eagle,
+            zero_sfr_sample=True, return_sim=True)
+    #########################################################################
+    # plotting 
+    #########################################################################
+    Ms_bins = [(11., 11.5), (10.5, 11.), (10., 10.5)]
+    obs_lbls = ['$G - R$']
+
+    fig = plt.figure(figsize=(8,10))
+    for i in range(len(Ms_bins)):
+        simba_msbin = (Ms_bins[i][0] < simba['logmstar']) & (Ms_bins[i][1] >= simba['logmstar'])
+        tng_msbin   = (Ms_bins[i][0] < tng['logmstar']) & (Ms_bins[i][1] >= tng['logmstar'])
+        eagle_msbin = (Ms_bins[i][0] < eagle['logmstar']) & (Ms_bins[i][1] >= eagle['logmstar'])
+        obs_msbin   = (Ms_bins[i][0] < sdss_ms) & (Ms_bins[i][1] >= sdss_ms)
+    
+        sub = fig.add_subplot(3,1,i+1)
+
+        _ = sub.hist(x_obs[1][obs_msbin], density=True, #weights=np.repeat(1./vol_sdss, np.sum(obs_msbin)), 
+                range=(0., 2.), bins=20, color='k', alpha=0.25, 
+                histtype='stepfilled') 
+
+        _ = sub.hist(x_simba[1][simba_msbin], density=True, #weights=np.repeat(1./vol_simba, np.sum(simba_msbin)),
+                range=(0., 2.), bins=20, color='C1', linewidth=2.2, histtype='step') 
+        _ = sub.hist(x_tng[1][tng_msbin], density=True, # weights=np.repeat(1./vol_tng, np.sum(tng_msbin)),
+                range=(0., 2.), bins=20, color='C0', linewidth=2, histtype='step') 
+        _ = sub.hist(x_eagle[1][eagle_msbin], density=True, # weights=np.repeat(1./vol_eagle, np.sum(eagle_msbin)),
+                range=(0., 2.), bins=20, color='C2', linewidth=1.8, histtype='step') 
+
+        sub.set_xlim(0., 2.) 
+                
+        sub.text(0.05, 0.95, '$%.1f < M_* > %.1f$' % (Ms_bins[i][0], Ms_bins[i][1]), 
+                transform=sub.transAxes, fontsize=20, ha='left', va='top')
+    sub.set_xlabel(r'$G - R$', fontsize=20) 
+
+    _plth0 = sub.fill_between([], [], [], color='k', alpha=0.25, edgecolor='None')
+    _plth1, = sub.plot([], [], c='C1')
+    _plth2, = sub.plot([], [], c='C0')
+    _plth3, = sub.plot([], [], c='C2')
+
+    names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM', 'SDSS']
+    sub.legend([_plth1, _plth2, _plth3, _plth0], names, loc='upper right',
+            handletextpad=0.2, fontsize=14) 
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    #bkgd.set_ylabel(r'number density $({\rm Mpc}/h)^{-3}$', labelpad=25, fontsize=25) 
+    bkgd.set_ylabel(r'$p(G-R)$', labelpad=25, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.2)
+    ffig = os.path.join(fig_dir, '_abc_observables.ms_bin.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 if __name__=="__main__": 
     #SDSS()
     #SMFs() 
     #M_SFR()
+    #SMF_MsSFR()
     #DEM()
     #Observables()
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    ABC_Observables()
+    #ABC_Observables()
     
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
@@ -1594,3 +1917,5 @@ if __name__=="__main__":
 
     #_SIMBA_oddities()
     #_subpops()
+    #_extra_luminous()
+    _abc_color_Ms()

@@ -22,6 +22,11 @@
 Abazajian K.~N.,  et~al., 2009, \mn@doi [The Astrophysical Journal Supplement
   Series] {10.1088/0067-0049/182/2/543}, 182, 543
 
+\bibitem[\protect\citeauthoryear{Baes, Tr{\v c}ka, Camps, Nersesian, Trayford,
+  Theuns  \& Dobbels}{Baes et~al.}{2019}]{baes2019}
+Baes M.,  Tr{\v c}ka A.,  Camps P.,  Nersesian A.,  Trayford J.,  Theuns T.,
+  Dobbels W.,  2019, arXiv:1901.08878 [astro-ph]
+
 \bibitem[\protect\citeauthoryear{Blanton \& Roweis}{Blanton \&
   Roweis}{2007}]{blanton2007a}
 Blanton M.~R.,  Roweis S.,  2007, \mn@doi [The Astronomical Journal]
@@ -35,6 +40,11 @@ Blanton M.~R.,  et~al., 2005, \mn@doi [The Astronomical Journal]
 \bibitem[\protect\citeauthoryear{Calzetti}{Calzetti}{2001}]{calzetti2001}
 Calzetti D.,  2001, \mn@doi [New Astronomy Reviews]
   {10.1016/S1387-6473(01)00144-0}, 45, 601
+
+\bibitem[\protect\citeauthoryear{Camps \& Baes}{Camps \&
+  Baes}{2015}]{camps2015}
+Camps P.,  Baes M.,  2015, \mn@doi [Astronomy and Computing]
+  {10.1016/j.ascom.2014.10.004}, 9, 20
 
 \bibitem[\protect\citeauthoryear{Chabrier}{Chabrier}{2003}]{chabrier2003}
 Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
@@ -60,6 +70,11 @@ Kriek M.,  Conroy C.,  2013, \mn@doi [The Astrophysical Journal Letters]
   Popping}{Narayanan et~al.}{2018}]{narayanan2018}
 Narayanan D.,  Conroy C.,  Dav{\'e} R.,  Johnson B.~D.,   Popping G.,  2018,
   \mn@doi [The Astrophysical Journal] {10.3847/1538-4357/aaed25}, 869, 70
+
+\bibitem[\protect\citeauthoryear{Nelson et~al.,}{Nelson
+  et~al.}{2018}]{nelson2018}
+Nelson D.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
+  Society] {10.1093/mnras/stx3040}, 475, 624
 
 \bibitem[\protect\citeauthoryear{Noll, Burgarella, Giovannoli, Buat, Marcillac
   \& {Mu{\~n}oz-Mateos}}{Noll et~al.}{2009}]{noll2009}
@@ -96,6 +111,16 @@ Tinker J.,  Wetzel A.,   Conroy C.,  2011, preprint, 1107, arXiv:1107.5046
 Tinker J.~L.,  Hahn C.,  Mao Y.-Y.,  Wetzel A.~R.,   Conroy C.,  2018, \mn@doi
   [Monthly Notices of the Royal Astronomical Society] {10.1093/mnras/sty666},
   477, 935
+
+\bibitem[\protect\citeauthoryear{Trayford et~al.,}{Trayford
+  et~al.}{2015}]{trayford2015}
+Trayford J.~W.,  et~al., 2015, \mn@doi [Monthly Notices of the Royal
+  Astronomical Society] {10.1093/mnras/stv1461}, 452, 2879
+
+\bibitem[\protect\citeauthoryear{Trayford et~al.,}{Trayford
+  et~al.}{2017}]{trayford2017}
+Trayford J.~W.,  et~al., 2017, \mn@doi [Monthly Notices of the Royal
+  Astronomical Society] {10.1093/mnras/stx1051}, 470, 771
 
 \bibitem[\protect\citeauthoryear{Trayford, Lagos, Robotham  \&
   Obreschkow}{Trayford et~al.}{2020}]{trayford2020}

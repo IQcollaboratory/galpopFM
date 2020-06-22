@@ -1,3 +1,55 @@
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/abc.pdf}
+    \caption{\label{fig:abc}
+    Posterior distributions of our DEM parameters for the SIMBA (orange), TNG
+    (blue), and EAGLE (green) hydro simulations. The contours mark the $68\%$
+    and $95\%$ confidence intervals. We describe the parameters in
+    Section~\ref{sec:dem} and Table~\ref{tab:free_param} and derive these
+    posteriors using Approximate Bayesian Computation (Section~\ref{sec:abc}). 
+    In all simulations, dust attenuation increases for higher $M_*$ galaxies 
+    ($m_{\tau,M_*} \sim 2$). The simulations also have consistent optical 
+    depth amplitudes ($c_\tau$). However, the ${\rm SFR}$ dependence of
+    $\tau_V$ is different among the simulations. For TNG and EAGLE,
+    star-forming galaxies have lower $\tau_V$; for SIMBA quiescent galaxies
+    have lower $\tau_V$. Meanwhile, for the slope offset of the attenuation
+    curve, $\delta$, we find little $M_*$ and ${\rm SFR}$ dependence in the
+    simulations and that the amplitude ($c_\tau$) is consistent with 0. 
+    }
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/abc_observables.pdf}
+    \caption{\label{fig:dem}
+    $(G-R) - M_r$ color-magnitude (top panels) and $(FUV-NUV) - M_r$ (bottom
+    panels) relations predicted by the median DEM posteriors for the SIMBA
+    (orange), TNG (blue), and EAGLE (green) hydro simulations. For comparison, 
+    we include the observables for SDSS in the left-most panel
+    (Section~\ref{sec:obs}). The median posterior DEMs produce dramatically 
+    different observables than when we do not include any dust prescription
+    (Figure~\ref{fig:obs}). Hence, dust must be account for when interpreting 
+    and comparing simulations. Moreover, with the DEMs, all three simulations
+    produce observables consistent with SDSS. Since different simulations can 
+    produce reproduce observations by varying dust, dust significantly limits
+    our ability to constrain the physical processes that go into galaxy
+    simulations. 
+    }
+\end{center}
+\end{figure}
+
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/abc_observables_mr_bin.pdf}
+    \caption{Comparison of the observables predicted by the simulations with
+    the posterior DEM.}
+\label{fig:demcloseup}
+\end{center}
+\end{figure}
+
+
 \section{Results} \label{sec:results}
 We present the posterior distributions of the DEM parameters for the SIMBA
 (orange), TNG (blue), and EAGLE (green) hydro simulations in
@@ -13,30 +65,83 @@ $68\%$ and $95\%$ confidence intervals.
 
 In addition, we present the observables predicted by the DEM with median of the
 posteriors for the SIMBA (orange), TNG (blue), and EAGLE (green) simulations 
-in Figure~\ref{fig:dem}. We include the observables for SDSS in the left-most 
-panel for comparison (Section~\ref{sec:obs}). The top panels present the $(G-R) - M_r$ 
+in Figure~\ref{fig:dem}. We include the SDSS observables for comparison
+(black dashed; Section~\ref{sec:obs}). The top panels present the $(G-R) - M_r$ 
 color-magnitude relations while the bottom panels present the $(FUV-NUV) - M_r$
-relations. In Figure~\ref{fig:obs}, we find that the simulations predict
-dramatically different observables than SDSS without any dust prescriptions. 
-In contrast, {\em using DEMs we produce $(G-R) - M_r$ and $(FUV-NUV) - M_r$ 
+relations. Without any dust prescriptions, we found that simulations predict
+dramatically different observables than SDSS (Figure~\ref{fig:obs}). 
+\ch{something about clear bimodality with the red sequence and blue cloud} 
+In contrast, {\em using DEMs we produce $(G-R) - M_r$ and $(FUV-NUV) - M_r$
 relations consistent with SDSS for all of the simulations}. 
 
-\ch{More detailed look into the DEM observables.}
+We examine the observables more closely in Figure~\ref{fig:demcloseup}, where
+we present the $G-R$ (left) and $FUV-NUV$ (right) distributions in $M_r$ 
+bins for the DEM models of the SIMBA (orange), TNG (blue), and EAGLE (green) 
+simulations. The top panels contain galaxies with $-20 > M_r > -21$ and the 
+bottom panels contain galaxies with $-21 > M_r > -22.5$. In each panel we 
+include the SDSS distributions for comparison. These distributions are 
+number densities. The positions of the red sequence and blue cloud in the $G-R$
+distributions for the DEM models are consistent with the SDSS distribution. 
+They also produce $FUV_NUV$ distributions with peaks consistent with
+observations. We also find good agreement in the overall normalization
+(number density), especially for the $-20 > M_r > -21$ bin. 
+
+There are also a few discrepancies between the DEM models and SDSS observations. 
+First, the red sequence in the observed $G-R$ distribution has a sharp red color 
+cut-off.  In contrast, we do not find as sharp of a $G-R$ cut off in the DEM models, 
+and find a small fraction of galaxies redder than observations. 
+Furthermore, while the DEM models for TNG and EAGLE agree with SDSS, the DEM
+model for SIMBA overpredicts blue galaxies. \ch{what do we want to do with
+SIMBA?} We also find that the TNG and EAGLE DEM models slightly overpredict 
+galaxies in the higher luminosity bin and produce a broader $G-R$ distribution.
+Nonetheless, Figure~\ref{fig:demcloseup} demonstrates that overall the DEM
+models for SIMBA, TNG, and EAGLE produce observables are in good agreement 
+with SDSS.
+
 % comparison to literature 
-\cite{trayford2015}: EAGLE + GALAXEV + two component dust screen model. 
-They find a red sequence that is bluer and too many luminous blue galaxies.
-(all galaxies)
-\cite{trayford2017}: EAGLE + SKIRT. They claim it's better agreeement with
-observations
-\cite{nelson2018}: TNG + 'resolved' dust attenuation due to simulated
-distribution of neutral gas and metals. They don't really get the color
-distribution right, while we do. 
-(all galaxies)
-\cite{baes2019}: EAGLE+SKIRT SED compparison with GAMA 
-Far UV is not attenuated enough. underrestimates optical and NIR
-%\cite{trcka2020}: EAGLE+SKIRT with CIGALE to get physical properties of
-%galaxies.  trcka2020 compares to dustpedia~\citep{davies2017} Nothing
-%particularly interesting
+% First EAGLE
+Previous works in the literature have also presented models that predict colors
+and luminosities for different simulations and dust models and compared them to
+observations. For instance, \cite{trayford2015} calculate colors and luminosities 
+for $z=0.1$ galaxies using EAGLE with the {\sc GALAXEV} population synthesis models 
+and a two-component screen model for dust. Compared to GAMA observations, their
+model produces a bluer red sequence and overpredicts luminous blue galaxies~\citep[][Figure
+5]{trayford2015}. Although a detailed comparison is difficult since they
+compare all galaxies, not just centrals, we note that the DEM models find good
+agreement in the positions of the red sequences. Furthermore, for TNG and EAGLE, 
+the DEM models do not overpredict blue galaxies. Even for SIMBA, the DEM model
+overpredict blue galaxies by a smaller amount.
+
+More recently, \cite{trayford2017} calculated optical colors for the EAGLE simulation using
+{\sc SKIRT}, a Monte Carlo radiative transfer code~\citep{camps2015}, to model the dust. 
+\cite{trayford2017} compares all galaxies so again, we do not include a direct 
+comparison. Compared to GAMA, while they find good agreement with observations 
+at intermediate masses, $10^{10.5} < M_* < 10^{10.8} M_\odot$, they again find
+a bluer red-sequence at $10^{11.2} < M_* < 10^{11.5}$. While we do not present
+comparisons in $M_*$ bins, which compare SED derived $M_*$ to the predicted
+$M_*$ from simulations, we find that the position of the red sequence in the
+DEM models are in good agreement with SDSS even at $M_* > 10^{11.2}$. Our models, 
+however, predict an overall broader color distribution at the high mass end. 
+Using the same \cite{trayford2017} EAGLE and {\sc SKIRT} framework,
+\cite{baes2019} compared the predicted cosmic spectral energy distributions
+(CSED) to observations. While this comparison averages over the galaxy
+populations, they find the EAGLE-{\sc SKIRT} CSED overestimates the observed
+CSED in the UV regime. Moreover, the $FUV-NUV$ color of their CSED is
+significantly higher than GAMA $FUV-NUV$. The DEM models on the other hand, 
+predict $FUV-NUV$ in good agreement with observations. 
+
+%\cite{baes2019}: EAGLE+SKIRT SED compparison with GAMA Far UV is not attenuated enough. underrestimates optical and NIR
+% then TNG
+Besides with EAGLE, \cite{nelson2018} calculated optical colors for the
+TNG simulations with a dust model that includes attenuation due to dense gas 
+birth clouds surrounding young stellar populations and also attenuation due to 
+simulated distribution of neutral gas and metals.
+Although they compare the color distribution for all galaxies in bins of $M_*$,
+so we cannot directly compare to the DEM models, compared to SDSS they find 
+bluer red sequence peak position and narrower blue cloud. We find neither of
+these discrepancies between the DEM models and SDSS. 
+\ch{restatement of how the DEM models have the flexibility to reproduce the
+optical and UV color-magnitude relationship.}
 
 The simulations with DEMs predict observables in agreement with observations 
 despite the significant differents in the SMFs and $M_*$-SFR relations 
@@ -47,7 +152,7 @@ the DEM is based on the standard prescriptions for dust attenuation and, thus,
 serve as a flexible parameterization within the bounds of our current
 understanding of dust in galaxies.
 
-Figure~\ref{fig:dem} highlights two key points. First, any comparison of
+Figures~\ref{fig:dem} and~\ref{fig:demcloseup} highlights two key points. First, any comparison of
 simulations must account for dust. Dust entirely changes the predictions of
 simulations in observables-space. Fortunately, the DEM provides a simple framework
 for including dust without the need for expensive ray-tracing methods. 
@@ -63,10 +168,13 @@ galaxy physics) of the simulations.
 \ch{What do the differences in DEM parameters say about the differences among
 the hydro sims?} 
 The whole SIMBA discrepancy
-\ch{combining our understanding of dust maybe we can glean something about
-galaxy evolution}
 % Salim calims that the slope is steeper for satr burst galaxies, does this do
 % anything for us? 
+
+\ch{combining our understanding of dust maybe we can glean something about
+galaxy evolution}
+\ch{emphasize how the simple parameterization makes DEM very easy to
+interpret} 
 
 % what we learn about AV - galaxy property connection  
 While DEMs demonstrate that dust is a major bottleneck for interpreting galaxy
@@ -105,6 +213,9 @@ galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
 % In brief, at low optical depths, red light is scattered more isotropically and escapes the galaxy, while blue light is more forward- scattered and is subjected to more absorption. This results in a net steepening of the attenuation curve. At high optical depths, in a mixed star-dust geometry, the observed radiation primarily comes from stars at an optical depth less than unity. Redder photons travel more physical distance than bluer photons before absorption or scattering; the net effect is that larger optical depths result in a grayer attenuation curve.
 % Do we agree with the standard interpretion of dust? 
 
+%\cite{trcka2020}: EAGLE+SKIRT with CIGALE to get physical properties of
+%galaxies. trcka2020 compares to dustpedia~\citep{davies2017} They lok at
+%IRX-beta relation.
 
 % parameter degeneracies? 
 % \cite{salim2018} find that Galaxies with low AV values having steep curves and the ones with high AV being shallow.
@@ -138,47 +249,6 @@ comparison to \cite{leja2017} (only 129 nearby galaxies though)
 paragraph on restating how we can learn about dust through DEMs based on trends we see
 across all simulations. summarize main findings again. 
 
-\begin{figure}
-\begin{center}
-    \includegraphics[width=\textwidth]{figs/abc.pdf}
-    \caption{\label{fig:abc}
-    Posterior distributions of our DEM parameters for the SIMBA (orange), TNG
-    (blue), and EAGLE (green) hydro simulations. The contours mark the $68\%$
-    and $95\%$ confidence intervals. We derive these posteriors using
-    Approximate Bayesian Computation (ABC, Section~\ref{sec:abc}) and describe
-    the parameters in Section~\ref{sec:dem} and Table~\ref{tab:free_param}. 
-    In all simulations, dust attenuation increases for higher $M_*$ galaxies 
-    ($m_{\tau,M_*} \sim 2$). The simulations also have consistent optical 
-    depth amplitudes ($c_\tau$). However, the ${\rm SFR}$ dependence of
-    $\tau_V$ is different among the simulations. For TNG and EAGLE,
-    star-forming galaxies have lower $\tau_V$; for SIMBA quiescent galaxies
-    have lower $\tau_V$. Meanwhile, for the slope offset of the attenuation
-    curve, $\delta$, we find little $M_*$ and ${\rm SFR}$ dependence in the
-    simulations and that the amplitude ($c_\tau$) is consistent with 0. 
-    }
-\end{center}
-\end{figure}
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=\textwidth]{figs/abc_observables.pdf}
-    \caption{\label{fig:dem}
-    $(G-R) - M_r$ color-magnitude (top panels) and $(FUV-NUV) - M_r$ (bottom
-    panels) relations predicted by the median DEM posteriors for the SIMBA
-    (orange), TNG (blue), and EAGLE (green) hydro simulations. For comparison, 
-    we include the observables for SDSS in the left-most panel
-    (Section~\ref{sec:obs}). The median posterior DEMs produce dramatically 
-    different observables than when we do not include any dust prescription
-    (Figure~\ref{fig:obs}). Hence, dust must be account for when interpreting 
-    and comparing simulations. Moreover, with the DEMs, all three simulations
-    produce observables consistent with SDSS. Since different simulations can 
-    produce reproduce observations by varying dust, dust significantly limits
-    our ability to constrain the physical processes that go into galaxy
-    simulations. 
-    }
-\end{center}
-\end{figure}
-
 What are the limitations of DEM and how can it be improved? 
 \begin{itemize}
     \item too many luminous galaxies
@@ -187,15 +257,6 @@ What are the limitations of DEM and how can it be improved?
     simulations and they do not agree well with observations \ref{sec:res}. 
 \end{itemize}
 
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=\textwidth]{figs/abc_observables_1d.pdf}
-    \caption{Comparison of the observables predicted by the simulations with
-    the posterior DEM.}
-\label{fig:dem1d}
-\end{center}
-\end{figure}
 
 \ch{How robust are our results?}
 We fix the UV bump to reduce the number of parameters. But when run our
