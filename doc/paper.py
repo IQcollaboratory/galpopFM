@@ -1078,7 +1078,7 @@ def ABC_Observables():
     plt.close()
     
     Mr_bins = [(20., 21.), (21., 22.5)]
-    obs_lims = [(0.0, 2.), (-0.5, 4)]
+    obs_lims = [(0.0, 2.), (-0.5, 4.5)]
     obs_lbls = ['$G - R$', '$FUV - NUV$']
     yobs_lbls = ['$p(G - R)$', '$p(FUV - NUV)$']
 

@@ -11,24 +11,41 @@ and amplitude of $\delta$, the slope offset of the attenuation curve
 are derived using ABC (Section~\ref{sec:abc}) and the contours mark the 
 $68\%$ and $95\%$ confidence intervals. 
 
-In addition, we also present the observables derived from median of the DEM
+In addition, we present the observables predicted by the DEM with median of the
 posteriors for the SIMBA (orange), TNG (blue), and EAGLE (green) simulations 
 in Figure~\ref{fig:dem}. We include the observables for SDSS in the left-most 
 panel for comparison (Section~\ref{sec:obs}). The top panels present the $(G-R) - M_r$ 
 color-magnitude relations while the bottom panels present the $(FUV-NUV) - M_r$
-relations. In Figure~\ref{fig:obs}, where we compare of the same observables
-but for simulations without any dust prescription, we find dramatic differences 
-in observable-space between SDSS and the simulations. In contrast, {\em using
-DEMs we produce $(G-R) - M_r$ and $(FUV-NUV) - M_r$ relations consistent with
-SDSS for all of the simulations}. 
+relations. In Figure~\ref{fig:obs}, we find that the simulations predict
+dramatically different observables than SDSS without any dust prescriptions. 
+In contrast, {\em using DEMs we produce $(G-R) - M_r$ and $(FUV-NUV) - M_r$ 
+relations consistent with SDSS for all of the simulations}. 
 
-The agreement in the observables is inspite of the significant differences 
-in the SMFs and $M_*$-SFR relations (Figures~\ref{fig:smfs} and~\ref{fig:msfr}). 
-In other words, the DEM has the flexiblity to reproduce observations even for 
-simulations that predict galaxy populations with significantly different
-physical properties. We emphasize that the DEM is based on the standard
-prescriptions for dust attenuation and, thus, serve as a flexible
-parameterization within the bounds of our current understanding of dust in galaxies.
+\ch{More detailed look into the DEM observables.}
+% comparison to literature 
+\cite{trayford2015}: EAGLE + GALAXEV + two component dust screen model. 
+They find a red sequence that is bluer and too many luminous blue galaxies.
+(all galaxies)
+\cite{trayford2017}: EAGLE + SKIRT. They claim it's better agreeement with
+observations
+\cite{nelson2018}: TNG + 'resolved' dust attenuation due to simulated
+distribution of neutral gas and metals. They don't really get the color
+distribution right, while we do. 
+(all galaxies)
+\cite{baes2019}: EAGLE+SKIRT SED compparison with GAMA 
+Far UV is not attenuated enough. underrestimates optical and NIR
+%\cite{trcka2020}: EAGLE+SKIRT with CIGALE to get physical properties of
+%galaxies.  trcka2020 compares to dustpedia~\citep{davies2017} Nothing
+%particularly interesting
+
+The simulations with DEMs predict observables in agreement with observations 
+despite the significant differents in the SMFs and $M_*$-SFR relations 
+(Figures~\ref{fig:smfs} and~\ref{fig:msfr}). In other words, the DEM has the 
+flexiblity to reproduce observations even when simulations predict galaxy
+populations with significantly different physical properties. We emphasize that
+the DEM is based on the standard prescriptions for dust attenuation and, thus,
+serve as a flexible parameterization within the bounds of our current
+understanding of dust in galaxies.
 
 Figure~\ref{fig:dem} highlights two key points. First, any comparison of
 simulations must account for dust. Dust entirely changes the predictions of
@@ -42,6 +59,16 @@ consistent observables for a range of simulations, marginalizing over dust
 would leave little constraining power on the subgrid prescriptions (\emph{i.e.}
 galaxy physics) of the simulations. 
 
+% comparison across the simulations 
+\ch{What do the differences in DEM parameters say about the differences among
+the hydro sims?} 
+The whole SIMBA discrepancy
+\ch{combining our understanding of dust maybe we can glean something about
+galaxy evolution}
+% Salim calims that the slope is steeper for satr burst galaxies, does this do
+% anything for us? 
+
+% what we learn about AV - galaxy property connection  
 While DEMs demonstrate that dust is a major bottleneck for interpreting galaxy
 simulations, they also provide some insights into dust. For instance, the
 posteriors of DEM parameters in Figure~\ref{fig:abc} reveal consistent trends
@@ -49,7 +76,18 @@ among the simulations. In all three simulations, we find significant positive
 $M_*$ dependence of $\tau_V$: $\mtaum \sim 2$. Galaxies with higher $M_*$ have
 overall higher dust attenuation. 
 \ch{how does this compare to the literature?} 
+\cite{salim2018} finds the same thing with the GALEX-SDSS-WISE Legacy Catalog 2
+(GSWLC2) sample for SF galaxies. 
 
+
+Something about attenuation curves for quiescent galaxies since they are
+difficult to get from observations (\ch{why?})
+% IR luminosity from AGN can affect IR based attenuation curves(?) we don't
+% have this problem since we forward model UV and optical only. 
+% even for SED fitting methods \cite{leja2018} find that you have to include an
+% AGN model that properly models the MIR emission
+
+% what we learn about delta - galaxy property connection  
 We also find overall little $M_*$ and ${\rm SFR}$ dependence in $\delta$. In
 fact, the amplitude of $\delta$ is roughly consistent with 0.  
 \ch{what does this mean?}
@@ -57,22 +95,48 @@ fact, the amplitude of $\delta$ is roughly consistent with 0.
 This is consistent with \cite{salim2020}, where they measured the attenuation
 curve slopes of $23,000$ galaxies from GALEX-SDSS-WISE Legacy Catalog 2
 (\ch{cite}). 
+comparison to \cite{leja2017} (only 129 nearby galaxies though) 
+\cite{viaene2017} (one galaxy, jesus)  
+%salim2018: d = -0.38 + 0.29(log M* - 10),
+\cite{kriek2013}  using stacked SEDs of medium- and broadband photometry of
+galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
+%restrict to galaxies with moderate to high optical attenuations (AV> 0.5), 
 
+% In brief, at low optical depths, red light is scattered more isotropically and escapes the galaxy, while blue light is more forward- scattered and is subjected to more absorption. This results in a net steepening of the attenuation curve. At high optical depths, in a mixed star-dust geometry, the observed radiation primarily comes from stars at an optical depth less than unity. Redder photons travel more physical distance than bluer photons before absorption or scattering; the net effect is that larger optical depths result in a grayer attenuation curve.
+% Do we agree with the standard interpretion of dust? 
+
+
+% parameter degeneracies? 
+% \cite{salim2018} find that Galaxies with low AV values having steep curves and the ones with high AV being shallow.
+% At fixed AV there is no trend of slope versus mass
+% strong correlation between the attenuation curve slope and optical depth ( ctau -- cdelta) 
+% important implications, and it also impacts the underlying assumption of the comparison method,
+% Chevallard et al. (2013) (radiative transfer models combined with realistic
+% dust geometries and the two-component (birth clouds/diffuse ISM) model
+% (Charlot & Fall 2000))
+% Leja et al. (2017) also finds this correlation 
+
+% according to Chevallard et al. (2013) the steepness of an attenuation curve
+% at small optical depths is the result of the dominance of scattering over
+% absorption, coupled with the fact that scattering is more forward directed at
+% shorter wavelengths whereas it is more isotropic at longer wavelengths.As the
+% optical depth increases, absorption becomes more dominant than scattering,
+% and the curve becomes shallower (grayer).
+
+
+% what we learn about delta - galaxy property connection  
 paragraph on the variation of attenuation curves based on 
 \ch{what does this mean?}
 While an empirical prescription like DEM doesn't allow explicit modeling of the
 complex dust-star geometry, it does a good job at mimicking it. 
 \ch{how does this compare to the literature?} 
 comparison to \cite{narayanan2018} paper 
+comparison to \cite{salim2018} for SF population  
+comparison to \cite{leja2017} (only 129 nearby galaxies though) 
+
 
 paragraph on restating how we can learn about dust through DEMs based on trends we see
 across all simulations. summarize main findings again. 
-
-\ch{What do the differences in DEM parameters say about the differences among
-the hydro sims?} 
-The whole SIMBA discrepancy
-\ch{combining our understanding of dust maybe we can glean something about
-galaxy evolution}
 
 \begin{figure}
 \begin{center}
@@ -115,10 +179,6 @@ galaxy evolution}
 \end{center}
 \end{figure}
 
-\ch{More detailed look into the DEM observables.}
-\begin{itemize}
-    \item how does it compare to EAGLE+SKIRT? 
-\end{itemize}
 What are the limitations of DEM and how can it be improved? 
 \begin{itemize}
     \item too many luminous galaxies
