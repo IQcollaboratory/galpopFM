@@ -1218,7 +1218,7 @@ def ABC_Observables():
     _plth2, = sub.plot([], [], c='C0')
     _plth3, = sub.plot([], [], c='C2')
 
-    names   = ['SDSS', 'SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
+    names   = ['SDSS', 'SIMBA DEM', 'TNG DEM', 'EAGLE DEM']
     sub.legend([_plth0, _plth1, _plth2, _plth3], names, loc='upper right',
             handletextpad=0.2, fontsize=14) 
     fig.subplots_adjust(wspace=0.4)
@@ -1274,16 +1274,14 @@ def ABC_Observables():
                 _plth2, = sub.plot([], [], c='C0')
                 _plth3, = sub.plot([], [], c='C2')
 
-                names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM', 'SDSS']
+                names   = ['SIMBA DEM', 'TNG DEM', 'EAGLE DEM', 'SDSS']
                 sub.legend([_plth1, _plth2, _plth3, _plth0], names, loc='upper right',
-                        handletextpad=0.2, fontsize=14) 
+                        handletextpad=0.2, fontsize=20) 
 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_ylabel(r'number density $({\rm Mpc}/h)^{-3}$', labelpad=25, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    fig.subplots_adjust(wspace=0.1, hspace=0.1)
-
-    fig.subplots_adjust(wspace=0.4)
+    fig.subplots_adjust(wspace=0.2, hspace=0.1)
     ffig = os.path.join(fig_dir, 'abc_observables.mr_bin.png') 
     fig.savefig(ffig, bbox_inches='tight') 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
@@ -1916,11 +1914,11 @@ if __name__=="__main__":
     #M_SFR()
     #SMF_MsSFR()
     #DEM()
-    Observables()
+    #Observables()
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()

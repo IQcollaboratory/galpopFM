@@ -11,45 +11,45 @@ Warning--I didn't find a database entry for "viaene2017"
 Warning--I didn't find a database entry for "brinchmann2004"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 23 entries,
+You've used 29 entries,
             2881 wiz_defined-function locations,
-            886 strings with 16523 characters,
-and the built_in function-call counts, 10795 in all, are:
-= -- 930
-> -- 774
-< -- 46
-+ -- 348
-- -- 110
-* -- 1323
-:= -- 1687
+            923 strings with 18647 characters,
+and the built_in function-call counts, 13461 in all, are:
+= -- 1160
+> -- 957
+< -- 56
++ -- 431
+- -- 132
+* -- 1656
+:= -- 2098
 add.period$ -- 0
-call.type$ -- 23
-change.case$ -- 46
-chr.to.int$ -- 23
-cite$ -- 23
-duplicate$ -- 510
-empty$ -- 507
-format.name$ -- 190
-if$ -- 1865
+call.type$ -- 29
+change.case$ -- 58
+chr.to.int$ -- 29
+cite$ -- 29
+duplicate$ -- 644
+empty$ -- 639
+format.name$ -- 232
+if$ -- 2325
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 23
-newline$ -- 82
-num.names$ -- 152
-pop$ -- 109
+missing$ -- 29
+newline$ -- 100
+num.names$ -- 192
+pop$ -- 137
 preamble$ -- 1
-purify$ -- 92
+purify$ -- 116
 quote$ -- 0
-skip$ -- 297
+skip$ -- 373
 stack$ -- 0
-substring$ -- 692
-swap$ -- 236
-text.length$ -- 92
+substring$ -- 850
+swap$ -- 300
+text.length$ -- 116
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 207
+type$ -- 261
 warning$ -- 0
-while$ -- 166
+while$ -- 210
 width$ -- 0
-write$ -- 240
+write$ -- 300
 (There were 6 warnings)

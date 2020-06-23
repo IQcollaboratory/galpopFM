@@ -27,6 +27,16 @@ Abazajian K.~N.,  et~al., 2009, \mn@doi [The Astrophysical Journal Supplement
 Baes M.,  Tr{\v c}ka A.,  Camps P.,  Nersesian A.,  Trayford J.,  Theuns T.,
   Dobbels W.,  2019, arXiv:1901.08878 [astro-ph]
 
+\bibitem[\protect\citeauthoryear{Battisti, Calzetti  \& Chary}{Battisti
+  et~al.}{2016}]{battisti2016}
+Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2016, \mn@doi [The Astrophysical
+  Journal] {10.3847/0004-637X/818/1/13}, 818, 13
+
+\bibitem[\protect\citeauthoryear{Battisti, Calzetti  \& Chary}{Battisti
+  et~al.}{2017}]{battisti2017}
+Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2017, \mn@doi [The Astrophysical
+  Journal] {10.3847/1538-4357/aa6fb2}, 840, 109
+
 \bibitem[\protect\citeauthoryear{Blanton \& Roweis}{Blanton \&
   Roweis}{2007}]{blanton2007a}
 Blanton M.~R.,  Roweis S.,  2007, \mn@doi [The Astronomical Journal]
@@ -36,6 +46,16 @@ Blanton M.~R.,  Roweis S.,  2007, \mn@doi [The Astronomical Journal]
   et~al.}{2005}]{blanton2005}
 Blanton M.~R.,  et~al., 2005, \mn@doi [The Astronomical Journal]
   {10.1086/429803}, 129, 2562
+
+\bibitem[\protect\citeauthoryear{Buat et~al.,}{Buat et~al.}{2005}]{buat2005}
+Buat V.,  et~al., 2005, \mn@doi [The Astrophysical Journal Letters]
+  {10.1086/423241}, 619, L51
+
+\bibitem[\protect\citeauthoryear{Burgarella, Buat  \&
+  {Iglesias-P{\'a}ramo}}{Burgarella et~al.}{2005}]{burgarella2005}
+Burgarella D.,  Buat V.,   {Iglesias-P{\'a}ramo} J.,  2005, \mn@doi [Monthly
+  Notices of the Royal Astronomical Society]
+  {10.1111/j.1365-2966.2005.09131.x}, 360, 1413
 
 \bibitem[\protect\citeauthoryear{Calzetti}{Calzetti}{2001}]{calzetti2001}
 Calzetti D.,  2001, \mn@doi [New Astronomy Reviews]
@@ -50,11 +70,20 @@ Camps P.,  Baes M.,  2015, \mn@doi [Astronomy and Computing]
 Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
   Pacific] {10.1086/376392}, 115, 763
 
+\bibitem[\protect\citeauthoryear{Garn \& Best}{Garn \& Best}{2010}]{garn2010}
+Garn T.,  Best P.~N.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical
+  Society] {10.1111/j.1365-2966.2010.17321.x}, 409, 421
+
 \bibitem[\protect\citeauthoryear{Hahn, Vakili, Walsh, Hearin, Hogg  \&
   Campbell}{Hahn et~al.}{2017}]{hahn2017a}
 Hahn C.,  Vakili M.,  Walsh K.,  Hearin A.~P.,  Hogg D.~W.,   Campbell D.,
   2017, \mn@doi [Monthly Notices of the Royal Astronomical Society]
   {10.1093/mnras/stx894}, 469, 2791
+
+\bibitem[\protect\citeauthoryear{{Iglesias-P{\'a}ramo}
+  et~al.,}{{Iglesias-P{\'a}ramo} et~al.}{2006}]{iglesias-paramo2006}
+{Iglesias-P{\'a}ramo} J.,  et~al., 2006, \mn@doi [The Astrophysical Journal
+  Supplement Series] {10.1086/502628}, 164, 38
 
 \bibitem[\protect\citeauthoryear{Ishida et~al.,}{Ishida
   et~al.}{2015}]{ishida2015}

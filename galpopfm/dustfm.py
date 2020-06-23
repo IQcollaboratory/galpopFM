@@ -210,7 +210,7 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
 
     #Eq. 14 of Somerville+(1999) 
     A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
-    assert np.isfinite(A_V), print(tauV, logmstar, logsfr) 
+    assert np.all(np.isfinite(A_V)), print(tauV, logmstar, logsfr) 
     
     dlam = 350. # width of bump from Noll+(2009)
     lam0 = 2175. # wavelength of bump 
@@ -281,7 +281,7 @@ def DEM_slab_noll_msfr(theta, lam, flux_i, logmstar, logsfr, nebular=True):
 
     #Eq. 14 of Somerville+(1999) 
     A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
-    assert np.isfinite(A_V), print(tauV, logmstar, logsfr) 
+    assert np.all(np.isfinite(A_V)), print(tauV, logmstar, logsfr) 
     
     dlam = 350. # width of bump from Noll+(2009)
     lam0 = 2175. # wavelength of bump 

@@ -42,10 +42,18 @@
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=\textwidth]{figs/abc_observables_mr_bin.pdf}
-    \caption{Comparison of the observables predicted by the simulations with
-    the posterior DEM.}
-\label{fig:demcloseup}
+    \includegraphics[width=0.85\textwidth]{figs/abc_observables_mr_bin.pdf}
+    \caption{\label{fig:demcloseup}
+    $G-R$ (left) and $FUV-NUV$ (right) number density distributions for the DEM
+    models of the SIMBA (orange), TNG (blue), and EAGLE (green) simulations in
+    two $M_r$ bins: $-20 > M_r > -21$ (top panels) and $-21 > M_r > -22.5$
+    (bottom panels).  Each of the DEM models are run using the median posterior
+    parameter values. In comparison to SDSS (grey shaded), the DEM models predict 
+    consistent red sequence and blue cloud positions in the $G-R$ distributions, 
+    $FUV-NUV$ peak positions, and number density. {\em Overall the DEM
+    models for SIMBA, TNG, and EAGLE produce observables are in good agreement 
+    with SDSS.}
+    }
 \end{center}
 \end{figure}
 
@@ -79,7 +87,7 @@ we present the $G-R$ (left) and $FUV-NUV$ (right) distributions in $M_r$
 bins for the DEM models of the SIMBA (orange), TNG (blue), and EAGLE (green) 
 simulations. The top panels contain galaxies with $-20 > M_r > -21$ and the 
 bottom panels contain galaxies with $-21 > M_r > -22.5$. In each panel we 
-include the SDSS distributions for comparison. These distributions are 
+include the SDSS distributions for comparison (grey shaded). These distributions are 
 number densities. The positions of the red sequence and blue cloud in the $G-R$
 distributions for the DEM models are consistent with the SDSS distribution. 
 They also produce $FUV_NUV$ distributions with peaks consistent with
@@ -172,30 +180,47 @@ So far we have focused on comparing the predict observables of the DEM models.
 However, the inferred posterior of the DEM parameters provide key insights into 
 the hydro simulations. Comparing the posteriors of the different simulations in
 Figure~\ref{fig:abc}, we find significant differences between the posteriors of TNG and EAGLE versus
-SIMBA. Unlike the others, SIMBA has $\mtaus > 0$ --- \ie galaxies with higher SFR
+SIMBA. Unlike the others, SIMBA has $\mtaus > 0$ --- \emph{i.e.} galaxies with higher SFR
 have higher attenuation. With $\mtaus > 0$, star-forming galaxies in the SIMBA
-DEM model populate the red sequence, rather than the blue cloud. 
-
-
+DEM model populate the red sequence, rather than the blue cloud. \ch{this
+paragraph may change after kinked version finishes} 
 % Salim calims that the slope is steeper for satr burst galaxies, does this do
 % anything for us? 
 
-\ch{combining our understanding of dust maybe we can glean something about
-galaxy evolution}
-\ch{emphasize how the simple parameterization makes DEM very easy to
-interpret} 
-
 % what we learn about AV - galaxy property connection  
-While DEMs demonstrate that dust is a major bottleneck for interpreting galaxy
-simulations, they also provide some insights into dust. For instance, the
-posteriors of DEM parameters in Figure~\ref{fig:abc} reveal consistent trends
-among the simulations. In all three simulations, we find significant positive
-$M_*$ dependence of $\tau_V$: $\mtaum \sim 2$. Galaxies with higher $M_*$ have
-overall higher dust attenuation. 
-\ch{how does this compare to the literature?} 
-\cite{salim2018} finds the same thing with the GALEX-SDSS-WISE Legacy Catalog 2
-(GSWLC2) sample for SF galaxies. 
+The DEMs demonstrate that simulations can closely match observations by varying
+dust attenuation. They therefore illustrate how dust is a major bottleneck for
+directly interpreting galaxy simulations for insights into galaxy formation. In
+addition, DEMs also provide some insight into dust. Given our parameterization
+(Section~\ref{sec:dem}), it is especially easy to interpret correlation between
+dust attenuation and galaxy physical properties. For instance, the posteriors of
+DEM parameters in Figure~\ref{fig:abc} reveal a
+number of consistent trends across the simulations. In all three simulations, we find significant positive
+$M_*$ dependence of $\tau_V$: $\mtaum \sim 2$. Regardless of the underlying
+hydro simulations, we find that {\em galaxies with higher $M_*$ have overall higher 
+dust attenuation}.
 
+This $M_*$ dependence is consistent with prevoius works in the literature.
+The seminal work of \cite{burgarella2005}, for instance, found significant positive $M_*$ dependence 
+in $FUV$ attenuation in NUV-selected and FIR-selected samples of \cite{buat2005}
+and \cite{iglesias-paramo2006}. More recently, \cite{salim2018} also find
+higher attenuation for higher $M_*$ for star-forming galaxies in the
+GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2). \ch{there must be more citations we
+can include} 
+
+\cite{garn2010} using full  SDSS SFG data set (90,000 galaxies)
+find higher attenuation as a function of Mstar and SFR.
+
+\cite{battisti2016} using 10000 SF galaxies GALEX-SDSS
+find higher balmer opitcal depth as a function of Mstar and SFR.
+% SFG with higher metallicities, stellar masses, and SFRs tend to have higher dust attenuation (e.g., Wang & Heckman 1996; Hopkins et al. 2001; Garn & Best 2010; Reddy et al. 2015)
+
+%Previous studies have found a positive correlation between the total dust mass in galaxies and their gas-phase metallicity (Draine et al. 2007; Galametz et al. 2011);however, the functional form of this relation is still under considerable debate. In addition, there are the well- known positive correlations between stellar mass and metalli- city (e.g., Tremonti et al. 2004) and stellar mass and SFR, also called the star-forming mainsequence (e.g., Brinchmann et al. 2004; Cook et al. 2014). Taken together, these relations suggest a scenario in which the most massive galaxies and/or actively SFGs accumulate a larger amount of dust that can lead to elevated levels of attenuation compared to their low-mass and/or weakly star-forming counterparts.A relation between SFR and amount of dust attenuation is observed, for instance, in local galaxies (e.g., Wang & Heckman 1996; Calzetti 2001
+
+\cite{battisti2017} using 5000 SF galaxies from 
+found little stellar mass dependence in the opposite direction (less
+attenuation at higher stellar masses). But they have big error bars and only
+probe up to 9.7
 
 Something about attenuation curves for quiescent galaxies since they are
 difficult to get from observations (\ch{why?})
@@ -227,6 +252,8 @@ galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
 %IRX-beta relation.
 
 % parameter degeneracies? 
+% Both Leja et al. (2017) and Salim et al. (2018) find a strong relationship between the optical opacity and curve slope, such that the galaxies with higher AV have shallower slopes.
+
 % \cite{salim2018} find that Galaxies with low AV values having steep curves and the ones with high AV being shallow.
 % At fixed AV there is no trend of slope versus mass
 % strong correlation between the attenuation curve slope and optical depth ( ctau -- cdelta) 
