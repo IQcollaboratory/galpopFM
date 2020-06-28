@@ -38,9 +38,33 @@ vol_simba   = 100.**3 # (Mpc/h)^3
 vol_tng     = 75.**3 # (Mpc/h)^3
 vol_eagle   = 67.77**3 # (Mpc/h)^3  Lbox 100 Mpc h = 0.6777
 
-simba_abc = 8
-tng_abc = 9 
-eagle_abc = 11 
+sims = ['SIMBA', 'TNG', 'EAGLE']
+clrs = ['C1', 'C0', 'C2']
+
+nabc = [8, 8, 11] 
+abc_run = lambda _sim: '%s.slab_noll_msfr_fixbump.L2.3d' % _sim.lower() 
+dem_attenuate = dustFM.DEM_slab_noll_msfr_fixbump
+param_lbls = np.array([
+        r'$m_{\tau,M_*}$', r'$m_{\tau,{\rm SFR}}$', r'$c_{\tau}$', 
+        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$',
+        r'$f_{\rm neb}$'])
+prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
+prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+
+'''
+nabc = [7, 5, 5] 
+abc_run = lambda _sim: '%s.slab_noll_msfr_kink_fixbump.L2.3d' % _sim 
+param_lbls = np.array([
+        r'$m_{\tau,{\rm low}~M_*}$', r'$m_{\tau,{\rm high}~M_*}$', 
+        r'$m_{\tau,{\rm low~SFR}}$', r'$m_{\tau,{\rm high~SFR}}$', 
+        r'$c_{\tau}$', 
+        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$',
+        r'$f_{\rm neb}$'])
+prior_min = np.array([-5., -5., -5.,  -5., 0., -4., -4., -4., 1.]) 
+prior_max = np.array([5.0, 5.0, 5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+'''
+prior_range = np.array([(_min, _max) for _min, _max in zip(prior_min, prior_max)])
+
 
 def SDSS():
     ''' figure illustrating our SDSS 
@@ -336,126 +360,46 @@ def DEM():
         * Kriek & Conroy (2013)
         * Reddy+(2015)    
     '''
-    k_V_calzetti = 4.87789
-
-    def _dem(lam, logm, logsfr): 
-        tauV = np.clip(1.*(logm - 10.) + 1. * logsfr + 2., 1e-3, None) 
-        delta = -0.1 * (logm - 10.) + -0.1 * logsfr + -0.2 
-        E_b =  -1.9 * delta + 0.85
-    
-        # randomly sample the inclinatiion angle from 0 - pi/2 
-        incl = 0.
-        sec_incl = 1./np.cos(incl) 
-        #Eq. 14 of Somerville+(1999) 
-        A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
-        dlam = 350. # width of bump from Noll+(2009)
-        lam0 = 2175. # wavelength of bump 
-        # bump 
-        D_bump = E_b * (lam * dlam)**2 / ((lam**2 - lam0**2)**2 + (lam * dlam)**2)
-        # calzetti is already normalized to k_V
-        A_lambda = A_V * (dustFM.calzetti_absorption(lam) + D_bump / k_V_calzetti) * (lam / 5500.)**delta 
-        return A_lambda
-
-    def _cardelli89_mw(_lam): 
-        x = 10000./_lam
-        y = x - 1.82
-        return None  
-
-    def _salim2018(_lam, logm, logsfr): 
-        lam = _lam/10000. 
-        if logsfr < -0.5:  # quiescent
-            RV = 3.15
-            B = 1.57
-            a0 = -4.30
-            a1 = 2.71
-            a2 = -0.191
-            a3 = 0.0121
-        else: 
-            RV = 2.61
-            B = 2.21
-            a0 = -3.72
-            a1 = 2.20
-            a2 = -0.062
-            a3 = 0.0080
-
-        Dl = B * lam**2 * 0.035**2 / ((lam**2 - 0.2175**2)**2 + lam**2 * 0.035**2)
-        kl = a0 + a1/lam + a2 / lam**2 + a3/lam**3 + Dl + RV
-        return kl / RV
-
-    def _calzetti(lam): 
-        return dustFM.calzetti_absorption(lam)
+    _dem = lambda lam, logm, logsfr: -2.5 * np.log10(dem_attenuate(
+        np.array([2., -2., 2., -0.1, -0.1, -0.2, 1.]), 
+        lam, 
+        np.ones(len(lam)), 
+        logm, 
+        logsfr, 
+        incl=0.,
+        nebular=False)).flatten()
 
     wave = np.linspace(1000, 10000, 1000) 
 
-    fig = plt.figure(figsize=(11,8))
+    fig = plt.figure(figsize=(8,5))
     
     logSFR_sf = 0.5
     logSFR_q = -2.
     M_low = 10.
     M_high = 11.
 
+    sub = fig.add_subplot(111) 
     # low mass SFing galaxies
-    sub = fig.add_subplot(221) 
-    sub.plot(wave, _dem(wave, M_low, logSFR_sf), c='k')
-    sub.plot(wave, _salim2018(wave, M_low, logSFR_sf), c='C0')
-    sub.plot(wave, _calzetti(wave), c='C1') 
-    #sub.text(0.95, 0.95, r'Star-Forming', ha='right',
-    #        va='top', transform=sub.transAxes, fontsize=20)
-    #sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_low, ha='left',
-    #        va='top', transform=sub.transAxes, fontsize=20)
-
-    sub.set_xlim(1.2e3, 1e4)
-    sub.set_xticklabels([]) 
-    sub.set_ylim(0., 7.) 
-    sub.set_title('Star-Forming', fontsize=20)
-
+    sub.plot(wave, _dem(wave, M_low, logSFR_sf), c='C0',  
+            label=r'star-forming, low $M_*$')
+    # high mass SFing galaxies
+    sub.plot(wave, _dem(wave, M_high, logSFR_sf), c='C2',  
+            label=r'star-forming, high $M_*$')
     # low mass Quiescent galaxies
-    logSFR = -2 
-    sub = fig.add_subplot(222) 
-    _plt_dem, = sub.plot(wave, _dem(wave, M_low, logSFR_q), c='k')
-    _plt_salim, = sub.plot(wave, _salim2018(wave, M_low, logSFR_q), c='C0')
-    _plt_cal, = sub.plot(wave, _calzetti(wave), c='C1') 
-
-    sub.legend([_plt_dem, _plt_cal, _plt_salim], 
-            ['DEM', 'Calzetti+(2001)', 'Salim+(2018)'], loc='lower right',
-            bbox_to_anchor=(1., 0.5), handletextpad=0.25, fontsize=16) 
-    #sub.text(0.95, 0.95, r'Quiescent', ha='right',
-    #        va='top', transform=sub.transAxes, fontsize=20)
-    sub.set_xlim(1.2e3, 1e4)
-    sub.set_xticklabels([]) 
-    sub.set_yticklabels([]) 
-    sub.set_ylim(0., 7.) 
-    sub.set_title('Quiescent', fontsize=20)
-    sub.text(1.01, 0.5, r'$M_*\sim 10^{%.f}M_\odot$' % M_low, 
-            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
-    
-    sub = fig.add_subplot(223) 
-    sub.plot(wave, _dem(wave, M_high, logSFR_sf), c='k')
-    sub.plot(wave, _salim2018(wave, M_high, logSFR_sf), c='C0')
-    sub.plot(wave, _calzetti(wave), c='C1') 
-    #sub.text(0.05, 0.95, r'$M_*\sim 10^{%.f}M_\odot$' % M_high, ha='left',
-    #        va='top', transform=sub.transAxes, fontsize=20)
-
+    sub.plot(wave, _dem(wave, M_low, logSFR_q), c='C1',  
+            label=r'quiescent, low $M_*$')
+    # high mass Quiescent galaxies
+    sub.plot(wave, _dem(wave, M_high, logSFR_q), c='C3',  
+            label=r'quiescent, high $M_*$')
+    # calzetti for reference
+    sub.plot(wave, dustFM.calzetti_absorption(wave), c='k', 
+            ls='--', label='Calzetti+(2001)') 
     sub.set_xlim(1.2e3, 1e4)
     sub.set_ylim(0., 7.) 
+    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
 
-    # Quiescent galaxies
-    logSFR = -2 
-    sub = fig.add_subplot(224) 
-    sub.plot(wave, _dem(wave, M_high, logSFR_q), c='k')
-    sub.plot(wave, _salim2018(wave, M_high, logSFR_q), c='C0')
-    sub.plot(wave, _calzetti(wave), c='C1') 
-    sub.set_xlim(1.2e3, 1e4)
-    sub.set_yticklabels([]) 
-    sub.set_ylim(0., 7.) 
-    sub.text(1.01, 0.5, r'$M_*\sim 10^{%.f}M_\odot$' % M_high,
-            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
-
-    bkgd = fig.add_subplot(111, frameon=False)
-    bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
-    bkgd.set_ylabel(r'$A(\lambda)$', labelpad=10, fontsize=25) 
-    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+    sub.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
+    sub.set_ylabel(r'$A(\lambda)$', labelpad=10, fontsize=25) 
 
     ffig = os.path.join(fig_dir, 'dems.png') 
     fig.savefig(ffig, bbox_inches='tight') 
@@ -522,7 +466,7 @@ def Observables():
                 range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
                 contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
-        sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
+        #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
         sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
@@ -544,7 +488,7 @@ def Observables():
                 range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
                 contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
-        sfr0 = sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
+        #sfr0 = sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
@@ -555,7 +499,9 @@ def Observables():
         sub.set_ylim(ranges[2]) 
 
     _plth0, = sub.plot([], [], c='k', ls='--')
-    sub.legend([sfr0, _plth0], ['SFR = 0', 'SDSS'], loc='lower right', ncol=2, handletextpad=0,
+    #sub.legend([sfr0, _plth0], ['SFR = 0', 'SDSS'], loc='lower right', ncol=2, handletextpad=0,
+    #        markerscale=7, fontsize=20) 
+    sub.legend([_plth0], ['SDSS'], loc='lower right', ncol=2, handletextpad=0,
             markerscale=7, fontsize=20) 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
@@ -718,56 +664,40 @@ def ABC_corner():
     ''' example corner plot of DEM parameters
     '''
     import abcpmc
-    # update these values as I see fit
-    sims = ['SIMBA', 'TNG', 'EAGLE']
-    clrs = ['C1', 'C0', 'C2']
-    names = ['simba.slab_noll_msfr_fixbump.L2.3d',
-            'tng.slab_noll_msfr_fixbump.L2.3d', 
-            'eagle.slab_noll_msfr_fixbump.L2.3d']
-    Ts = [8, 8, 11]
-        
-    prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
-    prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
-    prior_range = [(_min, _max) for _min, _max in zip(prior_min, prior_max)]
-        
-    lbls = [r'$m_{\tau,1}$', r'$m_{\tau,2}$', r'$c_{\tau}$', 
-            r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
-            r'$f_{\rm neb}$'] 
+    # parameters of interest
+    keep_cols = np.zeros(len(param_lbls)).astype(bool) 
+    keep_cols[:-1] = True
 
-    for i, name, T in zip(range(len(names)), names, Ts):
+    for i, sim, T in zip(range(len(sims)), sims, nabc):
         dat_dir = os.environ['GALPOPFM_DIR']
-        abc_dir = os.path.join(dat_dir, 'abc', name) 
+        abc_dir = os.path.join(dat_dir, 'abc', abc_run(sim)) 
 
         # read pool 
         theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
         rho_T   = np.loadtxt(os.path.join(abc_dir, 'rho.t%i.dat' % T)) 
         w_T     = np.loadtxt(os.path.join(abc_dir, 'w.t%i.dat' % T)) 
         
-        # we have no constraints on m_E, c_E, and fneb so we ignore 
-        keep_cols = np.zeros(len(lbls)).astype(bool) 
-        keep_cols[:6] = True
-            
         if i == 0: 
             fig = DFM.corner(
                     theta_T[:,keep_cols], 
-                    range=np.array(prior_range)[keep_cols],
+                    range=prior_range[keep_cols],
                     weights=w_T,# quantiles=[0.16, 0.5, 0.84], 
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
                     color=clrs[i], 
-                    labels=np.array(lbls)[keep_cols], 
+                    labels=param_lbls[keep_cols], 
                     label_kwargs={'fontsize': 25}) 
         else: 
             DFM.corner(
                     theta_T[:,keep_cols], 
-                    range=np.array(prior_range)[keep_cols],
+                    range=prior_range[keep_cols],
                     weights=w_T, #quantiles=[0.16, 0.5, 0.84], 
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
                     color=clrs[i], 
-                    labels=np.array(lbls)[keep_cols], 
+                    labels=param_lbls[keep_cols], 
                     label_kwargs={'fontsize': 25}, 
                     fig = fig) 
     
@@ -1081,13 +1011,13 @@ def ABC_Observables():
     # read in simulations without dust attenuation
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'simba.slab_noll_msfr_fixbump.L2.3d', 'theta.t8.dat')) 
+        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
     theta_simba = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'tng.slab_noll_msfr_fixbump.L2.3d', 'theta.t8.dat')) 
+        abc_run('tng'), 'theta.t%i.dat' % nabc[1])) 
     theta_tng = np.median(theta_T, axis=0) 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        'eagle.slab_noll_msfr_fixbump.L2.3d', 'theta.t11.dat')) 
+        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
     theta_eagle = np.median(theta_T, axis=0) 
 
     x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
@@ -1101,7 +1031,6 @@ def ABC_Observables():
     #########################################################################
     xs      = [x_simba, x_tng, x_eagle]
     names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
-    clrs    = ['C1', 'C0', 'C2']
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
@@ -1284,6 +1213,205 @@ def ABC_Observables():
     fig.subplots_adjust(wspace=0.2, hspace=0.1)
     ffig = os.path.join(fig_dir, 'abc_observables.mr_bin.png') 
     fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_attenuation(): 
+    ''' comparison of attenuation curves of DEM models to standard attenuation curves in
+    the literature.
+
+    todo: 
+    * compile the following attenuation curves: 
+        * Cardelli+(1989) MW
+        * Wild+(2011)
+        * Kriek & Conroy (2013)
+        * Reddy+(2015)    
+    '''
+    def _cardelli89_mw(_lam): 
+        x = 10000./_lam
+        y = x - 1.82
+        return None  
+
+    def _salim2018(_lam, logm, logsfr): 
+        lam = _lam/10000. 
+        if logsfr < -0.5:  # quiescent
+            RV = 3.15
+            B = 1.57
+            a0 = -4.30
+            a1 = 2.71
+            a2 = -0.191
+            a3 = 0.0121
+        else: 
+            RV = 2.61
+            B = 2.21
+            a0 = -3.72
+            a1 = 2.20
+            a2 = -0.062
+            a3 = 0.0080
+
+        Dl = B * lam**2 * 0.035**2 / ((lam**2 - 0.2175**2)**2 + lam**2 * 0.035**2)
+        kl = a0 + a1/lam + a2 / lam**2 + a3/lam**3 + Dl + RV
+        return kl / RV
+
+    def _calzetti(lam): 
+        return dustFM.calzetti_absorption(lam)
+    
+    # Battisti+(2017) Eq. 9
+    #k (l) = 2.40(-2.488 + 1.803x - 0.261x2 + 0.0145x3) + 3.67 0.125 mm  l < 0.63 mm = 2.30(-1.996 + 1.135x - 0.0124x2) + 3.67 0.63 mm  l < 2.1 mm.
+
+    wave = np.linspace(1000, 10000, 2251) 
+    i3000 = 500
+
+    fig = plt.figure(figsize=(11,8))
+
+    # SF or Q  
+    for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
+        # low or high mass 
+        for im, _m in enumerate(['low mass', 'high mass']): 
+            sub = fig.add_subplot(2,2, 2 * im + isfq + 1) 
+
+            for isim, sim, iabc in zip(range(len(sims)), sims, nabc): 
+                # read sim 
+                _sim_sed = dustInfer._read_sed(sim.lower()) 
+
+                cens    = _sim_sed['censat'].astype(bool) 
+                mstar   = _sim_sed['logmstar']
+                sfr     = _sim_sed['logsfr.inst']
+
+                # M* and SFR 
+                if _m == 'low mass':
+                    mlim = (mstar > 10.) & (mstar < 10.5)
+                elif _m == 'high mass': 
+                    mlim = (mstar > 10.5)
+
+                if _sfq == 'star-forming': 
+                    sfrlim = (sfr > 0.5) & (sfr != -999)
+                elif _sfq == 'quiescent': 
+                    sfrlim = (sfr < -0.5) & (sfr != -999)
+
+                # subpopulation sample cut 
+                subpop = cens & mlim & sfrlim 
+    
+                # get abc posterior
+                theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+                    abc_run(sim), 'theta.t%i.dat' % iabc)) 
+                theta_median = np.median(theta_T, axis=0) 
+    
+                # get attenuation curve 
+                _A_lambda = dem_attenuate(
+                        theta_median, 
+                        wave, 
+                        np.ones(len(wave)), 
+                        mstar[subpop], 
+                        sfr[subpop],
+                        nebular=False) 
+                A_lambda = -2.5 * np.log10(_A_lambda)
+                # normalize to 3000A 
+                A_lambda /= A_lambda[:,i3000][:,None]
+
+                Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
+
+                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[isim],
+                        alpha=0.25, linewidth=0, label=sim) 
+                sub.plot(wave, Al_med, c=clrs[isim])
+                
+                # calzetti
+                A_calzetti = _calzetti(wave) 
+                A_salim = _salim2018(wave, [10.25, 11.][im], [1., -1][isfq])
+                calz, = sub.plot(wave, A_calzetti/A_calzetti[i3000], c='k', ls='--')
+                sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', ls=':')
+
+                sub.set_xlim(1.2e3, 1e4)
+                if im == 0: 
+                    sub.set_xticklabels([]) 
+                sub.set_ylim(0., 4.) 
+                if isfq == 1: 
+                    sub.set_yticklabels([]) 
+
+                if im == 0 and isfq == 0: 
+                    sub.set_title(r'Star-forming ($\log {\rm SFR} > 0.5$)', fontsize=20)
+                if im == 0 and isfq == 1: 
+                    sub.set_title(r'Quiescent ($\log {\rm SFR} < -0.5$)', fontsize=20)
+                    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+                if im == 0 and isfq == 1:
+                    sub.text(1.01, 0.5, r'$10 < \log M_*/M_\odot < 10.5$', 
+                            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
+                if im == 1 and isfq == 1:
+                    sub.text(1.01, 0.5, r'$10.5 < \log M_*/M_\odot$', 
+                            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
+                    sub.legend([calz, sal], ['Calzetti+(2001)', 'Salim+(2018)'], 
+                            loc='upper right', handletextpad=0.2, fontsize=20) 
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
+    bkgd.set_ylabel(r'$A(\lambda)/A(3000\AA)$', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_attenuation.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_slope_AV(): 
+    ''' comparison of slope to A_V
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i1500 = 25 
+    i3000 = 100
+    i5500 = 225
+
+    fig = plt.figure(figsize=(6,6))
+    sub = fig.add_subplot(111)
+    for isim, sim, iabc in zip(range(len(sims)), sims, nabc): 
+        # read sim 
+        _sim_sed = dustInfer._read_sed(sim.lower()) 
+
+        cens    = _sim_sed['censat'].astype(bool) 
+        mstar   = _sim_sed['logmstar']
+        sfr     = _sim_sed['logsfr.inst']
+
+        # M* and SFR 
+        mlim = (mstar > 9.4)
+        sfrlim = (sfr != -999)
+
+        # subpopulation sample cut 
+        subpop = cens & mlim & sfrlim 
+
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                mstar[subpop], 
+                sfr[subpop],
+                nebular=False) 
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        
+        A_V = A_lambda[:,i5500]
+        S = A_lambda[:,i1500]/A_V
+
+        sub.scatter(A_V, S, s=1, label=sim) 
+
+    sub.set_xlabel('$A_V$', fontsize=20)
+    sub.set_xlim(0.0, 1.4)
+    sub.set_ylabel('$S = A_{1500}/A_V$', fontsize=20)
+    sub.set_ylim(0., 14.4) 
+    sub.legend(loc='upper right', markerscale=2, handletextpad=0, fontsize=20) 
+
+    ffig = os.path.join(fig_dir, 'abc_slope_AV.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
@@ -1918,8 +2046,11 @@ if __name__=="__main__":
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    ABC_Observables()
+    #ABC_Observables()
+    #ABC_attenuation()
+    ABC_slope_AV()
     
+    # tnorm Av model  
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
     #slab_tnorm_comparison()

@@ -6,6 +6,8 @@ Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "shivaei2015"
 Warning--I didn't find a database entry for "reddy2015"
 Warning--I didn't find a database entry for "naranyanan2018"
+Warning--I didn't find a database entry for "salim2016"
+Warning--I didn't find a database entry for "leja2018"
 Warning--I didn't find a database entry for "leja2017"
 Warning--I didn't find a database entry for "viaene2017"
 Warning--I didn't find a database entry for "brinchmann2004"
@@ -13,7 +15,7 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 You've used 29 entries,
             2881 wiz_defined-function locations,
-            923 strings with 18647 characters,
+            925 strings with 18664 characters,
 and the built_in function-call counts, 13461 in all, are:
 = -- 1160
 > -- 957
@@ -52,4 +54,4 @@ warning$ -- 0
 while$ -- 210
 width$ -- 0
 write$ -- 300
-(There were 6 warnings)
+(There were 8 warnings)

@@ -157,7 +157,8 @@ def DEM_slab_noll_msfr_kink_fixbump(theta, lam, flux_i, logmstar, logsfr, nebula
     return flux_i * T_lam 
 
 
-def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=True): 
+def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr,
+        nebular=True, incl=None): 
     ''' Dust empirical model that combines the slab model with Noll+(2009) but
     keeps the **UV bump relation to delta fixed** 
 
@@ -186,18 +187,18 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
     '''
     assert theta.shape[0] == 7, print(theta) 
 
-    if isinstance(logsfr, float): 
-        if logsfr == -999.:  raise ValueError
-    else: 
-        if -999. in logsfr: raise ValueError
-
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
 
-    tauV = np.clip(theta[0] * (logmstar - 10.) + theta[1] * logsfr + theta[2],
+    zerosfr = (logsfr == -999.)
+
+    _logmstar   = logmstar[~zerosfr]
+    _logsfr     = logsfr[~zerosfr]
+
+    tauV = np.clip(theta[0] * (_logmstar - 10.) + theta[1] * _logsfr + theta[2],
             1e-3, None) 
 
-    delta = theta[3] * (logmstar - 10.) + theta[4] * logsfr + theta[5] 
+    delta = theta[3] * (_logmstar - 10.) + theta[4] * _logsfr + theta[5] 
     
     # Kriek & Conroy (2013) 
     E_b = -1.9 * delta + 0.85
@@ -205,12 +206,13 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
     # E_b = -0.46 * delta + 0.69 
     
     # randomly sample the inclinatiion angle from 0 - pi/2 
-    incl = np.random.uniform(0., 0.5*np.pi, size=logmstar.shape[0])
+    if incl is None: 
+        incl = np.random.uniform(0., 0.5*np.pi, size=_logmstar.shape[0])
     sec_incl = 1./np.cos(incl) 
 
     #Eq. 14 of Somerville+(1999) 
     A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
-    assert np.all(np.isfinite(A_V)), print(tauV, logmstar, logsfr) 
+    assert np.all(np.isfinite(A_V))
     
     dlam = 350. # width of bump from Noll+(2009)
     lam0 = 2175. # wavelength of bump 
@@ -227,7 +229,10 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, nebular=Tru
     if not nebular: factor = 1.
     else: factor = theta[6] 
 
-    T_lam = 10.0**(-0.4 * A_lambda * factor)
+    _T_lam = 10.0**(-0.4 * A_lambda * factor)
+
+    T_lam = np.ones((len(logmstar), len(lam)))
+    T_lam[~zerosfr] = _T_lam 
 
     return flux_i * T_lam 
 

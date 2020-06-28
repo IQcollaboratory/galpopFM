@@ -222,6 +222,9 @@ def abc_attenuationt(T, sim='simba', dem='slab_calzetti', abc_dir=None):
         elif dem == 'tnorm_noll_msfr_fixbump': 
             A_lambda = -2.5 * np.log10(dustFM.DEM_tnorm_noll_msfr_fixbump(theta_med, wave, 
                 flux, logms[i], logsfr[i], nebular=False)) 
+        elif dem == 'slab_noll_msfr_kink_fixbump':
+            A_lambda = -2.5 * np.log10(dustFM.DEM_slab_noll_msfr_kink_fixbump(theta_med, wave, 
+                flux, logms[i], logsfr[i], nebular=False)) 
         else:
             raise NotImplementedError
         A_lambdas.append(A_lambda) 
@@ -306,6 +309,10 @@ def run_params(name):
     elif params['dem'] == 'tnorm_noll_msfr_fixbump': 
         params['prior_min'] = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., 1.]) 
         params['prior_max'] = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 4.]) 
+    elif params['dem'] == 'slab_noll_msfr_kink_fixbump':
+        #m_tau,M*0 m_tau,M*1 m_tau,SFR0 m_tau,SFR1 c_tau m_delta1 m_delta2 c_delta fneb
+        params['prior_min'] = np.array([-5., -5., -5.,  -5., 0., -4., -4., -4., 1.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
     else: 
         raise NotImplementedError
     return params 
@@ -341,4 +348,4 @@ if __name__=="__main__":
         # plot ABCC summary statistics  
         abc_sumstat(niter, sim=sim, dem=dem, abc_dir=abc_dir)
         # plot attenuation 
-        abc_attenuationt(niter, sim=sim, dem=dem, abc_dir=abc_dir)
+        #abc_attenuationt(niter, sim=sim, dem=dem, abc_dir=abc_dir)

@@ -21,7 +21,7 @@
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=\textwidth]{figs/abc_observables.pdf}
+    \includegraphics[width=0.9\textwidth]{figs/abc_observables.pdf}
     \caption{\label{fig:dem}
     $(G-R) - M_r$ color-magnitude (top panels) and $(FUV-NUV) - M_r$ (bottom
     panels) relations predicted by the median DEM posteriors for the SIMBA
@@ -57,6 +57,15 @@
 \end{center}
 \end{figure}
 
+
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{figs/abc_attenuation.pdf}
+    \caption{\label{fig:atten}
+    }
+\end{center}
+\end{figure}
 
 \section{Results} \label{sec:results}
 We present the posterior distributions of the DEM parameters for the SIMBA
@@ -153,7 +162,7 @@ optical and UV color-magnitude relationship.}
 
 The simulations with DEMs predict observables in agreement with observations 
 despite the significant differents in the SMFs and $M_*$-SFR relations 
-(Figures~\ref{fig:smfs} and~\ref{fig:msfr}). In other words, the DEM has the 
+(Figure~\ref{fig:smf_m_sfr}). In other words, the DEM has the 
 flexiblity to reproduce observations even when simulations predict galaxy
 populations with significantly different physical properties. We emphasize that
 the DEM is based on the standard prescriptions for dust attenuation and, thus,
@@ -175,18 +184,6 @@ consistent observables for a range of simulations, marginalizing over dust
 would leave little constraining power on the subgrid prescriptions (\emph{i.e.}
 galaxy physics) of the simulations. 
 
-% comparison across the simulations 
-So far we have focused on comparing the predict observables of the DEM models.
-However, the inferred posterior of the DEM parameters provide key insights into 
-the hydro simulations. Comparing the posteriors of the different simulations in
-Figure~\ref{fig:abc}, we find significant differences between the posteriors of TNG and EAGLE versus
-SIMBA. Unlike the others, SIMBA has $\mtaus > 0$ --- \emph{i.e.} galaxies with higher SFR
-have higher attenuation. With $\mtaus > 0$, star-forming galaxies in the SIMBA
-DEM model populate the red sequence, rather than the blue cloud. \ch{this
-paragraph may change after kinked version finishes} 
-% Salim calims that the slope is steeper for satr burst galaxies, does this do
-% anything for us? 
-
 % what we learn about AV - galaxy property connection  
 The DEMs demonstrate that simulations can closely match observations by varying
 dust attenuation. They therefore illustrate how dust is a major bottleneck for
@@ -201,39 +198,64 @@ hydro simulations, we find that {\em galaxies with higher $M_*$ have overall hig
 dust attenuation}.
 
 This $M_*$ dependence is consistent with prevoius works in the literature.
-The seminal work of \cite{burgarella2005}, for instance, found significant positive $M_*$ dependence 
-in $FUV$ attenuation in NUV-selected and FIR-selected samples of \cite{buat2005}
-and \cite{iglesias-paramo2006}. More recently, \cite{salim2018} also find
-higher attenuation for higher $M_*$ for star-forming galaxies in the
-GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2). \ch{there must be more citations we
-can include} 
+The seminal work of \cite{burgarella2005}, for instance, found significant
+positive $M_*$ dependence in $FUV$ attenuation in NUV-selected and FIR-selected
+samples of \cite{buat2005} and \cite{iglesias-paramo2006}. \cite{garn2010} also
+find positive $M_*$ dependence in Balmer decrement-based H$\alpha$ attenuation
+in ${\sim}90,000$ SDSS star-forming galaxies. \cite{battisti2016} similarly
+find higher Balmer optical depth for higher $M_*$ in ${\sim}10,000$
+star-forming galaxies from GALEX and SDSS. Most recently, \cite{salim2018} 
+find higher $V$ and $FUV$ attenuation for more masssive star-forming galaxies in the
+GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2). \todo{citation is a bit SDSS heavy.
+Anything else in the literature?}
 
-\cite{garn2010} using full  SDSS SFG data set (90,000 galaxies)
-find higher attenuation as a function of Mstar and SFR.
+%\ch{SFR dependence of attenuation curves} 
+In addition to the $M_*$ dependence, the DEM posteriors also allow us to
+examine the correlation bteween dust attenuation and star formation. For TNG
+and EAGLE, we infer DEM posteriors with $\mtaus\sim-1$ (Figure~\ref{fig:abc}). 
+This means that TNG and EAGLE require higher attenuation for galaxies with
+lower SFR --- \ie quiescent galaxies have higher dust attenuation overall.
+While previous works that have examined the relationship between dust attenuation
+and SFR in observations~\citep[\eg][]{garn2010, reddy2015, battisti2016,
+battisti2017}, they focus solely on star-forming galaxies. While they find that
+star-forming galaxies with higher SFR have higher attenuation, much of this
+trend is driven by the star-forming sequence~\citep[more massive star-forming
+galaxies have higher SFR;][]{garn2010, battisti2017}. At fixed $M_*$,
+observations find no strong SFR dependence for the SF population. 
 
-\cite{battisti2016} using 10000 SF galaxies GALEX-SDSS
-find higher balmer opitcal depth as a function of Mstar and SFR.
-% SFG with higher metallicities, stellar masses, and SFRs tend to have higher dust attenuation (e.g., Wang & Heckman 1996; Hopkins et al. 2001; Garn & Best 2010; Reddy et al. 2015)
+For SIMBA, unlike for TNG and EAGLE, we infer $\mtaus\sim 3$: galaxies with
+higher SFR have higher dust attenuation (Figure~\ref{fig:abc}). In fact, the
+attenuation is so high for star-forming galaxies that they populate the red
+sequence rather than the blue cloud in the color-magnitude relation. This
+extreme SFR dependence in the dust attenuation that results in a contradiction of
+established color-SFR relations, is due to the fact that SIMBA predicts a population of
+star-forming with exceptionally high SFR, that seemingly lie above the SFS
+(Figure~\ref{fig:smf_msfr}). In a SIMBA DEM model with $\mtaus < 0$, these high
+SFR galaxies would be high luminosity blue galaxies, not found in observations. 
+\ch{If we impose a $\mtaus < 0$ prior for the SIMBA DEM model, we struggle to
+reproduce observables consistent with SDSS.} The difference in $\mtaus$ 
+among the hydro simulations demonstrates that, in addition to insights on dust
+in galaxies, our DEM approach can also highlights differences and limiations among 
+simulations. Moreover, it further highlights that dust attenuation can be
+adjusted, within priors set by observations, so that any simulation can 
+match observations. 
 
-%Previous studies have found a positive correlation between the total dust mass in galaxies and their gas-phase metallicity (Draine et al. 2007; Galametz et al. 2011);however, the functional form of this relation is still under considerable debate. In addition, there are the well- known positive correlations between stellar mass and metalli- city (e.g., Tremonti et al. 2004) and stellar mass and SFR, also called the star-forming mainsequence (e.g., Brinchmann et al. 2004; Cook et al. 2014). Taken together, these relations suggest a scenario in which the most massive galaxies and/or actively SFGs accumulate a larger amount of dust that can lead to elevated levels of attenuation compared to their low-mass and/or weakly star-forming counterparts.A relation between SFR and amount of dust attenuation is observed, for instance, in local galaxies (e.g., Wang & Heckman 1996; Calzetti 2001
+%For instance, \cite{garn2010} find that SDSS star-forming galaxies with higher
+%SFR have higher H$\alpha$ attenuation. \cite{battisti2016} find a consistent
+%correlation for the Balmer optical depth of star-forming galaxies in GALEX and SDSS 
+%using 10000 SF galaxies GALEX-SDSS. Although at higher redshifts,  
+%\cite{reddy2015} also find this correlation among $z{\sim}2$ star-forming galaxies of
+%MOSFIRE Deep Evolution Field.
 
-\cite{battisti2017} using 5000 SF galaxies from 
-found little stellar mass dependence in the opposite direction (less
-attenuation at higher stellar masses). But they have big error bars and only
-probe up to 9.7
+%\cite{battisti2017} using 5000 SF galaxies from found little stellar mass dependence in the opposite direction (less attenuation at higher stellar masses). But they have big error bars and only probe up to 9.7
+%\cite{reddy2015} SF galaxies from $z\sim2$ MOSFIRE Deep Evolution Field survey find strong correlation with SFR. %ionized gas is more reddened relative to the stellar continuum with increasing SFR 
+\ch{delta - galaxy property connection}
+In addition to the dependence of $A_V$ on $M_*$ and SFR, our results also shed light 
+on the correlation between the slope of dust attenuation, parameterized by
+slope deviation $\delta$, and galaxy properties. Overall, 
 
-Something about attenuation curves for quiescent galaxies since they are
-difficult to get from observations (\ch{why?})
-% IR luminosity from AGN can affect IR based attenuation curves(?) we don't
-% have this problem since we forward model UV and optical only. 
-% even for SED fitting methods \cite{leja2018} find that you have to include an
-% AGN model that properly models the MIR emission
-
-% what we learn about delta - galaxy property connection  
 We also find overall little $M_*$ and ${\rm SFR}$ dependence in $\delta$. In
 fact, the amplitude of $\delta$ is roughly consistent with 0.  
-\ch{what does this mean?}
-\ch{how does this compare to the literature?} 
 This is consistent with \cite{salim2020}, where they measured the attenuation
 curve slopes of $23,000$ galaxies from GALEX-SDSS-WISE Legacy Catalog 2
 (\ch{cite}). 
@@ -244,6 +266,9 @@ comparison to \cite{leja2017} (only 129 nearby galaxies though)
 galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
 %restrict to galaxies with moderate to high optical attenuations (AV> 0.5), 
 
+% Salim calims that the slope is steeper for satr burst galaxies 
+
+
 % In brief, at low optical depths, red light is scattered more isotropically and escapes the galaxy, while blue light is more forward- scattered and is subjected to more absorption. This results in a net steepening of the attenuation curve. At high optical depths, in a mixed star-dust geometry, the observed radiation primarily comes from stars at an optical depth less than unity. Redder photons travel more physical distance than bluer photons before absorption or scattering; the net effect is that larger optical depths result in a grayer attenuation curve.
 % Do we agree with the standard interpretion of dust? 
 
@@ -252,6 +277,7 @@ galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
 %IRX-beta relation.
 
 % parameter degeneracies? 
+\ch{can we say anything about the $A_V - \delta$ relation?}
 % Both Leja et al. (2017) and Salim et al. (2018) find a strong relationship between the optical opacity and curve slope, such that the galaxies with higher AV have shallower slopes.
 
 % \cite{salim2018} find that Galaxies with low AV values having steep curves and the ones with high AV being shallow.
@@ -271,9 +297,8 @@ galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
 % and the curve becomes shallower (grayer).
 
 
-% what we learn about delta - galaxy property connection  
-paragraph on the variation of attenuation curves based on 
-\ch{what does this mean?}
+% variation of attenuation curve  
+\ch{variation of attenuation curves}
 While an empirical prescription like DEM doesn't allow explicit modeling of the
 complex dust-star geometry, it does a good job at mimicking it. 
 \ch{how does this compare to the literature?} 
@@ -282,10 +307,26 @@ comparison to \cite{salim2018} for SF population
 comparison to \cite{leja2017} (only 129 nearby galaxies though) 
 
 
-paragraph on restating how we can learn about dust through DEMs based on trends we see
-across all simulations. summarize main findings again. 
 
-What are the limitations of DEM and how can it be improved? 
+dust attenuation in quiescent galaxies, which is difficult to measure from
+observations. For non-star-forming galaxies, MIR emission from active galactic nuclei (AGN)
+heating nearby dust complicate methods that rely on IR luminosity to measure
+dust attenuation. Even SED fitting methods require accounting for AGN MIR 
+emission~\citep{salim2016, leja2018, salim2018}. 
+Since we utilize a forward modeling approach with optical and UV data, we don't
+have this issue. 
+\ch{what do we learn about quiescent galaxy attenuation?} 
+
+%\cite{salim2018}: The IR luminosities of AGN may be affected by nonstellar dust heating, especially since they are based on the mid-IR data.
+
+%\cite{leja2017} Inferring total IR luminosities with only MIR broadband photometry can be strongly affected by galaxy-to- galaxy variability in polycyclic aromatic hydrocarbon (PAH) emission in the MIR (Draine et al. 2007) and by an active galactic nucleus (AGN) contribution (Kirkpatrick et al. 2015). The interpretation of LIR itself is complicated by the contribution of evolved stars to the IR luminosity (Cortese et al. 2008; Hayward et al. 2014; Utomo et al. 2014). UV luminosities are sensitive to stellar metallicity and recent SFH, and very sensitive to the amount of dust attenuation, which can be estimated from the UV slope β but with serious limitations (Viaene et al. 2016).
+%\cite{leja2018}:  Full SED models will naively attribute AGN emission to dust heated by star formation, resulting in full SED models overestimating sSFRs by up to 0.6 dex for galaxies with AGN (Salim et al. 2016)
+
+% For comparison methods, IR lumninosity from AGN can affect IR based attenuation curves~\citep{cite}. Even for SED
+%\cite{salim2018} does look at attenuatiion for quiesscent 
+
+
+\ch{limitations of DEM and potential improvements}
 \begin{itemize}
     \item too many luminous galaxies
     \item color distribution isnt' perfect. 
@@ -304,14 +345,10 @@ truncated normal distribution in Appendix~\ref{sec:nonslab}. tnorm DEM model all
 scatter of the attenuation curve 
 
 \ch{How about our prior choice?}
-%\begin{figure}
-%\begin{center}
-%    \includegraphics[width=\textwidth]{figs/abc_tnorm_observables.pdf}
-%    \caption{Comparison of the observables predicted by the simulations with
-%    the posterior DEM.}
-%\label{fig:dem}
-%\end{center}
-%\end{figure}
+
+\ch{restate what we learn about dust through DEMs}  
+paragraph on restating how we can learn about dust through DEMs based on trends we see
+across all simulations. summarize main findings again. 
 
 \ch{If we marginalize over dust, can we learn anything about galaxy evolution
 from the simulation?}
@@ -333,12 +370,3 @@ dust allows us to reproduce whatever we want.
 \ch{What are some applications for DEMs?}
 Realistic mock catalogs that reproduce observations in observable-space rather
 than physical parameter space.  
-
-%\begin{figure}
-%\begin{center}
-%    \includegraphics[width=\textwidth]{figs/abc_tnorm_observables_1d.pdf}
-%    \caption{Comparison of the observables predicted by the simulations with
-%    the posterior DEM.}
-%\label{fig:dem}
-%\end{center}
-%\end{figure}
