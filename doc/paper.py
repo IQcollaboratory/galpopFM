@@ -1366,53 +1366,158 @@ def ABC_slope_AV():
     i3000 = 100
     i5500 = 225
 
-    fig = plt.figure(figsize=(6,6))
-    sub = fig.add_subplot(111)
-    for isim, sim, iabc in zip(range(len(sims)), sims, nabc): 
+    fig = plt.figure(figsize=(12,5))
+    sub1 = fig.add_subplot(121)
+    sub2 = fig.add_subplot(122)
+    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
         # read sim 
-        _sim_sed = dustInfer._read_sed(sim.lower()) 
-
-        cens    = _sim_sed['censat'].astype(bool) 
-        mstar   = _sim_sed['logmstar']
-        sfr     = _sim_sed['logsfr.inst']
-
-        # M* and SFR 
-        mlim = (mstar > 9.4)
-        sfrlim = (sfr != -999)
-
-        # subpopulation sample cut 
-        subpop = cens & mlim & sfrlim 
-
         # get abc posterior
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
             abc_run(sim), 'theta.t%i.dat' % iabc)) 
         theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
+                zero_sfr_sample=True, return_sim=True)
 
         # get attenuation curve 
         _A_lambda = dem_attenuate(
                 theta_median, 
                 wave, 
                 np.ones(len(wave)), 
-                mstar[subpop], 
-                sfr[subpop],
+                _sim['logmstar'], 
+                _sim['logsfr.inst'], # mstar[subpop], sfr[subpop],
                 nebular=False) 
         A_lambda = -2.5 * np.log10(_A_lambda)
         
         A_V = A_lambda[:,i5500]
         S = A_lambda[:,i1500]/A_V
+        
+        delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
+                theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
 
-        sub.scatter(A_V, S, s=1, label=sim) 
+        DFM.hist2d(A_V, S, levels=[0.68, 0.95],
+                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], 
+                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
+        #sub.fill_between([], [], [], color=clrs[isim], alpha=0.25,
+        #        linewidth=0., label=sim)
 
-    sub.set_xlabel('$A_V$', fontsize=20)
-    sub.set_xlim(0.0, 1.4)
-    sub.set_ylabel('$S = A_{1500}/A_V$', fontsize=20)
-    sub.set_ylim(0., 14.4) 
-    sub.legend(loc='upper right', markerscale=2, handletextpad=0, fontsize=20) 
+        A_V = A_lambda[:,i5500]
+
+        DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
+                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], 
+                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
+
+    # SMC
+    sub1.scatter([0.5], [4.8], c='b', s=60) 
+    sub1.text(0.55, 5., 'SMC', ha='left', va='bottom', fontsize=20) 
+    # MW
+    sub1.scatter([1.15], [2.8], c='k', marker='*', s=60) 
+    sub1.text(1.2, 3., 'MW', ha='left', va='bottom', fontsize=20) 
+    # Calzetti 
+    sub1.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--', label='Calzetti+(2001)') 
+    # Salim 2020 (0.12 dex scatter) 
+    sub1.plot(np.linspace(0., 1.4, 10), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 10))+0.424), 
+            c='k', ls=':', label='Salim\& Narayanan(2020)')
+    # Inoue(2005) 
+    sub1.plot([0.04624, 0.08447, 0.14629, 0.24109, 0.35660, 0.51096, 0.66340, 0.87693, 1.07223, 1.30417], 
+            [13.85715, 8.97327, 6.44298, 4.74012, 3.71245, 3.03250, 2.57058, 2.15059, 1.92728, 1.68118], 
+            c='r', ls=':', label='Inoue(2005)') 
+    sub1.set_xlabel(r'$A_V$', fontsize=25)
+    sub1.set_xlim(0.0, 1.4)
+    sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
+    sub1.set_ylim(0., 14.4) 
+    sub1.legend(loc='upper right', handletextpad=0.1, fontsize=20) 
+
+    # Wiit & Gordon (2000)
+    sub2.plot([0.01645, 0.63816, 1.77632, 2.83882],
+            [-0.38591, -0.19720, 0.04641, 0.17912], 
+            c='k', ls=':', label='Witt\& Gordon(2000)')
+    # Chevallard+(2013)
+    sub2.plot([0.10835, 0.21592, 0.32572, 0.53347, 1.08204, 1.39621], 
+            [-0.69552, -0.40416, -0.20461, -0.00546, 0.19557, 0.25330], 
+            c='k', ls='--', label='Chevallard+(2013)')
+    # Salmon+(2016)
+    #sub2.plot([0.25000, 0.45395, 0.65461, 0.86513, 1.06250, 1.25987, 1.46711,
+    #    1.68421, 1.88816, 2.08553, 2.28618, 2.49342, 2.70066], 
+    #    [-0.44029, -0.33634, -0.22886, -0.15658, -0.11245, -0.06656, -0.04002,
+    #        -0.00292, 0.02889, 0.04311, 0.06964, 0.11202, 0.14032], c='g',
+    #    label='Salmon+(2016)') 
+    # Salim+(2018)
+    sub2.plot([0.04749, 0.24662, 0.34430, 0.55215, 0.74590, 1.25348, 1.33918], 
+            [-0.87232, -0.44691, -0.31288, -0.15964, -0.09486, 0.19159, 0.19779], 
+            c='k', ls='-', label='Salim+(2018)') 
+    sub2.set_xlabel(r'$A_V$', fontsize=25)
+    sub2.set_xlim(0.0, 1.4)
+    sub2.set_ylabel('$\delta$', fontsize=25)
+    sub2.set_ylim(-1.5, 1.) 
+
+    # sim legends     
+    _plt_sims = [] 
+    for i in range(1,3): 
+        _plt_sim = sub2.fill_between([], [], [], color=clrs[i], alpha=0.25,
+                linewidth=0)
+        _plt_sims.append(_plt_sim) 
+
+    sim_legend = sub2.legend(_plt_sims, sims[1:], loc='lower right',
+            handletextpad=0.1, prop={'size': 20})
+    sub2.legend(loc='upper left', handletextpad=0.1, fontsize=20) 
+    plt.gca().add_artist(sim_legend)
+
+    fig.subplots_adjust(wspace=0.3)
 
     ffig = os.path.join(fig_dir, 'abc_slope_AV.png') 
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_slope_MSFR(): 
+    ''' comparison of slope on the M*-SFR plane  
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i1500 = 25 
+    i3000 = 100
+    i5500 = 225
+
+    fig = plt.figure(figsize=(10,5))
+    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
+        sub = fig.add_subplot(1,2,isim)
+        # read sim 
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
+                zero_sfr_sample=True, return_sim=True)
+
+        delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
+                theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
+        sc = sub.scatter(_sim['logmstar'][~sfr0_sim],
+                _sim['logsfr.inst'][~sfr0_sim]-_sim['logmstar'][~sfr0_sim], 
+                c=delta_median[~sfr0_sim], vmin=-1.5, vmax=1.)
+
+        sub.set_xlim([9., 12.]) 
+        sub.set_ylim([-14., -8.]) 
+        if isim != 1: sub.set_yticklabels([]) 
+        sub.set_xticklabels([9., '', 10., '', 11.]) 
+        sub.text(0.05, 0.95, sim, transform=sub.transAxes, fontsize=20, ha='left', va='top')
+
+    
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    bkgd.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=15, fontsize=25) 
+    bkgd.set_ylabel(r'log ( sSFR $[yr^{-1}]$ )', labelpad=15, fontsize=25) 
+
+    fig.subplots_adjust(wspace=0.1, right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+    fig.colorbar(sc, cax=cbar_ax)
+
+    ffig = os.path.join(fig_dir, 'abc_slope_msfr.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -2048,7 +2153,8 @@ if __name__=="__main__":
     #_ABC_Observables()
     #ABC_Observables()
     #ABC_attenuation()
-    ABC_slope_AV()
+    #ABC_slope_AV()
+    ABC_slope_MSFR()
     
     # tnorm Av model  
     #ABC_tnorm_corner()
