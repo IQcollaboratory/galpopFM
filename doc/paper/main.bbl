@@ -33,9 +33,14 @@ Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2016, \mn@doi [The Astrophysical
   Journal] {10.3847/0004-637X/818/1/13}, 818, 13
 
 \bibitem[\protect\citeauthoryear{Battisti, Calzetti  \& Chary}{Battisti
-  et~al.}{2017}]{battisti2017}
-Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2017, \mn@doi [The Astrophysical
+  et~al.}{2017a}]{battisti2017}
+Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2017a, \mn@doi [The Astrophysical
   Journal] {10.3847/1538-4357/aa6fb2}, 840, 109
+
+\bibitem[\protect\citeauthoryear{Battisti, Calzetti  \& Chary}{Battisti
+  et~al.}{2017b}]{battisti2017a}
+Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2017b, \mn@doi [The Astrophysical
+  Journal] {10.3847/1538-4357/aa9a43}, 851, 90
 
 \bibitem[\protect\citeauthoryear{Blanton \& Roweis}{Blanton \&
   Roweis}{2007}]{blanton2007a}
@@ -69,6 +74,11 @@ Camps P.,  Baes M.,  2015, \mn@doi [Astronomy and Computing]
 \bibitem[\protect\citeauthoryear{Chabrier}{Chabrier}{2003}]{chabrier2003}
 Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
   Pacific] {10.1086/376392}, 115, 763
+
+\bibitem[\protect\citeauthoryear{Chevallard, Charlot, Wandelt  \&
+  Wild}{Chevallard et~al.}{2013}]{chevallard2013}
+Chevallard J.,  Charlot S.,  Wandelt B.,   Wild V.,  2013, \mn@doi [Monthly
+  Notices of the Royal Astronomical Society] {10.1093/mnras/stt523}, 432, 2061
 
 \bibitem[\protect\citeauthoryear{Garn \& Best}{Garn \& Best}{2010}]{garn2010}
 Garn T.,  Best P.~N.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical

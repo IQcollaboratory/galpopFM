@@ -58,6 +58,13 @@
 \end{figure}
 
 
+\begin{figure}
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{figs/abc_slope_AV.pdf}
+    \caption{\label{fig:slope}
+    }
+\end{center}
+\end{figure}
 
 \begin{figure}
 \begin{center}
@@ -222,6 +229,8 @@ star-forming galaxies with higher SFR have higher attenuation, much of this
 trend is driven by the star-forming sequence~\citep[more massive star-forming
 galaxies have higher SFR;][]{garn2010, battisti2017}. At fixed $M_*$,
 observations find no strong SFR dependence for the SF population. 
+%\cite{tress2018} find positive dependence between E(B-V) (color excess) with M* and negative dependence with
+%SSFR for 1753 star-forming galaxies within 1.5 < z < 3.  
 
 For SIMBA, unlike for TNG and EAGLE, we infer $\mtaus\sim 3$: galaxies with
 higher SFR have higher dust attenuation (Figure~\ref{fig:abc}). In fact, the
@@ -238,7 +247,8 @@ among the hydro simulations demonstrates that, in addition to insights on dust
 in galaxies, our DEM approach can also highlights differences and limiations among 
 simulations. Moreover, it further highlights that dust attenuation can be
 adjusted, within priors set by observations, so that any simulation can 
-match observations. 
+match observations. Given this signifcant discrepancy, we omit SIMBA for the
+rest of the discussion.
 
 %For instance, \cite{garn2010} find that SDSS star-forming galaxies with higher
 %SFR have higher H$\alpha$ attenuation. \cite{battisti2016} find a consistent
@@ -249,24 +259,76 @@ match observations.
 
 %\cite{battisti2017} using 5000 SF galaxies from found little stellar mass dependence in the opposite direction (less attenuation at higher stellar masses). But they have big error bars and only probe up to 9.7
 %\cite{reddy2015} SF galaxies from $z\sim2$ MOSFIRE Deep Evolution Field survey find strong correlation with SFR. %ionized gas is more reddened relative to the stellar continuum with increasing SFR 
-\ch{delta - galaxy property connection}
-In addition to the dependence of $A_V$ on $M_*$ and SFR, our results also shed light 
-on the correlation between the slope of dust attenuation, parameterized by
-slope deviation $\delta$, and galaxy properties. Overall, 
 
-We also find overall little $M_*$ and ${\rm SFR}$ dependence in $\delta$. In
-fact, the amplitude of $\delta$ is roughly consistent with 0.  
-This is consistent with \cite{salim2020}, where they measured the attenuation
-curve slopes of $23,000$ galaxies from GALEX-SDSS-WISE Legacy Catalog 2
-(\ch{cite}). 
-comparison to \cite{leja2017} (only 129 nearby galaxies though) 
-\cite{viaene2017} (one galaxy, jesus)  
-%salim2018: d = -0.38 + 0.29(log M* - 10),
-\cite{kriek2013}  using stacked SEDs of medium- and broadband photometry of
-galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
-%restrict to galaxies with moderate to high optical attenuations (AV> 0.5), 
+% attenuation curve slope  
+In addition to the dependence of $A_V$ on galaxy properties, our results also
+shed light on the slope of dust attenuation as well as its correlation with 
+galaxy properties. If we measure the slope of the attenuation curve of the DEM
+models using the quantity $S = A(3000\AA)/A_V$, which is easier to cosntrain 
+observationally, we find that the TNG and EAGLE DEM models both predict
+slopes within $2 < S < 5$ and centered around $S\sim 3.5$ (Figure~\ref{fig:slope}).
+In comparison, previous observational works that measure dust attenuation in
+star-forming galaxies also find slopes within the range $2 < S <
+5$~\citep{calzetti2000, burgarella2005, johnson2007, conroy2010, wild2011,
+battisti2016, battisti2017}. \cite{leja2017} and \cite{salim2018} find a
+broader range of slopes in their galaxy samples, $2 < S < 15$. However,
+their galaxies with steeper slopes, $S > 6$, have $A_V < 0.4$, which we are not
+in our sample (we discuss this in further detail below). Excluding those
+galaxies, we find good agreement. Also for reference, the Small Magellanic Cloud 
+and the Milky Way have attenuation slopes $S_{SMC} = 4.8$ and $S_{\rm MW} = 2.8$. 
+\ch{The dust attenuation curve slopes predicted by
+the TNG and EAGLE DEM models are in excellent overall agreement with observations}. 
 
-% Salim calims that the slope is steeper for satr burst galaxies 
+%\cite{calzetti2000} find  slopes of $2.3 < S < 2.9$ for low-redshift starburst galaxies, 
+%\cite{burgarella2005} find $2.5 < S < 6.2$ for 50 UV and 100 IR selected galaxies,
+%\cite{johnson2007} find $S\sim2.5$ for 1000 nearby galaxies, 
+%\cite{conroy2010} find $S\sim4.5$ for 3400 $10^{9.5} < M_* < 10^{10} M_\odot$ disk galaxies,
+%\cite{wild2011} find $2.5 < S < 4.5$ for 23,000 $z{\sim}0.07$ star-forming galaxies, 
+%\cite{battisti2016, battisti2017} find slopes consistent with Calzetti (S=2.4) for SF galaxies 
+%\cite{leja2017} 130 relatively massive galaxies 2 < S < 15
+%\cite{salim2018} 230,000 SDSS galaxies 2 < S < 15 with median S = 5.4
+% high z
+%\cite{kriek2013}  using stacked SEDs of medium- and broadband photometry of
+%galaxies at 0.5 < z < 2 find an average slope of delta=-0.2  but they restrict
+%to galaxies with moderate to high optical attenuations (AV> 0.5), 
+%\cite{salmon2016} is also spot on. 
+
+In addition to the amplitude, we can also examine the correlation between
+attenuation curve slopes and galaxy properties. For TNG and EAGLE, we find
+little $M_*$ and $\sfr$ dependence in $\delta$: both $\mdeltam$ and $\mdeltas$
+are consistent with 0. To date most observational works do not examine the
+correlation between slope and galaxy properties and have been limited to
+star-forming galaxies. \cite{leja2017} recently measured the slope of the 
+attenuation curves of galaxies, some of which are non-star-forming. However,
+with only 129 galaxies the trends are difficult to meaningfully interpret.
+More recently, \cite{salim2018} measured attenuation curves of $23,000$ 
+galaxies from the GALEX-SDSS-WISE Legacy Catalog 2~\cite{salim2019}. While they
+also mainly focus on star-forming galaxies, \cite{salim2018} also they find 
+that quiescent galaxies have significantly steeper curves. This is in
+disagreement with our $\mdeltas\sim0$; however, we note that \cite{salim2018} 
+also find significantly steeper curves for the starburst population 
+(galaxies above the SFS). Since the DEM model only includes a linear dependence
+on SFR, its hard to tell. Furthermore, for star-forming galaxies,
+\cite{salim2018} find a significant $M_*$ dependence on $\delta$, unlike our
+$\mdeltam\sim0$ constraint. They find, however, this dependence is actually a
+result of the underlying trend between slope and $A_V$.
+
+\ch{$A_V - \delta$ relation}
+Physical reason why we expect this relation.%Salmon+(2016): Chevallard et al. (2013) predicted the relation between δ and attenuation optical depth at all orientations, assuming only Milky-Way type dust grains. Their model predicted a relationship between the shape of the extinction law (here parameterized by δ) and the dust-attenuation optical depth. We consider this relationship in two scenarios: small and large dust- attenuation optical depths, τ, where the optical depth is related to the color excess by τλ = 0.92 kλ E(B − V ).
+% (Charlot & Fall 2000)
+% \cite{chevallard2013} provide the following physical picture for this correlation. The steepness of an attenuation curve at small optical depths is the result of the dominance of scattering over absorption, coupled with the fact that scattering is more forward directed at shorter wavelengths whereas it is more isotropic at longer wavelengths. As the optical depth increases, absorption becomes more dominant than scattering, and the curve becomes shallower (grayer).
+\cite{leja2017, salim2018} both find a $A_V - \delta$ relation below
+\cite{chevallard2013}, which is consistent with us. 
+We're also in good agreement with \cite{witt2000} and \cite{salmon2016}
+
+%Overall simulations predict shallower slopes \citep{inoue2005, chevallard2013, narayanan2018} 
+%\cite{chevallard2013} radiative transfer models combined with realistic dust geometries and the two-component (birth clouds/diffuse ISM) model
+
+
+
+
+% Both Leja et al. (2017) and Salim et al. (2018) find a strong relationship between the optical opacity and curve slope, such that the galaxies with higher AV have shallower slopes.
+
 
 
 % In brief, at low optical depths, red light is scattered more isotropically and escapes the galaxy, while blue light is more forward- scattered and is subjected to more absorption. This results in a net steepening of the attenuation curve. At high optical depths, in a mixed star-dust geometry, the observed radiation primarily comes from stars at an optical depth less than unity. Redder photons travel more physical distance than bluer photons before absorption or scattering; the net effect is that larger optical depths result in a grayer attenuation curve.
@@ -277,16 +339,10 @@ galaxies at 0.5 < z < 2 find an average slope of delta=-0.2 . % but they
 %IRX-beta relation.
 
 % parameter degeneracies? 
-\ch{can we say anything about the $A_V - \delta$ relation?}
-% Both Leja et al. (2017) and Salim et al. (2018) find a strong relationship between the optical opacity and curve slope, such that the galaxies with higher AV have shallower slopes.
-
 % \cite{salim2018} find that Galaxies with low AV values having steep curves and the ones with high AV being shallow.
 % At fixed AV there is no trend of slope versus mass
 % strong correlation between the attenuation curve slope and optical depth ( ctau -- cdelta) 
 % important implications, and it also impacts the underlying assumption of the comparison method,
-% Chevallard et al. (2013) (radiative transfer models combined with realistic
-% dust geometries and the two-component (birth clouds/diffuse ISM) model
-% (Charlot & Fall 2000))
 % Leja et al. (2017) also finds this correlation 
 
 % according to Chevallard et al. (2013) the steepness of an attenuation curve
@@ -305,8 +361,6 @@ complex dust-star geometry, it does a good job at mimicking it.
 comparison to \cite{narayanan2018} paper 
 comparison to \cite{salim2018} for SF population  
 comparison to \cite{leja2017} (only 129 nearby galaxies though) 
-
-
 
 dust attenuation in quiescent galaxies, which is difficult to measure from
 observations. For non-star-forming galaxies, MIR emission from active galactic nuclei (AGN)
@@ -343,6 +397,14 @@ We also get no constraints on the UV bump parameters.
 We rely on the slab model. But nothing changes when we use a more flexible
 truncated normal distribution in Appendix~\ref{sec:nonslab}. tnorm DEM model allows us to also vary the
 scatter of the attenuation curve 
+
+% how does the slab model actually do compared to observations? 
+\cite{chevallard2013}
+\cite{trayford2015}
+\cite{battisti2017a} find a trend between inclination and slope...
+\cite{naranyanan2018}? 
+% Salmon+(2016): There is evidence that galaxy inclination correlates with the strength of Lyα emission, such that we observe less Lyα equivalent width for more edge-on galaxies (Charlot & Fall 1993; Laursen & Sommer-Larsen 2007; Yajima et al. 2012; Verhamme et al. 2012; U et al. 2015)
+% Therefore, based on physi- cal models, one expects that galaxies with “greyer” dust laws and larger overall attenuation should have higher inclinations
 
 \ch{How about our prior choice?}
 
