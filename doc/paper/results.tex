@@ -247,8 +247,8 @@ among the hydro simulations demonstrates that, in addition to insights on dust
 in galaxies, our DEM approach can also highlights differences and limiations among 
 simulations. Moreover, it further highlights that dust attenuation can be
 adjusted, within priors set by observations, so that any simulation can 
-match observations. Given this signifcant discrepancy, we omit SIMBA for the
-rest of the discussion.
+match observations. Given this signifcant discrepancy for SIMBA, we focus 
+the rest of the discussion on TNG and EAGLE.
 
 %For instance, \cite{garn2010} find that SDSS star-forming galaxies with higher
 %SFR have higher H$\alpha$ attenuation. \cite{battisti2016} find a consistent
@@ -302,7 +302,7 @@ star-forming galaxies. \cite{leja2017} recently measured the slope of the
 attenuation curves of galaxies, some of which are non-star-forming. However,
 with only 129 galaxies the trends are difficult to meaningfully interpret.
 More recently, \cite{salim2018} measured attenuation curves of $23,000$ 
-galaxies from the GALEX-SDSS-WISE Legacy Catalog 2~\cite{salim2019}. While they
+galaxies from the GALEX-SDSS-WISE Legacy Catalog 2~\citep[GSWLC2;][]{salim2019}. While they
 also mainly focus on star-forming galaxies, \cite{salim2018} also they find 
 that quiescent galaxies have significantly steeper curves. This is in
 disagreement with our $\mdeltas\sim0$; however, we note that \cite{salim2018} 
@@ -310,48 +310,34 @@ also find significantly steeper curves for the starburst population
 (galaxies above the SFS). Since the DEM model only includes a linear dependence
 on SFR, its hard to tell. Furthermore, for star-forming galaxies,
 \cite{salim2018} find a significant $M_*$ dependence on $\delta$, unlike our
-$\mdeltam\sim0$ constraint. They find, however, this dependence is actually a
-result of the underlying trend between slope and $A_V$.
+$\mdeltam\sim0$ constraint. They find, however, this dependence is entirely
+driven by the underlying fundamental trend between slope and $A_V$.
 
-\ch{$A_V - \delta$ relation}
-Physical reason why we expect this relation.%Salmon+(2016): Chevallard et al. (2013) predicted the relation between δ and attenuation optical depth at all orientations, assuming only Milky-Way type dust grains. Their model predicted a relationship between the shape of the extinction law (here parameterized by δ) and the dust-attenuation optical depth. We consider this relationship in two scenarios: small and large dust- attenuation optical depths, τ, where the optical depth is related to the color excess by τλ = 0.92 kλ E(B − V ).
-% (Charlot & Fall 2000)
-% \cite{chevallard2013} provide the following physical picture for this correlation. The steepness of an attenuation curve at small optical depths is the result of the dominance of scattering over absorption, coupled with the fact that scattering is more forward directed at shorter wavelengths whereas it is more isotropic at longer wavelengths. As the optical depth increases, absorption becomes more dominant than scattering, and the curve becomes shallower (grayer).
-\cite{leja2017, salim2018} both find a $A_V - \delta$ relation below
-\cite{chevallard2013}, which is consistent with us. 
-We're also in good agreement with \cite{witt2000} and \cite{salmon2016}
-
-%Overall simulations predict shallower slopes \citep{inoue2005, chevallard2013, narayanan2018} 
-%\cite{chevallard2013} radiative transfer models combined with realistic dust geometries and the two-component (birth clouds/diffuse ISM) model
-
-
-
-
-% Both Leja et al. (2017) and Salim et al. (2018) find a strong relationship between the optical opacity and curve slope, such that the galaxies with higher AV have shallower slopes.
-
-
-
-% In brief, at low optical depths, red light is scattered more isotropically and escapes the galaxy, while blue light is more forward- scattered and is subjected to more absorption. This results in a net steepening of the attenuation curve. At high optical depths, in a mixed star-dust geometry, the observed radiation primarily comes from stars at an optical depth less than unity. Redder photons travel more physical distance than bluer photons before absorption or scattering; the net effect is that larger optical depths result in a grayer attenuation curve.
-% Do we agree with the standard interpretion of dust? 
+At low attenuation, dust scattering dominates absoprtion. In this regime,
+the attenuation curve steepens because red light tends to
+scatter isotropically while blue light tends to forward scatter, which causes
+more optical-to-IR light to escape the galaxy than UV light~\citep{gordon1994,
+witt2000, draine2003}. On the other hand, at high attenuation dust absorption 
+is dominant and the attenuation curve is shallower~\citep{chevallard2013}.
+In Figure~\ref{fig:slope}, we present the $A_V$ and slope relationship 
+for attenuation curves from the TNG (blue) and EAGLE (green) DEM models. On the
+left panel we quantify slope using $S = A(1500\AA)/A_V$; on the right
+panel, we use $\delta$. In both panels, the DEM moodels predict consistent 
+$A_V$--slope relations where the slope is steeper at lower 
+attenuation. Furthermore, although the comparison is limited by the $A_V$ range
+of the DEM models, we find that the DEM $A_V$--slope relations are consistent with 
+the $A_V - S$ relation of GSWLC2 galaxies~\citep[black shaded][]{salim2020}.
+They are also consistent with \cite{leja2017}. 
+We also compare our results to theoretical predictions from \cite{witt2000,
+inoue2005, chevallard2013}. \cite{inoue2005} and \cite{chevallard2013} 
+predict shallower attenuation curves than our DEM models and, consequently, 
+observations. \cite{narayanan2018}, which is not included in Figure~\ref{fig:slope}, 
+also predict shallower attenuation curves~\citep{salim2020}.  
+Meanwhile, our DEM models are in good agreement with \cite{witt2000}.
 
 %\cite{trcka2020}: EAGLE+SKIRT with CIGALE to get physical properties of
 %galaxies. trcka2020 compares to dustpedia~\citep{davies2017} They lok at
 %IRX-beta relation.
-
-% parameter degeneracies? 
-% \cite{salim2018} find that Galaxies with low AV values having steep curves and the ones with high AV being shallow.
-% At fixed AV there is no trend of slope versus mass
-% strong correlation between the attenuation curve slope and optical depth ( ctau -- cdelta) 
-% important implications, and it also impacts the underlying assumption of the comparison method,
-% Leja et al. (2017) also finds this correlation 
-
-% according to Chevallard et al. (2013) the steepness of an attenuation curve
-% at small optical depths is the result of the dominance of scattering over
-% absorption, coupled with the fact that scattering is more forward directed at
-% shorter wavelengths whereas it is more isotropic at longer wavelengths.As the
-% optical depth increases, absorption becomes more dominant than scattering,
-% and the curve becomes shallower (grayer).
-
 
 % variation of attenuation curve  
 \ch{variation of attenuation curves}
@@ -405,6 +391,7 @@ scatter of the attenuation curve
 \cite{naranyanan2018}? 
 % Salmon+(2016): There is evidence that galaxy inclination correlates with the strength of Lyα emission, such that we observe less Lyα equivalent width for more edge-on galaxies (Charlot & Fall 1993; Laursen & Sommer-Larsen 2007; Yajima et al. 2012; Verhamme et al. 2012; U et al. 2015)
 % Therefore, based on physi- cal models, one expects that galaxies with “greyer” dust laws and larger overall attenuation should have higher inclinations
+% Salim+(2018): Chevallard et al. (2013) furthermore show that the depend- ence of the slope on AV is the same irrespective of whether the AV is driven by different levels of intrinsic (face-on) attenuation or is the result of inclined viewing geometry. 
 
 \ch{How about our prior choice?}
 
