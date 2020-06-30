@@ -1396,7 +1396,7 @@ def ABC_slope_AV():
                 theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
 
         DFM.hist2d(A_V, S, levels=[0.68, 0.95],
-                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], 
+                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
                 plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
         #sub.fill_between([], [], [], color=clrs[isim], alpha=0.25,
         #        linewidth=0., label=sim)
@@ -1404,27 +1404,32 @@ def ABC_slope_AV():
         A_V = A_lambda[:,i5500]
 
         DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
-                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], 
+                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
                 plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
 
     # SMC
-    sub1.scatter([0.5], [4.8], c='b', s=60) 
-    sub1.text(0.55, 5., 'SMC', ha='left', va='bottom', fontsize=20) 
+    #sub1.scatter([0.5], [4.8], c='b', s=60) 
+    #sub1.text(0.55, 5., 'SMC', ha='left', va='bottom', fontsize=20) 
     # MW
     sub1.scatter([1.15], [2.8], c='k', marker='*', s=60) 
-    sub1.text(1.2, 3., 'MW', ha='left', va='bottom', fontsize=20) 
+    sub1.text(1.2, 2.8, 'MW', ha='left', va='bottom', fontsize=20) 
     # Calzetti 
-    sub1.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--', label='Calzetti+(2001)') 
-    # Salim 2020 (0.12 dex scatter) 
-    sub1.plot(np.linspace(0., 1.4, 10), 
-            10**(-0.68 * np.log10(np.linspace(0., 1.4, 10))+0.424), 
-            c='k', ls=':', label='Salim\& Narayanan(2020)')
+    sub1.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--')
+    sub1.text(0.125, 2.2, 'Calzetti+(2000)', ha='left', va='top', fontsize=15) 
     # Inoue(2005) 
     sub1.plot([0.04624, 0.08447, 0.14629, 0.24109, 0.35660, 0.51096, 0.66340, 0.87693, 1.07223, 1.30417], 
             [13.85715, 8.97327, 6.44298, 4.74012, 3.71245, 3.03250, 2.57058, 2.15059, 1.92728, 1.68118], 
-            c='r', ls=':', label='Inoue(2005)') 
+            c='k', ls=':', label='Inoue(2005)') 
+    # Salim 2020 (0.12 dex scatter) 
+    #sub1.plot(np.linspace(0., 1.4, 10), 
+    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 10))+0.424), 
+    #        c='k', ls='-.', label='Salim\&Narayanan(2020)')
+    sub1.fill_between(np.linspace(0., 1.4, 100), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
+            color='k', alpha=0.25, linewidth=0, label='Salim\&Narayanan(2020)')
     sub1.set_xlabel(r'$A_V$', fontsize=25)
-    sub1.set_xlim(0.0, 1.4)
+    sub1.set_xlim(0.1, 1.4)
     sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
     sub1.set_ylim(0., 14.4) 
     sub1.legend(loc='upper right', handletextpad=0.1, fontsize=20) 
@@ -1436,7 +1441,7 @@ def ABC_slope_AV():
     # Chevallard+(2013)
     sub2.plot([0.10835, 0.21592, 0.32572, 0.53347, 1.08204, 1.39621], 
             [-0.69552, -0.40416, -0.20461, -0.00546, 0.19557, 0.25330], 
-            c='k', ls='--', label='Chevallard+(2013)')
+            c='k', ls='-.', label='Chevallard+(2013)')
     # Salmon+(2016)
     #sub2.plot([0.25000, 0.45395, 0.65461, 0.86513, 1.06250, 1.25987, 1.46711,
     #    1.68421, 1.88816, 2.08553, 2.28618, 2.49342, 2.70066], 
@@ -1444,11 +1449,11 @@ def ABC_slope_AV():
     #        -0.00292, 0.02889, 0.04311, 0.06964, 0.11202, 0.14032], c='g',
     #    label='Salmon+(2016)') 
     # Salim+(2018)
-    sub2.plot([0.04749, 0.24662, 0.34430, 0.55215, 0.74590, 1.25348, 1.33918], 
-            [-0.87232, -0.44691, -0.31288, -0.15964, -0.09486, 0.19159, 0.19779], 
-            c='k', ls='-', label='Salim+(2018)') 
+    #sub2.plot([0.04749, 0.24662, 0.34430, 0.55215, 0.74590, 1.25348, 1.33918], 
+    #        [-0.87232, -0.44691, -0.31288, -0.15964, -0.09486, 0.19159, 0.19779], 
+    #        c='k', ls='-.', label='Salim+(2018)') 
     sub2.set_xlabel(r'$A_V$', fontsize=25)
-    sub2.set_xlim(0.0, 1.4)
+    sub2.set_xlim(0.1, 1.4)
     sub2.set_ylabel('$\delta$', fontsize=25)
     sub2.set_ylim(-1.5, 1.) 
 
@@ -2153,8 +2158,8 @@ if __name__=="__main__":
     #_ABC_Observables()
     #ABC_Observables()
     #ABC_attenuation()
-    #ABC_slope_AV()
-    ABC_slope_MSFR()
+    ABC_slope_AV()
+    #ABC_slope_MSFR()
     
     # tnorm Av model  
     #ABC_tnorm_corner()
