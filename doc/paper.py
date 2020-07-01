@@ -1218,146 +1218,6 @@ def ABC_Observables():
     return None 
 
 
-def ABC_attenuation(): 
-    ''' comparison of attenuation curves of DEM models to standard attenuation curves in
-    the literature.
-
-    todo: 
-    * compile the following attenuation curves: 
-        * Cardelli+(1989) MW
-        * Wild+(2011)
-        * Kriek & Conroy (2013)
-        * Reddy+(2015)    
-    '''
-    def _cardelli89_mw(_lam): 
-        x = 10000./_lam
-        y = x - 1.82
-        return None  
-
-    def _salim2018(_lam, logm, logsfr): 
-        lam = _lam/10000. 
-        if logsfr < -0.5:  # quiescent
-            RV = 3.15
-            B = 1.57
-            a0 = -4.30
-            a1 = 2.71
-            a2 = -0.191
-            a3 = 0.0121
-        else: 
-            RV = 2.61
-            B = 2.21
-            a0 = -3.72
-            a1 = 2.20
-            a2 = -0.062
-            a3 = 0.0080
-
-        Dl = B * lam**2 * 0.035**2 / ((lam**2 - 0.2175**2)**2 + lam**2 * 0.035**2)
-        kl = a0 + a1/lam + a2 / lam**2 + a3/lam**3 + Dl + RV
-        return kl / RV
-
-    def _calzetti(lam): 
-        return dustFM.calzetti_absorption(lam)
-    
-    # Battisti+(2017) Eq. 9
-    #k (l) = 2.40(-2.488 + 1.803x - 0.261x2 + 0.0145x3) + 3.67 0.125 mm  l < 0.63 mm = 2.30(-1.996 + 1.135x - 0.0124x2) + 3.67 0.63 mm  l < 2.1 mm.
-
-    wave = np.linspace(1000, 10000, 2251) 
-    i3000 = 500
-
-    fig = plt.figure(figsize=(11,8))
-
-    # SF or Q  
-    for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
-        # low or high mass 
-        for im, _m in enumerate(['low mass', 'high mass']): 
-            sub = fig.add_subplot(2,2, 2 * im + isfq + 1) 
-
-            for isim, sim, iabc in zip(range(len(sims)), sims, nabc): 
-                # read sim 
-                _sim_sed = dustInfer._read_sed(sim.lower()) 
-
-                cens    = _sim_sed['censat'].astype(bool) 
-                mstar   = _sim_sed['logmstar']
-                sfr     = _sim_sed['logsfr.inst']
-
-                # M* and SFR 
-                if _m == 'low mass':
-                    mlim = (mstar > 10.) & (mstar < 10.5)
-                elif _m == 'high mass': 
-                    mlim = (mstar > 10.5)
-
-                if _sfq == 'star-forming': 
-                    sfrlim = (sfr > 0.5) & (sfr != -999)
-                elif _sfq == 'quiescent': 
-                    sfrlim = (sfr < -0.5) & (sfr != -999)
-
-                # subpopulation sample cut 
-                subpop = cens & mlim & sfrlim 
-    
-                # get abc posterior
-                theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-                    abc_run(sim), 'theta.t%i.dat' % iabc)) 
-                theta_median = np.median(theta_T, axis=0) 
-    
-                # get attenuation curve 
-                _A_lambda = dem_attenuate(
-                        theta_median, 
-                        wave, 
-                        np.ones(len(wave)), 
-                        mstar[subpop], 
-                        sfr[subpop],
-                        nebular=False) 
-                A_lambda = -2.5 * np.log10(_A_lambda)
-                # normalize to 3000A 
-                A_lambda /= A_lambda[:,i3000][:,None]
-
-                Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
-
-                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[isim],
-                        alpha=0.25, linewidth=0, label=sim) 
-                sub.plot(wave, Al_med, c=clrs[isim])
-                
-                # calzetti
-                A_calzetti = _calzetti(wave) 
-                A_salim = _salim2018(wave, [10.25, 11.][im], [1., -1][isfq])
-                calz, = sub.plot(wave, A_calzetti/A_calzetti[i3000], c='k', ls='--')
-                sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', ls=':')
-
-                sub.set_xlim(1.2e3, 1e4)
-                if im == 0: 
-                    sub.set_xticklabels([]) 
-                sub.set_ylim(0., 4.) 
-                if isfq == 1: 
-                    sub.set_yticklabels([]) 
-
-                if im == 0 and isfq == 0: 
-                    sub.set_title(r'Star-forming ($\log {\rm SFR} > 0.5$)', fontsize=20)
-                if im == 0 and isfq == 1: 
-                    sub.set_title(r'Quiescent ($\log {\rm SFR} < -0.5$)', fontsize=20)
-                    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
-                if im == 0 and isfq == 1:
-                    sub.text(1.01, 0.5, r'$10 < \log M_*/M_\odot < 10.5$', 
-                            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
-                if im == 1 and isfq == 1:
-                    sub.text(1.01, 0.5, r'$10.5 < \log M_*/M_\odot$', 
-                            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
-                    sub.legend([calz, sal], ['Calzetti+(2001)', 'Salim+(2018)'], 
-                            loc='upper right', handletextpad=0.2, fontsize=20) 
-
-    bkgd = fig.add_subplot(111, frameon=False)
-    bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
-    bkgd.set_ylabel(r'$A(\lambda)/A(3000\AA)$', labelpad=10, fontsize=25) 
-    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    fig.subplots_adjust(wspace=0.1, hspace=0.1)
-
-    ffig = os.path.join(fig_dir, 'abc_attenuation.png') 
-    fig.savefig(ffig, bbox_inches='tight') 
-
-    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
-    plt.close()
-    return None 
-
-
 def ABC_slope_AV(): 
     ''' comparison of slope to A_V
     '''
@@ -1432,12 +1292,12 @@ def ABC_slope_AV():
     sub1.set_xlim(0.1, 1.4)
     sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
     sub1.set_ylim(0., 14.4) 
-    sub1.legend(loc='upper right', handletextpad=0.1, fontsize=20) 
+    sub1.legend(loc='upper right', handletextpad=0.1, fontsize=18) 
 
-    # Wiit & Gordon (2000)
-    sub2.plot([0.01645, 0.63816, 1.77632, 2.83882],
-            [-0.38591, -0.19720, 0.04641, 0.17912], 
-            c='k', ls=':', label='Witt\& Gordon(2000)')
+    ## Wiit & Gordon (2000)
+    #sub2.plot([0.01645, 0.63816, 1.77632, 2.83882],
+    #        [-0.38591, -0.19720, 0.04641, 0.17912], 
+    #        c='k', ls=':', label='Witt\&Gordon(2000)')
     # Chevallard+(2013)
     sub2.plot([0.10835, 0.21592, 0.32572, 0.53347, 1.08204, 1.39621], 
             [-0.69552, -0.40416, -0.20461, -0.00546, 0.19557, 0.25330], 
@@ -1452,6 +1312,98 @@ def ABC_slope_AV():
     #sub2.plot([0.04749, 0.24662, 0.34430, 0.55215, 0.74590, 1.25348, 1.33918], 
     #        [-0.87232, -0.44691, -0.31288, -0.15964, -0.09486, 0.19159, 0.19779], 
     #        c='k', ls='-.', label='Salim+(2018)') 
+
+    # Trayford+(2020)
+    #[-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
+    sub2.fill_between([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
+        [-0.22334, -0.00201, 0.19517, 0.34004, 0.45272, 0.56942, 0.63380, 0.69014, 0.73038, 0.80684], 
+        [-0.99598, -0.54125, -0.24748, -0.04225, 0.10262, 0.22334, 0.31187, 0.36016, 0.47284, 0.52918], 
+        facecolor='k', alpha=0.1, hatch='X', edgecolor='k', linewidth=0., label='Trayford+(2020)') 
+    sub2.set_xlabel(r'$A_V$', fontsize=25)
+    sub2.set_xlim(0.1, 1.4)
+    sub2.set_ylabel('$\delta$', fontsize=25)
+    sub2.set_ylim(-1.6, 1.5) 
+
+    # sim legends     
+    _plt_sims = [] 
+    for i in range(1,3): 
+        _plt_sim = sub2.fill_between([], [], [], color=clrs[i], alpha=0.25,
+                linewidth=0)
+        _plt_sims.append(_plt_sim) 
+
+    sim_legend = sub2.legend(_plt_sims, sims[1:], loc='lower right',
+            handletextpad=0.1, prop={'size': 20})
+    sub2.legend(loc='upper left', handletextpad=0.1, fontsize=18) 
+    plt.gca().add_artist(sim_legend)
+
+    fig.subplots_adjust(wspace=0.3)
+
+    ffig = os.path.join(fig_dir, 'abc_slope_AV.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def _ABC_slope_AV_quiescent(): 
+    ''' comparison of slope to A_V
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i1500 = 25 
+    i3000 = 100
+    i5500 = 225
+
+    fig = plt.figure(figsize=(12,5))
+    sub1 = fig.add_subplot(121)
+    sub2 = fig.add_subplot(122)
+    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
+        # read sim 
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
+                zero_sfr_sample=True, return_sim=True)
+
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                _sim['logmstar'], 
+                _sim['logsfr.inst'], # mstar[subpop], sfr[subpop],
+                nebular=False) 
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        
+        A_V = A_lambda[:,i5500]
+        S = A_lambda[:,i1500]/A_V
+        
+        quiescent = (_sim['logsfr.inst'] - _sim['logmstar'] < -11.5) & ~sfr0_sim 
+        print('%i quiescent galaxies' % np.sum(quiescent)) 
+        
+        delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
+                theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
+
+        DFM.hist2d(A_V, S, levels=[0.68, 0.95],
+                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
+        sub1.scatter(A_V[quiescent], S[quiescent], c='r')
+
+        A_V = A_lambda[:,i5500]
+
+        DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
+                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
+
+        sub2.scatter(A_V[quiescent], delta_median[quiescent], c='r')
+
+    sub1.set_xlabel(r'$A_V$', fontsize=25)
+    sub1.set_xlim(0.1, 1.4)
+    sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
+    sub1.set_ylim(0., 14.4) 
+
     sub2.set_xlabel(r'$A_V$', fontsize=25)
     sub2.set_xlim(0.1, 1.4)
     sub2.set_ylabel('$\delta$', fontsize=25)
@@ -1466,15 +1418,12 @@ def ABC_slope_AV():
 
     sim_legend = sub2.legend(_plt_sims, sims[1:], loc='lower right',
             handletextpad=0.1, prop={'size': 20})
-    sub2.legend(loc='upper left', handletextpad=0.1, fontsize=20) 
     plt.gca().add_artist(sim_legend)
 
     fig.subplots_adjust(wspace=0.3)
 
-    ffig = os.path.join(fig_dir, 'abc_slope_AV.png') 
+    ffig = os.path.join(fig_dir, '_abc_slope_AV_quiescent.png') 
     fig.savefig(ffig, bbox_inches='tight') 
-
-    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -1523,6 +1472,186 @@ def ABC_slope_MSFR():
 
     ffig = os.path.join(fig_dir, 'abc_slope_msfr.png') 
     fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_attenuation(): 
+    ''' comparison of attenuation curves of DEM models to standard attenuation curves in
+    the literature.
+
+    todo: 
+    * compile the following attenuation curves: 
+        * Cardelli+(1989) MW
+        * Wild+(2011)
+        * Kriek & Conroy (2013)
+        * Reddy+(2015)    
+    '''
+    def _salim2018(_lam, logm, logsfr): 
+        # Salim(2018) table 1 and Eq. 10
+        logssfr = logsfr - logm 
+
+        lam = _lam/10000. 
+        if logssfr < -11:  # quiescent
+            RV = 2.61
+            B = 2.21
+            a0 = -3.72
+            a1 = 2.20
+            a2 = -0.062
+            a3 = 0.0080
+        elif logm > 9.5 and logm < 10.5: 
+            RV  = 2.99 
+            B   = 1.73 
+            a0  = -4.13
+            a1  = 2.56
+            a2  = -0.153    
+            a3  = 0.0105
+        elif logm > 10.5: 
+            RV  = 3.47
+            B   = 1.09
+            a0  = -4.66
+            a1  = 3.03
+            a2  = -0.271
+            a3  = 0.0147
+
+        Dl = B * lam**2 * 0.035**2 / ((lam**2 - 0.2175**2)**2 + lam**2 * 0.035**2)
+        kl = a0 + a1/lam + a2 / lam**2 + a3/lam**3 + Dl + RV
+        return kl / RV
+
+    def _calzetti(lam): 
+        return dustFM.calzetti_absorption(lam)
+    
+    # Battisti+(2017) Eq. 9
+    def _battisti2017(_lam): 
+        lam = np.atleast_1d(_lam/1e4)
+        x = 1./lam 
+        lowlam = (lam < 0.63) 
+        highlam = (lam >= 0.63) 
+        kl = np.zeros(len(lam))
+        kl[lowlam] = 2.40 * (-2.488 + 1.803 * x[lowlam] - 0.261 * x[lowlam]**2 + 0.0145 *
+                x[lowlam]**3) + 3.67
+        kl[highlam] = 2.30 * (-1.996 + 1.135 * x[highlam] - 0.0124 * x[highlam]**2) + 3.67
+        return kl  
+
+    # read Narayanan+(2018) attenuation curves
+    fnara = os.path.join(dat_dir, 'obs', 'narayanan_median_Alambda.dat.txt')
+    _wave_n2018, av_n2018 = np.loadtxt(fnara, skiprows=1, unpack=True, usecols=[0, 1]) 
+    wave_n2018 = 1e4/_wave_n2018
+
+    ## read SMC from Pei(1992)
+    #fsmc = os.path.join(dat_dir, 'obs', 'pei1992_smc.txt') 
+    #_1_lam, E_ratio = np.loadtxt(fsmc, skiprows=1, unpack=True, usecols=[0, 1]) 
+    #wave_smc = 1e4/_1_lam
+    #RV_smc = 2.93
+    #Asmc = (E_ratio + RV_smc)/(1+RV_smc)
+    ## normalize at 3000 
+    #Asmc3000 = np.interp([3000.], wave_smc, Asmc)[0]
+    #Asmc /= Asmc3000
+
+    wave = np.linspace(1000, 10000, 2251) 
+    i3000 = 500
+
+    fig = plt.figure(figsize=(11,8))
+
+    # SF or Q  
+    for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
+        # low or high mass 
+        for im, _m in enumerate(['low mass', 'high mass']): 
+            sub = fig.add_subplot(2,2, 2 * im + isfq + 1) 
+
+            for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
+                # read sim 
+                _sim_sed = dustInfer._read_sed(sim.lower()) 
+
+                cens    = _sim_sed['censat'].astype(bool) 
+                mstar   = _sim_sed['logmstar']
+                sfr     = _sim_sed['logsfr.inst']
+
+                # M* and SFR 
+                if _m == 'low mass':
+                    mlim = (mstar > 10.) & (mstar < 11.)
+                elif _m == 'high mass': 
+                    mlim = (mstar > 11.)
+
+                if _sfq == 'star-forming': 
+                    sfrlim = (sfr > 0.5) & (sfr != -999)
+                elif _sfq == 'quiescent': 
+                    sfrlim = (sfr < -0.5) & (sfr != -999)
+
+                # subpopulation sample cut 
+                subpop = cens & mlim & sfrlim 
+    
+                # get abc posterior
+                theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+                    abc_run(sim), 'theta.t%i.dat' % iabc)) 
+                theta_median = np.median(theta_T, axis=0) 
+    
+                # get attenuation curve 
+                _A_lambda = dem_attenuate(
+                        theta_median, 
+                        wave, 
+                        np.ones(len(wave)), 
+                        mstar[subpop], 
+                        sfr[subpop],
+                        nebular=False) 
+                A_lambda = -2.5 * np.log10(_A_lambda)
+                # normalize to 3000A 
+                A_lambda /= A_lambda[:,i3000][:,None]
+
+                Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
+
+                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[isim],
+                        alpha=0.25, linewidth=0, label=sim) 
+                sub.plot(wave, Al_med, c=clrs[isim])
+                
+                # calzetti
+                A_calzetti = _calzetti(wave) 
+                A_salim = _salim2018(wave, [10.25, 11.][im], [1., -1][isfq])
+                A_battisti = _battisti2017(wave)
+                if isfq == 0: 
+                    calz,   = sub.plot(wave, A_calzetti/A_calzetti[i3000], c='k', ls='--')
+                    #smc,    = sub.plot(wave_smc, Asmc, c='r') 
+                    b2017,  = sub.plot(wave, A_battisti/A_battisti[i3000],
+                            c='k', ls=':')
+                    n2018, = sub.plot(wave_n2018, av_n2018, c='k', ls='-.') 
+                sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', 
+                        lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
+
+                sub.set_xlim(1.2e3, 1e4)
+                if im == 0: 
+                    sub.set_xticklabels([]) 
+                sub.set_ylim(0., 4.) 
+                if isfq == 1: 
+                    sub.set_yticklabels([]) 
+
+                if im == 0 and isfq == 0: 
+                    sub.set_title(r'Star-forming ($\log {\rm SFR} > 0.5$)', fontsize=20)
+                if im == 1 and isfq == 0: 
+                    sub.legend(
+                            [calz, b2017, n2018], 
+                            ['Calzetti+(2001)', 'Battisti+(2017)', 'Narayanan+(2018)'], 
+                            loc='upper right', handletextpad=0.2, fontsize=20) 
+                if im == 0 and isfq == 1: 
+                    sub.set_title(r'Quiescent ($\log {\rm SFR} < -0.5$)', fontsize=20)
+                    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+                    sub.text(1.01, 0.5, r'$10 < \log M_*/M_\odot < 11$', 
+                            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
+                if im == 1 and isfq == 1:
+                    sub.text(1.01, 0.5, r'$11 < \log M_*/M_\odot$', 
+                            transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
+                    sub.legend([sal], ['Salim+(2018)'], 
+                            loc='upper right', handletextpad=0.2, fontsize=20) 
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
+    bkgd.set_ylabel(r'$A(\lambda)/A(3000\AA)$', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_attenuation.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -2157,9 +2286,9 @@ if __name__=="__main__":
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
     #ABC_Observables()
-    #ABC_attenuation()
     ABC_slope_AV()
-    #ABC_slope_MSFR()
+    #_ABC_slope_AV_quiescent()   
+    #ABC_attenuation()
     
     # tnorm Av model  
     #ABC_tnorm_corner()
