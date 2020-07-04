@@ -1810,6 +1810,90 @@ def fig_tex(ffig, pdf=False):
     return os.path.join(path, '.'.join([_ffig_name, ext]))
 
 
+def _observables_sfr0(): 
+    ''' Figure presenting the observables along with simulations without any
+    attenuation.
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(name='sdss',
+            statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(7)]), 
+            zero_sfr_sample=False)
+    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(7)]),
+            zero_sfr_sample=False)
+    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(7)]),
+            zero_sfr_sample=False)
+    print('--- fraction of galaxies w/ 0 SFR ---') 
+    print('simba %.2f' % (np.sum(sfr0_simba)/len(sfr0_simba)))
+    print('tng %.2f' % (np.sum(sfr0_tng)/len(sfr0_tng)))
+    print('eagle %.2f' % (np.sum(sfr0_eag)/len(sfr0_eag)))
+    #########################################################################
+    # plotting 
+    #########################################################################
+    xs      = [x_simba, x_tng, x_eag]
+    names   = ['SIMBA (no dust)', 'TNG (no dust)', 'EAGLE (no dust)']
+    clrs    = ['C1', 'C0', 'C2']
+    sfr0s   = [sfr0_simba, sfr0_tng, sfr0_eag] 
+
+    fig = plt.figure(figsize=(5*len(xs),10))
+
+    for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
+        # R vs (G - R)
+        sub = fig.add_subplot(2,len(xs),i+1)
+        DFM.hist2d(_x[0][~_sfr0], _x[1][~_sfr0], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=25) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+
+        # R vs FUV-NUV
+        sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
+        DFM.hist2d(_x[0][~_sfr0], _x[2][~_sfr0], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        sfr0 = sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=25) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, '_observables_sfr0.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def _SIMBA_oddities(): 
     ''' SIMBA has a number of differences compared to TNG and EAGLE. This
     script is to examine some of the oddities: 
@@ -2286,7 +2370,7 @@ if __name__=="__main__":
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
     #ABC_Observables()
-    ABC_slope_AV()
+    #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
     
@@ -2294,7 +2378,8 @@ if __name__=="__main__":
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
     #slab_tnorm_comparison()
-
+    
+    _observables_sfr0()
     #_SIMBA_oddities()
     #_subpops()
     #_extra_luminous()
