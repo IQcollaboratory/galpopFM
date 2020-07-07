@@ -1387,25 +1387,25 @@ def _ABC_slope_AV_quiescent():
                 theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
 
         DFM.hist2d(A_V, S, levels=[0.68, 0.95],
-                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
+                range=[(0., 2.), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
                 plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
         sub1.scatter(A_V[quiescent], S[quiescent], c='r')
 
         A_V = A_lambda[:,i5500]
 
         DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
-                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
+                range=[(0., 2.), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
                 plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
 
         sub2.scatter(A_V[quiescent], delta_median[quiescent], c='r')
 
     sub1.set_xlabel(r'$A_V$', fontsize=25)
-    sub1.set_xlim(0.1, 1.4)
+    sub1.set_xlim(0.1, 2.)
     sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
     sub1.set_ylim(0., 14.4) 
 
     sub2.set_xlabel(r'$A_V$', fontsize=25)
-    sub2.set_xlim(0.1, 1.4)
+    sub2.set_xlim(0.1, 2.)
     sub2.set_ylabel('$\delta$', fontsize=25)
     sub2.set_ylim(-1.5, 1.) 
 
@@ -1614,8 +1614,8 @@ def ABC_attenuation():
                     b2017,  = sub.plot(wave, A_battisti/A_battisti[i3000],
                             c='k', ls=':')
                     n2018, = sub.plot(wave_n2018, av_n2018, c='k', ls='-.') 
-                sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', 
-                        lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
+                    sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', 
+                            lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
 
                 sub.set_xlim(1.2e3, 1e4)
                 if im == 0: 
@@ -1626,10 +1626,11 @@ def ABC_attenuation():
 
                 if im == 0 and isfq == 0: 
                     sub.set_title(r'Star-forming ($\log {\rm SFR} > 0.5$)', fontsize=20)
-                if im == 1 and isfq == 0: 
+                #if im == 1 and isfq == 0: 
                     sub.legend(
-                            [calz, b2017, n2018], 
-                            ['Calzetti+(2001)', 'Battisti+(2017)', 'Narayanan+(2018)'], 
+                            [calz, b2017, n2018, sal], 
+                            ['Calzetti+(2001)', 'Battisti+(2017)',
+                                'Narayanan+(2018)', 'Salim+(2018)'], 
                             loc='upper right', handletextpad=0.2, fontsize=20) 
                 if im == 0 and isfq == 1: 
                     sub.set_title(r'Quiescent ($\log {\rm SFR} < -0.5$)', fontsize=20)
@@ -1639,8 +1640,8 @@ def ABC_attenuation():
                 if im == 1 and isfq == 1:
                     sub.text(1.01, 0.5, r'$11 < \log M_*/M_\odot$', 
                             transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
-                    sub.legend([sal], ['Salim+(2018)'], 
-                            loc='upper right', handletextpad=0.2, fontsize=20) 
+                    #sub.legend([sal], ['Salim+(2018)'], 
+                    #        loc='upper right', handletextpad=0.2, fontsize=20) 
 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
@@ -2372,14 +2373,14 @@ if __name__=="__main__":
     #ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
-    #ABC_attenuation()
+    ABC_attenuation()
     
     # tnorm Av model  
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
     #slab_tnorm_comparison()
     
-    _observables_sfr0()
+    #_observables_sfr0()
     #_SIMBA_oddities()
     #_subpops()
     #_extra_luminous()

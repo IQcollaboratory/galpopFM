@@ -78,23 +78,28 @@
 \end{center}
 \end{figure}
 
+
 \begin{figure}
 \begin{center}
     \includegraphics[width=0.85\textwidth]{figs/abc_attenuation.pdf}
     \caption{\label{fig:atten}
-    Attenuation curves of the SIMBA (orange), TNG (blue), and EAGLE (green) DEM
-    models for low (top) and high $M_*$ (bottom), star-forming (left) and
+    Attenuation curves of the TNG (blue) and EAGLE (green) DEM models for 
+    low (top) and high $M_*$ (bottom), star-forming (left) and
     quiescent galaxies (right). The attenuation curves are normalized at
     $3000\AA$: $A(\lambda)/A(3000\AA)$. We mark the $1\sigma$ standard
     deviation of the attenuation curves with the shaded region. For comparison,
     we include measurements of $A(\lambda)/A(3000\AA)$ from 
     observations~\citep{caleztti2000, battisti2017, salim2018} as well as
-    from simulations~\cite{narayanan2018}. The \cite{calzetti2000} and
-    \cite{battisti2017} attenuation curves are shallower than the DEM
-    attenuation curves; however, this discrepancy is primarily driven by the
+    from simulations~\citep{narayanan2018}. For star-forming galaxies, the 
+    \cite{calzetti2000} and \cite{battisti2017} attenuation curves are shallower 
+    than the DEM attenuation curves; however, this is primarily driven by the
     differences in $M_*$ ranges. For \cite{salim2018}, which probe a similar
-    $M_*$ range as our DEM models, we find goood agreement. We also find good agreement with
-    median attenuation curve of \cite{narayanan2018} star-forming galaxies. 
+    $M_*$ range as our DEM models, we find goood agreement. We also find good 
+    agreement with median attenuation curve of \cite{narayanan2018}. With DEM
+    models, we can also constrain the attenuation curves of quiescent galaxies,
+    which are challenging to observationally constrain. Quiescent galaxies,
+    have significantly shallower attenuation curves with larger variations in
+    slope. 
     }
 \end{center}
 \end{figure}
@@ -403,47 +408,54 @@ curves for star-forming galaxies. In addition, the variation we find in the
 DEM attenuation curves of star-forming galaxies is consistent with the
 variation \cite{salim2018} presents in their Figure 9. The DEM attenuation
 curves are also in excellent agreement with the median attenuation curve of
-\cite{narayanan2018} star-forming galaxies. \cite{narayanan2018}, however, find
-larger attenuation curve variation than the DEM models. Part of the
-discrepancy is likely due to the fact that the cosmological zoom-in simulations
-of \cite{narayanan2018} span a broader $M_*$ range~\citep{abruzzo2018}.
-Overall, however, the DEM models find significant variation in the attenuation
-curves of star-forming galaxies consistent with both observations and
+\cite{narayanan2018} star-forming galaxies. While \cite{narayanan2018} find
+larger attenuation curve variation than the DEM models, this is partly due to
+the fact that their cosmological zoom-in simulations span a broader $M_*$ 
+range~\citep{abruzzo2018}. Overall, the DEM models find significant variation 
+in the attenuation curves of star-forming galaxies consistent with both observations and
 simulations. 
 
-\ch{what do we learn about quiescent galaxy attenuation?} 
-% Kartheik on why dust is hard to constrain for quiescent galaxies: regarding the poor constraints on dust for quiescent galaxies, this is hard to constrain because of two reasons: firstly because quiescent galaxies don't have much recent SFR and therefore not much dust (their most recently produced dust has likely happened more than a dust destruction timescale ago), and secondly because the continuum for quiescent galaxies is super hard to fit (and break degeneracies with SFH & metallicity), which leads to poor(er) constraints. You could basically think of this in terms of dust/total SNR, which drops sharply for this population.
+%\ch{what do we learn about quiescent galaxy attenuation?} 
+In addition to constraining the attenuation curve of star-forming galaxies,
+the DEM models also shed light on dust attenuation in quiescent galaxies, which
+is particularly valuable due to the observational challenges of measuring dust 
+attenuation in quiescent galaxies. For instance, MIR emission from active galactic
+nuclei (AGN) heating nearby dust complicates methods that rely on IR luminosity 
+to measure dust attenuation~\cite{kirkpatrick2015}. Even SED fitting methods
+require accounting for AGN MIR emission~\citep{salim2016, leja2018, salim2018}
+in addition to the overall challenge of breaking the degeneracy between SFH and
+metallicity to fit the continuum of quiescent galaxy SEDs (\ch{cite?}). With DEM
+models, which take a foward modeling approach with optical and UV data, we do
+not face these issues and can constrain the attenuation curves of quiescent
+galaxies. For both TNG and EAGLE, we find that quiescent galaxies have shallower attenuation curve
+with large variations in the slopes (Figure~\ref{fig:atten}). We also find that they have higher $A_V
+\gtrsim 1.25$. \ch{explanation for why DEM model does this} 
+In \cite{leja2017}, they similar find composite and AGN galaxies
+to have shallow attenuation curves with higher $A_V$; however, the comparison
+is limited due to ther smaller sample size (129 galaxies). In contrast,  
+\cite{salim2018} find that quiescent galaxies in GSWLC2 have significantly
+steeper curves; they, however, focus their analysis mainly on star-forming 
+galaxies.
 
-dust attenuation in quiescent galaxies, which is difficult to measure from
-observations. For non-star-forming galaxies, MIR emission from active galactic nuclei (AGN)
-heating nearby dust complicate methods that rely on IR luminosity to measure
-dust attenuation. Even SED fitting methods require accounting for AGN MIR 
-emission~\citep{salim2016, leja2018, salim2018}. 
-Since we utilize a forward modeling approach with optical and UV data, we don't
-have this issue. 
+% Kartheik on why dust is hard to constrain for quiescent galaxies: 
+%firstly because quiescent galaxies don't have much recent SFR and therefore not much dust (their most recently produced dust has likely happened more than a dust destruction timescale ago), 
+% secondly because the continuum for quiescent galaxies is super hard to fit (and break degeneracies with SFH & metallicity), which leads to poor(er) constraints. You could basically think of this in terms of dust/total SNR, which drops sharply for this population.
 
-We find quiescent galaxies with shallow slopes and high AV
-(Figure~\ref{fig:atten}). This is consistent
-with \cite{leja2017} but not really with \cite{salim2018}  
+In our DEM model, we neglect the galaxies with SFR=0 from simulations by
+directly sampling the quiescent galaxy observables (Section~\ref{sec:res}).
+Since galaxies with SFR=0 predicted by the simulations do not have recent 
+star-formation and also have 0 gas mass\todo{@tjitske is this for all
+sims}, we would expect them to also have no dust. However, a DEM model
+where we do not attenuate SFR=0 galaxies struggles to reproduce observations.
+This likely highlights the limitations of hydrodynamical simulations near the
+mass and temporal resolutions as well as the limitations of subgrid
+prescriptions for gas. \ch{Uncertainties in the dust desctruction timescale may
+also contribute to the explanation~\citep[\eg][]{jones2011, slavin2015}}. 
+We emphasize that our prescription for SFR=0 galaxies ensures that they do not
+significantly impact the constraints on DEM parameters. 
 
-%\cite{salim2018}: The IR luminosities of AGN may be affected by nonstellar dust heating, especially since they are based on the mid-IR data.
+In the DEM model, we also assume 
 
-%\cite{leja2017} Inferring total IR luminosities with only MIR broadband photometry can be strongly affected by galaxy-to- galaxy variability in polycyclic aromatic hydrocarbon (PAH) emission in the MIR (Draine et al. 2007) and by an active galactic nucleus (AGN) contribution (Kirkpatrick et al. 2015). The interpretation of LIR itself is complicated by the contribution of evolved stars to the IR luminosity (Cortese et al. 2008; Hayward et al. 2014; Utomo et al. 2014). UV luminosities are sensitive to stellar metallicity and recent SFH, and very sensitive to the amount of dust attenuation, which can be estimated from the UV slope β but with serious limitations (Viaene et al. 2016).
-%\cite{leja2018}:  Full SED models will naively attribute AGN emission to dust heated by star formation, resulting in full SED models overestimating sSFRs by up to 0.6 dex for galaxies with AGN (Salim et al. 2016)
-
-% For comparison methods, IR lumninosity from AGN can affect IR based attenuation curves~\citep{cite}. Even for SED
-%\cite{salim2018} does look at attenuatiion for quiesscent 
-
-
-\ch{color magnitude diagrams are not perfect}
-too many luminous galaxies? 
-color distribution isnt' perfect. 
-
-\ch{sfr=0 galaxies}
-There isn't a whole lot of flexibility for SFR=0 galaxies predicted by
-simulations and they do not agree well with observations \ref{sec:res}. 
-
-\ch{fixed UV bump}
 We fix the UV bump to reduce the number of parameters. But when run our
 analysis without fixing the UV bump, we find it does not impact our results.
 We also get no constraints on the UV bump parameters. 
