@@ -348,6 +348,7 @@ on SFR, its hard to tell. Furthermore, for star-forming galaxies,
 $\mdeltam\sim0$ constraint. They find, however, this dependence is entirely
 driven by the underlying fundamental trend between slope and $A_V$.
 
+% attenuation-slope relation 
 At low attenuation, dust scattering dominates absoprtion. In this regime,
 the attenuation curve steepens because red light tends to
 scatter isotropically while blue light tends to forward scatter, which causes
@@ -363,10 +364,11 @@ attenuation. Furthermore, although the comparison is limited by the $A_V$ range
 of the DEM models, we find that the DEM $A_V$--slope relations are consistent with 
 the $A_V - S$ relation of GSWLC2 galaxies~\citep[black shaded][]{salim2020}.
 They are also consistent with \cite{leja2017}. 
-We also compare our results to theoretical predictions from \cite{witt2000,
-inoue2005, chevallard2013}. Our DEM models are in good agreement with \cite{witt2000}.
-However, \cite{inoue2005} and \cite{chevallard2013} predict shallower attenuation 
-curves than our DEM models. \cite{narayanan2018}, not included in Figure~\ref{fig:slope}, 
+We also compare our results to theoretical predictions from radiative transfer
+models~\citep{witt2000, inoue2005, chevallard2013}. Our DEM models are in good 
+agreement with \cite{witt2000}. However, \cite{inoue2005} and the radiative
+transfer models considered in \cite{chevallard2013} predict shallower attenuation curves than our DEM models. 
+\cite{narayanan2018}, not included in Figure~\ref{fig:slope}, 
 also predict shallower attenuation curves~\citep{salim2020}. Overall, our DEM models 
 better reproduce the $A_V$--slope relations of observations than these
 theoretical predictions.
@@ -464,23 +466,23 @@ consistent constraints for the other DEM parameters, which implies that fixing
 the UV bump parameters does not impact our results. 
 
 A major assumption in the DEM model is how we sample the $A_V$ using the slab
-model. \cite{salim2020} find 
-
-
-\ch{slab model}
-We rely on the slab model. But nothing changes when we use a more flexible
-truncated normal distribution in Appendix~\ref{sec:nonslab}. tnorm DEM model allows us to also vary the
-scatter of the attenuation curve 
-
-% how does the slab model actually do compared to observations? 
-\cite{chevallard2013} Section 2.3 
-\cite{trayford2015}
-%\cite{battisti2017a} find a trend between inclination and slope...
-\cite{naranyanan2018}? 
+model. For each simulated galaxy, the DEM model uniformly samples the
+inclination and then assigns $A_V$ with the slab model (Eq.~\ref{eq:slab}). As
+we detail in Section~\ref{sec:dem}, this slab model is consistent inclination
+dependence of attenuation found in both observations~\citep[\eg][]{conroy2010,
+salim2020} and simulations~\citep[\eg]{chevallard2013, narayanan2018,
+trayford2020}. Moreover, the slab model successfully reproduces the $A_V$
+distribution of SDSS galaxies (Figure~\ref{fig:av_dist}). To ensure that our
+results do not hinge on the slab model, we conduct our analysis using a
+a truncated normal distribution based DEM model to sample $A_V$
+(Appendix~\ref{sec:nonslab}). This model is more flexible than the slab model. 
+For instance, we include physical parameter dependence for the scatter of
+$A_V$, and not just for $\tau_V$. We refer readers to Appendix~\ref{sec:nonslab} for details. 
+We find that adding our results are not impacted by the change in the $A_V$ 
+sampling model or the added flexiblity. Therefore, our results are not driven
+by our choice of the slab model. 
 
 % Salim(2020): Chevallard et al. (2013), who aggregated and analyzed a diverse series of theoretical attenuation law studies by Pierini et al. (2004), Tuffs et al. (2004), Silva et al. (1998) and Jonsson et al. (2006), and showed that all the stud- ies predict, with some normalization differences, a relationship between the optical depth AV and attenuation law slope.
-
-
 
 % Salmon+(2016): There is evidence that galaxy inclination correlates with the strength of Lyα emission, such that we observe less Lyα equivalent width for more edge-on galaxies (Charlot & Fall 1993; Laursen & Sommer-Larsen 2007; Yajima et al. 2012; Verhamme et al. 2012; U et al. 2015)
 % Therefore, based on physi- cal models, one expects that galaxies with “greyer” dust laws and larger overall attenuation should have higher inclinations
@@ -488,7 +490,7 @@ scatter of the attenuation curve
 
 \ch{How about our prior choice?}
 
-
+% recap everything
 \ch{what we learn about in the simulations}
 
 
