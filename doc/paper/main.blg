@@ -5,6 +5,25 @@ The style file: mnras.bst
 Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "shivaei2015"
 Warning--I didn't find a database entry for "reddy2015"
+Warning--I didn't find a database entry for "pillepich2018b"
+Warning--I didn't find a database entry for "springel2018"
+Warning--I didn't find a database entry for "vogelsberger2014"
+Warning--I didn't find a database entry for "genel2014"
+Warning--I didn't find a database entry for "nelson2015"
+Warning--I didn't find a database entry for "weinberger2018"
+Warning--I didn't find a database entry for "schaye2015"
+Warning--I didn't find a database entry for "crain2015"
+Warning--I didn't find a database entry for "mcalpine2016"
+Warning--I didn't find a database entry for "springel2005"
+Warning--I didn't find a database entry for "dallavecchia2012"
+Warning--I didn't find a database entry for "Booth2009"
+Warning--I didn't find a database entry for "dave2019"
+Warning--I didn't find a database entry for "dave2016"
+Warning--I didn't find a database entry for "dave2017"
+Warning--I didn't find a database entry for "dave2017a"
+Warning--I didn't find a database entry for "hopkins2015a"
+Warning--I didn't find a database entry for "hopkins2017"
+Warning--I didn't find a database entry for "anglesalcazar2017"
 Warning--I didn't find a database entry for "naranyanan2018"
 Warning--I didn't find a database entry for "inoue2005"
 Warning--I didn't find a database entry for "caleztti2000"
@@ -27,45 +46,45 @@ Warning--I didn't find a database entry for "slavin2015"
 Warning--I didn't find a database entry for "brinchmann2004"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 31 entries,
+You've used 30 entries,
             2881 wiz_defined-function locations,
-            950 strings with 19198 characters,
-and the built_in function-call counts, 14459 in all, are:
-= -- 1238
-> -- 1039
-< -- 60
-+ -- 466
-- -- 146
-* -- 1778
-:= -- 2262
+            965 strings with 19251 characters,
+and the built_in function-call counts, 13990 in all, are:
+= -- 1204
+> -- 1000
+< -- 58
++ -- 448
+- -- 140
+* -- 1720
+:= -- 2184
 add.period$ -- 0
-call.type$ -- 31
-change.case$ -- 62
+call.type$ -- 30
+change.case$ -- 60
 chr.to.int$ -- 30
-cite$ -- 31
-duplicate$ -- 690
-empty$ -- 683
-format.name$ -- 250
-if$ -- 2495
-int.to.chr$ -- 2
+cite$ -- 30
+duplicate$ -- 667
+empty$ -- 661
+format.name$ -- 242
+if$ -- 2417
+int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 31
-newline$ -- 106
-num.names$ -- 208
-pop$ -- 147
+missing$ -- 30
+newline$ -- 103
+num.names$ -- 200
+pop$ -- 142
 preamble$ -- 1
-purify$ -- 124
+purify$ -- 120
 quote$ -- 0
-skip$ -- 398
+skip$ -- 386
 stack$ -- 0
-substring$ -- 904
-swap$ -- 328
-text.length$ -- 124
+substring$ -- 884
+swap$ -- 314
+text.length$ -- 120
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 279
+type$ -- 270
 warning$ -- 0
-while$ -- 226
+while$ -- 218
 width$ -- 0
-write$ -- 320
-(There were 22 warnings)
+write$ -- 310
+(There were 41 warnings)
