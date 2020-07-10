@@ -4,87 +4,55 @@ The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "shivaei2015"
-Warning--I didn't find a database entry for "reddy2015"
-Warning--I didn't find a database entry for "pillepich2018b"
-Warning--I didn't find a database entry for "springel2018"
-Warning--I didn't find a database entry for "vogelsberger2014"
-Warning--I didn't find a database entry for "genel2014"
-Warning--I didn't find a database entry for "nelson2015"
-Warning--I didn't find a database entry for "weinberger2018"
-Warning--I didn't find a database entry for "schaye2015"
-Warning--I didn't find a database entry for "crain2015"
-Warning--I didn't find a database entry for "mcalpine2016"
-Warning--I didn't find a database entry for "springel2005"
-Warning--I didn't find a database entry for "dallavecchia2012"
-Warning--I didn't find a database entry for "Booth2009"
-Warning--I didn't find a database entry for "dave2019"
-Warning--I didn't find a database entry for "dave2016"
-Warning--I didn't find a database entry for "dave2017"
-Warning--I didn't find a database entry for "dave2017a"
-Warning--I didn't find a database entry for "hopkins2015a"
-Warning--I didn't find a database entry for "hopkins2017"
-Warning--I didn't find a database entry for "anglesalcazar2017"
 Warning--I didn't find a database entry for "naranyanan2018"
-Warning--I didn't find a database entry for "inoue2005"
 Warning--I didn't find a database entry for "caleztti2000"
-Warning--I didn't find a database entry for "calzetti2000"
-Warning--I didn't find a database entry for "johnson2007"
 Warning--I didn't find a database entry for "conroy2010"
-Warning--I didn't find a database entry for "wild2011"
-Warning--I didn't find a database entry for "leja2017"
-Warning--I didn't find a database entry for "salim2019"
 Warning--I didn't find a database entry for "gordon1994"
-Warning--I didn't find a database entry for "witt2000"
 Warning--I didn't find a database entry for "draine2003"
 Warning--I didn't find a database entry for "battisit2017"
-Warning--I didn't find a database entry for "abruzzo2018"
-Warning--I didn't find a database entry for "kirkpatrick2015"
 Warning--I didn't find a database entry for "salim2016"
 Warning--I didn't find a database entry for "leja2018"
-Warning--I didn't find a database entry for "jones2011"
-Warning--I didn't find a database entry for "slavin2015"
-Warning--I didn't find a database entry for "brinchmann2004"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 30 entries,
+You've used 63 entries,
             2881 wiz_defined-function locations,
-            965 strings with 19251 characters,
-and the built_in function-call counts, 13990 in all, are:
-= -- 1204
-> -- 1000
-< -- 58
-+ -- 448
-- -- 140
-* -- 1720
-:= -- 2184
+            1127 strings with 28355 characters,
+and the built_in function-call counts, 29087 in all, are:
+= -- 2508
+> -- 2078
+< -- 114
++ -- 943
+- -- 288
+* -- 3611
+:= -- 4527
 add.period$ -- 0
-call.type$ -- 30
-change.case$ -- 60
-chr.to.int$ -- 30
-cite$ -- 30
-duplicate$ -- 667
-empty$ -- 661
-format.name$ -- 242
-if$ -- 2417
-int.to.chr$ -- 1
+call.type$ -- 63
+change.case$ -- 126
+chr.to.int$ -- 62
+cite$ -- 63
+duplicate$ -- 1392
+empty$ -- 1385
+format.name$ -- 502
+if$ -- 5023
+int.to.chr$ -- 2
 int.to.str$ -- 0
-missing$ -- 30
-newline$ -- 103
-num.names$ -- 200
-pop$ -- 142
+missing$ -- 63
+newline$ -- 202
+num.names$ -- 406
+pop$ -- 301
 preamble$ -- 1
-purify$ -- 120
+purify$ -- 252
 quote$ -- 0
-skip$ -- 386
+skip$ -- 798
 stack$ -- 0
-substring$ -- 884
-swap$ -- 314
-text.length$ -- 120
+substring$ -- 1846
+swap$ -- 622
+text.length$ -- 252
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 270
+type$ -- 567
 warning$ -- 0
-while$ -- 218
+while$ -- 452
 width$ -- 0
-write$ -- 310
-(There were 41 warnings)
+write$ -- 638
+(There were 9 warnings)

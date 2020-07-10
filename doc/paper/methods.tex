@@ -1,53 +1,58 @@
-\section{Dust Empirical Modeling} \label{sec:methods}
-\subsection{Fiducial DEM} \label{sec:dem}
-\todo{motivation for the DEM model} 
+\section{Dust Empirical Modeling} \label{sec:dem}
+In this section we present the dust empirical model (DEM), a flexible model for
+applying attenuation curves to galaxy populations that allows us to incorporate
+intrinsic variations in dust attenuation as well as correlation to physical
+galaxy properties. Later, we demonstrate that we can accurately reproduce
+observations with the DEM and use it to test galaxy formation models and shed
+light on dust in galaxies. 
 
-\cite{trayford2015} uses an empirical dust model but doesn't implement an
-attenuation curve but rather multiplicative factors for the broadband
-photometry.
-
-We begin by defining the dust attenuation curve $A(\lambda)$ as 
+We define the dust attenuation curve $A(\lambda)$ as 
 \begin{equation} 
     F_o (\lambda) = F_i (\lambda) 10^{-0.4 A(\lambda)}
 \end{equation}
-where $F_o$ is the observed flux and $F_i$ is the intrinsic flux. We normalize the attenuation at the $V$ band, 
+where $F_o$ is the observed flux and $F_i$ is the intrinsic flux. We normalize
+the attenuation at the $V$ band, 
 \begin{equation} 
-    A(\lambda) = A_V \frac{k(\lambda)}{k_V}. 
+    A(\lambda) = A_V \frac{k(\lambda)}{k_V}
 \end{equation}
+so that $A_V$ determines the amplitude of the attenuation, while $k(\lambda)$
+determines the wavelength dependence. 
 
-For the normalization of the attenuation curve, $A_V$, we use the slab model
-from~\cite{somerville1999, somerville2012}. In the slab model the amplitude of
-attuenuation depends on the inclination angle, $i$, and the optical depth,
-$\tau_V$: 
+To determine $A(\lambda)$ for each galaxy, we first assign $A_V$ using the slab
+model from~\cite{somerville1999, somerville2012}. In the slab model, $A_V$ is
+calculated from the inclination of the galaxy, $i$, and its optical depth, $\tau_V$: 
 \begin{equation} \label{eq:slab}
-    A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right]
+    A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right].
 \end{equation}
-\todo{justification of why this is enough}. We sample $i$ uniformly.
-% is the slab model consistent with Battisti et al. (2017b) who find a
-% correlation with the attenuation curve slopes: highly inclined galaxies have shallower slopes (S = 2.2) with a possible weak bump (B ∼ 0.1), whereas face on galaxies had steeper slopes (though still only S = 2.7)
-
-
-% at fixed A_ISM, higher inclination (more edge-on) galaxies exhibit greyer V attenuation curves. Taking the difference in this way removes the primary trend that higher AISM measurements tend to be associated V with more edge-on galaxies. This effect has been previously noted for real galaxies (e.g. Wild et al. 2011), and attributed to the effect that the attenuation in face-on galaxies is governed by the physical association between ISM and young stars, while in edge- on systems dust lanes are less discriminating between differently aged populations.
-
-%Salim+(2020): explanatiion for why we don't have slope depend on inclination. 
-%Remarkably, the lack of difference in the slopes at fixed AV is true even for
-%galaxies with very different inclinations. A dusty galaxy with a face-on
-%attenuation of AV and a less dusty galaxy that has the same AV (because we
-%observe it edge-on) will have the same attenuation curve slope, as predicted
-%in the radiative transfer models analyzed by Chevallard et al. (2013).
-% Salim+(2020): We conclude that the dominant determinant in the slope of the
-% attenuation curve, out of the considered physical parameters, is AV .
-
-Recently, \cite{salim2020} find significant dependence in $A_V$ on both $M_*$
-and SFR. We include this dependence through $\tau_V$, which we flexibly
-parameterize as 
+For all of our galaxies, we uniformly sample $i$. Then, we include the
+correlation between $A_V$ and galaxy properties ($M_*$ and $\sfr$), found
+in both observations and simulations~\citep[\eg][]{narayanan2018, salim2020},
+in $\tau_V$. We use $\tau_V$ with a simple and flexible linear $M_*$ and $\sfr$ 
+dependence:
 \begin{equation} \label{eq:tauv}
-    \tau_V(M_*, {\rm SFR}) = m_{\tau,1} \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
-    m_{\tau,2} \log\,{\rm SFR} + c_\tau.
+    \tau_V(M_*, \sfr) = \mtaum \log \left(\frac{M_*}{10^{10} M_\odot}\right) + \mtaus \log\,\sfr + c_\tau.
 \end{equation}
+$\mtaum$ quantifies the $M_*$ dependence, $\mtaus$ quantifies the $\sfr$
+dependence, and $c_\tau$ quantifies the overall amplitude. Since $\tau_V$ is
+optical depth, we impose a $\tau_V \ge 0$ limit. We note that the slab model 
+is a naive approximation. In reality, $A_V$ for a galaxy will depend on complexities 
+of its star-to-dust geometry, variations in the extinction curves, and other
+properties beyond just inclination and $\tau_V$. The purpose of the DEM,
+however, is not to accurately model dust attenuation for individual galaxies,
+but rather to accurately model the distribution of dust attenuation of galaxy
+populations. In this sense, the slab model qualitatively reproduces the
+correlation between $A_V$ and $i$ found in the literature: edge-on galaxies
+have higher $A_V$ than face-on galaxies~\citep[\eg][]{salim2020}. More
+importantly, the distribution of $A_V$, $p(A_V)$, produced using the slab model with
+uniformly sampled inclinations closely matches the $p(A_V)$ of our SDSS sample
+(Figure~\ref{fig:av_dist}). Also, we demonstrate that replacing the slab model
+with a more flexible prescription for sampling $A_V$ does not significant
+impact our analysis (Appendix~\ref{sec:nonslab}). We therefore conclude that
+the slab model is a sufficiently flexible empirical prescription for sampling
+$A_V$. 
 
-Next, for the wavelength dependence of the attenuation curve, we use $k(\lambda)$ from 
-\cite{noll2009}: 
+Next, for the wavelength dependence of the attenuation curve, we use the
+parameterization of $k(\lambda)$ from \cite{noll2009}: 
 \begin{equation} \label{eq:noll}
     k(\lambda) = \left(k_{\rm Cal}(\lambda) + D(\lambda)\right) \left(
     \frac{\lambda}{\lambda_V} \right)^\delta.
@@ -62,24 +67,30 @@ Here $k_{\rm Cal}(\lambda)$ is the \cite{calzetti2001} curve:
         R_V & 1200 \AA \le \lambda \le 6300 \AA
     \end{cases}
 \]
-where $\lambda_V$ is the $V$ band wavelength. $\delta$, the slope of the attenuation curve.
-also correlates with galaxy
-properties.
-So we parameterize $\delta$ and 
+where $\lambda_V = 5500 \AA$ is the $V$ band wavelength. $\delta$ is the slope
+offset of the attenuation curve from $k_{\rm Cal}$. Given the evidence that
+$\delta$ correlate with galaxy properties~\citep[\eg][]{leja2017, salim2018},
+we parameterize $\delta$ with a similar $M_*$ and $\sfr$ dependence as
+$\tau_V$:  
 \begin{align}
-    \delta(M_*, {\rm SFR}) &= m_{\delta,2} \log \left(\frac{M_*}{10^{10}
-    M_\odot}\right) + m_{\delta,2} \log\,{\rm SFR} + c_\delta 
+    \delta(M_*, \sfr) &= \mdeltam \log \left(\frac{M_*}{10^{10}
+    M_\odot}\right) + \mdeltas \log\,\sfr + c_\delta 
 \end{align}
-
-$D(\lambda)$ is the UV dust bump, which we
-parameter using the standard Lorentzian-like Drude profile:
+$D(\lambda)$ in Eq.~\ref{eq:noll} is the UV dust bump, which we parameter using
+the standard Lorentzian-like Drude profile:
 \begin{equation}
     D(\lambda) = \frac{E_b(\lambda \Delta \lambda)^2}{(\lambda^2 -
     \lambda_0^2)^2 + (\lambda \Delta \lambda)^2}
 \end{equation}
 where $\lambda_0$, $\Delta \lambda$, and $E_b$ are the central wavelength,
-FWHM, and strength of the bump, respecitvely. In our DEM, we assume fixed 
+FWHM, and strength of the bump, respectively. In our DEM, we assume fixed 
 $\lambda_0 = 2175 \AA$ and $\Delta \lambda = 350\AA$. 
+
+% Although a number of works have found correlation between the attenuation
+% curve slope and inclination~\citep{wild2011, chevallard2013, battisti2017b},
+% \cite{salim2020}, most recently, found that the driver of this trend is the
+% relationship between $A_V$ and slope. We therefore do not include an
+% inclination dependence in $\delta$. 
 
 \cite{kriek2013} and \cite{tress2018} found evidence that $E_b$ correlates with
 the slope of the attenuation curve for star-forming galaxies $z\sim2$. This was
@@ -158,8 +169,14 @@ where we parameterize
 \end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Likelihood-Free Inference} \label{sec:abc}
+\section{Likelihood-Free Inference} \label{sec:abc}
 Approximate Bayesian Computation with Population Monte Carlo \cite{hahn2017a},
+
+We also restrict the
+sample to central galaxies where brighter than $M_r < -20$, where our SDSS 
+central galaxy sample is complete. 
+
+
 
 To compare the outputs of our DEMs to observations, we first measure the color-magnitude
 observables ($G-R$, $FUV-NUV$, and $M_r$) as described in Section~\ref{sec:fm}
