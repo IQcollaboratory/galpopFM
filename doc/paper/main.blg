@@ -4,7 +4,6 @@ The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "shivaei2015"
-Warning--I didn't find a database entry for "naranyanan2018"
 Warning--I didn't find a database entry for "caleztti2000"
 Warning--I didn't find a database entry for "conroy2010"
 Warning--I didn't find a database entry for "gordon1994"
@@ -16,7 +15,7 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 You've used 63 entries,
             2881 wiz_defined-function locations,
-            1127 strings with 28355 characters,
+            1126 strings with 28341 characters,
 and the built_in function-call counts, 29087 in all, are:
 = -- 2508
 > -- 2078
@@ -55,4 +54,4 @@ warning$ -- 0
 while$ -- 452
 width$ -- 0
 write$ -- 638
-(There were 9 warnings)
+(There were 8 warnings)

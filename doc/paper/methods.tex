@@ -51,8 +51,8 @@ impact our analysis (Appendix~\ref{sec:nonslab}). We therefore conclude that
 the slab model is a sufficiently flexible empirical prescription for sampling
 $A_V$. 
 
-Next, for the wavelength dependence of the attenuation curve, we use the
-parameterization of $k(\lambda)$ from \cite{noll2009}: 
+For the wavelength dependence of the attenuation curve, $k(\lambda)$, we
+use the \cite{noll2009} parameterization: 
 \begin{equation} \label{eq:noll}
     k(\lambda) = \left(k_{\rm Cal}(\lambda) + D(\lambda)\right) \left(
     \frac{\lambda}{\lambda_V} \right)^\delta.
@@ -68,14 +68,19 @@ Here $k_{\rm Cal}(\lambda)$ is the \cite{calzetti2001} curve:
     \end{cases}
 \]
 where $\lambda_V = 5500 \AA$ is the $V$ band wavelength. $\delta$ is the slope
-offset of the attenuation curve from $k_{\rm Cal}$. Given the evidence that
-$\delta$ correlate with galaxy properties~\citep[\eg][]{leja2017, salim2018},
+offset of the attenuation curve from $k_{\rm Cal}$. Since $\delta$ correlates 
+with galaxy properties~\citep[\eg][]{leja2017, salim2018},
 we parameterize $\delta$ with a similar $M_*$ and $\sfr$ dependence as
 $\tau_V$:  
-\begin{align}
+\begin{align} \label{eq:delta}
     \delta(M_*, \sfr) &= \mdeltam \log \left(\frac{M_*}{10^{10}
     M_\odot}\right) + \mdeltas \log\,\sfr + c_\delta 
 \end{align}
+% Although a number of works have found correlation between the attenuation
+% curve slope and inclination~\citep{wild2011, chevallard2013, battisti2017b},
+% \cite{salim2020}, most recently, found that the driver of this trend is the
+% relationship between $A_V$ and slope. We therefore do not include an
+% inclination dependence in $\delta$. 
 $D(\lambda)$ in Eq.~\ref{eq:noll} is the UV dust bump, which we parameter using
 the standard Lorentzian-like Drude profile:
 \begin{equation}
@@ -83,34 +88,49 @@ the standard Lorentzian-like Drude profile:
     \lambda_0^2)^2 + (\lambda \Delta \lambda)^2}
 \end{equation}
 where $\lambda_0$, $\Delta \lambda$, and $E_b$ are the central wavelength,
-FWHM, and strength of the bump, respectively. In our DEM, we assume fixed 
-$\lambda_0 = 2175 \AA$ and $\Delta \lambda = 350\AA$. 
+FWHM, and strength of the bump, respectively. We assume fixed $\lambda_0 = 2175
+\AA$ and $\Delta \lambda = 350\AA$. \cite{kriek2013} and \cite{tress2018} find
+that $E_b$ correlates with the $\delta$ for star-forming galaxies $z\sim2$.
+\cite{narayanan2018} confirmed this dependence in simulations. In our DEM, we
+assume a fixed relation between $E_B$ and $\delta$ from \cite{kriek2013}: 
+$E_b = -1.9~\delta + 0.85$. We note that allowing the slope and amplitude 
+of the $E_B$ and $\delta$ relation to vary, does {\em not} impact our results.
 
-% Although a number of works have found correlation between the attenuation
-% curve slope and inclination~\citep{wild2011, chevallard2013, battisti2017b},
-% \cite{salim2020}, most recently, found that the driver of this trend is the
-% relationship between $A_V$ and slope. We therefore do not include an
-% inclination dependence in $\delta$. 
-
-\cite{kriek2013} and \cite{tress2018} found evidence that $E_b$ correlates with
-the slope of the attenuation curve for star-forming galaxies $z\sim2$. This was
-dependence was confirmed with simulations in \cite{naranyanan2018}. $E_b$: 
-\begin{align} \label{eq:bump_amp}
-    E_b &= m_E~\delta + c_E
-\end{align}
-\todo{we fixed this and find our results do not change significantly.} 
-
-We also split the attenuation on the star light and nebular emission 
-\begin{equation} 
+Next, to attenuate the galaxy SEDs, we apply $A(\lambda)$ we separately to the
+star light and nebular emssion: 
+\begin{equation} \label{eq:full_atten}
     F_o (\lambda) = F^{\rm star}_i (\lambda) 10^{-0.4 A(\lambda)} + F^{\rm
-    neb}_i (\lambda) 10^{-0.4 A_{\rm neb}(\lambda)}
+    neb}_i (\lambda) 10^{-0.4 A_{\rm neb}(\lambda)}.
 \end{equation}
-where we parameterize
+We parameterize
 \begin{equation}
     A_{\rm neb}(\lambda) = f_{\rm neb}  A(\lambda) 
 \end{equation} 
+and allow $f_{\rm neb}$ to vary freely. In Table~\ref{tab:free_param}, we list
+and describe all of the free parameters in the DEM. 
 
-\todo{mention of how we treat SFR = 0 galaxies} 
+$\sfr$ of galaxies are used to calculate $\tau_v$ and $\delta$ in
+Eqs.~\ref{eq:tauv} and~\ref{eq:delta}. Due to mass and temporal resolutions,
+some galaxies in the simulations have $\sfr=0$ --- \ie~an unmeasurably low
+SFR~\citep{hahn2019c}. Eqs.~\ref{eq:tauv} and~\ref{eq:delta} cannot be used to
+derive $\tau_v$ and $\delta$ for these galaxies. Since $\sfr=0$ galaxies do
+not account for a large fraction of our simulated galaxies, we directly sample 
+their observables ($G, R, NUV$, and $FUV$) from the distribution of observables
+for SDSS quiescent galaxies. This way, the attenuation of $\sfr=0$ galaxies 
+does not impact the rest of the DEM parameters. In Appendix~\ref{sec:res}, we 
+discuss the resolution effects in more detail and demonstrate that our results
+are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
+
+The DEM we describe in this section provides a flexible model for assigning
+dust attenuation to galaxies based on their physical properties ($M_*$ and
+$\sfr$. For a simulated galaxy population, we first uniformly sample inclinations, 
+$i$, and assign them to each galaxy. Then for a given set of DEM parameter values 
+(Table~\ref{tab:free_param}), $\tau_V$, and $\delta$ are calculated for each 
+galaxy using its $i$, $M_*$, and $\sfr$. From $\tau_v$ and $\delta$, we get 
+$A_V$ and $k(\lambda)$, which together gives $A(\lambda)$ for all the galaxies.
+Afterwards, we attenuate the galaxy SEDs using Eq.~\ref{eq:full_atten} and use 
+the attenuated SEDs to calculate our observables: the $G, R, NUV$, and $FUV$
+absolute magnitudes.  
 
 \begin{figure}
 \begin{center}
@@ -135,14 +155,13 @@ where we parameterize
 % table of free parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table}
-    \caption{Parameters of the Dust Empirical Models}
+    \caption{Parameters of the Dust Empirical Model}
     \begin{center}
         \begin{tabular}{ccc} \toprule
             Parameter & Definition & prior\\[3pt] \hline\hline
             %\multicolumn{3}{c}{DEM with slab model}\\ \hline
-            $m_{\tau,M_*}$ & Slope of the $\log M_*$ dependence of optical depth,
-            $\tau_V$ & flat $[-5., 5.]$\\
-            $m_{\tau,{\rm SFR}}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $[-5., 5.]$\\
+            $\mtaum$ & Slope of the optical depth, $\tau_V$, $\log M_*$ dependence & flat $[-5., 5.]$\\
+            $\mtaus$ & Slope of the optical depth, $\tau_V$, $\log {\rm SFR}$ dependence & flat $[-5., 5.]$\\
             $c_{\tau}$ & amplitude of the optical depth, $\tau_V$ & flat $[0., 6.]$\\
             %\hline
             %\multicolumn{3}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
@@ -155,14 +174,10 @@ where we parameterize
             %$m_{\sigma,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $[-5., 5.]$\\
             %$c_{\sigma}$ & amplitude of the optical depth, $\tau_V$ & flat $[0.1, 3.]$\\ 
             %\hline
-            $m_{\delta,1}$ & Slope of the $\log M_*$ dependence of the
-            attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
-            $m_{\delta,2}$ & Slope of the $\log {\rm SFR}$ dependence of the
-            attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
+            $\mdeltam$ & Slope of the attenuation curve slope offset, $\delta$, $\log M_*$ dependence & flat $[-4., 4.]$\\
+            $\mdeltas$ & Slope of the attenuation curve slope offset, $\delta$, $\log {\rm SFR}$ dependence of  & flat $[-4., 4.]$\\
             $c_{\delta}$ & amplitude of the attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
-            %$m_{E}$ & slope of the $\delta$ dependence of UV dust bump strength, $E_b$ & flat $[-4., 0.]$\\
-            %$c_{E}$ & amplitude of UV dust bump strength, $\delta$ & flat $[0., 4.]$\\
-            $f_{\rm neb}$ & fraction of nebular attenuation curve & flat $[1., 4.]$\\
+            $f_{\rm neb}$ & nebular attenuation fraction & flat $[1., 4.]$\\
             \hline
         \end{tabular} \label{tab:free_param}
     \end{center}
