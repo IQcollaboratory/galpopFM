@@ -27,6 +27,10 @@ Abazajian K.~N.,  et~al., 2009, \mn@doi [The Astrophysical Journal Supplement
 Abruzzo M.~W.,  Narayanan D.,  Dav{\'e} R.,   Thompson R.,  2018, arXiv
   e-prints, 1803, arXiv:1803.02374
 
+\bibitem[\protect\citeauthoryear{Alsing, Wandelt  \& Feeney}{Alsing
+  et~al.}{2018}]{alsing2018}
+Alsing J.,  Wandelt B.,   Feeney S.,  2018, arXiv:1801.01497 [astro-ph]
+
 \bibitem[\protect\citeauthoryear{{Angl{\'e}s-Alc{\'a}zar}, Dav{\'e},
   {Faucher-Gigu{\`e}re}, {\"O}zel  \& Hopkins}{{Angl{\'e}s-Alc{\'a}zar}
   et~al.}{2017}]{angles-alcazar2017}
@@ -48,6 +52,11 @@ Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2016, \mn@doi [The Astrophysical
   et~al.}{2017}]{battisti2017}
 Battisti A.~J.,  Calzetti D.,   Chary R.-R.,  2017, \mn@doi [The Astrophysical
   Journal] {10.3847/1538-4357/aa6fb2}, 840, 109
+
+\bibitem[\protect\citeauthoryear{Beaumont, Cornuet, Marin  \& Robert}{Beaumont
+  et~al.}{2009}]{beaumont2009}
+Beaumont M.~A.,  Cornuet J.-M.,  Marin J.-M.,   Robert C.~P.,  2009, \mn@doi
+  [Biometrika] {10.1093/biomet/asp052}, 96, 983
 
 \bibitem[\protect\citeauthoryear{Blanton \& Roweis}{Blanton \&
   Roweis}{2007}]{blanton2007a}
@@ -89,6 +98,11 @@ Calzetti D.,  2001, \mn@doi [New Astronomy Reviews]
 Calzetti D.,  Armus L.,  Bohlin R.~C.,  Kinney A.~L.,  Koornneef J.,
   {Storchi-Bergmann} T.,  2000, \mn@doi [The Astrophysical Journal]
   {10.1086/308692}, 533, 682
+
+\bibitem[\protect\citeauthoryear{Cameron \& Pettitt}{Cameron \&
+  Pettitt}{2012}]{cameron2012}
+Cameron E.,  Pettitt A.~N.,  2012, \mn@doi [Monthly Notices of the Royal
+  Astronomical Society] {10.1111/j.1365-2966.2012.21371.x}, 425, 44
 
 \bibitem[\protect\citeauthoryear{Camps \& Baes}{Camps \&
   Baes}{2015}]{camps2015}
@@ -135,6 +149,16 @@ Dav{\'e} R.,  {Angl{\'e}s-Alc{\'a}zar} D.,  Narayanan D.,  Li Q.,
   Rafieferantsoa M.~H.,   Appleby S.,  2019, \mn@doi [Monthly Notices of the
   Royal Astronomical Society] {10.1093/mnras/stz937}, 486, 2827
 
+\bibitem[\protect\citeauthoryear{Del~Moral, Doucet  \& Jasra}{Del~Moral
+  et~al.}{2012}]{delmoral2012}
+Del~Moral P.,  Doucet A.,   Jasra A.,  2012, \mn@doi [Statistics and Computing]
+  {10.1007/s11222-011-9271-y}, 22, 1009
+
+\bibitem[\protect\citeauthoryear{Diggle \& Gratton}{Diggle \&
+  Gratton}{1984}]{diggle1984}
+Diggle P.~J.,  Gratton R.~J.,  1984, Journal of the Royal Statistical Society.
+  Series B (Methodological), 46, 193
+
 \bibitem[\protect\citeauthoryear{Garn \& Best}{Garn \& Best}{2010}]{garn2010}
 Garn T.,  Best P.~N.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1111/j.1365-2966.2010.17321.x}, 409, 421
@@ -144,14 +168,33 @@ Genel S.,  et~al., 2014, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/stu1654}, 445, 175
 
 \bibitem[\protect\citeauthoryear{Hahn, Vakili, Walsh, Hearin, Hogg  \&
-  Campbell}{Hahn et~al.}{2017}]{hahn2017a}
+  Campbell}{Hahn et~al.}{2017a}]{hahn2017a}
 Hahn C.,  Vakili M.,  Walsh K.,  Hearin A.~P.,  Hogg D.~W.,   Campbell D.,
-  2017, \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  2017a, \mn@doi [Monthly Notices of the Royal Astronomical Society]
   {10.1093/mnras/stx894}, 469, 2791
 
-\bibitem[\protect\citeauthoryear{Hahn et~al.,}{Hahn et~al.}{2019}]{hahn2019c}
-Hahn C.,  et~al., 2019, \mn@doi [The Astrophysical Journal]
+\bibitem[\protect\citeauthoryear{Hahn, Tinker  \& Wetzel}{Hahn
+  et~al.}{2017b}]{hahn2017b}
+Hahn C.,  Tinker J.~L.,   Wetzel A.~R.,  2017b, \mn@doi [The Astrophysical
+  Journal] {10.3847/1538-4357/aa6d6b}, 841, 6
+
+\bibitem[\protect\citeauthoryear{Hahn, Tinker  \& Wetzel}{Hahn
+  et~al.}{2019a}]{hahn2019a}
+Hahn C.,  Tinker J.~L.,   Wetzel A.,  2019a, arXiv:1910.01644 [astro-ph]
+
+\bibitem[\protect\citeauthoryear{Hahn, Beutler, Sinha, Berlind, Ho  \&
+  Hogg}{Hahn et~al.}{2019b}]{hahn2019}
+Hahn C.,  Beutler F.,  Sinha M.,  Berlind A.,  Ho S.,   Hogg D.~W.,  2019b,
+  \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  {10.1093/mnras/stz558}, 485, 2956
+
+\bibitem[\protect\citeauthoryear{Hahn et~al.,}{Hahn et~al.}{2019c}]{hahn2019c}
+Hahn C.,  et~al., 2019c, \mn@doi [The Astrophysical Journal]
   {10.3847/1538-4357/aafedd}, 872, 160
+
+\bibitem[\protect\citeauthoryear{Handley \& Millea}{Handley \&
+  Millea}{2019}]{handley2019}
+Handley W.,  Millea M.,  2019, \mn@doi [Entropy] {10.3390/e21030272}, 21, 272
 
 \bibitem[\protect\citeauthoryear{Hopkins}{Hopkins}{2015}]{hopkins2015}
 Hopkins P.~F.,  2015, \mn@doi [Monthly Notices of the Royal Astronomical
@@ -202,6 +245,11 @@ Kriek M.,  Conroy C.,  2013, \mn@doi [The Astrophysical Journal Letters]
 Leja J.,  Johnson B.~D.,  Conroy C.,  {van Dokkum} P.~G.,   Byler N.,  2017,
   \mn@doi [The Astrophysical Journal] {10.3847/1538-4357/aa5ffe}, 837, 170
 
+\bibitem[\protect\citeauthoryear{Lin, Kilbinger  \& Pires}{Lin
+  et~al.}{2016}]{lin2016}
+Lin C.-A.,  Kilbinger M.,   Pires S.,  2016, \mn@doi [Astronomy and
+  Astrophysics] {10.1051/0004-6361/201628565}, 593, A88
+
 \bibitem[\protect\citeauthoryear{McAlpine et~al.,}{McAlpine
   et~al.}{2016}]{mcalpine2016}
 McAlpine S.,  et~al., 2016, \mn@doi [Astronomy and Computing]
@@ -232,6 +280,12 @@ Noll S.,  Burgarella D.,  Giovannoli E.,  Buat V.,  Marcillac D.,
   et~al.}{2018}]{pillepich2018}
 Pillepich A.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/stx2656}, 473, 4077
+
+\bibitem[\protect\citeauthoryear{Pritchard, Seielstad, {Perez-Lezaun}  \&
+  Feldman}{Pritchard et~al.}{1999}]{pritchard1999}
+Pritchard J.~K.,  Seielstad M.~T.,  {Perez-Lezaun} A.,   Feldman M.~W.,  1999,
+  \mn@doi [Molecular Biology and Evolution]
+  {10.1093/oxfordjournals.molbev.a026091}, 16, 1791
 
 \bibitem[\protect\citeauthoryear{Reddy et~al.,}{Reddy et~al.}{2015}]{reddy2015}
 Reddy N.~A.,  et~al., 2015, \mn@doi [The Astrophysical Journal]
@@ -281,6 +335,11 @@ Springel V.,  2005, \mn@doi [Monthly Notices of the Royal Astronomical Society]
 Springel V.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/stx3304}, 475, 676
 
+\bibitem[\protect\citeauthoryear{Tavare, Balding, Griffiths  \&
+  Donnelly}{Tavare et~al.}{1997}]{tavare1997}
+Tavare S.,  Balding D.~J.,  Griffiths R.~C.,   Donnelly P.,  1997, Genetics,
+  145, 505
+
 \bibitem[\protect\citeauthoryear{Tinker, Wetzel  \& Conroy}{Tinker
   et~al.}{2011}]{tinker2011}
 Tinker J.,  Wetzel A.,   Conroy C.,  2011, preprint, 1107, arXiv:1107.5046
@@ -320,6 +379,11 @@ Vogelsberger M.,  et~al., 2014, \mn@doi [Monthly Notices of the Royal
   et~al.}{2018}]{weinberger2018}
 Weinberger R.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal
   Astronomical Society] {10.1093/mnras/sty1733}, 479, 4056
+
+\bibitem[\protect\citeauthoryear{Weyant, Schafer  \& {Wood-Vasey}}{Weyant
+  et~al.}{2013}]{weyant2013}
+Weyant A.,  Schafer C.,   {Wood-Vasey} W.~M.,  2013, \mn@doi [The Astrophysical
+  Journal] {10.1088/0004-637X/764/2/116}, 764, 116
 
 \bibitem[\protect\citeauthoryear{Wild, Charlot, Brinchmann, Heckman, Vince,
   Pacifici  \& Chevallard}{Wild et~al.}{2011}]{wild2011}

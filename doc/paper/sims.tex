@@ -96,8 +96,18 @@ model, torque-limited accretion for cold gas~\citep{angles-alcazar2017} and
 Bondi-based accretion for hot gas, and two-mode AGN feedback. %which ejects bipolar kinetic winds with $\sim 10^3 \kms$ for high SMBH accretion rate, and launches winds with increased velocity of $\sim 8000 \kms$ for low SMBH accretion of Eddington ratio below 2 \%.
 \todo{details on the following properties that we use in the paper: SFH, ZH}
 
-\subsection{Forward Modeling Spectral Energy Distributions} \label{sec:fm} 
+\subsection{Forward Modeled Spectral Energy Distributions} \label{sec:fm} 
 \todo{describe how the SED is generated using the SFH and ZHs} 
+
+In Figure~\ref{fig:obs} we present the optical and UV color-magnitude
+relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom), for central galaxies
+of the SIMBA (left), TNG (center) and EAGLE (right) simulations. The $\gr$ and
+$\fnuv$ colors are derived from the forward modeled SED and absolute magnitudes.
+The observables for the simulations do not include any prescription for dust
+attenuation. Comparison to the observables of SDSS centrals (black dashed) 
+clearly demonstrate that {\em without any dust attenuation, the hydrodynamical 
+simulations cannot reproduce the observed optical or UV color-magnitude
+relations.}
 
 \subsection{SDSS DR7 Central Galaxies} \label{sec:obs} 
 The goal of the DEM we present in this paper is to provide a flexible model
@@ -125,15 +135,14 @@ NASA-Sloan Atlas\footnote{\url{http://nsatlas.org/}}.
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figs/observables.pdf} 
     \caption{\label{fig:obs}
-    We present the distributions of the main observables used throughout the
-    paper for SIMBA (left), TNG (center), and EAGLE (right) centrals. The
-    simulations above do {\em not} yet include any prescription for dust. The
-    top panels present the $(\gr)-M_r$ optical color-magnitude relations; 
-    the bottom panels present the $(\fnuv)-M_r$ UV color-magnitude relations. 
-    For comparison, we include the distributions of SDSS centrals (black
-    dashed). The observables for the simulations are derived from forward 
-    modeled SEDs and, thus, are consistently defined and measured as SDSS 
-    (Section~\ref{sec:fm}). {\em Without any dust prescription, the 
+    We present the optical and UV color-magnitude relations of central galaxies
+    in the SIMBA (left), TNG (center), and EAGLE (right) simulations. The
+    simulations above do {\em not} yet include the DEM or any prescription for
+    dust attenuation.  $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom) are the
+    main observables used throughout the paper. They are derived from forward
+    modeled SEDs and, thus, are consistently defined and measured as SDSS
+    observations (Section~\ref{sec:fm}). For comparison, we include the 
+    distributions of SDSS centrals (black dashed). {\em Without dust, the 
     hydrodynamical simulations cannot reproduce the observed optical or UV 
     color-magnitude.}
     }

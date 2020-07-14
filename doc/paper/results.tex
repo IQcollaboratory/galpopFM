@@ -1,26 +1,5 @@
 \begin{figure}
 \begin{center}
-    \includegraphics[width=\textwidth]{figs/abc.pdf}
-    \caption{\label{fig:abc}
-    Posterior distributions of our DEM parameters for the SIMBA (orange), TNG
-    (blue), and EAGLE (green) hydro simulations. The contours mark the $68\%$
-    and $95\%$ confidence intervals. We describe the parameters in
-    Section~\ref{sec:dem} and Table~\ref{tab:free_param} and derive these
-    posteriors using Approximate Bayesian Computation (Section~\ref{sec:abc}). 
-    In all simulations, dust attenuation increases for higher $M_*$ galaxies 
-    ($m_{\tau,M_*} \sim 2$). The simulations also have consistent optical 
-    depth amplitudes ($c_\tau$). However, the ${\rm SFR}$ dependence of
-    $\tau_V$ is different among the simulations. For TNG and EAGLE,
-    star-forming galaxies have lower $\tau_V$; for SIMBA quiescent galaxies
-    have lower $\tau_V$. Meanwhile, for the slope offset of the attenuation
-    curve, $\delta$, we find little $M_*$ and ${\rm SFR}$ dependence in the
-    simulations and that the amplitude ($c_\tau$) is consistent with 0. 
-    }
-\end{center}
-\end{figure}
-
-\begin{figure}
-\begin{center}
     \includegraphics[width=0.9\textwidth]{figs/abc_observables.pdf}
     \caption{\label{fig:dem}
     $(G-R) - M_r$ color-magnitude (top panels) and $(FUV-NUV) - M_r$ (bottom
@@ -40,90 +19,37 @@
 \end{figure}
 
 
-\begin{figure}
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{figs/abc_observables_mr_bin.pdf}
-    \caption{\label{fig:demcloseup}
-    $G-R$ (left) and $FUV-NUV$ (right) number density distributions for the DEM
-    models of the SIMBA (orange), TNG (blue), and EAGLE (green) simulations in
-    two $M_r$ bins: $-20 > M_r > -21$ (top panels) and $-21 > M_r > -22.5$
-    (bottom panels).  Each of the DEM models are run using the median posterior
-    parameter values. In comparison to SDSS (grey shaded), the DEM models predict 
-    consistent red sequence and blue cloud positions in the $G-R$ distributions, 
-    $FUV-NUV$ peak positions, and number density. {\em Overall the DEM
-    models for SIMBA, TNG, and EAGLE produce observables are in good agreement 
-    with SDSS.}
-    }
-\end{center}
-\end{figure}
+%\begin{figure}
+%\begin{center}
+%    \includegraphics[width=0.85\textwidth]{figs/abc_observables_mr_bin.pdf}
+%    \caption{\label{fig:demcloseup}
+%    $G-R$ (left) and $FUV-NUV$ (right) number density distributions for the DEM
+%    models of the SIMBA (orange), TNG (blue), and EAGLE (green) simulations in
+%    two $M_r$ bins: $-20 > M_r > -21$ (top panels) and $-21 > M_r > -22.5$
+%    (bottom panels).  Each of the DEM models are run using the median posterior
+%    parameter values. In comparison to SDSS (grey shaded), the DEM models predict 
+%    consistent red sequence and blue cloud positions in the $G-R$ distributions, 
+%    $FUV-NUV$ peak positions, and number density. {\em Overall the DEM
+%    models for SIMBA, TNG, and EAGLE produce observables are in good agreement 
+%    with SDSS.}
+%    }
+%\end{center}
+%\end{figure}
 
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{figs/abc_slope_AV.pdf}
-    \caption{\label{fig:slope}
-    The attenuation-slope relation for the TNG (bue) and EAGLE (green) DEM
-    models. We present the relation usng two different measurements of slope, 
-    commonly used in the ltierature: $S = A(1500\AA)/A_V$ (left panel) and
-    the slope offset from the \cite{calzetti2001} curve, $\delta$ (right panel).
-    The DEM moodels predict an attenuation-slope relation, where the slope is
-    steeppr at lower attenuation, consistent with both observations and
-    simulation. The DEM models only include masssive galaxies, hence, they do
-    not include mnay galaxies with low attenuatiton. At $A_V > 0.5$, however, 
-    the DEM models are in good agreement with observations~\cite{salim2020}. In
-    fact, the DEM models match the observed attenuation-slope relation 
-    better than radiative transfer simulations, which predict attenuation 
-    curves that are too shallow~\citep{inoue2005, chevallard2013, trayford2020}
-    }
-\end{center}
-\end{figure}
-
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{figs/abc_attenuation.pdf}
-    \caption{\label{fig:atten}
-    Attenuation curves of the TNG (blue) and EAGLE (green) DEM models for 
-    low (top) and high $M_*$ (bottom), star-forming (left) and
-    quiescent galaxies (right). The attenuation curves are normalized at
-    $3000\AA$: $A(\lambda)/A(3000\AA)$. We mark the $1\sigma$ standard
-    deviation of the attenuation curves with the shaded region. For comparison,
-    we include measurements of $A(\lambda)/A(3000\AA)$ from 
-    observations~\citep{caleztti2000, battisti2017, salim2018} as well as
-    from simulations~\citep{narayanan2018}. For star-forming galaxies, the 
-    \cite{calzetti2000} and \cite{battisti2017} attenuation curves are shallower 
-    than the DEM attenuation curves; however, this is primarily driven by the
-    differences in $M_*$ ranges. For \cite{salim2018}, which probe a similar
-    $M_*$ range as our DEM models, we find goood agreement. We also find good 
-    agreement with median attenuation curve of \cite{narayanan2018}. With DEM
-    models, we can also constrain the attenuation curves of quiescent galaxies,
-    which are challenging to observationally constrain. Quiescent galaxies,
-    have significantly shallower attenuation curves with larger variations in
-    slope. 
-    }
-\end{center}
-\end{figure}
 
 \section{Results} \label{sec:results}
-We present the posterior distributions of the DEM parameters for the SIMBA
-(orange), TNG (blue), and EAGLE (green) hydro simulations in
-Figure~\ref{fig:abc}. The DEM parameters include $\mtaum$, $\mtaus$, and
-$\ctau$, which parameterize the $M_*$ dependence, $\sfr$ dependence, and 
-amplitude of $\tau_V$, the $V$-band optical depth. $\tau_V$ dictates the
-overall strength of the dust attenuation. They also include $\mdeltam$,
-$\mdeltas$, and $\cdelta$, which parameterize the $M_*$ dependence, $\sfr$ dependence,
-and amplitude of $\delta$, the slope offset of the attenuation curve
-(Section~\ref{sec:dem} and Table~\ref{tab:free_param}). The posteriors 
-are derived using ABC (Section~\ref{sec:abc}) and the contours mark the 
-$68\%$ and $95\%$ confidence intervals. 
 
-In addition, we present the observables predicted by the DEM with median of the
-posteriors for the SIMBA (orange), TNG (blue), and EAGLE (green) simulations 
-in Figure~\ref{fig:dem}. We include the SDSS observables for comparison
-(black dashed; Section~\ref{sec:obs}). The top panels present the $(G-R) - M_r$ 
-color-magnitude relations while the bottom panels present the $(FUV-NUV) - M_r$
-relations. Without any dust prescriptions, we found that simulations predict
-dramatically different observables than SDSS (Figure~\ref{fig:obs}). 
+In Figure~\ref{fig:dem}, we present the optical and UV color-magnitude
+relations predicted by the DEM with median of the ABC posteriors for the SIMBA
+(orange), TNG (blue), and EAGLE (green) simulations. We include the SDSS
+observables for comparison (black dashed). Without any dust attenuation, we
+previusly found that simulations predict dramatically different $(\gr) - M_r$
+and $(\fnuv) - M_r$ relations than SDSS (Figure~\ref{fig:obs}). In contrast,
+with the DEM, the optical color-magnitude relations have well-defined red
+sequences and blue clouds that are consistent with SDSS. In the UV
+color-magnitude space, the simulations with DEM  
+
+
 \ch{something about clear bimodality with the red sequence and blue cloud} 
 In contrast, {\em using DEMs we produce $(G-R) - M_r$ and $(FUV-NUV) - M_r$
 relations consistent with SDSS for all of the simulations}. 
@@ -291,6 +217,55 @@ compared to TNG and EAGLE?}
 
 %\cite{battisti2017} using 5000 SF galaxies from found little stellar mass dependence in the opposite direction (less attenuation at higher stellar masses). But they have big error bars and only probe up to 9.7
 %\cite{reddy2015} SF galaxies from $z\sim2$ MOSFIRE Deep Evolution Field survey find strong correlation with SFR. %ionized gas is more reddened relative to the stellar continuum with increasing SFR 
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{figs/abc_slope_AV.pdf}
+    \caption{\label{fig:slope}
+    The attenuation-slope relation for the TNG (bue) and EAGLE (green) DEM
+    models. We present the relation usng two different measurements of slope, 
+    commonly used in the ltierature: $S = A(1500\AA)/A_V$ (left panel) and
+    the slope offset from the \cite{calzetti2001} curve, $\delta$ (right panel).
+    The DEM moodels predict an attenuation-slope relation, where the slope is
+    steeppr at lower attenuation, consistent with both observations and
+    simulation. The DEM models only include masssive galaxies, hence, they do
+    not include mnay galaxies with low attenuatiton. At $A_V > 0.5$, however, 
+    the DEM models are in good agreement with observations~\cite{salim2020}. In
+    fact, the DEM models match the observed attenuation-slope relation 
+    better than radiative transfer simulations, which predict attenuation 
+    curves that are too shallow~\citep{inoue2005, chevallard2013, trayford2020}
+    }
+\end{center}
+\end{figure}
+
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=0.85\textwidth]{figs/abc_attenuation.pdf}
+    \caption{\label{fig:atten}
+    Attenuation curves of the TNG (blue) and EAGLE (green) DEM models for 
+    low (top) and high $M_*$ (bottom), star-forming (left) and
+    quiescent galaxies (right). The attenuation curves are normalized at
+    $3000\AA$: $A(\lambda)/A(3000\AA)$. We mark the $1\sigma$ standard
+    deviation of the attenuation curves with the shaded region. For comparison,
+    we include measurements of $A(\lambda)/A(3000\AA)$ from 
+    observations~\citep{caleztti2000, battisti2017, salim2018} as well as
+    from simulations~\citep{narayanan2018}. For star-forming galaxies, the 
+    \cite{calzetti2000} and \cite{battisti2017} attenuation curves are shallower 
+    than the DEM attenuation curves; however, this is primarily driven by the
+    differences in $M_*$ ranges. For \cite{salim2018}, which probe a similar
+    $M_*$ range as our DEM models, we find goood agreement. We also find good 
+    agreement with median attenuation curve of \cite{narayanan2018}. With DEM
+    models, we can also constrain the attenuation curves of quiescent galaxies,
+    which are challenging to observationally constrain. Quiescent galaxies,
+    have significantly shallower attenuation curves with larger variations in
+    slope. 
+    }
+\end{center}
+\end{figure}
+
+
+
 
 % attenuation curve slope  
 In addition to the dependence of $A_V$ on galaxy properties, our results also
