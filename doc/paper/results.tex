@@ -76,28 +76,18 @@ populations and also due to simulated distribution of neutral gas and metals.
 They find bluer red sequence peaks and a narrower blue cloud compared to SDSS.
 Although they compare the color distribution for all galaxies in $M_*$ bins,
 we find neither of these discrepancies with the DEM. 
+\emph{With the DEM, we produce optical and UV color-magnitude relations that
+are in good agreement with observations, better than previous works, for the
+SIMBA, TNG, and EAGLE hydrodynamical simulations.}
 
-Despite the success of the DEM, there are still some discrepancies with SDSS. 
-For instance, the DEM produces broader distributions overall observations.
-Central galaxies in SDSS sharply cut-off above the red sequence while some
-galaxies in the DEM extend above this cut-off. The DEM color-magnitude
-relations also extend more broadly to higher luminosities than SDSS. For SIMBA,
-the DEM predicts a significant number of luminous ($M_r < -21$) blue galaxies 
-not found in observations. Nonetheless, \emph{with the DEM, we produce optical
-and UV color-magnitude relations that are in overall good agreement with
-observations, better than previous works, for three different hydrodyanmical
-simluations: SIMBA, TNG, and EAGLE.}
-
-Figures~\ref{fig:dem} also highlights the fact that any comparison of
-simulations must include dust attenuation. Dust dramatically changes the
-predicted observables of simulations. Without dust (Figure~\ref{fig:obs}), we
-did not find a clearly bimodality in the optical color-magnitude relation and
+Figures~\ref{fig:dem} clearly illustrates that any comparison of simulations 
+must include dust attenuation. Dust dramatically changes the predicted 
+observables of simulations. Without dust (Figure~\ref{fig:obs}), we did 
+not find a clearly bimodality in the optical color-magnitude relation and
 the simulations predicted UV colors outside of the range of observations.
 But with a simple framework for dust motivated by attenuation laws and 
 correlation with galaxy properties, such as the DEM, simulations can 
-reproduce observations. 
-
-These result highlights another key point. Robustly interpreting subgrid
+reproduce observations. Our results also highlight another key point. Robustly interpreting subgrid
 physics in simulations requires marginalizing over dust. Even for three
 simulations that produce significantly different SMFs and $M_*-\sfr$ relations
 (Figure~\ref{fig:smf_msfr}), the DEM is able to produce observables that agree
@@ -127,26 +117,23 @@ positive $M_*$ dependence in $FUV$ attenuation in NUV-selected and FIR-selected
 samples. \cite{garn2010} and \cite{battisti2016} also find positive $M_*$ 
 dependence in SDSS star-forming galaxies. Most recently, \cite{salim2018} 
 find higher $V$ and $FUV$ attenuation for more masssive star-forming galaxies in the
-GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2). With the DEM we confirm that
-\emph{galaxies with higher $M_*$ have overall higher dust attenuation}.
- %\todo{citation is a bit SDSS heavy.  Anything else in the literature?}
-
-%\ch{SFR dependence of attenuation curves} 
+GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2). 
 In addition to the $M_*$ dependence, the DEM posteriors also reveal the
-correlation between dust attenuation and star formation. We focus only on TNG
-and EAGLE since SIMBA flips the color versus $\sfr$ relation. We infer DEM
-posteriors with $\mtaus\sim-1$ --- galaxies with lower $\sfr$ have higher
-attenuation. While observations have examined the relationship between dust
-attenuation and $\sfr$~\citep[\eg][]{garn2010, reddy2015, battisti2016,
-battisti2017}, they focus solely on star-forming galaxies. They find that
-star-forming galaxies with higher SFR have higher attenuation; however, this
-trend is driven by the $M_*$ dependence since star-forming galaxies lie on 
-the star-forming sequence~\citep{garn2010, battisti2017}. At fixed $M_*$,
-observations find no strong $\sfr$ dependence for the star-forming population. 
-Since previous works do not include quiescent galaxies, the DEM provides new
-insight into the $\sfr$ dependence of dust attenuation: \emph{quiescent
-galaxies have overall higher dust attenuation}. 
-%\cite{tress2018} find positive dependence between E(B-V) (color excess) with M* and negative dependence with
+correlation between dust attenuation and star formation. Ignoring SIMBA, which
+flips the color versus $\sfr$ relation, we find $\mtaus\sim-1$ --- galaxies 
+with lower $\sfr$ have higher attenuation. Observations that examine the
+relationship between dust attenuation and $\sfr$~\citep[\eg][]{garn2010,
+reddy2015, battisti2016, battisti2017, salim2018} have thus far focused
+primarily on star-forming galaxies. With the DEM, we confirm that 
+\emph{galaxies with higher $M_*$ have overall higher dust attenuation
+and find that galaxies with lower $\sfr$ have overall higher dust attenuation}. 
+
+%They find that
+%star-forming galaxies with higher SFR have higher attenuation; however, this
+%trend is driven by the $M_*$ dependence since star-forming galaxies lie on 
+%the star-forming sequence~\citep{garn2010, battisti2017}. At fixed $M_*$,
+%observations find no strong $\sfr$ dependence for the star-forming population. 
+%Since previous works do not include quiescent galaxies, %\cite{tress2018} find positive dependence between E(B-V) (color excess) with M* and negative dependence with
 %SSFR for 1753 star-forming galaxies within 1.5 < z < 3.  
 
 %For instance, \cite{garn2010} find that SDSS star-forming galaxies with higher
@@ -180,23 +167,45 @@ galaxies have overall higher dust attenuation}.
 \end{figure}
 
 % attenuation curve slope  
-Our results also shed light on the slope of dust attenuation and its
-correlation to galaxy properties. In Figure~\ref{fig:slope}, we present the
-attenuation-slope relation for TNG (blue) and EAGLE (green) with the DEM. The
-left and right panels present two different measurements of the slope $S =
+Our results also shed light on the slope of dust attenuation. In Figure~\ref{fig:slope}, 
+we present the attenuation-slope relation for TNG (blue) and EAGLE (green) with the DEM.
+The left and right panels present two different measurements of the slope $S =
 A(3000\AA)/A_V$, which is easier to cosntrain in observations, and $\delta$,
 the slope offset from the \cite{calzetti2001} curve that use in the DEM. 
-We include the attenuation and lsope for the Milky Way (star) for reference.
+We include the attenuation and slope for the Milky Way (star) for reference.
 TNG and EAGLE both predict slopes within $2 < S < 5$ and centered around $S\sim
-3.5$. In comparison, \cite{leja2017} and \cite{salim2018} find a broader range 
-of slopes in their galaxy samples, $2 < S < 15$. However, this is because their
-sample includes galaxies with $A_V < 0.4$ that have steeper slopes. Excluding
-these galaxies, which are not in our sample, we find good agreement with 
-\cite{leja2017} and \cite{salim2018}. Other observations find slopes within 
-the range $2 < S < 5$ for star-forming galaxies~\citep{calzetti2000, burgarella2005, johnson2007,
-conroy2010, wild2011, battisti2016, battisti2017}. Therefore, \emph{the dust
-attenuation curve slopes predicted by the DEM for TNG and SIMBA are in
-excellent overall agreement with observations}. 
+3.5$. In comparison, for the same $A_V > 0.4$ range as the DEM, observations 
+find slopes within the range $2 < S < 5$~\citep{calzetti2000, burgarella2005, johnson2007,
+conroy2010, wild2011, battisti2016, battisti2017, ljea2017, salim2018} in good
+agreement. We also find that the DEM predicts steeper attenuation curves at 
+lower attenuation. This is consistent with the established attenuation--slope
+relation. At low attenuation, dust scattering dominates absoprtion so the 
+attenuation curve steepens because red light scatters isotropically while blue light
+scatters forward~\citep{gordon1994, witt2000, draine2003}. %, which causes more optical-to-IR light to escape the galaxy than UV light
+At high attenuation dust absorption is dominant and the attenuation curve is
+shallower~\citep{chevallard2013}. For the $A_V$ range probed by the DEM, the
+$A_V$--slope relation is in good agreement with GSWLC2 galaxies~\citep[black shaded][]{salim2020}.
+They are also consistent with \cite{leja2017}. We also compare our results to
+theoretical predictions from radiative transfer models, \cite{inoue2005}
+(dotted), the radiative transfer models considered in \cite{chevallard2013}
+(dot dashed), and \cite{trayford2020} (light shaded), which all predict shallower 
+attenuation curves than observations. This is also the case for the
+\cite{narayanan2018} attenuation curves (not included). 
+Overall, \emph{the dust attenuation curve slopes from the DEM for are in
+excellent agreement with observations and better reproduces the observed
+attenuation--slope relation than radiative transfer models.}
+
+%We can also examine the correlation between attenuation curve slopes and galaxy properties with the DEM. For TNG and EAGLE, we find that 
+%\cite{leja2017} find composite and AGN galaxies generally have shallower  
+%slopes, although their sample is limited to only 129 galaxies, In contrast,
+%\cite{salim2018} find that quiescent galaxies in the GALEX-SDSS-WISE Legacy
+%Catalog 2~\citep[GSWLC2;][]{salim2019} have significantly steeper curves. They,
+%however, also find significantly steeper curves for the starburst population 
+%(\ie~galaxies above the SFS). With no consensus in the literature and few
+%observations that examine the correlation between $\delta$ and galaxy
+%properties, the lack of $M_*$ and $\sfr$ dependence we find on $\delta$ is an
+%interesting prediction for future observations. 
+
 
 %\cite{calzetti2000} find  slopes of $2.3 < S < 2.9$ for low-redshift starburst galaxies, 
 %\cite{burgarella2005} find $2.5 < S < 6.2$ for 50 UV and 100 IR selected galaxies,
@@ -212,39 +221,8 @@ excellent overall agreement with observations}.
 %to galaxies with moderate to high optical attenuations (AV> 0.5), 
 %\cite{salmon2016} is also spot on. 
 
-With the DEM, we can also examine the correlation between attenuation curve
-slopes and galaxy properties. For TNG and EAGLE, we find that the slope of the
-attenuation curve does not depend significantly on $M_*$ or $\sfr$.
-\cite{leja2017} find composite and AGN galaxies generally have shallower  
-slopes, although their sample is limited to only 129 galaxies, In contrast,
-\cite{salim2018} find that quiescent galaxies in the GALEX-SDSS-WISE Legacy
-Catalog 2~\citep[GSWLC2;][]{salim2019} have significantly steeper curves. They,
-however, also find significantly steeper curves for the starburst population 
-(\ie~galaxies above the SFS). With no consensus in the literature and few
-observations that examine the correlation between $\delta$ and galaxy
-properties, the lack of $M_*$ and $\sfr$ dependence we find on $\delta$ is an
-interesting prediction for future observations. 
 
 % attenuation-slope relation 
-Next, we examine the attenuation-slope relation. At low attenuation, dust scattering dominates absoprtion. In this regime,
-the attenuation curve steepens because red light tends to
-scatter isotropically while blue light tends to forward scatter, which causes
-more optical-to-IR light to escape the galaxy than UV light~\citep{gordon1994,
-witt2000, draine2003}. On the other hand, at high attenuation dust absorption 
-is dominant and the attenuation curve is shallower~\citep{chevallard2013}.
-In both panels of Figure~\ref{fig:slope}, the DEM predicts attenuation--slope
-relations where the slope is steeper at lower attenuation. Furthermore, for the
-$A_V$ range probed by the DEM, the DEM $A_V$--slope relations are consistent with 
-the $A_V - S$ relation of GSWLC2 galaxies~\citep[black shaded][]{salim2020}.
-They are also consistent with \cite{leja2017}. 
-We also compare our results to theoretical predictions from radiative transfer
-models~\citep{inoue2005, chevallard2013, trayford2020}. \cite{inoue2005}
-(dotted), the radiative transfer models considered in \cite{chevallard2013}
-(dot dashed), and \cite{trayford2020} (light shaded) all predict shallower 
-attenuation curves than observations. This is also the case for the
-\cite{narayanan2018} attenuation curves, not included in Figure~\ref{fig:slope}. 
-Therefore, the DEM not only predicts the established attenuation--slope relation, 
-but it also better reproduces the observations than radiative transfer models. 
 
 %\cite{trcka2020}: EAGLE+SKIRT with CIGALE to get physical properties of
 %galaxies. trcka2020 compares to dustpedia~\citep{davies2017} They lok at
@@ -276,16 +254,15 @@ but it also better reproduces the observations than radiative transfer models.
 \end{figure}
 
 % variation of attenuation curve  
-Although the DEM does not explicitly model the complexities of dust-star geometry on a
-galaxy-by-galaxy basis, through the slab model and the dependence on galaxy
-properties, it includes significant variations in the dust attenuation. In
-Figure~\ref{fig:atten}, we present the normalized attenuation curves of the TNG
+In Figure~\ref{fig:atten}, we present the normalized attenuation curves of the TNG
 (blue) and EAGLE (green) DEM for low (top) and high $M_*$ (bottom),
-star-forming (left) and quiescent galaxies (right).  The attenuation curves are
-normalized at $3000\AA$: $A(\lambda)/A(3000\AA)$. The variation in the
-attenuation curves (1$\sigma$ standard deviation about the median) is
-represented by the shaded region. For comparison, we include
-$A(\lambda)/A(3000\AA)$ from observations~\citep{calzetti2000, battisti2017, salim2018} 
+star-forming (left) and quiescent galaxies (right). The attenuation curves are
+normalized at $3000\AA$: $A(\lambda)/A(3000\AA)$. Although the DEM does not
+model the complexities of dust-star geometry on a galaxy-by-galaxy basis, it
+includes significant variations in the dust attenuation through the slab model
+and the dependence on galaxy properties. We represent this variation with the
+shaded region (1$\sigma$ standard deviation about the median). For comparison, 
+we include $A(\lambda)/A(3000\AA)$ from observations~\citep{calzetti2000, battisti2017, salim2018} 
 as well as from simulations~\citep{narayanan2018}. The \cite{calzetti2000} and
 \cite{battisti2017} attenuation curves are for star-forming galaxies with
 significantly lower $M_*$. The \cite{battisti2017} curve, for instance, is
@@ -294,25 +271,22 @@ derived from $M_* < 10^{9.9}M_\odot$ star-forming galaxies. Meanwhile, the
 star-forming galaxies (top left), $10^{10.5} < M_*M_\odot$ star-forming
 galaxies (bottom left), and quiescent galaxies (top and bottom right panels). 
 
-
-Focusing first on the attenuation curves of star-forming galaxies (left
-panels), we find that the \cite{calzetti2000} and \cite{battisti2017} curves
-are significantly shallower than the TNG and EAGLE DEM attenuation curves.
-Part of this discrepancy is driven by differences in $M_*$. Although we do not
-probe to low $M_*$, since the TNG and EAGLE attenuation curves get shallower at
-lower $M_*$, we expect better agreement with \cite{calzetti2000} and
-\cite{battisti2017} at the $M_*$ ranges they probe. 
-Next, compared to \cite{salim2018}, we find good agreement among the attenuation
-curves for star-forming galaxies. Furthermore, the variation in the DEM attenuation curves of star-forming galaxies is consistent with the
+For star-forming galaxies (left panels), the TNG and EAGLE DEM attenuation
+curves are in good agreement with the \cite{salim2018} curves. The
+\cite{calzetti2000} and \cite{battisti2017} curves are shallower; however, this
+discrepancy is in part driven by their lower $M_*$ range. Although we do not
+probe such low $M_*$, the TNG and EAGLE attenuation curves get shallower for lower $M_*$
+so we expect better agreement at their $M_*$ ranges. Furthermore, the variation
+in the DEM attenuation curves of star-forming galaxies is consistent with the
 variation in Figure 9 of \cite{salim2018}. The DEM attenuation
 curves are also in excellent agreement with the median attenuation curve of
 \cite{narayanan2018} star-forming galaxies. While \cite{narayanan2018} find
 larger variations than the DEM, this is in part because of their broader $M_*$ 
-range. Hence, \emph{for star-forming, the DEM find significant variation in dust 
-attenuation consistent with both observations and simulations.}
+range. Hence, \emph{for star-forming galaxies, the DEM find dust attenuation curves with
+significant variation that are consistent with both observations and simulations.}
 
 %\ch{what do we learn about quiescent galaxy attenuation?} 
-The DEM also sheds light on dust attenuation in quiescent galaxies. This is
+The DEM also sheds light on dust attenuation in quiescent galaxies, which is
 particularly valuable since there are many challenges to measuring attenuation
 curves for quiescent galaxies in observations. For instance, methods that rely
 on IR luminosities can be contaminated by MIR emission from AGN heating nearby
@@ -336,44 +310,39 @@ galaxies have shallower attenuation curve with large variations in the slopes
 %firstly because quiescent galaxies don't have much recent SFR and therefore not much dust (their most recently produced dust has likely happened more than a dust destruction timescale ago), 
 % secondly because the continuum for quiescent galaxies is super hard to fit (and break degeneracies with SFH & metallicity), which leads to poor(er) constraints. You could basically think of this in terms of dust/total SNR, which drops sharply for this population.
 
-In our DEM model, we neglect the galaxies with SFR=0 from simulations by
-directly sampling the quiescent galaxy observables (Section~\ref{sec:res}).
-Since galaxies with SFR=0 predicted by the simulations do not have recent 
-star-formation and also have 0 gas mass\todo{@tjitske is this for all
-sims}, we would expect them to also have no dust. However, a DEM model
-where we do not attenuate SFR=0 galaxies struggles to reproduce observations.
-This likely highlights the limitations of hydrodynamical simulations near the
-mass and temporal resolutions as well as the limitations of subgrid
-prescriptions for gas. \ch{Uncertainties in the dust desctruction timescale may
-also contribute to the explanation~\citep[\eg][]{jones2011, slavin2015}}. 
-We emphasize that our prescription for SFR=0 galaxies ensures that they do not
-significantly impact the constraints on DEM parameters. 
+The DEM produces optical and UV color-magnitude relations overall consistent
+with SDSS and also reveals key insight into dust attenuation in galaxies. There
+are, however, still a few discrepancies between the DEM observables and SDSS.
+For instance, the DEM produces broader distributions overall observations.
+Galaxies in SDSS sharply cut-off above the red sequence, while some galaxies in
+the DEM broadly extend beyond the cut-off. The DEM also produces galaxies 
+more luminous galaxies than SDSS. Nevertheless, the DEM better reproduces
+observations than other works. Furthermore, we chose linear relations to
+parameterize $\tau_V$ and $\delta$ in the DEM for simplicity. However, the
+empirical framework of the DEM can easily be extended to more flexible
+parameterizations that better reproduce observations --- the only challenge
+would be to find a well-motivated parameterization from observations.
 
-
-
-For the DEM model in this paper, we fix the amplitude of the UV dust bump to
-the amplitude of $\delta$ (Eq.~\ref{eq:bump_amp}). If, rather than fixing $m_E$ and
-$c_E$ in Eq.~\ref{eq:bump_amp}, we allow them to be free parameters we find
-litte constraing power on these parameters. More importantly, we find
-consistent constraints for the other DEM parameters, which implies that fixing
-the UV bump parameters does not impact our results. 
-
-A major assumption in the DEM model is how we sample the $A_V$ using the slab
-model. For each simulated galaxy, the DEM model uniformly samples the
-inclination and then assigns $A_V$ with the slab model (Eq.~\ref{eq:slab}). As
-we detail in Section~\ref{sec:dem}, this slab model is consistent inclination
-dependence of attenuation found in both observations~\citep[\eg][]{conroy2010,
-salim2020} and simulations~\citep[\eg]{chevallard2013, narayanan2018,
-trayford2020}. Moreover, the slab model successfully reproduces the $A_V$
-distribution of SDSS galaxies (Figure~\ref{fig:av_dist}). To ensure that our
-results do not hinge on the slab model, we conduct our analysis using a
-a truncated normal distribution based DEM model to sample $A_V$
-(Appendix~\ref{sec:nonslab}). This model is more flexible than the slab model. 
-For instance, we include physical parameter dependence for the scatter of
-$A_V$, and not just for $\tau_V$. We refer readers to Appendix~\ref{sec:nonslab} for details. 
-We find that adding our results are not impacted by the change in the $A_V$ 
-sampling model or the added flexiblity. Therefore, our results are not driven
-by our choice of the slab model. 
+In the DEM, we make a few other assumptions and choices. For simulated galaxies
+with $\sfr=0$, we directly sample their observables from the distributions of 
+SDSS quiescent galaxies. These $\sfr=0$ galaxies do not have recent
+star-formation and also have 0 gas mass\todo{CHH: @tjitske is this for all
+sims} so we would expect them to also have no dust. However, without
+attenuating these galaxies, the simulations struggle to reproduce observations.
+Our prescription for $\sfr = 0$ galaxies ensures that $\sfr=0$ galaxies do not
+impact our results, without delving into the issue further. In
+Appendix~\ref{sec:res}, we describe our prescription in detail and discuss the
+limitations of the simulations near the mass and temporal resolutions or their
+gas prescriptions. Another assumption in the DEM is how we assign $A_V$ using 
+the slab model (Eq.~\ref{eq:slab}). Although the slab model is consistent with
+the correlation between attenuation and inclination in
+observations~\citep[\eg][]{conroy2010, salim2020} and
+simulations~\citep[\eg]{chevallard2013, narayanan2018, trayford2020} and
+reproduces the SDSS $A_V$ distribution (Figure~\ref{fig:av_dist}),
+we test the robustness of our results by replacing it with a more flexible
+truncated normal distribution in Appendix~\ref{sec:nonslab}. Replacing the slab
+model, does not significantly impact our results. We therefore conclude that
+our results are robust to the assumptions and choices we make in the DEM. 
 
 % Salim(2020): Chevallard et al. (2013), who aggregated and analyzed a diverse series of theoretical attenuation law studies by Pierini et al. (2004), Tuffs et al. (2004), Silva et al. (1998) and Jonsson et al. (2006), and showed that all the stud- ies predict, with some normalization differences, a relationship between the optical depth AV and attenuation law slope.
 
@@ -381,19 +350,25 @@ by our choice of the slab model.
 % Therefore, based on physi- cal models, one expects that galaxies with “greyer” dust laws and larger overall attenuation should have higher inclinations
 % Salim+(2018): Chevallard et al. (2013) furthermore show that the depend- ence of the slope on AV is the same irrespective of whether the AV is driven by different levels of intrinsic (face-on) attenuation or is the result of inclined viewing geometry. 
 
-\ch{How about our prior choice?}
+% recap what we learn from the  
+In this work, we present the DEM, an empirical framework for including dust
+attenuation in simulated galaxy populations. We apply the DEM to the SIMBA,
+TNG, and EAGLE hydrodynamical simulations and forward model optical and UV
+color-magnitude relations. %Then we compare the forward modeled DEM outputs to SDSS observations to reveal insights into the simulations as well as dust attenuation in galaxies.
+With the DEM we are able to reproduce SDSS observations for all three
+simulations. However, SIMBA requires a significantly different DEM that
+reverses the established relationship between color and $\sfr$. We find that
+this is due to the fact that SIMBA overpredicts a large starburst population at
+$<10^{10}M_\odot$. \todo{any specific subgrid physics in SIMBA
+that's responsible}.
 
-% recap everything
-\ch{what we learn about in the simulations}
-
-
-\ch{what we learn about dust}  
-paragraph on restating how we can learn about dust through DEMs based on trends we see
-across all simulations. summarize main findings again. 
-
-\ch{observables unaffected by dust/dem?}
-Are there observables that hydro sims + DEMs cannot reproduce? What does that say about the hydro sims?
-What observables are unaffected by DEMs? We should chase those observables. 
+Focusing on the DEM for TNG and EAGLE, we find significant $M_*$ and $\sfr$
+dependences in the amplitude of dust attentuation. More massive
+galaxies have overall higher dust attenuation. Also, galaxies with lower 
+$\sfr$ have overall higher dust attenuation. The DEM also produces an
+attenuation curves that better reproduce the observed attenuation–slope
+relation than radiative transfer models. For star-forming galaxies, 
+dust attenuation curves with significant variation that are consistent with both observations and simulations.
 
 \ch{don't over-interpret observations}
 We clearly have to becareful with overinterpreting hydro sims because modifying

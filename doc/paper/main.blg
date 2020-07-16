@@ -5,6 +5,7 @@ The style file: mnras.bst
 Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "shivaei2015"
 Warning--I didn't find a database entry for "conroy2010"
+Warning--I didn't find a database entry for "ljea2017"
 Warning--I didn't find a database entry for "gordon1994"
 Warning--I didn't find a database entry for "draine2003"
 Warning--I didn't find a database entry for "caleztti2000"
@@ -12,45 +13,45 @@ Warning--I didn't find a database entry for "salim2016"
 Warning--I didn't find a database entry for "leja2018"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 73 entries,
+You've used 70 entries,
             2881 wiz_defined-function locations,
-            1193 strings with 29502 characters,
-and the built_in function-call counts, 33935 in all, are:
-= -- 2830
-> -- 2519
-< -- 144
-+ -- 1133
-- -- 364
-* -- 4180
-:= -- 5351
+            1176 strings with 29004 characters,
+and the built_in function-call counts, 32560 in all, are:
+= -- 2724
+> -- 2415
+< -- 134
++ -- 1087
+- -- 350
+* -- 4015
+:= -- 5130
 add.period$ -- 0
-call.type$ -- 73
-change.case$ -- 146
-chr.to.int$ -- 69
-cite$ -- 73
-duplicate$ -- 1624
-empty$ -- 1603
-format.name$ -- 606
-if$ -- 5829
+call.type$ -- 70
+change.case$ -- 140
+chr.to.int$ -- 66
+cite$ -- 70
+duplicate$ -- 1555
+empty$ -- 1537
+format.name$ -- 578
+if$ -- 5595
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 73
-newline$ -- 232
-num.names$ -- 494
-pop$ -- 344
+missing$ -- 70
+newline$ -- 223
+num.names$ -- 470
+pop$ -- 334
 preamble$ -- 1
-purify$ -- 292
+purify$ -- 280
 quote$ -- 0
-skip$ -- 941
+skip$ -- 897
 stack$ -- 0
-substring$ -- 2010
-swap$ -- 782
-text.length$ -- 292
+substring$ -- 1950
+swap$ -- 740
+text.length$ -- 280
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 657
+type$ -- 630
 warning$ -- 0
-while$ -- 532
+while$ -- 508
 width$ -- 0
-write$ -- 736
-(There were 7 warnings)
+write$ -- 706
+(There were 8 warnings)
