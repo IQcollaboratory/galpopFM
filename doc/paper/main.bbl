@@ -109,6 +109,10 @@ Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
 Chevallard J.,  Charlot S.,  Wandelt B.,   Wild V.,  2013, \mn@doi [Monthly
   Notices of the Royal Astronomical Society] {10.1093/mnras/stt523}, 432, 2061
 
+\bibitem[\protect\citeauthoryear{Conroy}{Conroy}{2010}]{conroy2010b}
+Conroy C.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  {10.1111/j.1365-2966.2010.16266.x}, 404, 247
+
 \bibitem[\protect\citeauthoryear{Crain et~al.,}{Crain et~al.}{2015}]{crain2015}
 Crain R.~A.,  et~al., 2015, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/stv725}, 450, 1937
@@ -150,6 +154,21 @@ Del~Moral P.,  Doucet A.,   Jasra A.,  2012, \mn@doi [Statistics and Computing]
 Diggle P.~J.,  Gratton R.~J.,  1984, Journal of the Royal Statistical Society.
   Series B (Methodological), 46, 193
 
+\bibitem[\protect\citeauthoryear{Draine}{Draine}{2003}]{draine2003}
+Draine B.~T.,  2003, \mn@doi [The Astrophysical Journal] {10.1086/379118}, 598,
+  1017
+
+\bibitem[\protect\citeauthoryear{Driver, Davies, Meyer, Power, Robotham,
+  Baldry, Liske  \& Norberg}{Driver et~al.}{2016}]{driver2016}
+Driver S.~P.,  Davies L.~J.,  Meyer M.,  Power C.,  Robotham A. S.~G.,  Baldry
+  I.~K.,  Liske J.,   Norberg P.,  2016, \mn@doi [The Universe of Digital Sky
+  Surveys] {10.1007/978-3-319-19330-4_32}, 42, 205
+
+\bibitem[\protect\citeauthoryear{Driver et~al.,}{Driver
+  et~al.}{2019}]{driver2019}
+Driver S.~P.,  et~al., 2019, \mn@doi [The Messenger] {10.18727/0722-6691/5126},
+  175, 46
+
 \bibitem[\protect\citeauthoryear{Garn \& Best}{Garn \& Best}{2010}]{garn2010}
 Garn T.,  Best P.~N.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1111/j.1365-2966.2010.17321.x}, 409, 421
@@ -157,6 +176,11 @@ Garn T.,  Best P.~N.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical
 \bibitem[\protect\citeauthoryear{Genel et~al.,}{Genel et~al.}{2014}]{genel2014}
 Genel S.,  et~al., 2014, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/stu1654}, 445, 175
+
+\bibitem[\protect\citeauthoryear{Gordon, Witt, Carruthers, Christensen  \&
+  Dohne}{Gordon et~al.}{1994}]{gordon1994}
+Gordon K.~D.,  Witt A.~N.,  Carruthers G.~R.,  Christensen S.~A.,   Dohne
+  B.~C.,  1994, \mn@doi [The Astrophysical Journal] {10.1086/174602}, 432, 641
 
 \bibitem[\protect\citeauthoryear{Hahn, Vakili, Walsh, Hearin, Hogg  \&
   Campbell}{Hahn et~al.}{2017a}]{hahn2017a}
@@ -226,6 +250,11 @@ Kriek M.,  Conroy C.,  2013, \mn@doi [The Astrophysical Journal Letters]
 Leja J.,  Johnson B.~D.,  Conroy C.,  {van Dokkum} P.~G.,   Byler N.,  2017,
   \mn@doi [The Astrophysical Journal] {10.3847/1538-4357/aa5ffe}, 837, 170
 
+\bibitem[\protect\citeauthoryear{Leja, Johnson, Conroy  \& {van Dokkum}}{Leja
+  et~al.}{2018}]{leja2018}
+Leja J.,  Johnson B.~D.,  Conroy C.,   {van Dokkum} P.,  2018, \mn@doi [The
+  Astrophysical Journal] {10.3847/1538-4357/aaa8db}, 854, 62
+
 \bibitem[\protect\citeauthoryear{Lin, Kilbinger  \& Pires}{Lin
   et~al.}{2016}]{lin2016}
 Lin C.-A.,  Kilbinger M.,   Pires S.,  2016, \mn@doi [Astronomy and
@@ -276,6 +305,10 @@ Reddy N.~A.,  et~al., 2015, \mn@doi [The Astrophysical Journal]
   Narayanan}{2020}]{salim2020}
 Salim S.,  Narayanan D.,  2020, arXiv:2001.03181 [astro-ph]
 
+\bibitem[\protect\citeauthoryear{Salim et~al.,}{Salim et~al.}{2016}]{salim2016}
+Salim S.,  et~al., 2016, \mn@doi [The Astrophysical Journal Supplement Series]
+  {10.3847/0067-0049/227/1/2}, 227, 2
+
 \bibitem[\protect\citeauthoryear{Salim, Boquien  \& Lee}{Salim
   et~al.}{2018}]{salim2018}
 Salim S.,  Boquien M.,   Lee J.~C.,  2018, \mn@doi [The Astrophysical Journal]
@@ -305,6 +338,17 @@ Springel V.,  2005, \mn@doi [Monthly Notices of the Royal Astronomical Society]
   et~al.}{2018}]{springel2018}
 Springel V.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/stx3304}, 475, 676
+
+\bibitem[\protect\citeauthoryear{Takada et~al.,}{Takada
+  et~al.}{2014}]{takada2014}
+Takada M.,  et~al., 2014, \mn@doi [Publications of the Astronomical Society of
+  Japan] {10.1093/pasj/pst019}, 66, R1
+
+\bibitem[\protect\citeauthoryear{Tamura et~al.,}{Tamura
+  et~al.}{2016}]{tamura2016}
+Tamura N.,  et~al., 2016, in Ground-Based and {{Airborne Instrumentation}} for
+  {{Astronomy VI}}. {eprint: arXiv:1608.01075}, p. 99081M,
+  \mn@doi{10.1117/12.2232103}
 
 \bibitem[\protect\citeauthoryear{Tavare, Balding, Griffiths  \&
   Donnelly}{Tavare et~al.}{1997}]{tavare1997}
