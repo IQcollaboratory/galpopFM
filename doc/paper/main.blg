@@ -3,65 +3,50 @@ Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
-Warning--I didn't find a database entry for "walcher2011"
-Warning--I didn't find a database entry for "conroy2013"
-Warning--I didn't find a database entry for "galliano2018"
-Warning--I didn't find a database entry for "witt1996"
-Warning--I didn't find a database entry for "seon2016"
-Warning--I didn't find a database entry for "jonsson2006"
-Warning--I didn't find a database entry for "rocha2008"
-Warning--I didn't find a database entry for "hayward2015"
-Warning--I didn't find a database entry for "natale2015"
-Warning--I didn't find a database entry for "hou2017"
-Warning--I didn't find a database entry for "granato2000"
-Warning--I didn't find a database entry for "fontanot2009"
-Warning--I didn't find a database entry for "wilkins2012"
-Warning--I didn't find a database entry for "gonzalezperez2013"
-Warning--I didn't find a database entry for "steinacker2013"
 Warning--I didn't find a database entry for "dickey2020"
 Warning--I didn't find a database entry for "caleztti2000"
 Warning--I didn't find a database entry for "("
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 81 entries,
+You've used 96 entries,
             2881 wiz_defined-function locations,
-            1255 strings with 35271 characters,
-and the built_in function-call counts, 37316 in all, are:
-= -- 3120
-> -- 2741
-< -- 149
-+ -- 1245
-- -- 388
-* -- 4609
-:= -- 5857
+            1331 strings with 38190 characters,
+and the built_in function-call counts, 44865 in all, are:
+= -- 3714
+> -- 3364
+< -- 189
++ -- 1509
+- -- 496
+* -- 5523
+:= -- 7097
 add.period$ -- 0
-call.type$ -- 81
-change.case$ -- 162
-chr.to.int$ -- 77
-cite$ -- 81
-duplicate$ -- 1808
-empty$ -- 1793
-format.name$ -- 650
-if$ -- 6421
+call.type$ -- 96
+change.case$ -- 192
+chr.to.int$ -- 92
+cite$ -- 96
+duplicate$ -- 2149
+empty$ -- 2123
+format.name$ -- 800
+if$ -- 7713
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 81
-newline$ -- 256
-num.names$ -- 530
-pop$ -- 396
+missing$ -- 96
+newline$ -- 301
+num.names$ -- 646
+pop$ -- 464
 preamble$ -- 1
-purify$ -- 324
+purify$ -- 384
 quote$ -- 0
-skip$ -- 1047
+skip$ -- 1249
 stack$ -- 0
-substring$ -- 2210
-swap$ -- 831
-text.length$ -- 325
+substring$ -- 2623
+swap$ -- 1025
+text.length$ -- 385
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 729
+type$ -- 864
 warning$ -- 0
-while$ -- 582
+while$ -- 702
 width$ -- 0
-write$ -- 817
-(There were 18 warnings)
+write$ -- 967
+(There were 3 warnings)
