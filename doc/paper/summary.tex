@@ -1,1 +1,57 @@
 \section{Summary}
+In this work, we present the DEM, an empirical framework for including dust
+attenuation in simulated galaxy populations. It uses a parameterization of 
+the attenuation curves motivated from observations~\citep[][]{noll2009} and a
+flexible method for sampling the attenuation curve parameters that includes
+correlations with galaxy properties ($M_*$ and $\sfr$). We apply the DEM to 
+three state-of-the-art hydrodynamical simulations (SIMBA, TNG, and EAGLE) and
+forward model the optical and UV color-magnitude relations. Afterwards, we
+compare these forward modeled simulations to observed central galaxies in SDSS
+using simulation-based inference. From the constraints on the DEM parameters,
+we find the following results: 
+
+\begin{itemize}
+\item Dust attenuation is essential for simulations to reproduce observations.
+With the DEM, we are able to reproduce SDSS observations for all three
+hydrodynamical simulations. However, based on the inferred DEM parameter posteriors, SIMBA requires an
+extreme dust attenuation that reverses the established relationship between
+color and $\sfr$ because it overpredicts a large starburst population at
+$<10^{10}M_\odot$.
+\item Focusing on the DEM for TNG and EAGLE, we find significant $M_*$ and
+$\sfr$ dependences in $A_V$. More massive galaxies have higher dust
+attenuation; galaxies with lower $\sfr$ have  higher dust attenuation. 
+\item The DEM attenuation curves are in good agreement with major observational 
+constraints. They closely reproduce the observed attenuation--slope relation,
+better than radiative transfer models. We also find significant variation in 
+the attenuation curves as in observations. For star-forming galaxies, the DEM
+atteunation curves are in good agreement with the literature.  
+\item Lastly, the DEM is able to constrain the attenuation curves of quiescent
+galaxies, which are poorly constrained by observations. We find that quiescent
+galaxies have shallower attenuation curves with higher $A_V$ than star-forming
+galaxies. 
+\end{itemize}
+
+Our results clearly demonstrate that the DEM can be used to provide insight
+into dust attenuation. In this work, we are limited by the completeness limit
+of the SDSS central galaxies. Upcoming surveys such as the Bright Galaxy Survey
+of the Dark Energy Spectroscopic
+Instrument~\citep[DESI;][\ch{Ruiz\etal2020}](desicollaboration2016), the Galaxy
+Evolution Survey of the Prime Focus
+Spectrograph~\citep[PFS;][]{takada2014,tamura2016}, and the Wide-Area VISTA
+Extragalactic Survey~\citep[WAVES;][]{driver2016, driver2019} will provide
+more statistically powerful observations at higher redshifts. With these
+observations, the DEM will be able to tightly constrain and reveal new 
+insights into dust attenuation. 
+
+For those uninterested in dust, the DEM also provides a straightforward framework 
+for marginalizing over dust. Although accounting for dust is necessy to reproduce 
+observations, our current understanding of dust there broad enough that even 
+simulations that predict galaxy populations with significantly different physical properties can
+reproduce the same observable. Since varying dust alone can entirely reproduce 
+observations, dust is highly degenerate with the variations in subgrid physics 
+across simulations. After marginalizing over dust, observations do not have the
+constraining power to differentiate between the various hydrodyanmical models.
+Hence, detailed comparisons across simulations and to observations likely 
+overinterpret the differences and similarities found in simulations. Therefore, 
+we demonstrate that the current limitations in our understanding of dust is a 
+major bottleneck for investigating galaxy formation using simulations.

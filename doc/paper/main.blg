@@ -3,50 +3,65 @@ Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
-Warning--I didn't find a database entry for "shivaei2015"
+Warning--I didn't find a database entry for "walcher2011"
+Warning--I didn't find a database entry for "conroy2013"
+Warning--I didn't find a database entry for "galliano2018"
+Warning--I didn't find a database entry for "witt1996"
+Warning--I didn't find a database entry for "seon2016"
+Warning--I didn't find a database entry for "jonsson2006"
+Warning--I didn't find a database entry for "rocha2008"
+Warning--I didn't find a database entry for "hayward2015"
+Warning--I didn't find a database entry for "natale2015"
+Warning--I didn't find a database entry for "hou2017"
+Warning--I didn't find a database entry for "granato2000"
+Warning--I didn't find a database entry for "fontanot2009"
+Warning--I didn't find a database entry for "wilkins2012"
+Warning--I didn't find a database entry for "gonzalezperez2013"
+Warning--I didn't find a database entry for "steinacker2013"
+Warning--I didn't find a database entry for "dickey2020"
 Warning--I didn't find a database entry for "caleztti2000"
 Warning--I didn't find a database entry for "("
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 79 entries,
+You've used 81 entries,
             2881 wiz_defined-function locations,
-            1228 strings with 33970 characters,
-and the built_in function-call counts, 36650 in all, are:
-= -- 3067
-> -- 2700
+            1255 strings with 35271 characters,
+and the built_in function-call counts, 37316 in all, are:
+= -- 3120
+> -- 2741
 < -- 149
-+ -- 1220
++ -- 1245
 - -- 388
-* -- 4517
-:= -- 5761
+* -- 4609
+:= -- 5857
 add.period$ -- 0
-call.type$ -- 79
-change.case$ -- 158
-chr.to.int$ -- 75
-cite$ -- 79
-duplicate$ -- 1767
-empty$ -- 1750
-format.name$ -- 642
-if$ -- 6313
+call.type$ -- 81
+change.case$ -- 162
+chr.to.int$ -- 77
+cite$ -- 81
+duplicate$ -- 1808
+empty$ -- 1793
+format.name$ -- 650
+if$ -- 6421
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 79
-newline$ -- 250
-num.names$ -- 522
-pop$ -- 384
+missing$ -- 81
+newline$ -- 256
+num.names$ -- 530
+pop$ -- 396
 preamble$ -- 1
-purify$ -- 316
+purify$ -- 324
 quote$ -- 0
-skip$ -- 1025
+skip$ -- 1047
 stack$ -- 0
-substring$ -- 2182
-swap$ -- 823
-text.length$ -- 317
+substring$ -- 2210
+swap$ -- 831
+text.length$ -- 325
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 711
+type$ -- 729
 warning$ -- 0
-while$ -- 572
+while$ -- 582
 width$ -- 0
-write$ -- 798
-(There were 3 warnings)
+write$ -- 817
+(There were 18 warnings)
