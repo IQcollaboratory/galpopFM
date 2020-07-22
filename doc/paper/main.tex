@@ -91,18 +91,29 @@
 \author{IQ Collaboratory}
 
 \begin{abstract}
-    We construct a dust empirical model (DEM) framework for applying dust
-    attenuation to simulated galaxies based on handful of sensible assumptions
-    that come from our understanding of dust attenuation. The DEM framework is
-    essentially based on state-of-the-art attenuation curves with a flexible
-    parameterization that allows us to statistically sample them. Applying DEMs to three
-    different hydrodynamic simulations, SIMBA, Illustris TNG, and EAGLE, we
-    are able to produce UV and optical photometry consistent with SDSS
-    observations ($(G-R) - M_r$ color-magnitude and $(FUV-NUV)-M_r$ relations).
-    This suggests that there's enough
-    freedom in our current understanding (or lack) of dust for all simulations
-    to reproduce observations. Meanwhile, the DEM provides some insights into
-    dust as well as the subgrid physics that goes into the hydro simulations. 
+    We present the Dust Empirical Model (DEM), an empirical framework for
+    applying dust attenuation to simulated galaxy populations. The DEM uses 
+    a paramterization of the attenuation curve based on observational constraints 
+    and a statistical prescription for sampling the curves that includes
+    correlations with galaxy properties. We apply the DEM to three state-of-the-a
+    rt hydrodynamical simulations, SIMBA, Illustris TNG, and EAGLE. Then 
+    we forward model the spectral energy distributions and optical and 
+    UV color-magnitude relations, $(\gr) - M_r$ nd $(\fnuv)-M_r$, for the 
+    simulated galaxies and compare them to the central galaxies in SDSS 
+    using Approximate Bayesian Computation. For all three simulations, we are 
+    able to reproduce SDSS observations with the DEM. We find that SIMBA overpredicts low mass starburst galaxies and
+    requires extreme DEM that reverses the established relation between galaxy
+    color and $\sfr$. Since we can reproduce observations for disparate galaxy
+    populations by varying dust attenuation, we demonstrate that dust is highly
+    degenerate with subgrid physics in galaxy formation models. In addition to
+    the observed color-magnitude relations, the DEM also reproduces the
+    observed attenuation--slope relation better than radiative transfer models.
+    Its attenuation curves for star-forming galaxies are in good agreement with the
+    literature. Furthermore, using the DEM we find correlations between dust
+    attenuation and galaxy properties: more massive galaxies have higher dust
+    attenuation; galaxies with lower SFR have higher dust attenuation. Finally, 
+    we find that quiescent galaxies have shallower attenuation curves and 
+    larger varation than star-forming galaxies.
 \end{abstract}
 
 \keywords{
@@ -123,6 +134,10 @@ keyword1 -- keyword2 -- keyword3
 
 \section*{Acknowledgements}
 It's a pleasure to thank
+    Daniel Kelson, 
+    Mariska Kriek, 
+    Deseka Narayanan,
+    Katherine Suess 
     ...
 This material is based upon work supported by the U.S. Department of Energy,
 Office of Science, Office of High Energy Physics, under contract No.

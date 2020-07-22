@@ -6,48 +6,47 @@ Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "dickey2020"
 Warning--I didn't find a database entry for "conroy2010"
 Warning--I didn't find a database entry for "caleztti2000"
-Warning--I didn't find a database entry for "("
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 96 entries,
+You've used 97 entries,
             2881 wiz_defined-function locations,
-            1332 strings with 38200 characters,
-and the built_in function-call counts, 44865 in all, are:
-= -- 3714
-> -- 3364
+            1337 strings with 44383 characters,
+and the built_in function-call counts, 45182 in all, are:
+= -- 3735
+> -- 3387
 < -- 189
-+ -- 1509
++ -- 1525
 - -- 496
-* -- 5523
-:= -- 7097
+* -- 5566
+:= -- 7144
 add.period$ -- 0
-call.type$ -- 96
-change.case$ -- 192
-chr.to.int$ -- 92
-cite$ -- 96
-duplicate$ -- 2149
-empty$ -- 2123
-format.name$ -- 800
-if$ -- 7713
+call.type$ -- 97
+change.case$ -- 194
+chr.to.int$ -- 93
+cite$ -- 97
+duplicate$ -- 2169
+empty$ -- 2144
+format.name$ -- 804
+if$ -- 7761
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 96
-newline$ -- 301
-num.names$ -- 646
-pop$ -- 464
+missing$ -- 97
+newline$ -- 304
+num.names$ -- 650
+pop$ -- 472
 preamble$ -- 1
-purify$ -- 384
+purify$ -- 388
 quote$ -- 0
-skip$ -- 1249
+skip$ -- 1259
 stack$ -- 0
-substring$ -- 2623
-swap$ -- 1025
-text.length$ -- 385
+substring$ -- 2632
+swap$ -- 1029
+text.length$ -- 389
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 864
+type$ -- 873
 warning$ -- 0
-while$ -- 702
+while$ -- 706
 width$ -- 0
-write$ -- 967
-(There were 4 warnings)
+write$ -- 976
+(There were 3 warnings)
