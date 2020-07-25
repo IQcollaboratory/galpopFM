@@ -58,11 +58,14 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, logmstar, logsfr, dem='slab_calz
     else: 
         raise NotImplementedError
 
-    # apply attenuation curve to spectra without nebular emissoin
-    spec_noneb_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr, nebular=False) 
-    spec_neb_dusty = mdust(theta, lam, spec_neb, logmstar, logsfr, nebular=True)
+    if dem == 'slab_noll_msfr_fixbump': 
+        spec_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr, nebular=False) 
+    else: 
+        # apply attenuation curve to spectra without nebular emissoin
+        spec_noneb_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr, nebular=False) 
+        spec_neb_dusty = mdust(theta, lam, spec_neb, logmstar, logsfr, nebular=True)
 
-    spec_dusty = spec_noneb_dusty + spec_neb_dusty 
+        spec_dusty = spec_noneb_dusty + spec_neb_dusty 
     return spec_dusty 
 
 
@@ -157,8 +160,7 @@ def DEM_slab_noll_msfr_kink_fixbump(theta, lam, flux_i, logmstar, logsfr, nebula
     return flux_i * T_lam 
 
 
-def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr,
-        nebular=True, incl=None): 
+def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr, incl=None): 
     ''' Dust empirical model that combines the slab model with Noll+(2009) but
     keeps the **UV bump relation to delta fixed** 
 
@@ -171,8 +173,8 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr,
     E_b     =  -1.9 * delta + 0.85 (Kriek & Conroy 2013) 
 
     :param theta: 
-        7 free parameter of the slab + Noll+(2009) model
-        theta: m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta f_nebular
+        6 free parameter of the slab + Noll+(2009) model
+        theta: m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta 
     :param lam: 
         wavelength in angstrom
     :param flux_i: 
@@ -185,7 +187,7 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr,
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
     '''
-    assert theta.shape[0] == 7, print(theta) 
+    assert theta.shape[0] == 6, print(theta) 
 
     logmstar = np.atleast_1d(logmstar) 
     logsfr = np.atleast_1d(logsfr) 
@@ -225,11 +227,8 @@ def DEM_slab_noll_msfr_fixbump(theta, lam, flux_i, logmstar, logsfr,
     # calzetti is already normalized to k_V
     A_lambda = A_V[:,None] * (calzetti_absorption(lam) + D_bump / k_V_calzetti) * \
             (lam / 5500.)**delta[:,None]
-
-    if not nebular: factor = 1.
-    else: factor = theta[6] 
-
-    _T_lam = 10.0**(-0.4 * A_lambda * factor)
+    
+    _T_lam = 10.0**(-0.4 * A_lambda)
 
     T_lam = np.ones((len(logmstar), len(lam)))
     T_lam[~zerosfr] = _T_lam 
