@@ -59,7 +59,7 @@ def Attenuate(theta, lam, spec_noneb, spec_neb, logmstar, logsfr, dem='slab_calz
         raise NotImplementedError
 
     if dem == 'slab_noll_msfr_fixbump': 
-        spec_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr, nebular=False) 
+        spec_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr) 
     else: 
         # apply attenuation curve to spectra without nebular emissoin
         spec_noneb_dusty = mdust(theta, lam, spec_noneb, logmstar, logsfr, nebular=False) 
