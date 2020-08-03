@@ -1,6 +1,6 @@
 \section{Introduction} \label{sec:intro} 
-Dust in the interstellar medium of a galaxy can dramatically impact light we
-observe from the galaxy over the full range of the electromagnetic spectrum. 
+Dust in the interstellar medium of a galaxy can dramatically impact the
+observed light from the galaxy over the full range of the electromagnetic spectrum. 
 In the infrared (IR), dust produces emissions and from near-infrared (NIR) to
 ultraviolet (UV), dust modifies the galaxy's stellar radiation through
 absorption and scattering. Dust can therefore dramatically impact the physical
@@ -14,8 +14,8 @@ consequential for all galaxy studies.
 
 The combined effect of dust on the spectral energy distribution (SED) of a
 galaxy is typically described using an attenuation curve, $A(\lambda)$.
-Observations have now estabished the major features in $A(\lambda)$. In the UV, the 
-curve steeply rises due to absoprtions by small grains. At $2175\AA$, in the 
+Observations have now established the major features in $A(\lambda)$. In the UV, the 
+curve steeply rises due to absorptions by small grains. At $2175\AA$, in the 
 near-UV (NUV), there is absorption bump referred to as the UV dust bump. Then 
 at longer wavelengths, the curves on take a power-law shape. For an overview, we 
 refer to reviews by \cite{calzetti2001, draine2003, galliano2018}. Attenuation
@@ -34,15 +34,15 @@ amount of optical attenuation, the far-UV (FUV) attenuation can be $\sim
 % curves properly.
 To understand the origin of this variation in attenuation curves, previous
 works have examined the correlation between them and galaxy properties. 
-\cite{wild2011}, from 23,000 star-forming galaxies in the Sloan Digital
-Sky Survey (SDSS), find that the slope of the attenuation curves varies 
+Using 23,000 star-forming galaxies in the Sloan Digital
+Sky Survey (SDSS), \cite{wild2011} find that the slope of the attenuation curves varies 
 strongly with galaxy axial ratio and weakly with specific SFR. Similarly, 
 \cite{battisti2017}, from 5,500 star-forming galaxies, find only tentative
 trends with stellar age, specific star formation rate, stellar mass, and
 metallicity. Meanwhile, \cite{salim2018}, from 230,000 galaxies in the
 GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2), find a significant $M_*$ 
 dependence on the slope. They argue that this dependence is caused by
-underlying trend between the amplitude of the $V$-band attenuation ($A_V$) and
+underlying trends between the amplitude of the $V$-band attenuation ($A_V$) and
 slope. Based on this ``attenuation-slope relation'', galaxies with higher $A_V$
 have shallower slopes. Nevertheless, there is still no clear consensus on the
 connection between attenuation curves and galaxy properties. Furthermore, most
@@ -103,7 +103,7 @@ observations~\citep[\eg][]{nelson2018, baes2019, trcka2020, dickey2020}. From
 such comparisons, we can exploit the statistical power of large galaxy surveys 
 (\eg~SDSS) to constrain the DEM. These constraints provide insights into
 attenuation curves and their connection to galaxy properties. Besides 
-providing insights into dust, the DEM can also be used to tractly marginalize
+providing insights into dust, the DEM can also be used to tractably marginalize
 over the impact of dust by treating the DEM parameters as nuisance parameters. 
 The posterior probability distributions of the DEM parameters, derived from 
 the comparison to observations, can be used to effectively marginalize over 
@@ -113,13 +113,13 @@ prescriptions of the simulations.
 
 In this work, we present a simple DEM that uses the \cite{noll2009}
 attenuation curve parameterization and includes correlations with galaxy $M_*$
-and $\sfr$. We apply the DEM to three state-of-the-art hydrodynamical
-simulations, SIMBA, Illustris TNG, and EAGLE, which we describe in
-Section~\ref{sec:sims} and compare them to observed SDSS central galaxies,
+and $\sfr$. We apply the DEM to three state-of-the-art cosmological large-scale hydrodynamical
+simulations, SIMBA, IllustrisTNG, and EAGLE, which we describe in
+Section~\ref{sec:sims} and compare them to observed SDSS galaxies,
 which we describe in Section~\ref{sec:obs}. In Section~\ref{sec:dem}, we
 describe our DEM in detail. Finally, in Section~\ref{sec:results}, we present
 the results of our comparison and discuss insights the DEM provides for our
-understanding of dust attenuation as well as of hydrodyanmic simulations. 
+understanding of dust attenuation as well as of its interplay with galaxy evolution in cosmological simulations. 
 
 %Unlike other empirical approaches~\citep{trayford2015, trayford2020}, constraints on the DEM can be directly compared to observed attenuation curves
 %\cite{trayford2015} uses an empirical dust model but doesn't implement an attenuation curve but rather multiplicative factors for the broadband photometry.
