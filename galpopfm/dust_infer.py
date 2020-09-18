@@ -43,7 +43,7 @@ def distance_metric(x_obs, x_model, method='chi2', x_err=None):
     return rho
 
 
-def sumstat_obs(name='sdss', statistic='2d', return_bins=False): 
+def sumstat_obs(name='nsa', statistic='2d', return_bins=False): 
     ''' summary statistics for SDSS observations is the 3D histgram of 
     [M_r, G-R, FUV - NUV]. 
 

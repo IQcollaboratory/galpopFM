@@ -10,9 +10,8 @@ import sys
 import h5py 
 import numpy as np 
 import corner as DFM 
-# -- astrologs --
-from astrologs.astrologs import Astrologs 
 # -- galpopfm --
+from galpopfm.catalogs import Catalog
 from galpopfm import dustfm as dustFM
 from galpopfm import dust_infer as dustInfer
 from galpopfm import measure_obs as measureObs
@@ -34,11 +33,6 @@ mpl.rcParams['legend.frameon'] = False
 
 dat_dir = os.environ['GALPOPFM_DIR']
 fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'figs') 
-
-vol_sdss = 766021.225579427
-vol_simba   = 100.**3 # (Mpc/h)^3
-vol_tng     = 75.**3 # (Mpc/h)^3
-vol_eagle   = 67.77**3 # (Mpc/h)^3  Lbox 100 Mpc h = 0.6777
 
 sims = ['SIMBA', 'TNG', 'EAGLE']
 clrs = ['C1', 'C0', 'C2']
@@ -152,195 +146,41 @@ def NSA():
     return None 
 
 
-def SMFs():
-    ''' figure comparing the stellar mass fucntions of SDSS and the simulations
-    to show that SMFs, which more or less agree
-    '''
-    #########################################################################
-    # read in SDSS 
-    #########################################################################
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_logMstar.dat') 
-    logms_low, logms_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
-    #########################################################################
-    # read simulations 
-    #########################################################################
-    fsimba = os.path.join(dat_dir, 'sed', 'simba.hdf5')
-    simba = h5py.File(fsimba, 'r')
-    cen_simba = simba['censat'][...].astype(bool)
-
-    ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
-    tng = h5py.File(ftng, 'r')
-    cen_tng = tng['censat'][...].astype(bool)
-
-    feag = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
-    eag = h5py.File(feag, 'r')
-    cen_eag = eag['censat'][...].astype(bool)
-    #########################################################################
-    # calculate SMFs
-    #########################################################################
-    logms_bin = np.linspace(8., 13., 21)
-    dlogms = logms_bin[1:] - logms_bin[:-1]
-
-    Ngal_simba, _   = np.histogram(simba['logmstar'][...][cen_simba], bins=logms_bin)
-    Ngal_tng, _     = np.histogram(tng['logmstar'][...][cen_tng], bins=logms_bin)
-    Ngal_eag, _     = np.histogram(eag['logmstar'][...][cen_eag], bins=logms_bin)
-
-    phi_simba   = Ngal_simba.astype(float) / vol_simba / dlogms
-    phi_tng     = Ngal_tng.astype(float) / vol_tng / dlogms
-    phi_eag     = Ngal_eag.astype(float) / vol_eagle / dlogms
-    #########################################################################
-    # plot SMFs
-    #########################################################################
-    fig = plt.figure(figsize=(6,6))
-    sub = fig.add_subplot(111)
-    sub.errorbar(0.5*(logms_low + logms_high), phi_sdss, yerr=err_phi_sdss,
-            fmt='.k', label='SDSS Centrals')
-    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_simba, c='C0',
-            label='SIMBA')
-    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c='C1', 
-            label='TNG')
-    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_eag, c='C2', 
-            label='EAGLE')
-    sub.legend(loc='lower left', handletextpad=0.3, fontsize=20)
-    sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
-    sub.set_xlim(9.7, 12.5)
-    sub.set_xticks([10., 10.5, 11., 11.5, 12., 12.5]) 
-    sub.set_ylabel(r'Central Stellar Mass Function ($\Phi^{\rm cen}_{M_*}$)', fontsize=24)
-    sub.set_yscale("log")
-    sub.set_ylim(5e-6, 3e-2) 
-    
-    ffig = os.path.join(fig_dir, 'smfs.png') 
-    fig.savefig(ffig, bbox_inches='tight') 
-
-    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
-    plt.close()
-    return None 
-
-
-def M_SFR(): 
-    ''' M_* - SFR relation of the simulations to highlight their differences
-    '''
-    #########################################################################
-    # read in SDSS 
-    #########################################################################
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
-    sdss_ms = np.log10(sdss['ms_tinker'][...]) 
-    sdss_sfr = sdss['sfr_tinker'][...] + sdss_ms
-    #########################################################################
-    # read simulations 
-    #########################################################################
-    fsimba = os.path.join(dat_dir, 'sed', 'simba.hdf5')
-    simba = h5py.File(fsimba, 'r')
-    cen_simba = simba['censat'][...].astype(bool)
-    simba_ms  = simba['logmstar'][...][cen_simba]
-    simba_sfr = simba['logsfr.inst'][...][cen_simba]
-
-    ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
-    tng = h5py.File(ftng, 'r')
-    cen_tng = tng['censat'][...].astype(bool)
-    tng_ms  = tng['logmstar'][...][cen_tng]
-    tng_sfr = tng['logsfr.inst'][...][cen_tng]
-
-    feag = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
-    eag = h5py.File(feag, 'r')
-    cen_eag = eag['censat'][...].astype(bool)
-    eag_ms  = eag['logmstar'][...][cen_eag]
-    eag_sfr = eag['logsfr.inst'][...][cen_eag]
-    #########################################################################
-    # plot M*-SFR relations  
-    #########################################################################
-    names   = ['SIMBA', 'TNG', 'EAGLE']
-    clrs    = ['C1', 'C0', 'C2']
-    ms      = [simba_ms, tng_ms, eag_ms]
-    sfrs    = [simba_sfr, tng_sfr, eag_sfr]
-
-    fig = plt.figure(figsize=(15,5))
-    for i in range(len(names)): 
-        sub = fig.add_subplot(1,3,i+1)
-        DFM.hist2d(sdss_ms, sdss_sfr, levels=[0.68, 0.95],
-                range=[[7.8, 12.], [-4., 2.]], color='k', 
-                contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
-        DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
-                levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
-                contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
-        sub.text(0.05, 0.95, names[i], transform=sub.transAxes, ha='left', va='top', fontsize=25) 
-        sub.set_xlim([9., 12.]) 
-        sub.set_ylim([-3., 2.]) 
-        if i != 0: sub.set_yticklabels([]) 
-        sub.set_xticklabels([9., '', 10., '', 11.]) 
-    
-    _plth0, = sub.plot([], [], c='k', ls='--')
-    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
-            fontsize=20) 
-
-    bkgd = fig.add_subplot(111, frameon=False)
-    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    bkgd.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=15, fontsize=25) 
-    bkgd.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', labelpad=15, fontsize=25) 
-    fig.subplots_adjust(wspace=0.1, hspace=0.1)
-
-    ffig = os.path.join(fig_dir, 'm_sfr.png') 
-    fig.savefig(ffig, bbox_inches='tight') 
-
-    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
-    plt.close()
-    return None 
-
-
 def SMF_MsSFR(): 
-    ''' figure comparing the stellar mass fucntions of SDSS and the simulations
+    ''' figure comparing the stellar mass fucntions of the different simulations
     and M*-SFR relation 
     '''
     #########################################################################
-    # read in SDSS 
+    # read nsa and sims  
     #########################################################################
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.phi_logMstar.dat') 
-    logms_low, logms_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
+    simba = Catalog('simba') 
+    simba_ms  = simba.data['logmstar']
+    simba_sfr = simba.data['logsfr.inst']
 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
-    sdss_ms = np.log10(sdss['ms_tinker'][...]) 
-    sdss_sfr = sdss['sfr_tinker'][...] + sdss_ms
-    #########################################################################
-    # read simulations 
-    #########################################################################
-    fsimba = os.path.join(dat_dir, 'sed', 'simba.hdf5')
-    simba = h5py.File(fsimba, 'r')
-    cen_simba = simba['censat'][...].astype(bool)
-    simba_ms  = simba['logmstar'][...][cen_simba]
-    simba_sfr = simba['logsfr.inst'][...][cen_simba]
+    tng = Catalog('tng')  
+    tng_ms  = tng.data['logmstar']
+    tng_sfr = tng.data['logsfr.inst']
 
-    ftng = os.path.join(dat_dir, 'sed', 'tng.hdf5')
-    tng = h5py.File(ftng, 'r')
-    cen_tng = tng['censat'][...].astype(bool)
-    tng_ms  = tng['logmstar'][...][cen_tng]
-    tng_sfr = tng['logsfr.inst'][...][cen_tng]
-
-    feag = os.path.join(dat_dir, 'sed', 'eagle.hdf5') 
-    eag = h5py.File(feag, 'r')
-    cen_eag = eag['censat'][...].astype(bool)
-    eag_ms  = eag['logmstar'][...][cen_eag]
-    eag_sfr = eag['logsfr.inst'][...][cen_eag]
+    eag = Catalog('eagle')
+    eag_ms  = eag.data['logmstar']
+    eag_sfr = eag.data['logsfr.inst']
     #########################################################################
     # calculate SMFs
     #########################################################################
     logms_bin = np.linspace(8., 13., 21)
     dlogms = logms_bin[1:] - logms_bin[:-1]
-
-    Ngal_simba, _   = np.histogram(simba['logmstar'][...][cen_simba], bins=logms_bin)
-    Ngal_tng, _     = np.histogram(tng['logmstar'][...][cen_tng], bins=logms_bin)
-    Ngal_eag, _     = np.histogram(eag['logmstar'][...][cen_eag], bins=logms_bin)
-
-    phi_simba   = Ngal_simba.astype(float) / vol_simba / dlogms
-    phi_tng     = Ngal_tng.astype(float) / vol_tng / dlogms
-    phi_eag     = Ngal_eag.astype(float) / vol_eagle / dlogms
+    
+    Ngal_simba, _   = np.histogram(simba_ms, bins=logms_bin)
+    Ngal_tng, _     = np.histogram(tng_ms, bins=logms_bin)
+    Ngal_eag, _     = np.histogram(eag_ms, bins=logms_bin)
+    
+    phi_simba   = Ngal_simba.astype(float) / simba.cosmic_volume / dlogms
+    phi_tng     = Ngal_tng.astype(float) / tng.cosmic_volume
+    phi_eag     = Ngal_eag.astype(float) / eag.cosmic_volume / dlogms
     #########################################################################
     # plot SMFs
     #########################################################################
-    fig = plt.figure(figsize=(20,5))
+    fig = plt.figure(figsize=(20,4))
     outer = mpl.gridspec.GridSpec(1, 2, width_ratios=[1, 3], figure=fig) 
     #make nested gridspecs
     gs1 = mpl.gridspec.GridSpecFromSubplotSpec(1, 1, subplot_spec=outer[0])
@@ -348,8 +188,6 @@ def SMF_MsSFR():
             wspace=0.05)
 
     sub = plt.subplot(gs1[0])
-    sub.errorbar(0.5*(logms_low + logms_high), phi_sdss, yerr=err_phi_sdss,
-            fmt='.k', label='SDSS Centrals')
     sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_simba, c='C0',
             label='SIMBA')
     sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c='C1', 
@@ -358,11 +196,11 @@ def SMF_MsSFR():
             label='EAGLE')
     sub.legend(loc='lower left', handletextpad=0.3, fontsize=20)
     sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
-    sub.set_xlim(9.7, 12.5)
-    sub.set_xticks([10., 11., 12.]) 
-    sub.set_ylabel(r'central SMF ($\Phi^{\rm cen}_{M_*}$)', fontsize=24)
+    sub.set_xlim(9., 12.5)
+    sub.set_xticks([9., 10., 11., 12.]) 
+    sub.set_ylabel(r'SMF ($\Phi_{M_*}$)', fontsize=24)
     sub.set_yscale("log")
-    sub.set_ylim(5e-6, 3e-2) 
+    sub.set_ylim(5e-6, 1e-1) 
     
     names   = ['SIMBA', 'TNG', 'EAGLE']
     clrs    = ['C1', 'C0', 'C2']
@@ -371,25 +209,22 @@ def SMF_MsSFR():
 
     for i in range(len(names)): 
         sub = plt.subplot(gs2[i]) 
-        DFM.hist2d(sdss_ms, sdss_sfr, levels=[0.68, 0.95],
-                range=[[7.8, 12.], [-4., 2.]], color='k', 
-                contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
                 levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
                 contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
         sub.text(0.05, 0.95, names[i], transform=sub.transAxes, ha='left', va='top', fontsize=25) 
-        sub.set_xlim([9., 12.]) 
+        sub.set_xlim([9., 11.5]) 
         sub.set_ylim([-3., 2.]) 
         if i != 0: sub.set_yticklabels([]) 
         else: sub.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', fontsize=25) 
         if i == 1: sub.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', fontsize=25) 
-        sub.set_xticklabels([9., '', 10., '', 11.]) 
+        sub.set_xticks([9., 10., 11.]) 
+        #sub.set_xticklabels([9., 10., 11.]) 
     
-    _plth0, = sub.plot([], [], c='k', ls='--')
-    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
-            fontsize=20) 
+    #_plth0, = sub.plot([], [], c='k', ls='--')
+    #sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
+    #        fontsize=20) 
 
     fig.subplots_adjust(wspace=0.2, hspace=0.1)
 
@@ -2442,12 +2277,12 @@ def _abc_color_Ms():
 
 
 if __name__=="__main__": 
-    SDSS()
-    NSA()
+    #SDSS()
+    #NSA()
     #_sdsses()
     #SMFs() 
     #M_SFR()
-    #SMF_MsSFR()
+    SMF_MsSFR()
     #DEM()
     #Observables()
     #ABC_corner() 
