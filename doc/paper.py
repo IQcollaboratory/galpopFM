@@ -10,6 +10,8 @@ import sys
 import h5py 
 import numpy as np 
 import corner as DFM 
+# -- astrologs --
+from astrologs.astrologs import Astrologs 
 # -- galpopfm --
 from galpopfm import dustfm as dustFM
 from galpopfm import dust_infer as dustInfer
@@ -70,12 +72,13 @@ def SDSS():
     ''' figure illustrating our SDSS 
     '''
     # read in SDSS 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5')
-    sdss = h5py.File(fsdss, 'r')
-    
+    tinker = Astrologs('tinkergroup', mlim='9.7') 
+
     # get M_r and log M* 
-    R_mag = sdss['mr_tinker'][...]
-    logms = np.log10(sdss['ms_tinker'][...])
+    R_mag = tinker.data['M_r']
+    logms = tinker.data['log.M_star'] 
+    print('%i of %i are centrals' % (np.sum(tinker.data['iscen']),
+        len(tinker.data['iscen'])))
 
     Rlim = (R_mag < -20.) 
 
@@ -96,6 +99,55 @@ def SDSS():
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def NSA():
+    ''' figure illustrating our SDSS 
+    '''
+    # read in SDSS 
+    nsa = Astrologs('nsa') 
+
+    # get M_r and log M* 
+    R_mag   = nsa.data['M_r']
+    logms   = np.log10(nsa.data['M_star'] / 0.7**2) 
+    z       = nsa.data['redshift'] 
+
+    Rlim = (R_mag < -19.5) 
+
+    fig = plt.figure(figsize=(6,6))
+    sub = fig.add_subplot(111)
+
+    sub.scatter(logms, R_mag, c='k', s=1, label='NASA-Sloan Atlas')
+    sub.scatter(logms[Rlim], R_mag[Rlim], c='C1', s=1, label='$M_r < -19.5$') 
+    
+    sub.legend(loc='upper left', handletextpad=0.1, markerscale=10, fontsize=25) 
+    sub.set_xlabel(r'$\log(\,M_*$ [$M_\odot$]$)$', fontsize=25) 
+    sub.set_xlim(8.5, 12.)
+
+    sub.set_ylabel(r'$M_r$', fontsize=25) 
+    sub.set_ylim(-17., -23.4) 
+
+    ffig = os.path.join(fig_dir, 'nsa.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+
+    fig = plt.figure(figsize=(12,6))
+    sub = fig.add_subplot(111)
+
+    sub.scatter(z, R_mag, c='k', s=1, label='NASA-Sloan Atlas')
+    
+    sub.legend(loc='upper left', handletextpad=0.1, markerscale=10, fontsize=25) 
+    sub.set_xlabel(r'redshift', fontsize=25) 
+    sub.set_xlim(0., 0.07)
+    sub.set_ylabel(r'$M_r$', fontsize=25) 
+    sub.set_ylim(-17., -23.4) 
+
+    ffig = os.path.join(fig_dir, 'nsa_z.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -1811,6 +1863,35 @@ def fig_tex(ffig, pdf=False):
     return os.path.join(path, '.'.join([_ffig_name, ext]))
 
 
+def _sdsses(): 
+    ''' which group catalog should I use?  
+    '''
+    # read in the different SDSS group catalogs 
+
+    fig = plt.figure(figsize=(18,6))
+
+    for i, mlim in enumerate(['9.7', '10.1', '10.5']): 
+        tinker = Astrologs('tinkergroup', mlim=mlim) 
+
+        sub = fig.add_subplot(1,3,i+1)
+        R_mag = tinker.data['M_r']
+        logms = tinker.data['log.M_star'] 
+        print('%i of %i are centrals' % (np.sum(tinker.data['iscen']),
+            len(tinker.data['iscen'])))
+
+        sub.scatter(logms, R_mag, c='k', s=1, label='$M_{*, lim}=%s$' % mlim)
+        
+        sub.set_xlabel(r'$\log(\,M_*$ [$M_\odot$]$)$', fontsize=25) 
+        sub.set_xlim(9.6, 12.)
+
+        sub.set_ylabel(r'$M_r$', fontsize=25) 
+        sub.set_ylim(-17., -23.4) 
+
+    ffig = os.path.join(fig_dir, '_sdsses.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
 def _observables_sfr0(): 
     ''' Figure presenting the observables along with simulations without any
     attenuation.
@@ -2361,7 +2442,9 @@ def _abc_color_Ms():
 
 
 if __name__=="__main__": 
-    #SDSS()
+    SDSS()
+    NSA()
+    #_sdsses()
     #SMFs() 
     #M_SFR()
     #SMF_MsSFR()
@@ -2373,7 +2456,7 @@ if __name__=="__main__":
     #ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
-    ABC_attenuation()
+    #ABC_attenuation()
     
     # tnorm Av model  
     #ABC_tnorm_corner()
