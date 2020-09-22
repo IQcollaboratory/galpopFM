@@ -50,12 +50,14 @@ def sumstat_obs(name='nsa', statistic='2d', return_bins=False):
 
     notes
     -----
+    * 09/22/2020: observation summary statistics updated to Jeremy's SDSS
+      catalog (centrals *and* satellites) with NSA absolute magnitudes 
     * see `nb/observables.ipynb` to see exactly how the summary statistic is
     calculated. 
     '''
     if statistic == '1d': 
         r_edges, gr_edges, fn_edges, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
-            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr.GR.FUVNUV.npy'), 
+            'tinker.Mr_20.Mr.GR.FUVNUV.npy'), 
             allow_pickle=True)
         dgr = gr_edges[1] - gr_edges[0]
         nbar = dgr * np.sum(x_gr)
@@ -63,7 +65,7 @@ def sumstat_obs(name='nsa', statistic='2d', return_bins=False):
 
     elif statistic == '2d': 
         r_edges, gr_edges, fn_edges, x_gr, x_fn, _, _ = np.load(os.path.join(dat_dir, 'obs',
-            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR.Mr_FUVNUV.npy'), 
+            'tinker.Mr_20.Mr_GR.Mr_FUVNUV.npy'), 
             allow_pickle=True) 
         dr = r_edges[1] - r_edges[0]
         dgr = gr_edges[1] - gr_edges[0]
@@ -72,7 +74,7 @@ def sumstat_obs(name='nsa', statistic='2d', return_bins=False):
 
     elif statistic == '3d': 
         r_edges, gr_edges, fn_edges, _x_obs, _ = np.load(os.path.join(dat_dir, 'obs',
-            'tinker_SDSS_centrals_M9.7.Mr_complete.Mr_GR_FUVNUV.npy'), 
+            'tinker.Mr_20.Mr_GR_FUVNUV.npy'), 
             allow_pickle=True)
         dr = r_edges[1] - r_edges[0]
         dgr = gr_edges[1] - gr_edges[0]
@@ -180,8 +182,12 @@ def _observable_zeroSFR(wave, sed):
     and FUV-NUV distributions of quiescent SDSS galaxies. This is to remove
     these galaxies from consideration in the inference. 
 
+    See `nb/sdss_quiescent_sumstat.ipynb` for details. 
+
     notes
     -----
+    * 09/22/2020: updated the quiescent distributions since the observational
+      dataset has been updated.
     * in principle, the G-R and FUV-NUV sampling can done for R bins, but at
     the moment it does not. 
     * this only runs once so its not optimized in any way 
@@ -189,12 +195,10 @@ def _observable_zeroSFR(wave, sed):
     ngal = sed.shape[0]  
     # read in G-R and FUV-NUV distributions of SDSS quiescent galaxies 
     gr_edges, gr_nbins = np.load(os.path.join(dat_dir, 'obs',
-        'tinker_SDSS_centrals_M9.7.Mr_complete.quiescent.G_R_dist.npy'), 
-        allow_pickle=True)
+        'tinker.Mr_20.quiescent.G_R_dist.npy'), allow_pickle=True)
 
     fn_edges, fn_nbins = np.load(os.path.join(dat_dir, 'obs',
-        'tinker_SDSS_centrals_M9.7.Mr_complete.quiescent.FUV_NUV_dist.npy'), 
-        allow_pickle=True)
+        'tinker.Mr_20.quiescent.FUV_NUV_dist.npy'), allow_pickle=True)
     
     # calculate Mr from SEDs 
     R_mag = measureObs.AbsMag_sed(wave, sed, band='r_sdss') 
