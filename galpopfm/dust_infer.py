@@ -7,6 +7,7 @@ import os
 import sys 
 import h5py 
 import numpy as np 
+from scipy.stats import chi2 
 np.seterr(divide='ignore', invalid='ignore')
 # -- abcpmc -- 
 import abcpmc
@@ -132,6 +133,17 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
 
     FUV_NUV = F_mag - N_mag 
     G_R = G_mag - R_mag
+    
+    n_gal = len(R_mag)
+
+    # noise model (simplest model) 
+    sig_R = chi2.rvs(2, loc=0.02, scale=0.00025, size=n_gal)
+    sig_FN = chi2.rvs(2, loc=0.05, scale=0.1, size=n_gal)
+    sig_GR = chi2.rvs(3, size=n_gal) * (0.00005 * (R_mag + 20.1) + 0.00015) + 0.0283
+    
+    R_mag += np.random.normal(size=n_gal) * sig_R
+    FUV_NUV += np.random.normal(size=n_gal) * sig_FN
+    G_R += np.random.normal(size=n_gal) * sig_GR
 
     data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
 
