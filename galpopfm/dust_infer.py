@@ -104,7 +104,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
 
     notes
     -----
-    * still need to implement noise model
+    * 09/22/2020: simple noise model implemented
     * 4/22/2020: extra_data kwarg added. This is to pass pre-sampled
     observables for SFR = 0 galaxies 
     '''
@@ -137,9 +137,9 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     n_gal = len(R_mag)
 
     # noise model (simplest model) 
-    sig_R = chi2.rvs(2, loc=0.02, scale=0.00025, size=n_gal)
-    sig_FN = chi2.rvs(2, loc=0.05, scale=0.1, size=n_gal)
-    sig_GR = chi2.rvs(3, size=n_gal) * (0.00005 * (R_mag + 20.1) + 0.00015) + 0.0283
+    sig_R = chi2.rvs(3, loc=0.02, scale=0.00005, size=n_gal)
+    sig_FN = chi2.rvs(2, loc=0.05, scale=0.05, size=n_gal)
+    sig_GR = chi2.rvs(3, size=n_gal) * (0.000025 * (R_mag + 20.1) + 0.000075) + 0.0283
     
     R_mag += np.random.normal(size=n_gal) * sig_R
     FUV_NUV += np.random.normal(size=n_gal) * sig_FN
