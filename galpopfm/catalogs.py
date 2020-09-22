@@ -8,36 +8,55 @@ from astrologs.astrologs import Astrologs
 
 
 def Catalog(name): 
-    if name == 'nsa': 
-        return _nsa(name) 
+    if name == 'tinker': 
+        return _tinkergroup()
+    elif name == 'nsa': 
+        return _nsa() 
     elif name in ['simba', 'tng', 'eagle']: 
         return _sim_sed(name)
     else: 
         raise ValueError 
 
 
-def _nsa(name): 
+def _nsa(): 
     ''' read in the NSA catalog and impose selection critera 
     '''
-    nsa = Astrologs('nsa') 
+    # read nsa catalog over the SDSS VAGC footprint 
+    nsa = Astrologs('nsa', vagc_footprint=True) 
 
     # selection criteria 
     cut_redshift = (nsa.data['redshift'] > 0.01) & (nsa.data['redshift'] < 0.055) # redshift range 
-    # lazy way to simplify the comoving volume calculation
-    cut_footprint = (
-            (nsa.data['ra'] > 130.) & (nsa.data['ra'] < 235) & 
-            (nsa.data['dec'] > 0) & (nsa.data['dec'] < 56)) 
     # conservative absolute magnitude cut for completeness (this sample is
     # roughly M_* complete avove 10^9.7 Msun 
     cut_absmag = (nsa.data['M_r'] < -19.5)
-    cuts = (cut_redshift & cut_footprint & cut_absmag)
+    cuts = (cut_redshift & cut_absmag)
 
     # impose selection cut on the sample 
     nsa.select(cuts) 
+    
+    # some extra meta data 
+    nsa.footprint = 7818.28 # deg^2
 
-    nsa.cosmic_volume = 2558519.7 # (Mpc/h)^3
+    # from astropy.cosmology import Planck as cosmo 
+    # ((cosmo.comoving_volume(0.055).value - cosmo.comoving_volume(0.01).value) * (7818.28/41252.96) * cosmo.h**3)
+    nsa.cosmic_volume = 3401908.8 # (Mpc/h)^3
 
     return nsa 
+
+
+def _tinkergroup(): 
+    ''' read Jeremy's group catalog with M* limit of 10^9.7 Msun
+    '''
+    # read Jeremy's group catalog with M* = 10^9.7 Msun limit, cross matched
+    # with NSA
+    tinker = Astrologs('tinkergroup', mlim='9.7', cross_nsa=True) 
+    
+    # some extra meta data 
+    tinker.footprint = 7818.28 # deg^2
+    # from astropy.cosmology import Planck15 as cosmo
+    # ((cosmo.comoving_volume(0.0334).value - cosmo.comoving_volume(0.0107).value) * (7818.28/41252.96) * cosmo.h**3))
+    tinker.cosmic_volume = 751113.0 # (Mpc/h)^3
+    return tinker
 
 
 def _sim_sed(name): 
