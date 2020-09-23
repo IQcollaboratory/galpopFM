@@ -43,7 +43,7 @@ elif statistic == '2d':
         eps0 = [0.01, 0.2, 0.1]
 elif statistic == '3d': 
     if distance_method == 'L2': 
-        eps0 = [4.e-5, 0.004]
+        eps0 = [4.e-5, 0.01]
     elif distance_method == 'L1': 
         eps0 = [0.01, 0.2]
 ######################################################

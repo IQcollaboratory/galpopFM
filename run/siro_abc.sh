@@ -1,6 +1,6 @@
 # !/bin/bash
 #PBS -l nodes=1:ppn=24
-#PBS -N sim_slabnollmsfr.L2.3d
+#PBS -N tng_slabnollmsfrfixbump
 cd $PBS_O_WORKDIR
 export NPROCS=`wc -l $PBS_NODEFILE |gawk '//{print $1}'`
 export PATH="/home/users/hahn/anaconda3/bin:$PATH"
@@ -8,8 +8,8 @@ export PATH="/home/users/hahn/anaconda3/bin:$PATH"
 source /home/users/hahn/.bashrc
 conda activate iq 
 
-sim='simba'
-#sim='tng'
+#sim='simba'
+sim='tng'
 #sim='eagle'
 #dem='slab_noll_msfr'
 #dem='tnorm_noll_msfr'
@@ -21,6 +21,7 @@ stat='3d'
 ################################################################################ 
 # log
 ################################################################################ 
+# 09/23/2020: implemented central+satellite; modified observational sumstat 
 # 4/23/2020: running after implement instantaneous SFR=0 pre-sampling
 ################################################################################ 
 ofile="/home/users/hahn/projects/galpopFM/run/_siro/_abc_"$sim"."$dem"."$dist"."$stat".o"
