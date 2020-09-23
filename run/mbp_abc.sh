@@ -3,8 +3,8 @@ source ~/.bash_profile
 conda activate iq 
 
 #sim='simba'
-#sim='tng'
-sim='eagle'
+sim='tng'
+#sim='eagle'
 #dem='slab_noll_m'
 #dem='slab_noll_msfr'
 #dem='tnorm_noll_msfr'

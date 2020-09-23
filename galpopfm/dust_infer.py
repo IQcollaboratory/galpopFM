@@ -44,7 +44,7 @@ def distance_metric(x_obs, x_model, method='chi2', x_err=None):
     return rho
 
 
-def sumstat_obs(name='nsa', statistic='2d', return_bins=False): 
+def sumstat_obs(statistic='2d', return_bins=False): 
     ''' summary statistics for SDSS observations is the 3D histgram of 
     [M_r, G-R, FUV - NUV]. 
 
@@ -89,7 +89,7 @@ def sumstat_obs(name='nsa', statistic='2d', return_bins=False):
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
-        statistic='2d', return_datavector=False, extra_data=None): 
+        statistic='2d', noise=True, seed=0, return_datavector=False, extra_data=None): 
     ''' calculate summary statistics for forward model m(theta) 
     
     :param theta: 
@@ -137,15 +137,17 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     G_R = G_mag - R_mag
     
     n_gal = len(R_mag)
-
-    # noise model (simplest model) 
-    sig_R = chi2.rvs(3, loc=0.02, scale=0.00005, size=n_gal)
-    sig_FN = chi2.rvs(2, loc=0.05, scale=0.05, size=n_gal)
-    sig_GR = chi2.rvs(3, size=n_gal) * (0.000025 * (R_mag + 20.1) + 0.000075) + 0.0283
-    
-    R_mag += np.random.normal(size=n_gal) * sig_R
-    FUV_NUV += np.random.normal(size=n_gal) * sig_FN
-    G_R += np.random.normal(size=n_gal) * sig_GR
+        
+    if noise: 
+        np.random.seed(seed)
+        # noise model (simplest model) 
+        sig_R = chi2.rvs(3, loc=0.02, scale=0.00005, size=n_gal)
+        sig_FN = chi2.rvs(2, loc=0.05, scale=0.05, size=n_gal)
+        sig_GR = chi2.rvs(3, size=n_gal) * (0.000025 * (R_mag + 20.1) + 0.000075) + 0.0283
+        
+        R_mag += np.random.normal(size=n_gal) * sig_R
+        FUV_NUV += np.random.normal(size=n_gal) * sig_FN
+        G_R += np.random.normal(size=n_gal) * sig_GR
 
     data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
 

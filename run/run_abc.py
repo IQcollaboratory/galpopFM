@@ -60,11 +60,10 @@ downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
 f_downsample = 0.1
 
-cens    = sim_sed['censat'].astype(bool) # centrals
 mlim    = (sim_sed['logmstar'] > 9.4) # mass limit 
 zerosfr = sim_sed['logsfr.inst'] == -999
 
-cuts = cens & mlim & ~zerosfr & downsample 
+cuts = mlim & ~zerosfr & downsample 
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
@@ -80,10 +79,10 @@ shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy()
 # distribution 
 zerosfr_obs = dustInfer._observable_zeroSFR(
         sim_sed['wave'][wlim], 
-        sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
+        sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
 
-# read SDSS observable
-x_obs = dustInfer.sumstat_obs(name='sdss', statistic=statistic)
+# read SDSS summary statistics  
+x_obs = dustInfer.sumstat_obs(statistic=statistic)
 print('sdss nbar=%.4e' % x_obs[0])
 ######################################################
 # functions  
@@ -172,7 +171,7 @@ def dem_prior(dem_name):
 
 def _sumstat_model_wrap(theta, dem=dem): 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
-            f_downsample=f_downsample, statistic=statistic, 
+            f_downsample=f_downsample, statistic=statistic, noise=True, 
             extra_data=zerosfr_obs) 
     return x_mod 
 
