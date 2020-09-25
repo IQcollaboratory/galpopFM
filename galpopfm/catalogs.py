@@ -51,6 +51,13 @@ def _tinkergroup():
     # with NSA
     tinker = Astrologs('tinkergroup', mlim='9.7', cross_nsa=True) 
     
+    # some data columns for convenience
+    tinker.data['log.sfr']  = tinker.data['log.M_star'] + tinker.data['log.ssfr']
+    tinker.data['M_fuv']    = tinker.data['NSA_ABSMAG'][:,0]
+    tinker.data['M_nuv']    = tinker.data['NSA_ABSMAG'][:,1]
+    tinker.data['M_g']      = tinker.data['NSA_ABSMAG'][:,3]
+    tinker.data['M_r']      = tinker.data['NSA_ABSMAG'][:,4]
+
     # some extra meta data 
     tinker.footprint = 7818.28 # deg^2
     # from astropy.cosmology import Planck15 as cosmo
