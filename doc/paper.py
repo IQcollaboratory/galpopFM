@@ -151,8 +151,12 @@ def SMF_MsSFR():
     and M*-SFR relation 
     '''
     #########################################################################
-    # read nsa and sims  
+    # read sdss and sims  
     #########################################################################
+    sdss = Catalog('tinker') 
+    sdss_ms = sdss.data['log.M_star']
+    sdss_sfr = sdss_ms + sdss.data['log.ssfr'] 
+
     simba = Catalog('simba') 
     simba_ms  = simba.data['logmstar']
     simba_sfr = simba.data['logsfr.inst']
@@ -177,10 +181,13 @@ def SMF_MsSFR():
     phi_simba   = Ngal_simba.astype(float) / simba.cosmic_volume / dlogms
     phi_tng     = Ngal_tng.astype(float) / tng.cosmic_volume
     phi_eag     = Ngal_eag.astype(float) / eag.cosmic_volume / dlogms
+    # read sdss smf 
+    fsdss = os.path.join(dat_dir, 'obs', 'tinker.smf.dat') 
+    logms_low, logms_high, phi_sdss, err_phi_sdss = np.loadtxt(fsdss, unpack=True)
     #########################################################################
     # plot SMFs
     #########################################################################
-    fig = plt.figure(figsize=(20,4))
+    fig = plt.figure(figsize=(20,5))
     outer = mpl.gridspec.GridSpec(1, 2, width_ratios=[1, 3], figure=fig) 
     #make nested gridspecs
     gs1 = mpl.gridspec.GridSpecFromSubplotSpec(1, 1, subplot_spec=outer[0])
@@ -188,6 +195,8 @@ def SMF_MsSFR():
             wspace=0.05)
 
     sub = plt.subplot(gs1[0])
+    sub.errorbar(0.5*(logms_low + logms_high)[logms_low > 9.7], phi_sdss[logms_low > 9.7], 
+            yerr=err_phi_sdss[logms_low > 9.7],	fmt='.k', label='SDSS')
     sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_simba, c='C0',
             label='SIMBA')
     sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c='C1', 
@@ -209,6 +218,12 @@ def SMF_MsSFR():
 
     for i in range(len(names)): 
         sub = plt.subplot(gs2[i]) 
+        DFM.hist2d(sdss_ms, sdss_sfr, levels=[0.68, 0.95],	
+                range=[[7.8, 12.], [-4., 2.]], color='k', 	
+                contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 	
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+
+
         DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
                 levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
                 contour_kwargs={'linewidths': 0.5}, 
@@ -222,9 +237,9 @@ def SMF_MsSFR():
         sub.set_xticks([9., 10., 11.]) 
         #sub.set_xticklabels([9., 10., 11.]) 
     
-    #_plth0, = sub.plot([], [], c='k', ls='--')
-    #sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
-    #        fontsize=20) 
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.2,
+            fontsize=20) 
 
     fig.subplots_adjust(wspace=0.2, hspace=0.1)
 
@@ -303,30 +318,29 @@ def Observables():
     #########################################################################
     # read in SDSS measurements
     #########################################################################
-    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(name='sdss',
-            statistic='2d', return_bins=True)
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d',
+            return_bins=True)
     dr  = r_edges[1] - r_edges[0]
     dgr = gr_edges[1] - gr_edges[0]
     dfn = fn_edges[1] - fn_edges[0]
     ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
-    
-    mr_complete = (sdss['mr_tinker'][...] < -20.)
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
 
-    x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
-            sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
-            sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
     sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(7)]), 
+    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(6)]), 
             zero_sfr_sample=False)
-    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(7)]),
+    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(6)]),
             zero_sfr_sample=False)
-    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(7)]),
+    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(6)]),
             zero_sfr_sample=False)
     print('--- fraction of galaxies w/ 0 SFR ---') 
     print('simba %.2f' % (np.sum(sfr0_simba)/len(sfr0_simba)))
@@ -425,14 +439,13 @@ def _sim_observables(sim, theta, model='slab', fixbump=True,
     downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
     f_downsample = 1.#0.1
 
-    cens    = _sim_sed['censat'].astype(bool) 
     mlim    = (_sim_sed['logmstar'] > 9.4) 
     zerosfr = (_sim_sed['logsfr.inst'] == -999)
 
     if not zero_sfr_sample: 
-        cuts = cens & mlim & downsample 
+        cuts = mlim & downsample 
     else: 
-        cuts = cens & mlim & ~zerosfr & downsample 
+        cuts = mlim & ~zerosfr & downsample 
 
     sim_sed = {} 
     sim_sed['sim']          = sim 
@@ -2282,9 +2295,9 @@ if __name__=="__main__":
     #_sdsses()
     #SMFs() 
     #M_SFR()
-    SMF_MsSFR()
+    #SMF_MsSFR()
     #DEM()
-    #Observables()
+    Observables()
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
