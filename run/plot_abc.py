@@ -81,8 +81,7 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     ####################################################################################
     # read in SDSS measurements 
     ####################################################################################
-    r_edges, gr_edges, fn_edges, x_obs = dustInfer.sumstat_obs(name='sdss',
-            statistic='2d', return_bins=True)
+    r_edges, gr_edges, fn_edges, x_obs = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
     dr  = r_edges[1] - r_edges[0]
     dgr = gr_edges[1] - gr_edges[0]
     dfn = fn_edges[1] - fn_edges[0]
@@ -304,8 +303,8 @@ def run_params(name):
         params['prior_min'] = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., -4., 0., 1.]) 
         params['prior_max'] = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 0.0, 4., 4.]) 
     elif params['dem'] == 'slab_noll_msfr_fixbump':
-        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
-        params['prior_max'] = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -4.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0]) 
     elif params['dem'] == 'tnorm_noll_msfr_fixbump': 
         params['prior_min'] = np.array([-5., -5., 0., -5., -5., 0.1, -4., -4., -4., 1.]) 
         params['prior_max'] = np.array([5.0, 5.0, 6., 5.0, 5.0, 3., 4.0, 4.0, 4.0, 4.]) 
