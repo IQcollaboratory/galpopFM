@@ -37,15 +37,15 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 sims = ['SIMBA', 'TNG', 'EAGLE']
 clrs = ['C1', 'C0', 'C2']
 
-nabc = [8, 8, 11] 
+#nabc = [8, 8, 11] 
+nabc = [6, 6, 15]
 abc_run = lambda _sim: '%s.slab_noll_msfr_fixbump.L2.3d' % _sim.lower() 
 dem_attenuate = dustFM.DEM_slab_noll_msfr_fixbump
 param_lbls = np.array([
         r'$m_{\tau,M_*}$', r'$m_{\tau,{\rm SFR}}$', r'$c_{\tau}$', 
-        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$',
-        r'$f_{\rm neb}$'])
-prior_min = np.array([-5., -5., 0., -4., -4., -4., 1.]) 
-prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$'])#, r'$f_{\rm neb}$'])
+prior_min = np.array([-5., -5., 0., -4., -4., -4.])#, 1.]) 
+prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0])#, 4.]) 
 
 '''
 nabc = [7, 5, 5] 
@@ -416,7 +416,7 @@ def Observables():
     return None 
 
 
-def _sim_observables(sim, theta, model='slab', fixbump=True,
+def _sim_observables(sim, theta, model='slab', noise=True, fixbump=True,
         zero_sfr_sample=False, return_sim=False): 
     ''' read specified simulations and return data vector 
 
@@ -459,17 +459,17 @@ def _sim_observables(sim, theta, model='slab', fixbump=True,
         # SFR=0 observables are *not* sampled. Returns indices 
         x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
                 dem='%s_noll_msfr%s' % (model, ['', '_fixbump'][fixbump]), 
-                f_downsample=f_downsample, statistic='2d',
+                f_downsample=f_downsample, statistic='2d', noise=noise, 
                 return_datavector=True)
         _zerosfr = sim_sed['logsfr.inst'] == -999
     else: 
         zerosfr_obs = dustInfer._observable_zeroSFR(
                 _sim_sed['wave'][wlim], 
-                _sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
+                _sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
 
         x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
                 dem='%s_noll_msfr%s' % (model, ['', '_fixbump'][fixbump]), 
-                f_downsample=f_downsample, statistic='2d',
+                f_downsample=f_downsample, statistic='2d', noise=noise, 
                 extra_data=zerosfr_obs, return_datavector=True)
         _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
         _zerosfr[np.sum(cuts):] = True
@@ -483,9 +483,9 @@ def _sim_observables(sim, theta, model='slab', fixbump=True,
             _simsed['logsfr.inst'] = sim_sed['logsfr.inst'][mr_cut]
         else: 
             _simsed['logmstar'] = np.concatenate([sim_sed['logmstar'],
-                _sim_sed['logmstar'][cens & mlim & zerosfr & downsample]])[mr_cut]
+                _sim_sed['logmstar'][mlim & zerosfr & downsample]])[mr_cut]
             _simsed['logsfr.inst'] = np.concatenate([sim_sed['logsfr.inst'], 
-                _sim_sed['logsfr.inst'][cens & mlim & zerosfr & downsample]])[mr_cut]
+                _sim_sed['logsfr.inst'][mlim & zerosfr & downsample]])[mr_cut]
         return x_mod[:,mr_cut], _zerosfr[mr_cut], _simsed
 
 
@@ -885,27 +885,24 @@ def _ABC_Observables():
 
 
 def ABC_Observables(): 
-    ''' Figure presenting the observables along with simulations without any
-    attenuation.
+    ''' Figure the color-magnitude relation of simulations with DEM to SDSS
     '''
     #########################################################################
     # read in SDSS measurements
     #########################################################################
-    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(name='sdss',
-            statistic='2d', return_bins=True)
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
     dr  = r_edges[1] - r_edges[0]
     dgr = gr_edges[1] - gr_edges[0]
     dfn = fn_edges[1] - fn_edges[0]
     ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
 
-    fsdss = os.path.join(dat_dir, 'obs', 'tinker_SDSS_centrals_M9.7.valueadd.hdf5') 
-    sdss = h5py.File(fsdss, 'r') 
-    
-    mr_complete = (sdss['mr_tinker'][...] < -20.)
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
 
-    x_obs = [-1.*sdss['mr_tinker'][...][mr_complete], 
-            sdss['mg_tinker'][...][mr_complete] - sdss['mr_tinker'][...][mr_complete], 
-            sdss['ABSMAG'][...][:,0][mr_complete] - sdss['ABSMAG'][...][:,1][mr_complete]] 
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
     sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
     #########################################################################
     # read in simulations without dust attenuation
@@ -1699,6 +1696,112 @@ def ABC_tnorm_Observables():
     return None 
 
 
+def _observables_noise(): 
+    ''' comparison of color-magnitude relation of simulations + DEM with and
+    without the noise model 
+    '''
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+    #########################################################################
+    # read in simulations + DEM 
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
+    theta_simba = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('tng'), 'theta.t%i.dat' % nabc[1])) 
+    theta_tng = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
+    theta_eagle = np.median(theta_T, axis=0) 
+    
+    # with noise model 
+    x_noisy_simba, sfr0_simba = _sim_observables('simba', theta_simba, noise=True, 
+            zero_sfr_sample=True)
+    x_noisy_tng, sfr0_tng = _sim_observables('tng', theta_tng, noise=True, 
+            zero_sfr_sample=True)
+    x_noisy_eagle, sfr0_eagle = _sim_observables('eagle', theta_eagle, noise=True, 
+            zero_sfr_sample=True)
+    
+    # without noise model
+    x_simba, sfr0_simba = _sim_observables('simba', theta_simba, noise=False, 
+            zero_sfr_sample=True)
+    x_tng, sfr0_tng = _sim_observables('tng', theta_tng, noise=False, 
+            zero_sfr_sample=True)
+    x_eagle, sfr0_eagle = _sim_observables('eagle', theta_eagle, noise=False,  
+            zero_sfr_sample=True)
+    #########################################################################
+    # plotting 
+    #########################################################################
+    xs_noisy = [x_noisy_simba, x_noisy_tng, x_noisy_eagle]
+    xs      = [x_simba, x_tng, x_eagle]
+    names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
+
+    fig = plt.figure(figsize=(5*len(xs),10))
+
+    #for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
+    for i, _x_noisy, _x, name, clr in zip(range(len(xs)), xs_noisy, xs, names, clrs): 
+        # R vs (G - R)
+        sub = fig.add_subplot(2,len(xs),i+1)
+        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x_noisy[0], _x_noisy[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+
+        # R vs FUV-NUV
+        sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
+        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x_noisy[0], _x_noisy[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        #sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['no noise model'], loc='lower right', handletextpad=0.1,
+            fontsize=20)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, '_observables_noise.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+
 def fig_tex(ffig, pdf=False):
     ''' given filename of figure return a latex friendly file name
     '''
@@ -2297,7 +2400,7 @@ if __name__=="__main__":
     #M_SFR()
     #SMF_MsSFR()
     #DEM()
-    Observables()
+    #Observables()
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
@@ -2305,6 +2408,10 @@ if __name__=="__main__":
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
+
+    # testing the noise model  
+    _observables_noise()
+
     
     # tnorm Av model  
     #ABC_tnorm_corner()
