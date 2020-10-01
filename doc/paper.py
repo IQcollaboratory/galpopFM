@@ -38,7 +38,7 @@ sims = ['SIMBA', 'TNG', 'EAGLE']
 clrs = ['C1', 'C0', 'C2']
 
 #nabc = [8, 8, 11] 
-nabc = [6, 6, 15]
+nabc = [9, 6, 17]
 abc_run = lambda _sim: '%s.slab_noll_msfr_fixbump.L2.3d' % _sim.lower() 
 dem_attenuate = dustFM.DEM_slab_noll_msfr_fixbump
 param_lbls = np.array([
@@ -927,7 +927,7 @@ def ABC_Observables():
     # plotting 
     #########################################################################
     xs      = [x_simba, x_tng, x_eagle]
-    names   = ['SIMBA + DEM', 'TNG + DEM', 'EAGLE + DEM']
+    names   = ['SIMBA + EDP', 'TNG + EDP', 'EAGLE + EDP']
 
     fig = plt.figure(figsize=(5*len(xs),10))
 
@@ -988,7 +988,7 @@ def ABC_Observables():
     fig.savefig(ffig, bbox_inches='tight') 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
-
+    return None 
     obs_lims = [(20, 22.5), (0.2, 1.5), (-0.5, 5)]
     obs_lbls = [r'$M_r$ luminosity', '$G - R$', '$FUV - NUV$']
     yobs_lbls = [r'central luminosity function, $\Phi^{\rm cen}_{M_r}$', '$p(G - R)$', '$p(FUV - NUV)$']
@@ -1044,7 +1044,7 @@ def ABC_Observables():
     _plth2, = sub.plot([], [], c='C0')
     _plth3, = sub.plot([], [], c='C2')
 
-    names   = ['SDSS', 'SIMBA DEM', 'TNG DEM', 'EAGLE DEM']
+    names   = ['SDSS', 'SIMBA+EDP', 'TNG+EDP', 'EAGLE+EDP']
     sub.legend([_plth0, _plth1, _plth2, _plth3], names, loc='upper right',
             handletextpad=0.2, fontsize=14) 
     fig.subplots_adjust(wspace=0.4)
@@ -2404,13 +2404,13 @@ if __name__=="__main__":
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
 
     # testing the noise model  
-    _observables_noise()
+    #_observables_noise()
 
     
     # tnorm Av model  
