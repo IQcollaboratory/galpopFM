@@ -36,9 +36,19 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']
 clrs = ['C1', 'C0', 'C2']
+_clrs = {
+        'simba': 'C1', 
+        'tng': 'C0',
+        'eagle': 'C2' 
+        }
 
 #nabc = [8, 8, 11] 
-nabc = [9, 6, 17]
+nabc = [11, 7, 18]
+_nabc = {
+        'simba': 11, 
+        'tng': 7,
+        'eagle': 18
+        }
 abc_run = lambda _sim: '%s.slab_noll_msfr_fixbump.L2.3d' % _sim.lower() 
 dem_attenuate = dustFM.DEM_slab_noll_msfr_fixbump
 param_lbls = np.array([
@@ -417,7 +427,7 @@ def Observables():
 
 
 def _sim_observables(sim, theta, model='slab', noise=True, fixbump=True,
-        zero_sfr_sample=False, return_sim=False): 
+        zero_sfr_sample=False, no_Mr_cut=False, return_sim=False): 
     ''' read specified simulations and return data vector 
 
     :param zero_sfr_sample: 
@@ -473,7 +483,10 @@ def _sim_observables(sim, theta, model='slab', noise=True, fixbump=True,
                 extra_data=zerosfr_obs, return_datavector=True)
         _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
         _zerosfr[np.sum(cuts):] = True
-    mr_cut = x_mod[0] > 20
+    
+    if not no_Mr_cut: mr_cut = x_mod[0] > 20
+    else: mr_cut = np.ones(len(x_mod[0])).astype(bool) 
+
     if not return_sim: 
         return x_mod[:,mr_cut], _zerosfr[mr_cut]
     else: 
@@ -1696,6 +1709,411 @@ def ABC_tnorm_Observables():
     return None 
 
 
+def ABC_Lir(): 
+    ''' compare L_IR predicted by the ABC posterior dust attenuation 
+    '''
+    cinA    = 2.9979e18 # A/s
+    lsun    = 3.839e33 # erg/s
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
+    theta_simba = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('tng'), 'theta.t%i.dat' % nabc[1])) 
+    theta_tng = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
+    theta_eagle = np.median(theta_T, axis=0) 
+
+
+    def get_seds(sim, theta): 
+        sed = dustInfer._read_sed(sim) 
+
+        mlim    = (sed['logmstar'] > 9.4) 
+        zerosfr = (sed['logsfr.inst'] == -999)
+
+        cuts = mlim & ~zerosfr 
+
+        sed_nodust  = sed['sed_noneb'][cuts,:]
+        sed_dust    = dustFM.Attenuate(
+                theta, 
+                sed['wave'], 
+                sed['sed_noneb'][cuts,:], 
+                sed['sed_onlyneb'][cuts,:], 
+                sed['logmstar'][cuts],
+                sed['logsfr.inst'][cuts],
+                dem=abc_run(sim).split('.')[1]) 
+
+        R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dust, band='r_sdss') 
+
+        return sed['wave'], sed_nodust, sed_dust, R_mag 
+    
+    sims = ['simba', 'tng', 'eagle']
+    thetas_abc = [theta_simba, theta_tng, theta_eagle]
+    L_irs, M_rs = [], [] 
+    
+    for _sim, _theta in zip(sims, thetas_abc): 
+
+        wave, sed_nodust, sed_dust, M_r = get_seds(_sim, _theta)
+
+        L_nodust    = measureObs.tsum(wave, sed_nodust * cinA / (wave**2)) # Lsun
+        L_dust      = measureObs.tsum(wave, sed_dust * cinA / (wave**2)) # Lsun
+    
+        # L_ir based on energy balance assumption of da Cunha+(2008) 
+        L_ir = L_nodust - L_dust 
+        L_irs.append(L_ir) 
+
+        M_rs.append(M_r) 
+    
+    #########################################################################
+    # plotting 
+    #########################################################################
+    names   = ['SIMBA + EDP', 'TNG + EDP', 'EAGLE + EDP']
+
+    fig = plt.figure(figsize=(5*len(sims), 6))
+
+    for i, _M_r, _L_ir, name, clr in zip(range(len(sims)), M_rs, L_irs, names, clrs): 
+        # R vs log L_IR  
+        sub = fig.add_subplot(1,len(sims),i+1)
+        DFM.hist2d(_M_r, np.log10(_L_ir), levels=[0.68, 0.95],
+                range=[(20, 23), (8, 12)], bins=20, color=clr, 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, 
+                ax=sub)
+
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: sub.set_ylabel(r'dust emission $L_{\rm IR}$', fontsize=20) 
+        else: sub.set_yticklabels([]) 
+        sub.set_ylim(8, 12) 
+    
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_Lir.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def galpop_attenuation(sim): 
+    ''' determine why quiescent galaxies have high attenuation 
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
+
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    #########################################################################
+    # read in simulations 
+    #########################################################################
+    fig = plt.figure(figsize=(10,10))
+
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run(sim), 'theta.t%i.dat' % _nabc[sim])) 
+    theta_med = np.median(theta_T, axis=0) 
+
+    x, sfr0, sim_sed = _sim_observables(sim, theta_med,
+            zero_sfr_sample=True, no_Mr_cut=True, return_sim=True)
+
+    x_nodust, _     = _sim_observables(sim, np.array([0. for i in range(6)]),
+            zero_sfr_sample=True, no_Mr_cut=True)
+
+    # simple SSFR cut 
+    quiescent = ((sim_sed['logsfr.inst'] - sim_sed['logmstar']) < -11.) & ~sfr0
+    starforming =((sim_sed['logsfr.inst'] - sim_sed['logmstar']) >= -11.) & ~sfr0 
+    quiescent_sfr0 = sfr0 
+    print("%i star-forming galaxies" % np.sum(starforming))
+    print("%i quiescent galaxies" % np.sum(quiescent)) 
+    
+    mr_lim = (x[0] > 20) 
+    print("%i star-forming galaxies Mr < -20 w/ EDP" % 
+            np.sum(starforming & mr_lim))
+    print("%i quiescent galaxies Mr < -20 w/ EDP" % 
+            np.sum(quiescent & mr_lim)) 
+
+    # R vs (G - R)
+    sub = fig.add_subplot(221)
+    DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[1]], bins=20, color='k', 
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+    DFM.hist2d(x[0], x[1], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[1]], bins=20, color=_clrs[sim], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+    sub.scatter(x[0][starforming], x[1][starforming], c='C0', s=1)
+    sub.scatter(x[0][quiescent_sfr0], x[1][quiescent_sfr0], c='r', s=1)
+    sub.scatter(x[0][quiescent], x[1][quiescent], c='C1', s=1)
+    sub.text(0.95, 0.95, 'w/ EDP', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([])
+    sub.set_ylabel(r'$G-R$', fontsize=20) 
+    sub.set_ylim(ranges[1]) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    
+    sub = fig.add_subplot(222)
+    DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[1]], bins=20, color='k', 
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+    DFM.hist2d(x_nodust[0], x_nodust[1], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[1]], bins=20, color=_clrs[sim], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+    sub.scatter(x_nodust[0][starforming], x_nodust[1][starforming], c='C0', s=1)
+    sub.scatter(x_nodust[0][quiescent_sfr0], x_nodust[1][quiescent_sfr0], c='r', s=1)
+    sub.scatter(x_nodust[0][quiescent], x_nodust[1][quiescent], c='C1', s=1)
+    sub.text(0.95, 0.95, 'w/o EDP', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([])
+    sub.set_ylim(ranges[1]) 
+    sub.set_yticks([0., 0.5, 1., 1.5])
+    sub.set_yticklabels([]) 
+    
+    # R vs FUV-NUV
+    sub = fig.add_subplot(223)
+    DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[2]], bins=20, color='k', 
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+    DFM.hist2d(x[0], x[2], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[2]], bins=20, color=_clrs[sim], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub) 
+    sub.scatter(x[0][starforming], x[2][starforming], c='C0', s=1) 
+    sub.scatter(x[0][quiescent_sfr0], x[2][quiescent_sfr0], c='r', s=1)
+    sub.scatter(x[0][quiescent], x[2][quiescent], c='C1', s=1) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
+    sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+    sub.set_ylim(ranges[2]) 
+    
+    sub = fig.add_subplot(224)
+    DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[2]], bins=20, color='k', 
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+    DFM.hist2d(x_nodust[0], x_nodust[2], levels=[0.68, 0.95],
+            range=[ranges[0], ranges[2]], bins=20, color=_clrs[sim], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub) 
+    sub.scatter(x_nodust[0][starforming], x_nodust[2][starforming], c='C0', s=1) 
+    sub.scatter(x_nodust[0][quiescent_sfr0], x_nodust[2][quiescent_sfr0], c='r', s=1)
+    sub.scatter(x_nodust[0][quiescent], x_nodust[2][quiescent], c='C1', s=1) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
+    sub.set_yticklabels([]) 
+    sub.set_ylim(ranges[2]) 
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.1,
+            fontsize=20)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'galpop_attenuation.%s.png' % sim) 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def quiescent_attenuation(): 
+    ''' determine why quiescent galaxies have high attenuation 
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
+
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    #########################################################################
+    # read in simulations 
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
+    theta_simba = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('tng'), 'theta.t%i.dat' % nabc[1])) 
+    theta_tng = np.median(theta_T, axis=0) 
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
+    theta_eagle = np.median(theta_T, axis=0) 
+
+    x_simba, sfr0_simba, sim_simba = _sim_observables('simba', theta_simba,
+            zero_sfr_sample=True, no_Mr_cut=True, return_sim=True)
+    x_tng, sfr0_tng, sim_tng = _sim_observables('tng', theta_tng,
+            zero_sfr_sample=True, no_Mr_cut=True, return_sim=True)
+    x_eagle, sfr0_eagle, sim_eagle = _sim_observables('eagle', theta_eagle,
+            zero_sfr_sample=True, no_Mr_cut=True, return_sim=True)
+
+    x_simba_nodust, _   = _sim_observables('simba', np.array([0. for i in range(6)]), 
+            zero_sfr_sample=True, no_Mr_cut=True)
+    x_tng_nodust, _     = _sim_observables('tng', np.array([0. for i in range(6)]),
+            zero_sfr_sample=True, no_Mr_cut=True)
+    x_eagle_nodust, _   = _sim_observables('eagle', np.array([0. for i in range(6)]),
+            zero_sfr_sample=True, no_Mr_cut=True)
+
+    # identify quiescent galaxies 
+    xs      = [x_simba, x_tng, x_eagle]
+    xs_nodust = [x_simba_nodust, x_tng_nodust, x_eagle_nodust]
+    sims    = [sim_simba, sim_tng, sim_eagle]
+    sfr0s   = [sfr0_simba, sfr0_tng, sfr0_eagle]
+    xs_q_nodust = [] 
+
+    for _x, _x_nodust, _sfr0, _sim in zip(xs, xs_nodust, sfr0s, sims): 
+        # simple SSFR cut 
+        quiescent = ((_sim['logsfr.inst'] - _sim['logmstar']) < -11.) & ~_sfr0
+        print("%i quiescent galaxies" % np.sum(quiescent)) 
+        print(_x[:,quiescent][:,:5])
+        print(_x_nodust[:,quiescent][:,:5])
+       
+        # no attenuation for quiescent galaxies
+        x = _x.copy()
+        x[:,quiescent] = _x_nodust[:,quiescent] 
+        xs_q_nodust.append(x) 
+
+    #########################################################################
+    # plotting 
+    #########################################################################
+    names   = ['SIMBA + EDP', 'TNG + EDP', 'EAGLE + EDP']
+
+    fig = plt.figure(figsize=(5*len(xs),20))
+
+    for i, _x, _x_nodust, name, clr in zip(range(len(xs)), xs, xs_nodust, names, clrs): 
+        # R vs (G - R)
+        sub = fig.add_subplot(4,len(xs),i+1)
+        DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+        
+        sub = fig.add_subplot(4,len(xs),len(xs)+i+1)
+        DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x_nodust[0], _x_nodust[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=20) 
+            sub.text(0.95, 0.95, 'no EDP for quiescent', 
+                    ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+
+        # R vs FUV-NUV
+        sub = fig.add_subplot(4,len(xs),2*len(xs)+i+1)
+        DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+        
+        sub = fig.add_subplot(4,len(xs),3*len(xs)+i+1)
+        DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x_nodust[0], _x_nodust[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+            sub.text(0.95, 0.95, 'no EDP for quiescent', 
+                    ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.1,
+            fontsize=20)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'quiescent_attenuation.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def _observables_noise(): 
     ''' comparison of color-magnitude relation of simulations + DEM with and
     without the noise model 
@@ -1799,7 +2217,6 @@ def _observables_noise():
     fig.savefig(ffig, bbox_inches='tight') 
     plt.close()
     return None 
-
 
 
 def fig_tex(ffig, pdf=False):
@@ -2404,10 +2821,18 @@ if __name__=="__main__":
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    ABC_Observables()
+    #ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
+    
+    # examining what happens if quiiescent galaxies don't have attenuation
+    for sim in ['simba', 'tng', 'eagle']: 
+        galpop_attenuation(sim)
+    #quiescent_attenuation()
+
+    # dust IR emission luminosity 
+    #ABC_Lir()
 
     # testing the noise model  
     #_observables_noise()
