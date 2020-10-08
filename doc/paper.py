@@ -1763,16 +1763,17 @@ def ABC_Lir():
     
         # L_ir based on energy balance assumption of da Cunha+(2008) 
         L_ir = L_nodust - L_dust 
-        L_irs.append(L_ir) 
+        notnan = ~np.isnan(np.log10(L_ir))
 
-        M_rs.append(M_r) 
+        L_irs.append(L_ir[notnan]) 
+        M_rs.append(-1.*M_r[notnan]) 
     
     #########################################################################
     # plotting 
     #########################################################################
-    names   = ['SIMBA + EDP', 'TNG + EDP', 'EAGLE + EDP']
+    names   = ['SIMBA', 'TNG', 'EAGLE']
 
-    fig = plt.figure(figsize=(5*len(sims), 6))
+    fig = plt.figure(figsize=(5*len(sims), 5))
 
     for i, _M_r, _L_ir, name, clr in zip(range(len(sims)), M_rs, L_irs, names, clrs): 
         # R vs log L_IR  
@@ -1787,7 +1788,7 @@ def ABC_Lir():
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
-        if i == 0: sub.set_ylabel(r'dust emission $L_{\rm IR}$', fontsize=20) 
+        if i == 0: sub.set_ylabel(r'EDP predicted dust emission $L_{\rm IR}$', fontsize=20) 
         else: sub.set_yticklabels([]) 
         sub.set_ylim(8, 12) 
     
@@ -2827,12 +2828,12 @@ if __name__=="__main__":
     #ABC_attenuation()
     
     # examining what happens if quiiescent galaxies don't have attenuation
-    for sim in ['simba', 'tng', 'eagle']: 
-        galpop_attenuation(sim)
+    #for sim in ['simba', 'tng', 'eagle']: 
+    #    galpop_attenuation(sim)
     #quiescent_attenuation()
 
     # dust IR emission luminosity 
-    #ABC_Lir()
+    ABC_Lir()
 
     # testing the noise model  
     #_observables_noise()
