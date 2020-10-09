@@ -1,10 +1,10 @@
-\section{Dust Empirical Modeling} \label{sec:dem}
-In this section we present the dust empirical model (DEM), a flexible model for
-applying attenuation curves to galaxy populations that allows us to incorporate
-intrinsic variations in dust attenuation as well as correlation to physical
-galaxy properties. Later, we demonstrate that we can accurately reproduce
-observations with the DEM and use it to test galaxy formation models and shed
-light on dust in galaxies. 
+\section{Empirical Dust Attenuation Modeling} \label{sec:dem}
+In this section we present the Empirical Dust Attenuation (\eda) model, a
+flexible prescription for applying attenuation curves to galaxy populations 
+that allows us to incorporate intrinsic variations in dust attenuation as well
+as correlation to physical galaxy properties. Later, we demonstrate that we can
+accurately reproduce SDSS observations with the \eda~and use it to test galaxy
+formation models and shed light on dust in galaxies. 
 
 We define the dust attenuation curve, $A(\lambda)$, as 
 \begin{equation} 
@@ -37,7 +37,7 @@ dependence, and $c_\tau$ quantifies the overall amplitude. Since $\tau_V$ is
 optical depth, we impose a $\tau_V \ge 0$ limit. We note that the slab model 
 is a naive approximation. In reality, $A_V$ for a galaxy will depend on complexities 
 of its star-to-dust geometry, variations in the extinction curves, and other
-properties beyond just inclination and $\tau_V$. The purpose of the DEM,
+properties beyond just inclination and $\tau_V$. The purpose of the \eda,
 however, is not to accurately model dust attenuation for individual galaxies,
 but rather to accurately model the distribution of dust attenuation for galaxy
 populations. In this sense, the slab model qualitatively reproduces the
@@ -92,11 +92,12 @@ where $\lambda_0$, $\Delta \lambda$, and $E_b$ are the central wavelength,
 FWHM, and strength of the bump, respectively. We assume fixed $\lambda_0 = 2175
 \AA$ and $\Delta \lambda = 350\AA$. \cite{kriek2013} and \cite{tress2018} find
 that $E_b$ correlates with the $\delta$ for star-forming galaxies $z\sim2$.
-\cite{narayanan2018} confirmed this dependence in simulations. In our DEM, we
-assume a fixed relation between $E_B$ and $\delta$ from \cite{kriek2013}: 
+\cite{narayanan2018} confirmed this dependence in simulations. In our \eda~
+model, we assume a fixed relation between $E_B$ and $\delta$ from \cite{kriek2013}: 
 $E_b = -1.9~\delta + 0.85$. Allowing the slope and amplitude of the $E_B$ and
 $\delta$ relation to vary, does {\em not} impact our results.
-In Table~\ref{tab:free_param}, we list and describe all of the free parameters in the DEM. 
+In Table~\ref{tab:free_param}, we list and describe all of the free parameters
+in the \eda. 
 
 %Next, to attenuate the galaxy SEDs, we apply $A(\lambda)$ we separately to the
 %star light and nebular emssion: 
@@ -118,18 +119,18 @@ derive $\tau_V$ and $\delta$ for these galaxies. Since $\sfr=0$ galaxies do
 not account for a large fraction of our simulated galaxies, we directly sample 
 their observables ($G, R, NUV$, and $FUV$) from the distribution of observables
 for SDSS quiescent galaxies. This way, we ensure that the attenuation of $\sfr=0$ 
-galaxies does not impact the rest of the DEM parameters. In Appendix~\ref{sec:res}, 
+galaxies does not impact the rest of the \eda~parameters. In Appendix~\ref{sec:res}, 
 we discuss the resolution effects in more detail and demonstrate that our results
 are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
 
-To apply the DEM to a simulated galaxy population in practice, we begin by
+To apply the \eda~to a simulated galaxy population in practice, we begin by
 uniformly sample inclinations, $i$, and assign them to each galaxy. Then for a
-given set of DEM parameter values, $\tau_V$, and $\delta$ are calculated for
+given set of \eda~parameter values, $\tau_V$, and $\delta$ are calculated for
 each galaxy using its $i$, $M_*$, and $\sfr$. From $\tau_V$ and $\delta$, we
 determine $A_V$ and $k(\lambda)$, which together gives $A(\lambda)$ for each of
 the galaxies.  Afterwards, we attenuate the galaxy SEDs using Eq.~\ref{eq:full_atten} and use 
 the attenuated SEDs to calculate the observables: $G, R, NUV$, and $FUV$
-absolute magnitudes. In Figure~\ref{fig:dem_av}, we present the DEM
+absolute magnitudes. In Figure~\ref{fig:dem_av}, we present the \eda~ 
 $A(\lambda)$
 for galaxies with different $\sfr$ and $M_*$: 
 star-forming ($\sfr=10^{0.5}M_\odot/yr$) with low mass ($10^{10}M_\odot$;
@@ -139,7 +140,7 @@ mass ($10^{11}M_\odot$; red). All galaxies are edge-on (\ie~$i=0$) and we use
 $\{\mtaum, \mtaus, c_\tau, \mdeltam, \mdeltas,
 c_\delta\} = \{2., -2., 2., -0.1, -0.1, -0.2\}$, which were arbitrarily chosen
 within the prior range listed in Table~\ref{tab:free_param}. For comparison, we 
-include the \cite{calzetti2001} attenuation curve. The DEM we describe in this 
+include the \cite{calzetti2001} attenuation curve. The \eda~we describe in this 
 section provides a flexible model for assigning a wide range of dust attenuation 
 to galaxies based on their physical properties. 
 
@@ -147,18 +148,18 @@ to galaxies based on their physical properties.
 \begin{center}
     \includegraphics[width=0.6\textwidth]{figs/dems.pdf}
     \caption{\label{fig:dem_av}
-    Attenuation curves, $A(\lambda)$, of our Dust Empirical Model (DEM) for
-    galaxies with different $\sfr$ and $M_*$. We include $A(\lambda)$ for 
+    Attenuation curves, $A(\lambda)$, of our Empircial Dust Attenuation (\eda)
+    model for galaxies with different $\sfr$ and $M_*$. We include $A(\lambda)$ for 
     star-forming ($\sfr=10^{0.5}M_\odot/yr$) low mass galaxy ($10^{10}M_\odot$;
     blue), high mass galaxy ($10^{11}M_\odot$; green) and quiescent
     ($\sfr=10^{-2}M_\odot/yr$) low mass galaxy ($10^{10}M_\odot$; orange), 
     high mass galaxy ($10^{11}M_\odot$; red). All galaxies are edge-on
-    (\ie~$i=0$) and we use arbitrary DEM parameter values $\{\mtaum, \mtaus, c_\tau, \mdeltam, \mdeltas,
-    c_\delta\} = \{2., -2., 2., -0.1, -0.1, -0.2\}$ within the prior range
+    (\ie~$i=0$) and we use \eda~parameter values $\{\mtaum, \mtaus, c_\tau, \mdeltam, \mdeltas,
+    c_\delta\} = \{2., -2., 2., -0.1, -0.1, -0.2\}$ near the center of our prior range
     (Table~\ref{tab:free_param}). For comparison, we include the \cite{calzetti2001} 
-    attenuation curve. In the DEM, the amplitude, slope, and UV dust bump of
+    attenuation curve. In the \eda, the amplitude, slope, and UV dust bump of
     $A(\lambda)$ depend on $M_*$, and $\sfr$ (Eqs.~\ref{eq:tauv}
-    and~\ref{eq:delta}). {\em The DEM provides a flexible model for
+    and~\ref{eq:delta}). {\em The \eda~provides a flexible model for
     assigning dust attenuation to galaxies based on their physical properties}.
     } 
 \end{center}

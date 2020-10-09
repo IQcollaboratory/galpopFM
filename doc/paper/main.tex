@@ -57,6 +57,7 @@
 \newcommand{\mdeltam}{m_{\delta,M_*}}
 \newcommand{\mdeltas}{m_{\delta,{\rm SFR}}}
 \newcommand{\cdelta}{c_\delta}
+\newcommand{\eda}{EDA}
 
 
 \newcommand{\specialcell}[2][c]{%
@@ -80,12 +81,13 @@
 
 \begin{document}\sloppy\sloppypar\frenchspacing 
 
-\title{Empirical Dust Models: Taking Hydrodynamical Simulatons with a Grain of Dust \tks{I love the title! one question: \emph{dust models}, or \emph{dust prescriptions}?}}
+\title{Empirical Dust Attenuation Models: Taking Hydrodynamical Simulatons with a Grain of Dust}
 \date{\texttt{DRAFT~---~\githash~---~\gitdate~---~NOT READY FOR DISTRIBUTION}}
 
 \newcounter{affilcounter}
 \author{ChangHoon Hahn}
 \altaffiliation{hahn.changhoon@gmail.com}
+\affil{Department of Astrophysical Sciences, Princeton University, Peyton Hall, Princeton NJ 08544, USA} 
 \affil{Lawrence Berkeley National Laboratory, 1 Cyclotron Rd, Berkeley CA 94720, USA}
 \affil{Berkeley Center for Cosmological Physics, University of California, Berkeley CA 94720, USA}
 
@@ -95,25 +97,25 @@
 \author{IQ Collaboratory}
 
 \begin{abstract}
-    We present the Dust Empirical Model (DEM), an empirical framework for
-    applying dust attenuation to simulated galaxy populations. The DEM uses 
+    We present the Empirical Dust Attenuation (\eda) models, an empirical framework for
+    applying dust attenuation to simulated galaxy populations. The \eda uses 
     a parameterization of the attenuation curve based on observational constraints 
     and a statistical prescription for sampling the curves that includes
-    correlations with galaxy properties. We apply the DEM to three state-of-the-art 
+    correlations with galaxy properties. We apply the \eda to three state-of-the-art 
     hydrodynamical simulations, SIMBA, Illustris TNG, and EAGLE. Then 
     we forward model the spectral energy distributions and optical and 
     UV color-magnitude relations, $(\gr) - M_r$ nd $(\fnuv)-M_r$, for the 
     simulated galaxies and compare them to the central galaxies in SDSS 
     using Approximate Bayesian Computation. For all three simulations, we are 
-    able to reproduce SDSS observations with the DEM. We find that SIMBA overpredicts low mass starburst galaxies and
-    requires extreme DEM that reverses the established relation between galaxy
+    able to reproduce SDSS observations with the \eda. We find that SIMBA overpredicts low mass starburst galaxies and
+    requires extreme \eda that reverses the established relation between galaxy
     color and $\sfr$. Since we can reproduce observations for disparate galaxy
     populations by varying dust attenuation, we demonstrate that dust is highly
     degenerate with subgrid physics in galaxy formation models. In addition to
-    the observed color-magnitude relations, the DEM also reproduces the
+    the observed color-magnitude relations, the \eda also reproduces the
     observed attenuation--slope relation better than radiative transfer models.
     The predicted attenuation curves for star-forming galaxies are in good agreement with the
-    literature. Furthermore, using the DEM we find correlations between dust
+    literature. Furthermore, using the \eda we find correlations between dust
     attenuation and galaxy properties: more massive galaxies have higher dust
     attenuation; galaxies with lower SFR have higher dust attenuation \tks{this seems weird, we need to look into this and rephrase I think}. Finally, 
     we find that quiescent galaxies have shallower attenuation curves and 

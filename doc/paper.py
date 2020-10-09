@@ -43,7 +43,7 @@ _clrs = {
         }
 
 #nabc = [8, 8, 11] 
-nabc = [11, 7, 18]
+nabc = [13, 7, 18]
 _nabc = {
         'simba': 11, 
         'tng': 7,
@@ -1774,7 +1774,7 @@ def ABC_Lir():
     names   = ['SIMBA', 'TNG', 'EAGLE']
 
     fig = plt.figure(figsize=(5*len(sims), 5))
-
+    #sub = fig.add_subplot(111)
     for i, _M_r, _L_ir, name, clr in zip(range(len(sims)), M_rs, L_irs, names, clrs): 
         # R vs log L_IR  
         sub = fig.add_subplot(1,len(sims),i+1)
@@ -2822,7 +2822,7 @@ if __name__=="__main__":
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()

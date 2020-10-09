@@ -2,39 +2,36 @@
 \begin{center}
     \includegraphics[width=\textwidth]{figs/smf_m_sfr.pdf}
     \caption{\label{fig:smf_msfr}
-    The stellar mass functions ($\Phi^{\rm cen}_{M_*}$; left-most panel) and
-    $M_*-\sfr$ relation (right panels) \tks{the x-labels are off?} of central galaxies from the SIMBA
-    (orange), TNG (blue), and EAGLE (green) simulations. We include, for
-    comparison, $\Phi^{\rm cen}_{M_*}$ (black) and the $M_*-\sfr$ relation
-    (black dashed) for our SDSS central galaxy sample. Uncertainties for 
-    the SDSS $\Phi^{\rm cen}_{M_*}$ are derived using jackknife resampling. 
-    In Section~\ref{sec:sims}, we describe the simulations and observations 
-    above. Differences in $\Phi^{\rm cen}_{M_*}$ and the $M_*-\sfr$ relations 
-    above highlight that the \emph{hydrodynamical simulations predict central 
-    galaxies with significantly different the physical properties.} \tks{do you mean compared to each other, or compared to SDSS? and in this plane the last is largely because in SDSS different tracers with varying uncertainties/upper limits are used which we actually point out in Paper I.}
+    The stellar mass functions ($\Phi_{M_*}$; left-most panel) and $M_*-\sfr$
+    relation (right panels) of simulated galaxies from SIMBA (orange), TNG
+    (blue), and EAGLE (green). For reference, we include $\Phi_{M_*}$ (black)
+    and the $M_*-\sfr$ relation (black dashed) of our SDSS galaxy sample. 
+    Uncertainties for the SDSS $\Phi_{M_*}$ are derived using jackknife resampling. 
+    In Section~\ref{sec:sims}, we describe the simulations and observations above.
+    Differences in $\Phi_{M_*}$ and the $M_*-\sfr$ relations among the
+    simulations highlight that the \emph{hydrodynamical simulations predict
+    galaxy populations with significantly different the physical properties.} 
     }
 \end{center}
 \end{figure}
 
 \section{Data}\label{sec:sims}
-In this paper we apply dust empirical models (DEM) to galaxies in the Illustris
-TNG, EAGLE, and SIMBA cosmological hydrodynamical simulations. For each galaxy
-in the DEM output, we forward model the spectral energy distributions (SED) and
-measure the $r$-band luminosity ($M_r$), optical color ($G-R$), and UV color
-($FUV-NUV$) from the SEDs. These forward modeled observables, unlike physical
-properties such as $M_*$ and $\sfr$, are \emph{consistently} defined and
-derived in both simulations and observations \tks{want to add noise and do magnitude cuts like in Claire's paper?}.  Afterwards, we compare the
-predicted DEM observables to the central galaxies in SDSS DR7 observations.  
-We focus solely on the central galaxies, which constitute the majority of
-massive galaxies ($M_* > 10^{9.5}M_\odot$) at $z\sim0$.  \tks{are we sure we only want to do centrals? Isn't Jeremy's volume limited sample complete above a certain mass but including all centrals and satellites? For paper I we selected the centrals for that, but in Paper I it was important for the SFS/quenching to separate central/satellite. Here it is not as important I think, and a DEM should be optimized for all galaxies?} Below, we briefly describe
-the hydrodynamical simulations and the SDSS observations used throughout this
-work.
+In this paper we apply empirical dust attenuation (\eda) prescriptions to galaxies 
+in the Illustris TNG, EAGLE, and SIMBA cosmological hydrodynamical simulations. 
+For each galaxy in the \eda output, we forward model the spectral energy distributions 
+(SED) and measure the $r$-band luminosity ($M_r$), optical color ($G-R$), and
+UV color ($FUV-NUV$) from the SEDs. These forward modeled observables, unlike
+physical properties such as $M_*$ and $\sfr$, are \emph{consistently} defined
+and derived in both simulations and observations. Afterwards, we compare the
+predicted \eda observables to galaxies in the SDSS observations. Below, we
+briefly describe the hydrodynamical simulations and the SDSS observations used
+throughout this work.
 
-In Figure~\ref{fig:smf_msfr}, we present the stellar mass functions ($\Phi^{\rm
-cen}_{M_*}$; left-most panel) and $M_*-\sfr$ relations (right panels) for
-central galaxies in the SIMBA (orange), TNG (blue), and EAGLE (green) simulations. 
-We include, for reference, $\Phi^{\rm cen}_{M_*}$ and the $M_*-\sfr$ relation for
-our SDSS central galaxy sample. The uncertainties for the SDSS SMF are derived 
+In Figure~\ref{fig:smf_msfr}, we present the stellar mass functions
+($\Phi_{M_*}$; left-most panel) and $M_*-\sfr$ relations (right panels) for
+simulated galaxies of SIMBA (orange), TNG (blue), and EAGLE (green). 
+We include, for reference, $\Phi_{M_*}$ and the $M_*-\sfr$ relation for
+our SDSS galaxy sample. The uncertainties for the SDSS SMF are derived 
 from jackknife resampling. For the simulations, $M_*$ is the total stellar mass 
 within the host halo, excluding any stellar mass in subhalos; $\sfr$ is the
 instantaneous $\sfr$ derived from dense and cold gas. For SDSS, $M_*$ is
@@ -42,12 +39,12 @@ estimated using $\mathtt{kcorrect}$~\citep{blanton2007a}
 assuming a~\cite{chabrier2003} initial mass function and $\sfr$ are from the
 current release of
 \cite{brinchmann2004}\footnote{\url{http://www.mpa-garching.mpg.de/SDSS/DR7/}}.
-We describe the simulations and observations furthers in sections below. 
+%We describe the simulations and observations furthers in sections below. 
 Figure~\ref{fig:smf_msfr} illustrates that the hydrodynamical simulations
 predict significantly different SMFs and $M_*-\sfr$ relations. 
 This difference, which was also recently highlighted in \cite{hahn2019c}, 
-demonstrates that \emph{the hydrodynamical simulations all predict central 
-galaxy populations with significantly different physical properties}.
+demonstrates that \emph{the hydrodynamical simulations predict galaxy
+populations with significantly different physical properties}.
 
 \subsection{Illustris TNG} \label{sec:tng}
 The Illustris TNG simulation\footnote{\url{https://www.tng-project.org/}}
@@ -110,42 +107,36 @@ attenuation. Comparison to SDSS centrals (black dashed) clearly demonstrate
 that {\em without dust attenuation, the hydrodynamical simulations cannot
 reproduce the observed optical or UV color-magnitude relations.}
 
-\subsection{SDSS DR7 Central Galaxies} \label{sec:obs} 
-The goal of the DEM we present in this paper is to provide a flexible model
-that can reproduce observations using the hydrodynamical simulations above. 
-Throughout this work, we use the \cite{tinker2011} SDSS central galaxy sample 
-as our observation. This sample is constructed by first selecting a
-volume-limited sample of galaxies at $z \approx 0.04$ with $M_r < -18$ and
-complete above $M_* > 10^{9.4} h^{-2}M_\odot$ from the SDSS
-DR7~\citep{abazajian2009} NYU Value-Added Galaxy Catalog~\citep[VAGC;][]{blanton2005}. 
-Then, central galaxies are identified using a halo-based group finder that
-uses the abundance matching ansatz to iteratively assign halo masses to groups.
-Every group contains one central galaxy, which by definition is the most
-massive, and a group can contain $\ge0$ satellites.  As with any group finder,
-galaxies are misassigned due to projection effects and redshift space
-distortions; however, the central galaxy sample has a purity of ${\sim}90\%$
-and completeness of ${\sim}95\%$~\citep{tinker2018}. Finally, we impose a
-$r$-band absolute magnitude cut of $M_r < -20$ where our SDSS central galaxy 
-sample is complete. In this work, we focus on observables that can be 
-consistently defined and derived in both simulations and observables: 
-$M_r$, $\gr$, and $\fnuv$. For our SDSS sample, we use $r$ and $g$ band 
-absolute magnitudes from VAGC and GALEX $FUV$ and $NUV$ from the
-NASA-Sloan Atlas\footnote{\url{http://nsatlas.org/}}. 
+\subsection{SDSS Galaxies} \label{sec:obs} 
+The \eda model provides a flexible prescription for assigning dust attenuation
+to simulated galaxies so that the hydrodynamical simulations, described above,
+can reproduce observations. Throughout this work, for our observations, we use
+a galaxy sample derived from SDSS.  %Throughout this work, we use the \cite{tinker2011} SDSS central galaxy sample as our observation. 
+We impose a $M_r < -20$ completeness cut on the \cite{tinker2011} volume-limited 
+sample that is complete above $M_* > 10^{9.4} h^{-2}M_\odot$. The original
+\cite{tinker2011} sample is derived from the SDSS DR7~\citep{abazajian2009} NYU
+Value-Added Galaxy Catalog~\citep[VAGC;][]{blanton2005}. In this work, we focus 
+on observables that can be consistently defined and derived in both simulations 
+and observables: $M_r$, $\gr$, and $\fnuv$. For our SDSS sample, we use $FUV$,
+$NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
+Atlas\footnote{\url{http://nsatlas.org/}}. These absolute magnitudes are
+derived using $\mathtt{kcorrect}$~\citep{blanton2007a}, assuming
+a~\cite{chabrier2003} initial mass function, and use SDSS photometry with
+improved background subtraction~\citep{blanton2011}. 
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figs/observables.pdf} 
     \caption{\label{fig:obs}
-    We present the optical and UV color-magnitude relations of central galaxies
-    in the SIMBA (left), TNG (center), and EAGLE (right) simulations. The
-    simulations above do {\em not} yet include the DEM or any prescription for
-    dust attenuation.  $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom) are the
-    main observables used throughout the paper. They are derived from forward
-    modeled SEDs and, thus, are consistently defined and measured as SDSS
-    observations (Section~\ref{sec:fm}). For comparison, we include the 
-    distributions of SDSS centrals (black dashed). {\em Without dust, the 
-    hydrodynamical simulations cannot reproduce the observed optical or UV 
-    color-magnitude.}
+    We present the optical and UV color-magnitude relations of simulated galaxies
+    in SIMBA (left), TNG (center), and EAGLE (right). The simulations above do 
+    {\em not} yet include the \eda or any prescription for dust attenuation. 
+    $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom) are the main observables used 
+    throughout the paper. They are derived from forward modeled SEDs and, thus, 
+    are consistently defined and measured as SDSS observations
+    (Section~\ref{sec:fm}). For comparison, we include the distributions of our
+    SDSS sample (black dashed). {\em Without dust, the hydrodynamical simulations 
+    cannot reproduce the observed optical or UV color-magnitude.}
     }
 \end{center}
 \end{figure}
