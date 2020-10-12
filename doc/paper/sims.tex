@@ -96,16 +96,29 @@ Bondi-based accretion for hot gas, and two-mode AGN feedback. %which ejects bipo
 \todo{details on the following properties that we use in the paper: SFH, ZH}
 
 \subsection{Forward Modeled Spectral Energy Distributions} \label{sec:fm} 
-\todo{describe how the SED is generated using the SFH and ZHs} 
+One of the main goals of this work is to conduct an ``apples-to-apples'' comparison
+between observations and the simulations above. A crucial step in this is to
+forward model the observables for our simulations. In this work, we use the
+following observables: $r$-band luminosity ($M_r$), optical color ($G-R$), and 
+UV color ($FUV-NUV$). We measure these observables from the SED we construst
+for all the simulated galaxies based on their star formation and metallicity 
+histories using the Fleixble Stellar Population Synthesis
+model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. 
 
-In Figure~\ref{fig:obs} we present the optical and UV color-magnitude
-relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom), for central galaxies
-of the SIMBA (left), TNG (center) and EAGLE (right) simulations. The $\gr$ and
-$\fnuv$ colors are derived from the forward modeled SED and absolute magnitudes.
-The observables for the simulations do not yet include any prescription for dust
-attenuation. Comparison to SDSS centrals (black dashed) clearly demonstrate
-that {\em without dust attenuation, the hydrodynamical simulations cannot
-reproduce the observed optical or UV color-magnitude relations.}
+For each simulated galaxy, we bin the total stellar mass formed by age ($t$)
+and metallicity ($Z$). We use a consistent $t$, $Z$ grid for all of the simulations
+to account for the variable time and mass resolutions. For each point in the
+$t, Z$ grid, we generate the spectrum of a simple stellar population (SSP)
+using $\mathtt{FSPS}$ and take the linear combination of them, weighted by 
+the total stellar mass formed in the bin, to produce the galaxy SED. We use a
+\cite{chabrier2003} initial mass function. For further
+details on how the SEDs are constructed, we refer readers to Starkenberg et al.
+(in prep.). Next, we measure the observables by convolving the SEDs by
+transmission curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$
+broadband filters. Lastly, we add realistic noise to $M_r$, $\gr$, and $\fnuv$. 
+We sample the noise from normal distributions, where the standard deviations 
+are drawn from $\chi^2$ fits to the the observed uncertainty distributions from 
+NASA-Sloan Atlas.
 
 \subsection{SDSS Galaxies} \label{sec:obs} 
 The \eda model provides a flexible prescription for assigning dust attenuation
@@ -119,10 +132,19 @@ Value-Added Galaxy Catalog~\citep[VAGC;][]{blanton2005}. In this work, we focus
 on observables that can be consistently defined and derived in both simulations 
 and observables: $M_r$, $\gr$, and $\fnuv$. For our SDSS sample, we use $FUV$,
 $NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
-Atlas\footnote{\url{http://nsatlas.org/}}. These absolute magnitudes are
+Atlas\footnote{\url{http://nsatlas.org/}}, which is re-reduction of SDSS DR8
+\citep{aihara2011} that includes an improved background subtraction~\citep{blanton2011} 
+and near and far UV photometry from GALEX. These absolute magnitudes are
 derived using $\mathtt{kcorrect}$~\citep{blanton2007a}, assuming
-a~\cite{chabrier2003} initial mass function, and use SDSS photometry with
-improved background subtraction~\citep{blanton2011}. 
+a~\cite{chabrier2003} initial mass function. 
+
+In Figure~\ref{fig:obs} we present the forward modeled optical and UV color-magnitude
+relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom), for simulated galaxies
+of SIMBA (left), TNG (center) and EAGLE (right). The observables for the
+simulations do not yet include any prescription for dust attenuation.
+Comparison to SDSS observations (black dashed) clearly demonstrate
+that {\em without dust attenuation, the hydrodynamical simulations cannot
+reproduce the observed optical or UV color-magnitude relations.}
 
 \begin{figure}
 \begin{center}

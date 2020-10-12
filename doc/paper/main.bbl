@@ -22,6 +22,11 @@
 Abazajian K.~N.,  et~al., 2009, \mn@doi [The Astrophysical Journal Supplement
   Series] {10.1088/0067-0049/182/2/543}, 182, 543
 
+\bibitem[\protect\citeauthoryear{Aihara et~al.,}{Aihara
+  et~al.}{2011}]{aihara2011}
+Aihara H.,  et~al., 2011, \mn@doi [The Astrophysical Journal Supplement Series]
+  {10.1088/0067-0049/193/2/29}, 193, 29
+
 \bibitem[\protect\citeauthoryear{Alsing, Wandelt  \& Feeney}{Alsing
   et~al.}{2018}]{alsing2018}
 Alsing J.,  Wandelt B.,   Feeney S.,  2018, arXiv:1801.01497 [astro-ph]
@@ -62,6 +67,11 @@ Blanton M.~R.,  Roweis S.,  2007, \mn@doi [The Astronomical Journal]
   et~al.}{2005}]{blanton2005}
 Blanton M.~R.,  et~al., 2005, \mn@doi [The Astronomical Journal]
   {10.1086/429803}, 129, 2562
+
+\bibitem[\protect\citeauthoryear{Blanton, Kazin, Muna, Weaver  \&
+  {Price-Whelan}}{Blanton et~al.}{2011}]{blanton2011}
+Blanton M.~R.,  Kazin E.,  Muna D.,  Weaver B.~A.,   {Price-Whelan} A.,  2011,
+  \mn@doi [The Astronomical Journal] {10.1088/0004-6256/142/1/31}, 142, 31
 
 \bibitem[\protect\citeauthoryear{Booth \& Schaye}{Booth \&
   Schaye}{2009}]{booth2009}
@@ -116,6 +126,16 @@ Conroy C.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical Society]
 \bibitem[\protect\citeauthoryear{Conroy}{Conroy}{2013}]{conroy2013}
 Conroy C.,  2013, \mn@doi [Annual Review of Astronomy and Astrophysics]
   {10.1146/annurev-astro-082812-141017}, 51, 393
+
+\bibitem[\protect\citeauthoryear{Conroy, Gunn  \& White}{Conroy
+  et~al.}{2009}]{conroy2009}
+Conroy C.,  Gunn J.~E.,   White M.,  2009, \mn@doi [The Astrophysical Journal]
+  {10.1088/0004-637X/699/1/486}, 699, 486
+
+\bibitem[\protect\citeauthoryear{Conroy, White  \& Gunn}{Conroy
+  et~al.}{2010}]{conroy2010}
+Conroy C.,  White M.,   Gunn J.~E.,  2010, \mn@doi [The Astrophysical Journal]
+  {10.1088/0004-637X/708/1/58}, 708, 58
 
 \bibitem[\protect\citeauthoryear{Crain et~al.,}{Crain et~al.}{2015}]{crain2015}
 Crain R.~A.,  et~al., 2015, \mn@doi [Monthly Notices of the Royal Astronomical
