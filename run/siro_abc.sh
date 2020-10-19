@@ -27,7 +27,12 @@ stat='3d'
 ofile="/home/users/hahn/projects/galpopFM/run/_siro/_abc_"$sim"."$dem"."$dist"."$stat".o"
 >$ofile 
 
+#mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
+#    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 20 False 1000 \
+#    &>> $ofile
+
+# restart ABC 
 mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
-    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 20 False 1000 \
+    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 20 True 7 \
     &>> $ofile
 ################################################################################ 

@@ -268,6 +268,7 @@ if __name__=="__main__":
     else: 
         trest = int(sys.argv[9]) 
         print('T=%i restart' % trest) 
+        npart = None 
 
     abc_dir = os.path.join(dat_dir, 'abc', name) 
     if not os.path.isdir(abc_dir): 
