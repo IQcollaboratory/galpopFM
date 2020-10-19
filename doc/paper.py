@@ -2261,6 +2261,7 @@ def _sdsses():
     plt.close()
     return None 
 
+
 def _observables_sfr0(): 
     ''' Figure presenting the observables along with simulations without any
     attenuation.
@@ -2810,6 +2811,26 @@ def _abc_color_Ms():
     return None 
 
 
+def _profile_tng(): 
+    ''' abc for tng takes very long to converge 
+    '''
+    import time 
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
+    theta_mid = np.median(theta_T, axis=0) 
+    
+    
+    for sim in ['simba', 'eagle', 'tng']: 
+        t0 = time.time() 
+        x_mod, _ = _sim_observables(sim, theta_mid, zero_sfr_sample=True)
+        print('%s takes %.1f sec' % (sim, (time.time()-t0)))
+        print(x_mod.shape) 
+    return None 
+
+
 if __name__=="__main__": 
     #SDSS()
     #NSA()
@@ -2822,10 +2843,11 @@ if __name__=="__main__":
     #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    ABC_Observables()
+    #ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
+    _profile_tng()
     
     # examining what happens if quiiescent galaxies don't have attenuation
     #for sim in ['simba', 'tng', 'eagle']: 
@@ -2833,7 +2855,7 @@ if __name__=="__main__":
     #quiescent_attenuation()
 
     # dust IR emission luminosity 
-    ABC_Lir()
+    #ABC_Lir()
 
     # testing the noise model  
     #_observables_noise()
