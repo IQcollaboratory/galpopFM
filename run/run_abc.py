@@ -85,9 +85,8 @@ zerosfr_obs = dustInfer._observable_zeroSFR(
 
 # read SDSS summary statistics  
 x_obs = dustInfer.sumstat_obs(statistic=statistic)
-if distance_metric == 'L2_only': 
+if distance_method == 'L2_only': 
     x_obs = x_obs[1:]
-print('sdss nbar=%.4e' % x_obs[0])
 ######################################################
 # functions  
 ###################################################### 
@@ -188,6 +187,8 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 
 def _distance_metric_wrap(x_obs, x_model): 
+    if distance_method == 'L2_only': 
+        return dustInfer.distance_metric(x_obs, x_model, method='L2')
     return dustInfer.distance_metric(x_obs, x_model, method=distance_method)
 
 
