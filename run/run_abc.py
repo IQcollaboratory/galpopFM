@@ -166,6 +166,10 @@ def dem_prior(dem_name):
         #m_tau,M*0 m_tau,M*1 m_tau,SFR0 m_tau,SFR1 c_tau m_delta1 m_delta2 c_delta fneb
         prior_min = np.array([-5., -5., -5.,  -5., 0., -4., -4., -4., 1.]) 
         prior_max = np.array([5.0, 5.0, 5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+    elif dem_name == 'slab_noll_mssfr_fixbump':
+        #m_tau1 m_tau2 c_tau m_delta1 m_delta2 c_delta
+        prior_min = np.array([-5., -5., 0., -4., -4., -4.]) 
+        prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0]) 
     return prior_min, prior_max 
 
 

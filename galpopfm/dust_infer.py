@@ -89,7 +89,7 @@ def sumstat_obs(statistic='2d', return_bins=False):
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
-        statistic='2d', noise=True, seed=0, return_datavector=False, extra_data=None): 
+        statistic='2d', noise=True, seed=None, return_datavector=False, extra_data=None): 
     ''' calculate summary statistics for forward model m(theta) 
     
     :param theta: 
@@ -139,7 +139,8 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     n_gal = len(R_mag)
         
     if noise: 
-        np.random.seed(seed)
+        if seed is not None: 
+            np.random.seed(seed)
         # noise model (simplest model) 
         sig_R = chi2.rvs(3, loc=0.02, scale=0.00005, size=n_gal)
         sig_FN = chi2.rvs(2, loc=0.05, scale=0.05, size=n_gal)
@@ -365,6 +366,11 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
     elif dem == 'slab_noll_msfr_kink_fixbump': 
         lbls = [r'$m_{\tau,{\rm low}~M_*}$', r'$m_{\tau,{\rm high}~M_*}$', 
                 r'$m_{\tau,{\rm low~SFR}}$', r'$m_{\tau,{\rm high~SFR}}$', r'$c_{\tau}$', 
+                r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
+                r'$f_{\rm neb}$'] 
+    elif dem == 'tnorm_noll_mssfr_fixbump': 
+        lbls = [r'$m_{\mu,1}$', r'$m_{\mu,2}$', r'$c_{\mu}$', 
+                r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
                 r'$f_{\rm neb}$'] 
     else: 
