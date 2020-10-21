@@ -46,6 +46,8 @@ elif statistic == '3d':
         eps0 = [4.e-5, 0.01]
     elif distance_method == 'L1': 
         eps0 = [0.01, 0.2]
+    elif distance_method == 'L2_only': 
+        eps0 = [0.01]
 ######################################################
 # this will run on all processes =X
 # read SED for sims 
@@ -83,6 +85,8 @@ zerosfr_obs = dustInfer._observable_zeroSFR(
 
 # read SDSS summary statistics  
 x_obs = dustInfer.sumstat_obs(statistic=statistic)
+if distance_metric == 'L2_only': 
+    x_obs = x_obs[1:]
 print('sdss nbar=%.4e' % x_obs[0])
 ######################################################
 # functions  
@@ -177,6 +181,9 @@ def _sumstat_model_wrap(theta, dem=dem):
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
             f_downsample=f_downsample, statistic=statistic, noise=True, 
             extra_data=zerosfr_obs) 
+    if distance_method == 'L2_only':
+        # nbar not included in distance metric 
+        return x_mod[1:]
     return x_mod 
 
 
