@@ -1,16 +1,17 @@
 \section{Introduction} \label{sec:intro} 
 Dust in the interstellar medium of a galaxy can dramatically impact the
 observed light from the galaxy over the full range of the electromagnetic spectrum. 
-In the infrared (IR), dust produces emissions and from near-infrared (NIR) to
-ultraviolet (UV), dust modifies the galaxy's stellar radiation through
-absorption and scattering. Dust can therefore dramatically impact the physical
-properties of galaxies we infer from optical and UV light, such as star
+Dust emits in the infrared (IR) and modifies the galaxy's stellar radiation
+through absorption and scatter from the near-infrared (NIR) to ultraviolet
+(UV). It can, therefore, dramatically impact the physical properties of
+galaxies we infer from optical and UV light, such as star
 formation rate ($\sfr$), stellar mass ($M_*$), or stellar ages~\citep[see
 reviews by][]{walcher2011, conroy2013}. Since these properties are the
-building blocks for our understanding of galaxies and how they evolve, dust
-inevitably plays a crucial role for galaxy evolution. Beyond providing insights
-into the physical processes related to dust, better understanding dust is
-consequential for all galaxy studies.
+building blocks for our understanding of galaxies and how they evolve,
+a better understanding of dust no only provides insights into the physical
+processes related to dust, but it is also crucial to all galaxy studies.  
+
+% dust inevitably plays a crucial role for galaxy evolution. Beyond providing insights into the physical processes related to dust, better understanding dust is consequential for all galaxy studies.
 
 The combined effect of dust on the spectral energy distribution (SED) of a
 galaxy is typically described using an attenuation curve, $A(\lambda)$.
@@ -19,12 +20,10 @@ curve steeply rises due to absorptions by small grains. At $2175\AA$, in the
 near-UV (NUV), there is absorption bump referred to as the UV dust bump. Then 
 at longer wavelengths, the curves on take a power-law shape. For an overview, we 
 refer to reviews by \cite{calzetti2001, draine2003, galliano2018}. Attenuation
-curves, however, are not universal. Large statistical samples of local galaxies
-find a wide range of attenuation curves~\citep{wild2011, battisti2017,
-salim2018, salim2020}. Observations also reveal a diversity of attenuation
-curve at high redshifts~\citep[\eg][]{reddy2015, salmon2016}. For a given
-amount of optical attenuation, the far-UV (FUV) attenuation can be $\sim
-2-7\times$ greater. 
+curves, however, are not universal. Observations find a wide range of
+attenuation curves in the local Universe~\citep{wild2011, battisti2017,
+salim2018, salim2020} as well as at high redshifts~\citep[\eg][]{reddy2015,
+salmon2016}. %For a given amount of optical attenuation, the far-UV (FUV) attenuation can be $\sim 2-7\times$ greater.
 
 % summarize studies that looked at the connection between attenuation curves
 % and galaxy properties (wild2011 battisti2016, battisti2017, and
@@ -32,21 +31,21 @@ amount of optical attenuation, the far-UV (FUV) attenuation can be $\sim
 % that the attenuation-slope relations account for everything, but there's no
 % clear concensus. Restate the importance of understanding the attenuaion
 % curves properly.
-To understand the origin of this variation in attenuation curves, previous
-works have examined the correlation between them and galaxy properties. 
-Using 23,000 star-forming galaxies in the Sloan Digital
-Sky Survey (SDSS), \cite{wild2011} find that the slope of the attenuation curves varies 
-strongly with galaxy axial ratio and weakly with specific SFR. Similarly, 
-\cite{battisti2017}, from 5,500 star-forming galaxies, find only tentative
+To understand the origin of this variation in attenuation curves, a number of
+observational  works have examined the correlation between dust attenuation and
+galaxy properties. Using 23,000 star-forming galaxies in the Sloan Digital
+Sky Survey (SDSS), \cite{wild2011} found that the slope of the attenuation
+curves varies strongly with galaxy axial ratio and weakly with specific SFR.
+Similarly, \cite{battisti2017}, from 5,500 star-forming galaxies, found tentative
 trends with stellar age, specific star formation rate, stellar mass, and
 metallicity. Meanwhile, \cite{salim2018}, from 230,000 galaxies in the
 GALEX-SDSS-WISE Legacy Catalog 2 (GSWLC2), find a significant $M_*$ 
-dependence on the slope. They argue that this dependence is caused by
-underlying trends between the amplitude of the $V$-band attenuation ($A_V$) and
-slope. Based on this ``attenuation-slope relation'', galaxies with higher $A_V$
-have shallower slopes. Nevertheless, there is still no clear consensus on the
-connection between attenuation curves and galaxy properties. Furthermore, most
-studies so far have focused only on star-forming galaxies and little is known
+dependence on the slope. They argue that this is caused by the underlying 
+``attenuation-slope relation'', a trend between the amplitude of the 
+$V$-band attenuation ($A_V$) and slope where galaxies with higher $A_V$ have
+shallower slopes. Nevertheless, there is still no clear consensus on the
+connection between attenuation curves and galaxy properties. Also, studies 
+so far have focused only on star-forming galaxies and little is known
 about dust attenuation in quiescent galaxies.
 
 %Assumptions on the attenuation curve can dramatically impact the physical properties inferred from fitting the SED~\citep[\eg][]{kriek2013, shivaei2015, reddy2015, salim2020}. Moreover, the more we understand about dust the more constraining power we can keep for 
@@ -65,61 +64,76 @@ but make simple physically motivated assumptions about the resulting galaxy
 properties from dark matter growth~\citep[\eg][]{granato2000,
 fontanot2009, wilkins2012, gonzalez-perez2013}. Lastly, radiative transfer
 models have recently been applied to cosmological hydrodynamical
-simulations~\cite[\eg]{camps2015, narayanan2018, trayford2020}. As in
-observations, these simulations find significant variation in attenuation
-curves. They also reproduce the shape of the attenuation-slope relation. 
+simulations~\cite[\eg][]{camps2015, narayanan2018, trayford2020}. As in
+observations, simulations find significant variation in attenuation
+curves. %They also reproduce the shape of the attenuation-slope relation. 
 
 % Why can't we use RT for everything. 
-Despite their progress, there are still major challenges for radiative transfer
-models. For instance, computational constraints can result in under-resolved
-dust and radiation field grids. Many models require significant
-hand-tuning(\eg~propagating rays/photons into particular cells). Assumptions in
-the underlying dust grain models also produce systematic uncertainties that are
-difficult to quanitfy~\citep[see][for a review]{steinacker2013}. Furthermore,
-radiative transfer models produce attenuation-slope relations that are
-significantly steeper than observations. Finally, radiative transfer models 
+Despite their progress, there are still major challenges for radiative
+transfer models. For instance, they produce attenuation-slope relations that
+are significantly steeper than observations. Also, %computational constraints can result in under-resolved dust and radiation field grids. 
+many models require significant hand-tuning (\eg~propagating rays/photons into
+particular cells). Assumptions in the underlying dust grain models also produce
+systematic uncertainties that are difficult to quanitfy~\citep[see][for a
+review]{steinacker2013}. Lastly, radiative transfer models 
 are computationally expensive. So applying multiple radiative transfer dust
-models to multiple simulations for comparisons is prohibitive. Marginalizing over
-the impact of dust, for comparisons between simulations and observations aimed 
-at examining subgrid galaxy physics, would be intractable. 
+models to multiple simulations for comparisons is prohibitive. Using Markov
+Chain Monte Carlo sampling with them for parameter exploration or to marginalize
+over the impact of dust would be {\em intractable}. 
 
 %motivation for an empirical dust attenuation model
-In this paper, we take a different approach than these radiative transfer
-models. We present the Dust Empirical Model (DEM), which provides a framework
-for statistically assigning dust attenuation to galaxy populations. It uses a
-parameterization of the attenuation curves motivated from observational
-studies~\citep[\eg][]{noll2009} and a flexible method for sampling the
-attenuation curve parameters (\eg~optical depth, slope) that include 
-correlations with galaxy properties. There are a number of advantages to the
-DEM. Given the DEM parameterization, constraints on the DEM can be directly 
-compared to observed attenuation curves and correlations to galaxy properties
-can be easily interpreted. The DEM can also produce the wide range of 
-attenuation curves found in both observations and radiative transfer models. 
-Lastly, the empirical approach of the DEM makes it computationally inexpensive. 
+In this paper, we take a different approach and present the Empirical Dust
+Attenuation (\eda) model, a flexible framework for statistically applying dust
+attenuation to galaxy populations. The \eda~model assigns, to every galaxy, a
+different dust attenuation curve. The attenuation curves are parameterized with
+a function-form used in observational studies~\citep{noll2009} and the
+parameters of the curve for each galaxy (\eg~optical depth, slope) is sampled
+from distributions set by the \eda~model parameters and the galaxy's properties.  
+By sampling the attenuation curve parameters, it produces realistic variations 
+among the attenuation curves. We emphasize that the \eda~does not seek to produce 
+realistic dust attenuation for individual galaxies, like radiative transfer
+models. Instead, it aims to produce realistic dust attenuations for the entire
+galaxy sample and enable galaxy population-to-population comparisons.
 
-The DEM can be included on top of simulations and used to forward model
-observables and statistically compared to
-observations~\citep[\eg][]{nelson2018, baes2019, trcka2020, dickey2020}. From
-such comparisons, we can exploit the statistical power of large galaxy surveys 
-(\eg~SDSS) to constrain the DEM. These constraints provide insights into
-attenuation curves and their connection to galaxy properties. Besides 
-providing insights into dust, the DEM can also be used to tractably marginalize
-over the impact of dust by treating the DEM parameters as nuisance parameters. 
-The posterior probability distributions of the DEM parameters, derived from 
-the comparison to observations, can be used to effectively marginalize over 
-the DEM and disentangle the effect of dust from the subgrid galaxy formation 
-prescriptions of the simulations. 
-%In fact, given the parameterization of the DEM, informative priors for the DEM parameters can even be directly derived from observational constraints on attenuation curves. 
+There are a number of advantages to our \eda~approach. The \eda~uses the same
+functional-form for the attenuation curves as observational studies, so
+predictions of the model can easily be compared to observational constraints. 
+We also formulate the \eda~parameters so that they are easily interpretable and
+directly reveal correlations between dust attenuation and galaxy properties.
+Lastly, the \eda~model is computationally inexpensive. 
 
-In this work, we present a simple DEM that uses the \cite{noll2009}
-attenuation curve parameterization and includes correlations with galaxy $M_*$
-and $\sfr$. We apply the DEM to three state-of-the-art cosmological large-scale hydrodynamical
-simulations, SIMBA, IllustrisTNG, and EAGLE, which we describe in
-Section~\ref{sec:sims} and compare them to observed SDSS galaxies,
-which we describe in Section~\ref{sec:obs}. In Section~\ref{sec:dem}, we
-describe our DEM in detail. Finally, in Section~\ref{sec:results}, we present
-the results of our comparison and discuss insights the DEM provides for our
-understanding of dust attenuation as well as of its interplay with galaxy evolution in cosmological simulations. 
+The \eda~model, with its flexibility and speed, provides a key crucial in a
+{\em forward modeling approach} to comparing simulations to
+observations~\citep[\eg][]{nelson2018, baes2019, trcka2020, dickey2020}..
+In the standadrd approach, the galaxy properties (\eg~SFR, $M_*$) predicted by
+simulations are compared to those derived from observations. Instead, in the
+forward modeling approach, observables (\eg~magnitude, color) are {\em forward
+modeled} for each galaxy in the simulations. Then the simulations are compared 
+to observations directly in observational space. With a forward modeling approach, 
+comparisons are not limited by variations, inconsistencies, and biases of different
+observational methods for measuring galaxy properties (\eg~different tracers of
+SFR or $M_*$). Selection functions and systematic effects can also be included 
+in the forward model. 
 
-%Unlike other empirical approaches~\citep{trayford2015, trayford2020}, constraints on the DEM can be directly compared to observed attenuation curves
-%\cite{trayford2015} uses an empirical dust model but doesn't implement an attenuation curve but rather multiplicative factors for the broadband photometry.
+Of course to produce realistic observables of simulated galaxies, the forward
+model must include some prescription for applying dust attenuation. In
+principle, a radiative transfer model can be used for this purpose; however,
+its computational cost would severely limit any exploration of the ``dust
+parameters''. With the \eda, however, we can apply a wide range of realistic
+dust attenuation to simulated galaxies in a matter of seconds. We can,
+therefore, easily explore and sample the \eda~parameter space to infer the 
+relationship between dust attenuation and galaxy properties. {\em For readers 
+uninterested in dust}, the \eda~provides a way to treat dust parameters as
+{\em nuisance} parameters and tractably marginalize over them. In other words, 
+the \eda~can be used to effectively marginalize over dust attenuation. 
+
+In this work, we present a simple \eda~model that uses the \cite{noll2009}
+attenuation curve parameterization and includes correlations between dust
+attenuation and galaxy $M_*$ and $\sfr$ (Section~\ref{sec:dem}). We apply 
+the \eda~to three state-of-the-art cosmological large-scale hydrodynamical 
+simulations, SIMBA, IllustrisTNG, and EAGLE (Section~\ref{sec:sims}), and 
+compare them to observed SDSS galaxies (Section~\ref{sec:obs}). In 
+Section~\ref{sec:dem}, we describe our \eda~model in detail. Finally, in
+Section~\ref{sec:results}, we present the results of our comparison and discuss 
+their implications for our understanding of dust attenuation as well as of its
+connection to galaxy properties. 

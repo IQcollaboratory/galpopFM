@@ -1,4 +1,6 @@
-\documentclass[12pt, letterpaper, preprint]{aastex62}
+\documentclass[12pt, letterpaper, preprint, comicneue]{aastex63}
+\usepackage[default]{comicneue}
+\usepackage[T1]{fontenc}
 \input{vc}
 \usepackage{color}
 \usepackage{amsmath}
@@ -8,6 +10,10 @@
 \usepackage[normalem]{ulem} % Added by MS for \sout -> not required for final version
 \usepackage{xspace}
 \usepackage{csvsimple} 
+
+\usepackage{graphicx}
+\usepackage{pgfkeys, pgfsys, pgfcalendar}
+
 
 % typesetting shih
 \linespread{1.08} % close to 10/13 spacing
@@ -43,7 +49,6 @@
 \newcommand{\parti}[1]{\frac{\partial #1}{\partial \theta_i}}
 \newcommand{\partj}[1]{\frac{\partial #1}{\partial \theta_j}}
 \newcommand{\mpc}{{\rm Mpc}}
-\newcommand{\quij}{{\sc Quijote}~}
 \newcommand{\eg}{\emph{e.g.}}
 \newcommand{\ie}{\emph{i.e.}}
 
@@ -79,7 +84,7 @@
 \newcommand{\ch}[1]{{\color{orange}{\bf CH:} #1}}
 \newcommand{\tks}[1]{{\color{blue}{\bf TKS:} #1}}
 
-\begin{document}\sloppy\sloppypar\frenchspacing 
+\begin{document} \sloppy\sloppypar\frenchspacing 
 
 \title{Empirical Dust Attenuation Models: Taking Hydrodynamical Simulatons with a Grain of Dust}
 \date{\texttt{DRAFT~---~\githash~---~\gitdate~---~NOT READY FOR DISTRIBUTION}}
