@@ -201,12 +201,23 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
                 os.path.join(abc_dir, 'rho.t%i.dat' % restart)) 
         w_init      = np.loadtxt(
                 os.path.join(abc_dir, 'w.t%i.dat' % restart)) 
-        init_pool = abcpmc.PoolSpec(restart, None, None, theta_init, rho_init, w_init) 
 
+        fepsilon = open(os.path.join(abc_dir, 'epsilon.dat')) 
+        for i, line in enumerate(fepsilon): 
+            if i == restart: 
+                eps_init = float(line.split(']')[0].rstrip('[')) 
+                ratio_init = float(line.split(']')[1])
         npart = len(theta_init) 
+        print('--- restarting from %i ---' % restart) 
         print('%i particles' % npart) 
+        print('initial eps = %.5f' % eps_init) 
+
+        init_pool = abcpmc.PoolSpec(restart, eps_init, ratio_init, theta_init, rho_init, w_init) 
+        eps = eps_init
     else: 
         init_pool = None
+        # threshold 
+        eps = abcpmc.ConstEps(niter, eps0) 
 
     #--- inference with ABC-PMC below ---
     # prior 
@@ -221,11 +232,6 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
             pool=pewl,
             postfn_kwargs={'dem': dem}#, dist_kwargs={'method': 'L2', 'phi_err': phi_err}
             )      
-
-    # threshold 
-    eps = abcpmc.ConstEps(niter, eps0) 
-
-    print('eps0', eps.eps)
 
     for pool in abcpmc_sampler.sample(prior, eps, pool=init_pool):
         eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
