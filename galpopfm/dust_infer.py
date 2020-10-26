@@ -368,7 +368,7 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
                 r'$m_{\tau,{\rm low~SFR}}$', r'$m_{\tau,{\rm high~SFR}}$', r'$c_{\tau}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',
                 r'$f_{\rm neb}$'] 
-    elif dem == 'tnorm_noll_mssfr_fixbump': 
+    elif dem == 'slab_noll_mssfr_fixbump': 
         lbls = [r'$m_{\mu,1}$', r'$m_{\mu,2}$', r'$c_{\mu}$', 
                 r'$m_{\sigma,1}$', r'$m_{\sigma,2}$', r'$c_{\sigma}$', 
                 r'$m_{\delta,1}$', r'$m_{\delta,2}$', r'$c_\delta$',

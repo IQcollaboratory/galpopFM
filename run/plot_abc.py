@@ -103,11 +103,10 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     downsample[::10] = True
     f_downsample = 0.1
 
-    cens = _sim_sed['censat'].astype(bool) 
     mlim = (_sim_sed['logmstar'] > 9.4)
     zerosfr = (_sim_sed['logsfr.inst'] == -999)
 
-    cuts = cens & mlim & ~zerosfr & downsample 
+    cuts = mlim & ~zerosfr & downsample 
 
     sim_sed = {} 
     sim_sed['sim']          = sim
@@ -121,7 +120,7 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     # distribution 
     zerosfr_obs = dustInfer._observable_zeroSFR(
             _sim_sed['wave'][wlim], 
-            _sim_sed['sed_neb'][cens & mlim & zerosfr & downsample,:][:,wlim])
+            _sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
 
     x_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
             f_downsample=f_downsample, statistic='2d', extra_data=zerosfr_obs) 
@@ -193,13 +192,13 @@ def abc_attenuationt(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     
     # read simulations 
     _sim_sed = dustInfer._read_sed(sim) 
-    cens = _sim_sed['censat'].astype(bool) & (_sim_sed['logmstar'] > 9.4)#
-    logms = _sim_sed['logmstar'][cens].copy()
+    cuts = _sim_sed['logmstar'] > 9.4
+    logms = _sim_sed['logmstar'][cuts].copy()
     #logsfr = _sim_sed['logsfr.100'][cens].copy() 
-    logsfr = _sim_sed['logsfr.inst'][cens].copy() 
+    logsfr = _sim_sed['logsfr.inst'][cuts].copy() 
     
     A_lambdas, highmass, sfing = [], [], [] 
-    for i in np.arange(np.sum(cens))[::100]:  
+    for i in np.arange(np.sum(cuts))[::100]:  
         if dem == 'slab_calzetti': 
             A_lambda = -2.5 * np.log10(dustFM.DEM_slabcalzetti(theta_med, wave,
                 flux, logms[i], logsfr[i], nebular=False)) 
@@ -312,6 +311,9 @@ def run_params(name):
         #m_tau,M*0 m_tau,M*1 m_tau,SFR0 m_tau,SFR1 c_tau m_delta1 m_delta2 c_delta fneb
         params['prior_min'] = np.array([-5., -5., -5.,  -5., 0., -4., -4., -4., 1.]) 
         params['prior_max'] = np.array([5.0, 5.0, 5.0, 5.0, 6., 4.0, 4.0, 4.0, 4.]) 
+    elif params['dem'] == 'slab_noll_mssfr_fixbump':
+        params['prior_min'] = np.array([-5., -5., 0., -4., -4., -4.]) 
+        params['prior_max'] = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0]) 
     else: 
         raise NotImplementedError
     return params 
