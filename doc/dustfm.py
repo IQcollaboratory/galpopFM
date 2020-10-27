@@ -2113,6 +2113,19 @@ def simba_starbursts():
     return None 
 
 
+def sfr0_galaxies(): 
+    ''' fraction of galaxies with SFR=0  
+    '''
+    for name in sims: 
+        _, sfr0, sim_sed = _sim_observables(name.lower(), np.zeros(6),
+                zero_sfr_sample=True, return_sim=True)
+        mass_cut = np.ones(len(sim_sed['logmstar'])).astype(bool) #(sim_sed['logmstar'] > 10.) 
+        print('%.1f of %s galaxies' %
+                ((np.sum(mass_cut & sfr0)/np.sum(mass_cut))*100., name))
+        print('min SFR = %f' % (10**sim_sed['logsfr.inst'][~sfr0].min()))
+    return None 
+
+
 def _observables_noise(): 
     ''' comparison of color-magnitude relation of simulations + DEM with and
     without the noise model 
@@ -2967,9 +2980,12 @@ if __name__=="__main__":
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
-        
+    
+    # sfr=0 galaxies 
+    sfr0_galaxies()
+
     # examine starburst galaxies in simba 
-    simba_starbursts()
+    #simba_starbursts()
 
     # subpopulations in color magnitude space 
     #_subpops()
