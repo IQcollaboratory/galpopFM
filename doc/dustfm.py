@@ -42,7 +42,7 @@ _clrs = {
         'eagle': 'C2' 
         }
 
-nabc = [12, 16, 19]
+nabc = [12, 19, 19]
 _nabc = {
         'simba': nabc[0], 
         'tng': nabc[1],
@@ -2014,14 +2014,14 @@ def simba_starbursts():
     #########################################################################
     # simba with simba posterior 
     x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
-            zero_sfr_sample=True)
+            no_Mr_cut=True, zero_sfr_sample=True)
     # simba with eagle posterior 
     x_simba_eagle, sfr0_simba_eagle = _sim_observables('simba', theta_eagle,
-            zero_sfr_sample=True)
+            no_Mr_cut=True, zero_sfr_sample=True)
 
     # simba with eagle posterior excluding starbursts 
     _x_simba_eagle, sfr0_simba_eagle, sim_simba = _sim_observables('simba', theta_eagle,
-            zero_sfr_sample=True, return_sim=True)
+            no_Mr_cut=True, zero_sfr_sample=True, return_sim=True)
     
     starburst = (sim_simba['logsfr.inst']  > -0.5 + 0.7 * (sim_simba['logmstar'] - 9))
     print('%i starburst galaxies' % np.sum(starburst))
@@ -2969,10 +2969,10 @@ if __name__=="__main__":
     #ABC_attenuation()
         
     # examine starburst galaxies in simba 
-    #simba_starbursts()
+    simba_starbursts()
 
     # subpopulations in color magnitude space 
-    _subpops()
+    #_subpops()
     #subpops_nodust()
 
     #_profile_tng()
