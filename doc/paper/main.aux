@@ -76,14 +76,15 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Forward Modeling Observations}{6}{subsection.2.5}\protected@file@percent }
 \newlabel{sec:fm}{{2.5}{6}{Forward Modeling Observations}{subsection.2.5}{}}
 \newlabel{fig:obs}{{2}{7}{}{figure.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Empirical Dust Attenuation Modeling}{7}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}The Empirical Dust Attenuation Model}{7}{section.3}\protected@file@percent }
 \citation{somerville1999,somerville2012}
 \citation{narayanan2018,salim2020}
 \citation{conroy2010,wild2011,battisti2017,salim2020}
 \citation{noll2009}
-\newlabel{sec:dem}{{3}{8}{Empirical Dust Attenuation Modeling}{section.3}{}}
-\newlabel{eq:slab}{{3}{8}{Empirical Dust Attenuation Modeling}{equation.3.3}{}}
-\newlabel{eq:tauv}{{4}{8}{Empirical Dust Attenuation Modeling}{equation.3.4}{}}
+\newlabel{sec:dem}{{3}{8}{The Empirical Dust Attenuation Model}{section.3}{}}
+\newlabel{eq:full_atten}{{1}{8}{The Empirical Dust Attenuation Model}{equation.3.1}{}}
+\newlabel{eq:slab}{{3}{8}{The Empirical Dust Attenuation Model}{equation.3.3}{}}
+\newlabel{eq:tauv}{{4}{8}{The Empirical Dust Attenuation Model}{equation.3.4}{}}
 \citation{calzetti2001}
 \citation{leja2017,salim2018}
 \citation{kriek2013}
@@ -92,8 +93,8 @@
 \citation{kriek2013}
 \citation{hahn2019c}
 \citation{calzetti2001}
-\newlabel{eq:noll}{{5}{9}{Empirical Dust Attenuation Modeling}{equation.3.5}{}}
-\newlabel{eq:delta}{{6}{9}{Empirical Dust Attenuation Modeling}{equation.3.6}{}}
+\newlabel{eq:noll}{{5}{9}{The Empirical Dust Attenuation Model}{equation.3.5}{}}
+\newlabel{eq:delta}{{6}{9}{The Empirical Dust Attenuation Model}{equation.3.6}{}}
 \citation{calzetti2001}
 \citation{calzetti2001}
 \citation{diggle1984,tavare1997,pritchard1999,beaumont2009,delmoral2012}
@@ -110,7 +111,8 @@
 \citation{leja2017}
 \citation{salim2018}
 \citation{handley2019}
-\newlabel{tab:free_param}{{1}{11}{Empirical Dust Attenuation Modeling}{table.1}{}}
+\newlabel{tab:free_param}{{1}{11}{The Empirical Dust Attenuation Model}{table.1}{}}
+\newlabel{eq:distance}{{8}{11}{Simulation-Based Inference: Approximate Bayesian Computation}{equation.4.8}{}}
 \citation{hahn2017b}
 \citation{hahn2019a}
 \citation{trayford2015}
@@ -122,7 +124,6 @@
 \citation{trayford2015}
 \citation{baes2019}
 \citation{nelson2018}
-\newlabel{eq:distance}{{8}{12}{Simulation-Based Inference: Approximate Bayesian Computation}{equation.4.8}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Results}{12}{section.5}\protected@file@percent }
 \newlabel{sec:results}{{5}{12}{Results}{section.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Reproducing SDSS Color-Magnitude Relations}{12}{subsection.5.1}\protected@file@percent }
@@ -144,7 +145,6 @@
 \citation{calzetti2001}
 \citation{salim2020}
 \citation{inoue2005,chevallard2013,trayford2020}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Reproducing the Observed Attenuation-Slope Relation}{15}{subsection.5.2}\protected@file@percent }
 \citation{calzetti2000,battisti2017,salim2018}
 \citation{narayanan2018}
 \citation{salim2018}
@@ -157,13 +157,14 @@
 \citation{battisti2017}
 \citation{salim2018}
 \citation{narayanan2018}
-\newlabel{fig:slope}{{6}{16}{}{figure.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}The Galaxy -- Dust Attenuation Connection}{16}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Reproducing the Observed Attenuation-Slope Relation}{15}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}The Galaxy -- Dust Attenuation Connection}{15}{subsection.5.3}\protected@file@percent }
 \citation{burgarella2005}
 \citation{garn2010}
 \citation{battisti2016}
 \citation{salim2018}
 \citation{garn2010,reddy2015,battisti2016,battisti2017,salim2018}
+\newlabel{fig:slope}{{6}{16}{}{figure.6}{}}
 \citation{kirkpatrick2015}
 \citation{salim2016,leja2018,salim2018}
 \citation{calzetti2000,battisti2017,salim2018}
@@ -194,6 +195,7 @@
 \@writefile{toc}{\contentsline {section}{\numberline {B}Beyond the Slab DEM}{21}{appendix.B}\protected@file@percent }
 \newlabel{sec:nonslab}{{B}{21}{Beyond the Slab DEM}{appendix.B}{}}
 \newlabel{eq:tnorm}{{\hbox {B1}}{21}{Beyond the Slab DEM}{equation.B.1}{}}
+\newlabel{eq:tnorm_param}{{\hbox {B2}}{21}{Beyond the Slab DEM}{equation.B.2}{}}
 \bibdata{galpopfm}
 \bibcite{abazajian2009}{{1}{2009}{{Abazajian et~al.}}{{Abazajian et~al.,}}}
 \bibcite{aihara2011}{{2}{2011}{{Aihara et~al.}}{{Aihara et~al.,}}}
@@ -204,13 +206,12 @@
 \bibcite{battisti2017}{{7}{2017}{{Battisti et~al.}}{{Battisti, Calzetti \& Chary}}}
 \bibcite{beaumont2009}{{8}{2009}{{Beaumont et~al.}}{{Beaumont, Cornuet, Marin \& Robert}}}
 \bibcite{blanton2007a}{{9}{2007}{{Blanton \& Roweis}}{{Blanton \& Roweis}}}
-\newlabel{fig:av_dist}{{8}{22}{}{figure.8}{}}
-\newlabel{eq:tnorm_param}{{\hbox {B2}}{22}{Beyond the Slab DEM}{equation.B.2}{}}
 \bibcite{blanton2005}{{10}{2005}{{Blanton et~al.}}{{Blanton et~al.,}}}
 \bibcite{blanton2011}{{11}{2011}{{Blanton et~al.}}{{Blanton, Kazin, Muna, Weaver \& {Price-Whelan}}}}
 \bibcite{booth2009}{{12}{2009}{{Booth \& Schaye}}{{Booth \& Schaye}}}
 \bibcite{brinchmann2004}{{13}{2004}{{Brinchmann et~al.}}{{Brinchmann, Charlot, White, Tremonti, Kauffmann, Heckman \& Brinkmann}}}
 \bibcite{burgarella2005}{{14}{2005}{{Burgarella et~al.}}{{Burgarella, Buat \& {Iglesias-P{\'a}ramo}}}}
+\newlabel{fig:av_dist}{{8}{22}{}{figure.8}{}}
 \bibcite{calzetti2001}{{15}{2001}{{Calzetti}}{{Calzetti}}}
 \bibcite{calzetti2000}{{16}{2000}{{Calzetti et~al.}}{{Calzetti, Armus, Bohlin, Kinney, Koornneef \& {Storchi-Bergmann}}}}
 \bibcite{cameron2012}{{17}{2012}{{Cameron \& Pettitt}}{{Cameron \& Pettitt}}}
