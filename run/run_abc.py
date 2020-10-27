@@ -205,7 +205,7 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
         fepsilon = open(os.path.join(abc_dir, 'epsilon.dat')) 
         for i, line in enumerate(fepsilon): 
             if i == restart: 
-                eps_init = float(line.split(']')[0].rstrip('[')) 
+                eps_init = float(line.split(']')[0].split('[')[1]) 
                 ratio_init = float(line.split(']')[1])
         npart = len(theta_init) 
         print('--- restarting from %i ---' % restart) 
@@ -213,7 +213,7 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
         print('initial eps = %.5f' % eps_init) 
 
         init_pool = abcpmc.PoolSpec(restart, eps_init, ratio_init, theta_init, rho_init, w_init) 
-        eps = eps_init
+        eps = abcpmc.ConstEps(niter, eps_init) 
     else: 
         init_pool = None
         # threshold 
@@ -234,7 +234,11 @@ def abc(pewl, name=None, niter=None, npart=None, restart=None):
             )      
 
     for pool in abcpmc_sampler.sample(prior, eps, pool=init_pool):
-        eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
+        try: 
+            eps_str = ", ".join(["{0:>.4f}".format(e) for e in pool.eps])
+        except TypeError: 
+            eps_str = "{0:>.4f}".format(pool.eps)
+
         print("T: {0}, eps: [{1}], ratio: {2:>.4f}".format(pool.t, eps_str, pool.ratio))
 
         for i, (mean, std) in enumerate(zip(*abcpmc.weighted_avg_and_std(pool.thetas, pool.ws, axis=0))):

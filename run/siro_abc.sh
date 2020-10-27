@@ -1,6 +1,6 @@
 # !/bin/bash
 #PBS -l nodes=1:ppn=24
-#PBS -N tng_slabnollmssfrfixbump
+#PBS -N tng_slabnollmssfrfixbump_restart
 cd $PBS_O_WORKDIR
 export NPROCS=`wc -l $PBS_NODEFILE |gawk '//{print $1}'`
 export PATH="/home/users/hahn/anaconda3/bin:$PATH"
@@ -29,14 +29,14 @@ stat='3d'
 # 10/20/2020: running after changing parameterizations from SFR to SSFR 
 ################################################################################ 
 ofile="/home/users/hahn/projects/galpopFM/run/_siro/_abc_"$sim"."$dem"."$dist"."$stat".o"
->$ofile 
 
-mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
-    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 20 False 1000 \
-    &>> $ofile
+#>$ofile 
+#mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
+#    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 20 False 1000 \
+#    &>> $ofile
 
 # restart ABC 
-#mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
-#    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 20 True 7 \
-#    &>> $ofile
+mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
+    siro $sim $dem $dist $stat $sim"."$dem"."$dist"."$stat 30 True 19 \
+    &>> $ofile
 ################################################################################ 
