@@ -2661,14 +2661,14 @@ def subpops_nodust():
     return None
 
 
-def _subpops(): 
+def subpops(): 
     ''' Where in color-magnitude space do the low M* high SFR galaxies lie? 
     '''
     fig = plt.figure(figsize=(15,15))
     for i in range(len(sims)): 
         # read ABC posterior 
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-            abc_run(sims[i].lower()), 'theta.t%i.dat' % nabc[0])) 
+            abc_run(sims[i].lower()), 'theta.t%i.dat' % nabc[i])) 
         theta_sim = np.median(theta_T, axis=0) 
 
         # run through DEM  
@@ -2705,10 +2705,14 @@ def _subpops():
         veryhighSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -9.75)
         highSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -9.75) & 
                 (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -10.5))
-        lowSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -10.5)
+        lowSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -10.5) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -11.))
+        verylowSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -11.) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -12.))
+        veryverylowSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -12.)
 
-        subpops = [veryhighSFR, highSFR, lowSFR][::-1]
-        subclrs = ['C0', 'C2', 'C1'][::-1]
+        subpops = [veryhighSFR, highSFR, lowSFR, verylowSFR, veryverylowSFR][::-1]
+        subclrs = ['C0', 'C2', 'C1', 'r', 'C4'][::-1]
 
         # plot where they lie on the M*-SFR relation 
         sub = fig.add_subplot(3,3,3*i+1)
@@ -2717,7 +2721,7 @@ def _subpops():
                 plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         for subpop, subclr in zip(subpops, subclrs): 
             sub.scatter(sim_sed['logmstar'][subpop],
-                    sim_sed['logsfr.inst'][subpop], c=subclr, s=2)
+                    sim_sed['logsfr.inst'][subpop], c=subclr, s=3)
         sub.set_xlabel(r'$\log M_*$', fontsize=20) 
         sub.set_xlim(9.0, 12) 
         sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
@@ -2982,13 +2986,13 @@ if __name__=="__main__":
     #ABC_attenuation()
     
     # sfr=0 galaxies 
-    sfr0_galaxies()
+    #sfr0_galaxies()
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
 
     # subpopulations in color magnitude space 
-    #_subpops()
+    subpops()
     #subpops_nodust()
 
     #_profile_tng()
