@@ -1018,8 +1018,7 @@ def ABC_slope_AV():
                 wave, 
                 np.ones(len(wave)), 
                 _sim['logmstar'], 
-                _sim['logsfr.inst'], # mstar[subpop], sfr[subpop],
-                nebular=False) 
+                _sim['logsfr.inst'])#,  mstar[subpop], sfr[subpop], nebular=False) 
         A_lambda = -2.5 * np.log10(_A_lambda)
         
         A_V = A_lambda[:,i5500]
@@ -1085,13 +1084,27 @@ def ABC_slope_AV():
     #sub2.plot([0.04749, 0.24662, 0.34430, 0.55215, 0.74590, 1.25348, 1.33918], 
     #        [-0.87232, -0.44691, -0.31288, -0.15964, -0.09486, 0.19159, 0.19779], 
     #        c='k', ls='-.', label='Salim+(2018)') 
-
+    #sub2.scatter([0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800,
+    #    0.900, 1.000, 1.100, 1.200, 1.300], [-0.499, -0.270, -0.111, -0.007,
+    #        0.054, 0.112, 0.134, 0.144, 0.169, 0.196, 0.236, 0.282, 0.283],
+    #        marker='^', s=40, label='Salim+(2018)') 
+    sub2.fill_between( 
+            [0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900,
+                1.000, 1.100, 1.200, 1.300], 
+            [-1.030, -0.830, -0.636, -0.519, -0.440, -0.381, -0.341, -0.286,
+                -0.198, -0.103, -0.035, 0.054, 0.118], 
+            [-0.499, -0.270, -0.111, -0.007, 0.054, 0.112, 0.134, 0.144, 0.169,
+                0.196, 0.236, 0.282, 0.283], 
+            facecolor='k', alpha=0.1, hatch='X', edgecolor='k', linewidth=0., label='Salim+(2018)') 
+    #        facecolor='k', alpha=0.1, hatch='.', edgecolor='k', linewidth=0., label='Salim+(2018)') 
     # Trayford+(2020)
     #[-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
-    sub2.fill_between([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
-        [-0.22334, -0.00201, 0.19517, 0.34004, 0.45272, 0.56942, 0.63380, 0.69014, 0.73038, 0.80684], 
-        [-0.99598, -0.54125, -0.24748, -0.04225, 0.10262, 0.22334, 0.31187, 0.36016, 0.47284, 0.52918], 
-        facecolor='k', alpha=0.1, hatch='X', edgecolor='k', linewidth=0., label='Trayford+(2020)') 
+    sub2.plot([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
+            [-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
+            '-^', c='k', label='Trayford+(2020)') 
+    #    [-0.22334, -0.00201, 0.19517, 0.34004, 0.45272, 0.56942, 0.63380, 0.69014, 0.73038, 0.80684], 
+    #    [-0.99598, -0.54125, -0.24748, -0.04225, 0.10262, 0.22334, 0.31187, 0.36016, 0.47284, 0.52918], 
+    #    facecolor='k', alpha=0.1, hatch='X', edgecolor='k', linewidth=0., label='Trayford+(2020)') 
     sub2.set_xlabel(r'$A_V$', fontsize=25)
     sub2.set_xlim(0.1, 1.4)
     sub2.set_ylabel('$\delta$', fontsize=25)
@@ -1116,6 +1129,246 @@ def ABC_slope_AV():
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
+    return None 
+
+
+def ABC_slope_AV_starforming():
+    ''' comparison of slope to A_V for star-forming galaxies. We focus on
+    star-forming galaxies since observations focus on star-forming galaxies 
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i1500 = 25 
+    i3000 = 100
+    i5500 = 225
+
+    fig = plt.figure(figsize=(12,5))
+    sub1 = fig.add_subplot(121)
+    sub2 = fig.add_subplot(122)
+    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
+        # read sim 
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
+                zero_sfr_sample=True, return_sim=True)
+    
+        # star-forming 
+        starforming = (_sim['logsfr.inst'] - _sim['logmstar'] > -10.5)
+
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                _sim['logmstar'], 
+                _sim['logsfr.inst'])#,  mstar[subpop], sfr[subpop], nebular=False) 
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        
+        A_V = A_lambda[:,i5500]
+        S = A_lambda[:,i1500]/A_V
+        
+        delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
+                theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
+
+        DFM.hist2d(A_V[starforming], S[starforming], levels=[0.68, 0.95],
+                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
+        #sub.fill_between([], [], [], color=clrs[isim], alpha=0.25,
+        #        linewidth=0., label=sim)
+
+        A_V = A_lambda[:,i5500]
+
+        DFM.hist2d(A_V[starforming], delta_median[starforming], levels=[0.68, 0.95],
+                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
+
+    # SMC
+    #sub1.scatter([0.5], [4.8], c='b', s=60) 
+    #sub1.text(0.55, 5., 'SMC', ha='left', va='bottom', fontsize=20) 
+    # MW
+    sub1.scatter([1.15], [2.8], c='k', marker='*', s=60) 
+    sub1.text(1.2, 2.8, 'MW', ha='left', va='bottom', fontsize=20) 
+    # Calzetti 
+    sub1.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--')
+    sub1.text(0.125, 2.2, 'Calzetti+(2000)', ha='left', va='top', fontsize=15) 
+    # Inoue(2005) 
+    sub1.plot([0.04624, 0.08447, 0.14629, 0.24109, 0.35660, 0.51096, 0.66340, 0.87693, 1.07223, 1.30417], 
+            [13.85715, 8.97327, 6.44298, 4.74012, 3.71245, 3.03250, 2.57058, 2.15059, 1.92728, 1.68118], 
+            c='k', ls=':', label='Inoue(2005)') 
+    # Salim 2020 (0.12 dex scatter) 
+    #sub1.plot(np.linspace(0., 1.4, 10), 
+    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 10))+0.424), 
+    #        c='k', ls='-.', label='Salim\&Narayanan(2020)')
+    sub1.fill_between(np.linspace(0., 1.4, 100), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
+            color='k', alpha=0.25, linewidth=0, label='Salim\&Narayanan(2020)')
+    sub1.set_xlabel(r'$A_V$', fontsize=25)
+    sub1.set_xlim(0.1, 1.4)
+    sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
+    sub1.set_ylim(0., 14.4) 
+    sub1.legend(loc='upper right', handletextpad=0.1, fontsize=18) 
+
+    ## Wiit & Gordon (2000)
+    #sub2.plot([0.01645, 0.63816, 1.77632, 2.83882],
+    #        [-0.38591, -0.19720, 0.04641, 0.17912], 
+    #        c='k', ls=':', label='Witt\&Gordon(2000)')
+    # Chevallard+(2013)
+    sub2.plot([0.10835, 0.21592, 0.32572, 0.53347, 1.08204, 1.39621], 
+            [-0.69552, -0.40416, -0.20461, -0.00546, 0.19557, 0.25330], 
+            c='k', ls='-.', label='Chevallard+(2013)')
+    # Salmon+(2016)
+    #sub2.plot([0.25000, 0.45395, 0.65461, 0.86513, 1.06250, 1.25987, 1.46711,
+    #    1.68421, 1.88816, 2.08553, 2.28618, 2.49342, 2.70066], 
+    #    [-0.44029, -0.33634, -0.22886, -0.15658, -0.11245, -0.06656, -0.04002,
+    #        -0.00292, 0.02889, 0.04311, 0.06964, 0.11202, 0.14032], c='g',
+    #    label='Salmon+(2016)') 
+    # Salim+(2018)
+    sub2.fill_between( 
+            [0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900,
+                1.000, 1.100, 1.200, 1.300], 
+            [-1.030, -0.830, -0.636, -0.519, -0.440, -0.381, -0.341, -0.286,
+                -0.198, -0.103, -0.035, 0.054, 0.118], 
+            [-0.499, -0.270, -0.111, -0.007, 0.054, 0.112, 0.134, 0.144, 0.169,
+                0.196, 0.236, 0.282, 0.283], 
+            facecolor='k', alpha=0.2, hatch='X', edgecolor='k', linewidth=0., label='Salim+(2018)') 
+    # Trayford+(2020)
+    #[-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
+    sub2.plot([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
+            [-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
+            '-^', c='k', label='Trayford+(2020)') 
+    #sub2.scatter([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
+    #        [-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
+    #        marker='^', s=40, c='k', label='Trayford+(2020)') 
+    sub2.set_xlabel(r'$A_V$', fontsize=25)
+    sub2.set_xlim(0.1, 1.4)
+    sub2.set_ylabel('$\delta$', fontsize=25)
+    sub2.set_ylim(-1.6, 1.5) 
+
+    # sim legends     
+    _plt_sims = [] 
+    for i in range(1,3): 
+        _plt_sim = sub2.fill_between([], [], [], color=clrs[i], alpha=0.25,
+                linewidth=0)
+        _plt_sims.append(_plt_sim) 
+
+    sim_legend = sub2.legend(_plt_sims, sims[1:], loc='lower right',
+            handletextpad=0.1, prop={'size': 20})
+    sub2.legend(loc='upper left', handletextpad=0.1, fontsize=18) 
+    plt.gca().add_artist(sim_legend)
+
+    fig.subplots_adjust(wspace=0.3)
+
+    ffig = os.path.join(fig_dir, 'abc_slope_AV_starforming.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_slope_AV_subpop(): 
+    ''' comparison of slope to A_V relation marking the different
+    subpopulations 
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i1500 = 25 
+    i3000 = 100
+    i5500 = 225
+
+    fig = plt.figure(figsize=(12,10))
+    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
+        sub1 = fig.add_subplot(2,2,2*isim-1)
+        sub2 = fig.add_subplot(2,2,2*isim)
+        sub1.text(0.05, 0.95, sim, transform=sub1.transAxes, fontsize=20, ha='left', va='top')
+        # read sim 
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
+                zero_sfr_sample=True, return_sim=True)
+
+        # galaxies with low M* and high SFR 
+        veryhighSFR = (_sim['logsfr.inst'] - _sim['logmstar'] > -9.75)
+        highSFR     = ((_sim['logsfr.inst'] - _sim['logmstar'] < -9.75) & 
+                (_sim['logsfr.inst'] - _sim['logmstar'] > -10.5))
+        lowSFR      = ((_sim['logsfr.inst'] - _sim['logmstar'] < -10.5) & 
+                (_sim['logsfr.inst'] - _sim['logmstar'] > -11.))
+        verylowSFR  = ((_sim['logsfr.inst'] - _sim['logmstar'] < -11.) & 
+                (_sim['logsfr.inst'] - _sim['logmstar'] > -12.))
+        veryverylowSFR = (_sim['logsfr.inst'] - _sim['logmstar'] < -12.)
+        lowmass = (_sim['logmstar'] < 10.5) 
+        highmass = (_sim['logmstar'] >= 10.5) 
+
+        subpops = [veryhighSFR, highSFR, lowSFR, verylowSFR, veryverylowSFR][::-1]
+        subclrs = ['C0', 'C2', 'C1', 'r', 'C4'][::-1]
+
+
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                _sim['logmstar'], 
+                _sim['logsfr.inst'])#,  mstar[subpop], sfr[subpop], nebular=False) 
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        
+        A_V = A_lambda[:,i5500]
+        S = A_lambda[:,i1500]/A_V
+        
+        delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
+                theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
+
+        DFM.hist2d(A_V, S, levels=[0.68, 0.95],
+                range=[(0., 1.4), (0., 14.4)], bins=10, color='k', #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub1)
+
+        DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
+                range=[(0., 1.4), (-1.5, 1.)], bins=10, color='k', #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub2)
+        
+        for subpop, clr in zip(subpops, subclrs): 
+            sub1.scatter(A_V[subpop & lowmass], S[subpop & lowmass], c=clr, s=3) 
+            sub1.scatter(A_V[subpop & highmass], S[subpop & highmass], c=clr,
+                    s=10, marker='o', edgecolors='k') 
+            sub2.scatter(A_V[subpop & lowmass], delta_median[subpop & lowmass], c=clr, s=3) 
+            sub2.scatter(A_V[subpop & highmass], delta_median[subpop & highmass],
+                    c=clr, s=10, marker='o', edgecolors='k') 
+
+        sub1.fill_between(np.linspace(0., 1.4, 100), 
+                10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
+                10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
+                color='k', alpha=0.25, linewidth=0, label='Salim\&Narayanan(2020)')
+
+        sub2.fill_between( 
+                [0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900,
+                    1.000, 1.100, 1.200, 1.300], 
+                [-1.030, -0.830, -0.636, -0.519, -0.440, -0.381, -0.341, -0.286,
+                    -0.198, -0.103, -0.035, 0.054, 0.118], 
+                [-0.499, -0.270, -0.111, -0.007, 0.054, 0.112, 0.134, 0.144, 0.169,
+                    0.196, 0.236, 0.282, 0.283], 
+                facecolor='k', alpha=0.1, hatch='X', edgecolor='k', linewidth=0., label='Salim+(2018)') 
+
+        sub1.set_xlim(0.1, 1.4)
+        sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
+        sub1.set_ylim(0., 14.4) 
+
+        sub2.set_xlim(0.1, 1.4)
+        sub2.set_ylabel('$\delta$', fontsize=25)
+        sub2.set_ylim(-1.6, 1.5) 
+
+    sub1.set_xlabel(r'$A_V$', fontsize=25)
+    sub2.set_xlabel(r'$A_V$', fontsize=25)
+    #sub1.legend(loc='upper right', handletextpad=0.1, fontsize=18) 
+
+    fig.subplots_adjust(wspace=0.3)
+
+    ffig = os.path.join(fig_dir, 'abc_slope_AV_subpop.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
     return None 
 
 
@@ -1365,8 +1618,7 @@ def ABC_attenuation():
                         wave, 
                         np.ones(len(wave)), 
                         mstar[subpop], 
-                        sfr[subpop],
-                        nebular=False) 
+                        sfr[subpop])#, nebular=False) 
                 A_lambda = -2.5 * np.log10(_A_lambda)
                 # normalize to 3000A 
                 A_lambda /= A_lambda[:,i3000][:,None]
@@ -2977,12 +3229,20 @@ if __name__=="__main__":
     #SMF_MsSFR()
     #DEM()
     #Observables()
-    ABC_corner() 
+    #ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    ABC_Observables()
+    
+    # color magnitude relation for ABC posterior
+    #ABC_Observables()
+    
+    # slope-AV relation for ABC posterior
     #ABC_slope_AV()
+    #ABC_slope_AV_starforming()
+    ABC_slope_AV_subpop()
     #_ABC_slope_AV_quiescent()   
+
+    # amplitude normalized attenuation curves
     #ABC_attenuation()
     
     # sfr=0 galaxies 
