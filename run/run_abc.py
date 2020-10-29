@@ -30,7 +30,10 @@ sim     = sys.argv[2] # name of simulation
 dem     = sys.argv[3] # name of EDM model to use 
 
 distance_method = sys.argv[4]
-statistic = sys.argv[5]
+statistic       = sys.argv[5]
+sfr0            = sys.argv[6] # prescription for SFR=0 galaxies 
+######################################################
+# starting distance threshold 
 if statistic == '1d': 
     if distance_method == 'L2': 
         eps0 = [4.e-5, 0.0005, 0.0002]
@@ -65,7 +68,23 @@ f_downsample = 0.1
 mlim    = (sim_sed['logmstar'] > 9.4) # mass limit 
 zerosfr = sim_sed['logsfr.inst'] == -999
 
-cuts = mlim & ~zerosfr & downsample 
+if sfr0 == 'adhoc': 
+    # observables for SFR = 0 simulated galaxies are directly sampled from SDSS
+    # distribution 
+    cuts = mlim & ~zerosfr & downsample 
+    zerosfr_obs = dustInfer._observable_zeroSFR(
+            sim_sed['wave'][wlim], 
+            sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
+elif sfr0 == 'sfrmin': 
+    # impose minimum SFR for SFR = 0 simulated galaxies 
+    logsfr_min = _sim_sed['logsfr.inst'][~zerosfr].min() # minimum SFR
+    sim_sed['logsfr.inst'][zerosfr] = logsfr_min
+
+    cuts = mlim & downsample
+    zerosfr_obs = None 
+else: 
+    raise NotImplementedError
+
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
@@ -77,11 +96,6 @@ shared_sim_sed['wave']          = sim_sed['wave'][wlim].copy()
 shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
 
-# observables for SFR = 0 simulated galaxies are directly sampled from SDSS
-# distribution 
-zerosfr_obs = dustInfer._observable_zeroSFR(
-        sim_sed['wave'][wlim], 
-        sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
 
 # read SDSS summary statistics  
 x_obs = dustInfer.sumstat_obs(statistic=statistic)
