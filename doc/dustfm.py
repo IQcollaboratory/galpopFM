@@ -42,7 +42,7 @@ _clrs = {
         'eagle': 'C2' 
         }
 
-nabc = [12, 19, 19]
+nabc = [13, 22, 22]
 _nabc = {
         'simba': nabc[0], 
         'tng': nabc[1],
@@ -2977,10 +2977,10 @@ if __name__=="__main__":
     #SMF_MsSFR()
     #DEM()
     #Observables()
-    #ABC_corner() 
+    ABC_corner() 
     #_ABC_corner_flexbump() 
     #_ABC_Observables()
-    #ABC_Observables()
+    ABC_Observables()
     #ABC_slope_AV()
     #_ABC_slope_AV_quiescent()   
     #ABC_attenuation()
@@ -2992,7 +2992,7 @@ if __name__=="__main__":
     #simba_starbursts()
 
     # subpopulations in color magnitude space 
-    subpops()
+    #subpops()
     #subpops_nodust()
 
     #_profile_tng()
