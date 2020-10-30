@@ -77,7 +77,7 @@ if sfr0 == 'adhoc':
             sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
 elif sfr0 == 'sfrmin': 
     # impose minimum SFR for SFR = 0 simulated galaxies 
-    logsfr_min = _sim_sed['logsfr.inst'][~zerosfr].min() # minimum SFR
+    logsfr_min = sim_sed['logsfr.inst'][~zerosfr].min() # minimum SFR
     sim_sed['logsfr.inst'][zerosfr] = logsfr_min
 
     cuts = mlim & downsample
@@ -288,9 +288,9 @@ if __name__=="__main__":
     else: 
         pewl = None 
 
-    name    = sys.argv[6] # name of ABC run
-    niter   = int(sys.argv[7]) # number of iterations
-    restart = (sys.argv[8] == 'True')
+    name    = sys.argv[7] # name of ABC run
+    niter   = int(sys.argv[8]) # number of iterations
+    restart = (sys.argv[9] == 'True')
     print('Runnin ABC with ...') 
     print('%s simulation' % sim) 
     print('%s DEM' % dem)
@@ -298,11 +298,11 @@ if __name__=="__main__":
     print('%s summary statistic' % statistic)
     print('%i iterations' % niter)
     if not restart: 
-        npart   = int(sys.argv[9]) # number of particles 
+        npart   = int(sys.argv[10]) # number of particles 
         print('%i particles' % npart)
         trest = None 
     else: 
-        trest = int(sys.argv[9]) 
+        trest = int(sys.argv[10]) 
         print('T=%i restart' % trest) 
         npart = None 
 
