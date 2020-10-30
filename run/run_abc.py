@@ -65,7 +65,7 @@ downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
 f_downsample = 0.1
 
-mlim    = (sim_sed['logmstar'] > 9.4) # mass limit 
+cuts = (sim_sed['logmstar'] > 9.4) # mass limit 
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
@@ -268,9 +268,9 @@ if __name__=="__main__":
     else: 
         pewl = None 
 
-    name    = sys.argv[6] # name of ABC run
-    niter   = int(sys.argv[7]) # number of iterations
-    restart = (sys.argv[8] == 'True')
+    name    = sys.argv[7] # name of ABC run
+    niter   = int(sys.argv[8]) # number of iterations
+    restart = (sys.argv[9] == 'True')
     print('Runnin ABC with ...') 
     print('%s simulation' % sim) 
     print('%s DEM' % dem)
@@ -278,11 +278,11 @@ if __name__=="__main__":
     print('%s summary statistic' % statistic)
     print('%i iterations' % niter)
     if not restart: 
-        npart   = int(sys.argv[9]) # number of particles 
+        npart   = int(sys.argv[10]) # number of particles 
         print('%i particles' % npart)
         trest = None 
     else: 
-        trest = int(sys.argv[9]) 
+        trest = int(sys.argv[10]) 
         print('T=%i restart' % trest) 
         npart = None 
 
