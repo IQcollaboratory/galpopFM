@@ -89,7 +89,8 @@ def sumstat_obs(statistic='2d', return_bins=False):
 
 
 def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
-        statistic='2d', noise=True, seed=None, return_datavector=False, extra_data=None): 
+        statistic='2d', noise=True, seed=None, return_datavector=False,
+        sfr0_prescription='adhoc'): 
     ''' calculate summary statistics for forward model m(theta) 
     
     :param theta: 
@@ -100,9 +101,8 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
         string specifying the dust empirical model
     :param f_downsample: 
         if f_downsample > 1., then the SED dictionary is downsampled. 
-    :param extra_data: 
-        fixed extra data to be included in the data_vector. Has to be
-        of the form [Rmag, G-R, FUV-NUV] (see note below) 
+    :param sfr0_prescription: 
+        prescription for dealing with SFR=0 galaxies  
 
     notes
     -----
@@ -117,6 +117,19 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     dRmag   = 0.5
     dGR     = 0.0625
     dfuvnuv = 0.25
+
+    # SFR=0 galaxies 
+    sfr0 = (sed['logsfr.inst'] == -999) 
+    if sfr0_prescription == 'adhoc': 
+        raise ValueError
+        #R_mag_sfr0, G_R_sfr0, FUV_NUV_sfr0 = _observable_zeroSFR(
+        #        sed['wave'], 
+        #        sed['sed_noneb'][sfr0,:])
+    elif sfr0_prescription == 'sfrmin': 
+        logsfr_min = sed['logsfr.inst'][~sfr0].min() # minimum SFR
+        sed['logsfr.inst'][sfr0] = logsfr_min
+    else: 
+        raise NotImplementedError
 
     sed_dusty = dustFM.Attenuate(
             theta, 
@@ -136,6 +149,12 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     FUV_NUV = F_mag - N_mag 
     G_R = G_mag - R_mag
     
+    if sfr0_prescription == 'adhoc':
+        # append sampled SFR=0 observables to data vector
+        R_mag   = np.concatenate([R_mag, R_mag_sfr0]) 
+        G_R     = np.concatenate([G_R, G_R_sfr0]) 
+        FUV_NUV = np.concatenate([FUV_NUV, FUV_NUV_sfr0]) 
+
     n_gal = len(R_mag)
         
     if noise: 
@@ -151,11 +170,6 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
         G_R += np.random.normal(size=n_gal) * sig_GR
 
     data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
-
-    if extra_data is not None: #append extra data to data vector
-        # assumes extra_data = [R_mag, G-R, FUV-NUV]
-        extra_data[0] = -1. * extra_data[0]
-        data_vector = np.concatenate([data_vector, np.array(extra_data).T], axis=0) 
 
     if return_datavector: 
         return data_vector.T
