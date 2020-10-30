@@ -65,26 +65,7 @@ downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
 f_downsample = 0.1
 
-mlim    = (sim_sed['logmstar'] > 9.4) # mass limit 
-zerosfr = sim_sed['logsfr.inst'] == -999
-
-if sfr0 == 'adhoc': 
-    # observables for SFR = 0 simulated galaxies are directly sampled from SDSS
-    # distribution 
-    cuts = mlim & ~zerosfr & downsample 
-    zerosfr_obs = dustInfer._observable_zeroSFR(
-            sim_sed['wave'][wlim], 
-            sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
-elif sfr0 == 'sfrmin': 
-    # impose minimum SFR for SFR = 0 simulated galaxies 
-    logsfr_min = sim_sed['logsfr.inst'][~zerosfr].min() # minimum SFR
-    sim_sed['logsfr.inst'][zerosfr] = logsfr_min
-
-    cuts = mlim & downsample
-    zerosfr_obs = None 
-else: 
-    raise NotImplementedError
-
+cuts = (sim_sed['logmstar'] > 9.4) # mass limit 
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
@@ -99,8 +80,7 @@ shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy()
 
 # read SDSS summary statistics  
 x_obs = dustInfer.sumstat_obs(statistic=statistic)
-if distance_method == 'L2_only': 
-    x_obs = x_obs[1:]
+if distance_method == 'L2_only': x_obs = x_obs[1:]
 ######################################################
 # functions  
 ###################################################### 
@@ -193,7 +173,7 @@ def dem_prior(dem_name):
 def _sumstat_model_wrap(theta, dem=dem): 
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
             f_downsample=f_downsample, statistic=statistic, noise=True, 
-            extra_data=zerosfr_obs) 
+            sfr0_prescription=sfr0) 
     if distance_method == 'L2_only':
         # nbar not included in distance metric 
         return x_mod[1:]
