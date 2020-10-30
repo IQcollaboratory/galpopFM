@@ -75,7 +75,7 @@ def plot_pool(T, prior=None, dem='slab_calzetti', abc_dir=None):
     return None 
 
 
-def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
+def abc_sumstat(T, sim='simba', dem='slab_calzetti', sfr0_prescription='adhoc', abc_dir=None):
     ''' compare ABC summary statistics to data 
     '''
     ####################################################################################
@@ -99,32 +99,20 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', abc_dir=None):
     ####################################################################################
     _sim_sed = dustInfer._read_sed(sim) 
     wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
-    downsample = np.zeros(len(_sim_sed['logmstar'])).astype(bool)
-    downsample[::10] = True
-    f_downsample = 0.1
-
-    mlim = (_sim_sed['logmstar'] > 9.4)
-    zerosfr = (_sim_sed['logsfr.inst'] == -999)
-
-    cuts = mlim & ~zerosfr & downsample 
+    cuts = (_sim_sed['logmstar'] > 9.4)
 
     sim_sed = {} 
     sim_sed['sim']          = sim
     sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
-    sim_sed['logsfr.inst']   = _sim_sed['logsfr.inst'][cuts].copy() 
+    sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
     sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
     sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+    print(np.sum(sim_sed['logsfr.inst'] == -999))
+    print(np.sum(cuts))
 
-    # observables for SFR = 0 simulated galaxies are directly sampled from SDSS
-    # distribution 
-    zerosfr_obs = dustInfer._observable_zeroSFR(
-            _sim_sed['wave'][wlim], 
-            _sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
-
-    x_mod = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
-            f_downsample=f_downsample, statistic='2d', extra_data=zerosfr_obs) 
-    nbar_mod, x_mod_gr, x_mod_fn = x_mod
+    nbar_mod, x_mod_gr, x_mod_fn = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
+            statistic='2d', sfr0_prescription=sfr0_prescription) 
     ########################################################################
     print('obs nbar = %.4e' % nbar_obs)
     print('mod nbar = %.4e' % nbar_mod)
@@ -325,6 +313,7 @@ if __name__=="__main__":
     name    = sys.argv[2] # name of ABC run
     i0      = int(sys.argv[3])
     i1      = int(sys.argv[4]) 
+    sfr0    = sys.argv[5]
     if fetch: 
         pwd = getpass.getpass('sirocco password: ') 
     ######################################################
@@ -347,6 +336,6 @@ if __name__=="__main__":
         # plot the pools 
         plot_pool(niter, prior=prior, dem=dem, abc_dir=abc_dir)
         # plot ABCC summary statistics  
-        abc_sumstat(niter, sim=sim, dem=dem, abc_dir=abc_dir)
+        abc_sumstat(niter, sim=sim, dem=dem, sfr0_prescription=sfr0, abc_dir=abc_dir)
         # plot attenuation 
         #abc_attenuationt(niter, sim=sim, dem=dem, abc_dir=abc_dir)
