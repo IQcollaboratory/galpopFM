@@ -64,8 +64,11 @@ wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 8e3)
 downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
 downsample[::10] = True
 f_downsample = 0.1
+#downsample[:] = True
+#f_downsample = 1.
 
-cuts = (sim_sed['logmstar'] > 9.4) # mass limit 
+mlim = (sim_sed['logmstar'] > 9.4) 
+cuts = mlim & downsample # mass limit 
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
@@ -182,8 +185,11 @@ def _sumstat_model_wrap(theta, dem=dem):
 
 def _distance_metric_wrap(x_obs, x_model): 
     if distance_method == 'L2_only': 
-        return dustInfer.distance_metric(x_obs, x_model, method='L2')
-    return dustInfer.distance_metric(x_obs, x_model, method=distance_method)
+        rho = dustInfer.distance_metric(x_obs, x_model, method='L2')
+    else: 
+        rho = dustInfer.distance_metric(x_obs, x_model, method=distance_method)
+    print('     rho = %s' % ', '.join(['%.5f' % _rho for _rho in rho]))
+    return rho 
 
 
 def abc(pewl, name=None, niter=None, npart=None, restart=None): 
@@ -285,7 +291,7 @@ if __name__=="__main__":
         trest = int(sys.argv[10]) 
         print('T=%i restart' % trest) 
         npart = None 
-
+    
     abc_dir = os.path.join(dat_dir, 'abc', name) 
     if not os.path.isdir(abc_dir): 
         os.system('mkdir %s' % abc_dir)

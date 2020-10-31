@@ -18,6 +18,7 @@ from galpopfm import dust_infer as dustInfer
 from galpopfm import measure_obs as measureObs
 # -- plotting -- 
 import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt 
 mpl.rcParams['text.usetex'] = True
 mpl.rcParams['font.family'] = 'serif'
@@ -161,7 +162,10 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', sfr0_prescription='adhoc', 
     fig.subplots_adjust(wspace=0.1, hspace=0.1, right=0.85)
     cbar_ax = fig.add_axes([0.875, 0.15, 0.02, 0.7])
     fig.colorbar(h, cax=cbar_ax)
-    fig.savefig(os.path.join(abc_dir, 'abc_sumstat.t%i.png' % T), bbox_inches='tight') 
+    try: 
+        fig.savefig(os.path.join(abc_dir, 'abc_sumstat.t%i.png' % T), bbox_inches='tight') 
+    except RuntimeError: 
+        fig.savefig(os.path.join(abc_dir, 'abc_sumstat.t%i.pdf' % T), bbox_inches='tight') 
     return None 
 
 

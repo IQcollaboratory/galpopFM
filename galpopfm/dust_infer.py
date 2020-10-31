@@ -40,7 +40,6 @@ def distance_metric(x_obs, x_model, method='chi2', x_err=None):
                 for _obs, _mod, _err in zip(x_obs, x_model, x_err)]
     else: 
         raise NotImplementedError
-    print('     (%s)' % ', '.join([str(_rho) for _rho in rho]))
     return rho
 
 
@@ -403,5 +402,8 @@ def plotABC(pool, prior=None, dem='slab_calzetti', abc_dir=None):
             smooth=True, 
             labels=lbls, 
             label_kwargs={'fontsize': 20}) 
-    fig.savefig(os.path.join(abc_dir, 'abc.t%i.png' % pool.t) , bbox_inches='tight') 
+    try:  
+        fig.savefig(os.path.join(abc_dir, 'abc.t%i.png' % pool.t) , bbox_inches='tight') 
+    except: 
+        fig.savefig(os.path.join(abc_dir, 'abc.t%i.pdf' % pool.t) , bbox_inches='tight') 
     return None 
