@@ -35,7 +35,7 @@ ofile="/home/users/hahn/projects/galpopFM/run/_siro/_abc_"$sim"."$dem"."$dist"."
 
 mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
     siro $sim $dem $dist $stat $sfr0 $sim"."$dem"."$dist"."$stat"."$sfr0 30 False 1000 \
-    &>> $ofile
+    >> $ofile
 
 # restart ABC 
 #mpiexec -n 8 python /home/users/hahn/projects/galpopFM/run/run_abc.py \
