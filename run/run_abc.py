@@ -67,7 +67,8 @@ f_downsample = 0.1
 #downsample[:] = True
 #f_downsample = 1.
 
-cuts = (sim_sed['logmstar'] > 9.4) & downsample # mass limit 
+mlim = (sim_sed['logmstar'] > 9.4) 
+cuts = mlim & downsample # mass limit 
 
 # global variable that can be accessed by multiprocess (~2GB) 
 shared_sim_sed = {} 
