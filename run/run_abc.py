@@ -33,6 +33,12 @@ distance_method = sys.argv[4]
 statistic       = sys.argv[5]
 sfr0            = sys.argv[6] # prescription for SFR=0 galaxies 
 ######################################################
+# read SDSS summary statistics  
+x_obs = dustInfer.sumstat_obs(statistic=statistic)
+if distance_method == 'L2_only': x_obs = x_obs[1:]
+
+rho_max_3d = np.sum(x_obs[0]**2)
+
 # starting distance threshold 
 if statistic == '1d': 
     if distance_method == 'L2': 
@@ -50,7 +56,7 @@ elif statistic == '3d':
     elif distance_method == 'L1': 
         eps0 = [0.01, 0.2]
     elif distance_method == 'L2_only': 
-        eps0 = [0.01]
+        eps0 = [rho_max_3d]
 ######################################################
 # this will run on all processes =X
 # read SED for sims 
@@ -62,8 +68,8 @@ wlim = (sim_sed['wave'] > 1e3) & (sim_sed['wave'] < 8e3)
 # the lower limit log M* > 9.4 is padded by >0.25 dex to conservatively account
 # for log M* and R magnitude scatter  
 downsample = np.zeros(len(sim_sed['logmstar'])).astype(bool)
-downsample[::10] = True
-f_downsample = 0.1
+downsample[::5] = True
+f_downsample = 0.2
 #downsample[:] = True
 #f_downsample = 1.
 
@@ -81,9 +87,6 @@ shared_sim_sed['sed_noneb']     = sim_sed['sed_noneb'][cuts,:][:,wlim].copy()
 shared_sim_sed['sed_onlyneb']   = sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
 
 
-# read SDSS summary statistics  
-x_obs = dustInfer.sumstat_obs(statistic=statistic)
-if distance_method == 'L2_only': x_obs = x_obs[1:]
 ######################################################
 # functions  
 ###################################################### 
@@ -174,6 +177,7 @@ def dem_prior(dem_name):
 
 
 def _sumstat_model_wrap(theta, dem=dem): 
+    print('    [%s]' % ','.join('%.1f' % tt for tt in theta))
     x_mod = dustInfer.sumstat_model(theta, sed=shared_sim_sed, dem=dem,
             f_downsample=f_downsample, statistic=statistic, noise=True, 
             sfr0_prescription=sfr0) 
