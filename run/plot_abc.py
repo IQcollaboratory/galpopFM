@@ -73,6 +73,7 @@ def plot_pool(T, prior=None, dem='slab_calzetti', abc_dir=None):
     pool    = abcpmc.PoolSpec(T, None, None, theta_T, rho_T, w_T) 
 
     dustInfer.plotABC(pool, prior=prior, dem=dem, abc_dir=abc_dir)
+    plt.close() 
     return None 
 
 
@@ -109,8 +110,6 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', sfr0_prescription='adhoc', 
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
     sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
     sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
-    print(np.sum(sim_sed['logsfr.inst'] == -999))
-    print(np.sum(cuts))
 
     nbar_mod, x_mod_gr, x_mod_fn = dustInfer.sumstat_model(theta_med, sed=sim_sed, dem=dem,
             statistic='2d', sfr0_prescription=sfr0_prescription) 
@@ -166,6 +165,7 @@ def abc_sumstat(T, sim='simba', dem='slab_calzetti', sfr0_prescription='adhoc', 
         fig.savefig(os.path.join(abc_dir, 'abc_sumstat.t%i.png' % T), bbox_inches='tight') 
     except RuntimeError: 
         fig.savefig(os.path.join(abc_dir, 'abc_sumstat.t%i.pdf' % T), bbox_inches='tight') 
+    plt.close() 
     return None 
 
 

@@ -34,27 +34,22 @@ mpl.rcParams['legend.frameon'] = False
 dat_dir = os.environ['GALPOPFM_DIR']
 fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'figs') 
 
-sims = ['SIMBA', 'TNG', 'EAGLE']
-clrs = ['C1', 'C0', 'C2']
-_clrs = {
-        'simba': 'C1', 
-        'tng': 'C0',
-        'eagle': 'C2' 
-        }
+sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
+clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
+nabc = {'simba': 11, 'tng': 19, 'eagle': 22}        # Niteration 
 
-nabc = [13, 22, 22]
-_nabc = {
-        'simba': nabc[0], 
-        'tng': nabc[1],
-        'eagle': nabc[2] 
-        }
-abc_run = lambda _sim: '%s.slab_noll_mssfr_fixbump.L2_only.3d' % _sim.lower() 
-dem_attenuate = dustFM.DEM_slab_noll_msfr_fixbump
+sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
+dem = 'slab_noll_mssfr_fixbump'
+abc_run = lambda _sim: \
+        '%s.%s.L2_only.3d.%s' % (_sim.lower(), dem, sfr0_prescript)
+dem_attenuate = dustFM.DEM_slab_noll_mssfr_fixbump  # dustFM function 
+
+# parameters
 param_lbls = np.array([
         r'$m_{\tau,M_*}$', r'$m_{\tau,{\rm SFR}}$', r'$c_{\tau}$', 
-        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$'])#, r'$f_{\rm neb}$'])
-prior_min = np.array([-5., -5., 0., -4., -4., -4.])#, 1.]) 
-prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0])#, 4.]) 
+        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$'])
+prior_min = np.array([-5., -5., 0., -4., -4., -4.])
+prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0])
 
 prior_range = np.array([(_min, _max) for _min, _max in zip(prior_min, prior_max)])
 
@@ -329,76 +324,66 @@ def Observables():
     x_obs = [-1.*sdss_M_r[mr_complete], 
             sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
             sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
-    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    x_simba, sfr0_simba  = _sim_observables('simba', np.array([0. for i in range(6)]), 
-            zero_sfr_sample=False)
-    x_tng, sfr0_tng      = _sim_observables('tng', np.array([0. for i in range(6)]),
-            zero_sfr_sample=False)
-    x_eag, sfr0_eag      = _sim_observables('eagle', np.array([0. for i in range(6)]),
-            zero_sfr_sample=False)
-    print('--- fraction of galaxies w/ 0 SFR ---') 
-    print('simba %.2f' % (np.sum(sfr0_simba)/len(sfr0_simba)))
-    print('tng %.2f' % (np.sum(sfr0_tng)/len(sfr0_tng)))
-    print('eagle %.2f' % (np.sum(sfr0_eag)/len(sfr0_eag)))
+    nontheta = np.zeros(6) 
+    x_simba, _, sfr0_simba  = _sim_observables('simba', nontheta)
+    x_tng, _, sfr0_tng      = _sim_observables('tng', nontheta)
+    x_eagle, _, sfr0_eagle  = _sim_observables('eagle', nontheta)
+    sfr0s = [sfr0_simba, sfr0_tng, sfr0_eagle]
     #########################################################################
     # plotting 
     #########################################################################
-    xs      = [x_simba, x_tng, x_eag]
-    names   = ['SIMBA (no dust)', 'TNG (no dust)', 'EAGLE (no dust)']
-    clrs    = ['C1', 'C0', 'C2']
-    sfr0s   = [sfr0_simba, sfr0_tng, sfr0_eag] 
+    fig = plt.figure(figsize=(5*len(sims),10))
+    for i, _x, sim in zip(range(len(sims)), [x_simba, x_tng, x_eagle], sims): 
 
-    fig = plt.figure(figsize=(5*len(xs),10))
-
-    for i, _x, _sfr0, name, clr in zip(range(len(xs)), xs, sfr0s, names, clrs): 
         # R vs (G - R)
-        sub = fig.add_subplot(2,len(xs),i+1)
-        DFM.hist2d(x_obs[0][~sfr0_obs], x_obs[1][~sfr0_obs], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[1]], bins=20, color='k', 
+        sub = fig.add_subplot(2,len(sims),i+1)
+        DFM.hist2d(x_obs[0], x_obs[1], range=[ranges[0], ranges[1]],
+                levels=[0.68, 0.95], bins=20, color='k',
                 contour_kwargs={'linestyles': 'dashed'}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
-        DFM.hist2d(_x[0][~_sfr0], _x[1][~_sfr0], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub)
+        DFM.hist2d(_x[0], _x[1], range=[ranges[0], ranges[1]],
+                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], 
                 contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
-        #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
-        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+                plot_datapoints=True, fill_contours=False, plot_density=True, 
+                ax=sub)
+        #sub.scatter(_x[0][sfr0s[i]], _x[1][sfr0s[i]], c='k', s=1) 
+        sub.text(0.95, 0.95, '%s (no dust)' % sim, 
+            ha='right', va='top', transform=sub.transAxes, fontsize=25)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([])
-        if i == 0: 
-            sub.set_ylabel(r'$G-R$', fontsize=25) 
-        else: 
-            sub.set_yticklabels([]) 
+        if i == 0: sub.set_ylabel(r'$G-R$', fontsize=25) 
+        else: sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
         sub.set_yticks([0., 0.5, 1., 1.5])
 
+
         # R vs FUV-NUV
-        sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
-        DFM.hist2d(x_obs[0][~sfr0_obs], x_obs[2][~sfr0_obs], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[2]], bins=20, color='k', 
-                contour_kwargs={'linestyles': 'dashed'}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
-        DFM.hist2d(_x[0][~_sfr0], _x[2][~_sfr0], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
-                contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
-        #sfr0 = sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
+        sub = fig.add_subplot(2,len(sims),i+len(sims)+1)
+        DFM.hist2d(x_obs[0], x_obs[2], range=[ranges[0], ranges[2]],
+            levels=[0.68, 0.95], bins=20, color='k', 
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, 
+            ax=sub)
+        DFM.hist2d(_x[0], _x[2], range=[ranges[0], ranges[2]],
+            levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=True, fill_contours=False, plot_density=True, 
+            ax=sub) 
+        #sub.scatter(_x[0][sfr0s[i]], _x[2][sfr0s[i]], c='k', s=1) 
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
-        if i == 0: 
-            sub.set_ylabel(r'$FUV - NUV$', fontsize=25) 
-        else: 
-            sub.set_yticklabels([]) 
+        if i == 0: sub.set_ylabel(r'$FUV - NUV$', fontsize=25) 
+        else: sub.set_yticklabels([]) 
         sub.set_ylim(ranges[2]) 
 
+
     _plth0, = sub.plot([], [], c='k', ls='--')
-    #sub.legend([sfr0, _plth0], ['SFR = 0', 'SDSS'], loc='lower right', ncol=2, handletextpad=0,
-    #        markerscale=7, fontsize=20) 
     sub.legend([_plth0], ['SDSS'], loc='lower right', ncol=2, handletextpad=0,
             markerscale=7, fontsize=20) 
     bkgd = fig.add_subplot(111, frameon=False)
@@ -413,8 +398,8 @@ def Observables():
     return None 
 
 
-def _sim_observables(sim, theta, model='slab', noise=True, fixbump=True,
-        zero_sfr_sample=False, no_Mr_cut=False, return_sim=False): 
+def _sim_observables(sim, theta, model='slab', noise=True,
+        sfr0_prescription=sfr0_prescript, no_Mr_cut=False): 
     ''' read specified simulations and return data vector 
 
     :param zero_sfr_sample: 
@@ -431,62 +416,36 @@ def _sim_observables(sim, theta, model='slab', noise=True, fixbump=True,
     '''
     _sim_sed = dustInfer._read_sed(sim) 
     wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
-    #downsample = np.zeros(len(_sim_sed['logmstar'])).astype(bool)
-    #downsample[::10] = True
-    downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
-    f_downsample = 1.#0.1
 
     mlim    = (_sim_sed['logmstar'] > 9.4) 
     zerosfr = (_sim_sed['logsfr.inst'] == -999)
-
-    if not zero_sfr_sample: 
-        cuts = mlim & downsample 
-    else: 
-        cuts = mlim & ~zerosfr & downsample 
+    cuts    = mlim 
 
     sim_sed = {} 
     sim_sed['sim']          = sim 
     sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
-    sim_sed['logsfr.inst']   = _sim_sed['logsfr.inst'][cuts].copy() 
+    sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
     sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
     sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
     
-    if not zero_sfr_sample: 
-        # SFR=0 observables are *not* sampled. Returns indices 
-        x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-                dem='%s_noll_mssfr%s' % (model, ['', '_fixbump'][fixbump]), 
-                f_downsample=f_downsample, statistic='2d', noise=noise, 
-                return_datavector=True)
-        _zerosfr = sim_sed['logsfr.inst'] == -999
-    else: 
-        zerosfr_obs = dustInfer._observable_zeroSFR(
-                _sim_sed['wave'][wlim], 
-                _sim_sed['sed_neb'][mlim & zerosfr & downsample,:][:,wlim])
-
-        x_mod = dustInfer.sumstat_model(theta, sed=sim_sed,
-                dem='%s_noll_mssfr%s' % (model, ['', '_fixbump'][fixbump]), 
-                f_downsample=f_downsample, statistic='2d', noise=noise, 
-                extra_data=zerosfr_obs, return_datavector=True)
-        _zerosfr = np.zeros(x_mod.shape[1]).astype(bool)
-        _zerosfr[np.sum(cuts):] = True
+    x_mod = dustInfer.sumstat_model(
+            theta, 
+            sed=sim_sed, 
+            dem=dem,
+            statistic='2d', 
+            sfr0_prescription=sfr0_prescription, 
+            noise=noise, 
+            return_datavector=True) 
     
+    # impose Mr cut (or not) 
     if not no_Mr_cut: mr_cut = x_mod[0] > 20
     else: mr_cut = np.ones(len(x_mod[0])).astype(bool) 
 
-    if not return_sim: 
-        return x_mod[:,mr_cut], _zerosfr[mr_cut]
-    else: 
-        _simsed = {} 
-        if not zero_sfr_sample: 
-            _simsed['logmstar'] = sim_sed['logmstar'][mr_cut]
-            _simsed['logsfr.inst'] = sim_sed['logsfr.inst'][mr_cut]
-        else: 
-            _simsed['logmstar'] = np.concatenate([sim_sed['logmstar'],
-                _sim_sed['logmstar'][mlim & zerosfr & downsample]])[mr_cut]
-            _simsed['logsfr.inst'] = np.concatenate([sim_sed['logsfr.inst'], 
-                _sim_sed['logsfr.inst'][mlim & zerosfr & downsample]])[mr_cut]
-        return x_mod[:,mr_cut], _zerosfr[mr_cut], _simsed
+    sim_sed['logmstar'] = sim_sed['logmstar'][mr_cut] 
+    sim_sed['logsfr.inst'] = sim_sed['logsfr.inst'][mr_cut] 
+
+    return x_mod[:,mr_cut], sim_sed, zerosfr[cuts][mr_cut]
 
 
 def slab_tnorm_comparison(): 
@@ -568,9 +527,10 @@ def ABC_corner():
     keep_cols = np.zeros(len(param_lbls)).astype(bool) 
     keep_cols[:-1] = True
 
-    for i, sim, T in zip(range(len(sims)), sims, nabc):
+    for i, sim in enumerate(sims):
         dat_dir = os.environ['GALPOPFM_DIR']
-        abc_dir = os.path.join(dat_dir, 'abc', abc_run(sim)) 
+        abc_dir = os.path.join(dat_dir, 'abc', abc_run(sim.lower())) 
+        T = nabc[sim.lower()]
 
         # read pool 
         theta_T = np.loadtxt(os.path.join(abc_dir, 'theta.t%i.dat' % T)) 
@@ -585,7 +545,7 @@ def ABC_corner():
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
-                    color=clrs[i], 
+                    color=clrs[sim.lower()], 
                     labels=param_lbls[keep_cols], 
                     label_kwargs={'fontsize': 25}) 
         else: 
@@ -596,7 +556,7 @@ def ABC_corner():
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
-                    color=clrs[i], 
+                    color=clrs[sim.lower()], 
                     labels=param_lbls[keep_cols], 
                     label_kwargs={'fontsize': 25}, 
                     fig = fig) 
@@ -604,7 +564,7 @@ def ABC_corner():
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
     for i, sim in enumerate(sims): 
-        bkgd.fill_between([],[],[], color=clrs[i], label=sim) 
+        bkgd.fill_between([],[],[], color=clrs[sim.lower()], label=sim) 
     bkgd.legend(loc='upper right', bbox_to_anchor=(0.875, 0.775), fontsize=25)
 
     ffig = os.path.join(fig_dir, 'abc.png')
@@ -903,76 +863,67 @@ def ABC_Observables():
     x_obs = [-1.*sdss_M_r[mr_complete], 
             sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
             sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
-    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
-    theta_simba = np.median(theta_T, axis=0) 
-    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('tng'), 'theta.t%i.dat' % nabc[1])) 
-    theta_tng = np.median(theta_T, axis=0) 
-    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
-    theta_eagle = np.median(theta_T, axis=0) 
+    xs, sfr0s = [], [] 
+    for sim in sims: 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
 
-    x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
-            zero_sfr_sample=True)
-    x_tng, sfr0_tng = _sim_observables('tng', theta_tng,
-            zero_sfr_sample=True)
-    x_eagle, sfr0_eagle = _sim_observables('eagle', theta_eagle,
-            zero_sfr_sample=True)
+        x_mod, _, sfr0 = _sim_observables(sim.lower(), theta_med)
+        xs.append(x_mod) 
+        sfr0s.append(sfr0) 
     #########################################################################
     # plotting 
     #########################################################################
-    xs      = [x_simba, x_tng, x_eagle]
-    names   = ['SIMBA + EDP', 'TNG + EDP', 'EAGLE + EDP']
 
-    fig = plt.figure(figsize=(5*len(xs),10))
+    fig = plt.figure(figsize=(5*len(sims),10))
+    for i, sim in enumerate(sims): 
 
-    #for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
-    for i, _x, name, clr in zip(range(len(xs)), xs, names, clrs): 
         # R vs (G - R)
-        sub = fig.add_subplot(2,len(xs),i+1)
-        DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[1]], bins=20, color='k', 
+        sub = fig.add_subplot(2,len(sims),i+1)
+        DFM.hist2d(x_obs[0], x_obs[1],range=[ranges[0], ranges[1]],
+                levels=[0.68, 0.95], bins=20, color='k', 
                 contour_kwargs={'linestyles': 'dashed'}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
-        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub)
+        DFM.hist2d(xs[i][0], xs[i][1], range=[ranges[0], ranges[1]],
+                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], 
                 contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+                plot_datapoints=True, fill_contours=False, plot_density=True, 
+                ax=sub)
         #sub.scatter(_x[0][_sfr0], _x[1][_sfr0], c='k', s=1)
-        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.text(0.95, 0.95, '%s + EDA' % sim, 
+                ha='right', va='top', transform=sub.transAxes, fontsize=25)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([])
-        if i == 0: 
-            sub.set_ylabel(r'$G-R$', fontsize=20) 
-        else: 
-            sub.set_yticklabels([]) 
+        if i == 0: sub.set_ylabel(r'$G-R$', fontsize=20) 
+        else: sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
         sub.set_yticks([0., 0.5, 1., 1.5])
 
+
         # R vs FUV-NUV
-        sub = fig.add_subplot(2,len(xs),i+len(xs)+1)
-        DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[2]], bins=20, color='k', 
+        sub = fig.add_subplot(2,len(sims),i+len(sims)+1)
+        DFM.hist2d(x_obs[0], x_obs[2], range=[ranges[0], ranges[2]], 
+                levels=[0.68, 0.95], bins=20, color='k', 
                 contour_kwargs={'linestyles': 'dashed'}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
-        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub)
+        DFM.hist2d(xs[i][0], xs[i][2], range=[ranges[0], ranges[2]], 
+                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], 
                 contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+                plot_datapoints=True, fill_contours=False, plot_density=True, 
+                ax=sub) 
         #sub.scatter(_x[0][_sfr0], _x[2][_sfr0], c='k', s=1)
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
-        if i == 0: 
-            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
-        else: 
-            sub.set_yticklabels([]) 
+        if i == 0: sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: sub.set_yticklabels([]) 
         sub.set_ylim(ranges[2]) 
     
     _plth0, = sub.plot([], [], c='k', ls='--')
@@ -991,7 +942,7 @@ def ABC_Observables():
     return None 
 
 
-def ABC_slope_AV(): 
+def ABC_slope_AV(gal_type='all'): 
     ''' comparison of slope to A_V
     '''
     wave = np.linspace(1000, 10000, 451) 
@@ -1002,15 +953,21 @@ def ABC_slope_AV():
     fig = plt.figure(figsize=(12,5))
     sub1 = fig.add_subplot(121)
     sub2 = fig.add_subplot(122)
-    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
-        # read sim 
+
+    for i, sim in enumerate(['TNG', 'EAGLE']): 
+
         # get abc posterior
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
         theta_median = np.median(theta_T, axis=0) 
 
-        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
-                zero_sfr_sample=True, return_sim=True)
+        x_sim, _sim, _sfr0 = _sim_observables(sim.lower(), theta_median)
+
+        if gal_type == 'all': # all galaxies 
+            subpop = np.ones(len(_sim['logmstar'])).astype(bool) 
+        elif gal_type == 'starforming':
+            # star-forming 
+            subpop = (_sim['logsfr.inst'] - _sim['logmstar'] > -10.5)
 
         # get attenuation curve 
         _A_lambda = dem_attenuate(
@@ -1018,7 +975,8 @@ def ABC_slope_AV():
                 wave, 
                 np.ones(len(wave)), 
                 _sim['logmstar'], 
-                _sim['logsfr.inst'])#,  mstar[subpop], sfr[subpop], nebular=False) 
+                _sim['logsfr.inst']
+                )
         A_lambda = -2.5 * np.log10(_A_lambda)
         
         A_V = A_lambda[:,i5500]
@@ -1027,17 +985,15 @@ def ABC_slope_AV():
         delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
                 theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
 
-        DFM.hist2d(A_V, S, levels=[0.68, 0.95],
-                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
-                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
-        #sub.fill_between([], [], [], color=clrs[isim], alpha=0.25,
-        #        linewidth=0., label=sim)
+        DFM.hist2d(A_V[subpop], S[subpop], range=[(0., 1.4), (0., 14.4)], 
+                levels=[0.68, 0.95], bins=10, color=clrs[sim.lower()],
+                plot_datapoints=False, fill_contours=True, plot_density=False, 
+                ax=sub1)
 
-        A_V = A_lambda[:,i5500]
-
-        DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
-                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
-                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
+        DFM.hist2d(A_V[subpop], delta_median[subpop], range=[(0., 1.4), (-1.5, 1.)],
+                levels=[0.68, 0.95], bins=10, color=clrs[sim.lower()], 
+                plot_datapoints=False, fill_contours=True, plot_density=False, 
+                ax=sub2)
 
     # SMC
     #sub1.scatter([0.5], [4.8], c='b', s=60) 
@@ -1112,9 +1068,9 @@ def ABC_slope_AV():
 
     # sim legends     
     _plt_sims = [] 
-    for i in range(1,3): 
-        _plt_sim = sub2.fill_between([], [], [], color=clrs[i], alpha=0.25,
-                linewidth=0)
+    for sim in ['TNG', 'EAGLE']:   
+        _plt_sim = sub2.fill_between([], [], [], 
+                color=clrs[sim.lower()], alpha=0.25, linewidth=0)
         _plt_sims.append(_plt_sim) 
 
     sim_legend = sub2.legend(_plt_sims, sims[1:], loc='lower right',
@@ -1124,144 +1080,7 @@ def ABC_slope_AV():
 
     fig.subplots_adjust(wspace=0.3)
 
-    ffig = os.path.join(fig_dir, 'abc_slope_AV.png') 
-    fig.savefig(ffig, bbox_inches='tight') 
-
-    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
-    plt.close()
-    return None 
-
-
-def ABC_slope_AV_starforming():
-    ''' comparison of slope to A_V for star-forming galaxies. We focus on
-    star-forming galaxies since observations focus on star-forming galaxies 
-    '''
-    wave = np.linspace(1000, 10000, 451) 
-    i1500 = 25 
-    i3000 = 100
-    i5500 = 225
-
-    fig = plt.figure(figsize=(12,5))
-    sub1 = fig.add_subplot(121)
-    sub2 = fig.add_subplot(122)
-    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
-        # read sim 
-        # get abc posterior
-        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-            abc_run(sim), 'theta.t%i.dat' % iabc)) 
-        theta_median = np.median(theta_T, axis=0) 
-
-        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
-                zero_sfr_sample=True, return_sim=True)
-    
-        # star-forming 
-        starforming = (_sim['logsfr.inst'] - _sim['logmstar'] > -10.5)
-
-        # get attenuation curve 
-        _A_lambda = dem_attenuate(
-                theta_median, 
-                wave, 
-                np.ones(len(wave)), 
-                _sim['logmstar'], 
-                _sim['logsfr.inst'])#,  mstar[subpop], sfr[subpop], nebular=False) 
-        A_lambda = -2.5 * np.log10(_A_lambda)
-        
-        A_V = A_lambda[:,i5500]
-        S = A_lambda[:,i1500]/A_V
-        
-        delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
-                theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
-
-        DFM.hist2d(A_V[starforming], S[starforming], levels=[0.68, 0.95],
-                range=[(0., 1.4), (0., 14.4)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
-                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub1)
-        #sub.fill_between([], [], [], color=clrs[isim], alpha=0.25,
-        #        linewidth=0., label=sim)
-
-        A_V = A_lambda[:,i5500]
-
-        DFM.hist2d(A_V[starforming], delta_median[starforming], levels=[0.68, 0.95],
-                range=[(0., 1.4), (-1.5, 1.)], bins=10, color=clrs[isim], #contour_kwargs={'linewidths': 0}, 
-                plot_datapoints=False, fill_contours=True, plot_density=False, ax=sub2)
-
-    # SMC
-    #sub1.scatter([0.5], [4.8], c='b', s=60) 
-    #sub1.text(0.55, 5., 'SMC', ha='left', va='bottom', fontsize=20) 
-    # MW
-    sub1.scatter([1.15], [2.8], c='k', marker='*', s=60) 
-    sub1.text(1.2, 2.8, 'MW', ha='left', va='bottom', fontsize=20) 
-    # Calzetti 
-    sub1.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--')
-    sub1.text(0.125, 2.2, 'Calzetti+(2000)', ha='left', va='top', fontsize=15) 
-    # Inoue(2005) 
-    sub1.plot([0.04624, 0.08447, 0.14629, 0.24109, 0.35660, 0.51096, 0.66340, 0.87693, 1.07223, 1.30417], 
-            [13.85715, 8.97327, 6.44298, 4.74012, 3.71245, 3.03250, 2.57058, 2.15059, 1.92728, 1.68118], 
-            c='k', ls=':', label='Inoue(2005)') 
-    # Salim 2020 (0.12 dex scatter) 
-    #sub1.plot(np.linspace(0., 1.4, 10), 
-    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 10))+0.424), 
-    #        c='k', ls='-.', label='Salim\&Narayanan(2020)')
-    sub1.fill_between(np.linspace(0., 1.4, 100), 
-            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
-            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
-            color='k', alpha=0.25, linewidth=0, label='Salim\&Narayanan(2020)')
-    sub1.set_xlabel(r'$A_V$', fontsize=25)
-    sub1.set_xlim(0.1, 1.4)
-    sub1.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
-    sub1.set_ylim(0., 14.4) 
-    sub1.legend(loc='upper right', handletextpad=0.1, fontsize=18) 
-
-    ## Wiit & Gordon (2000)
-    #sub2.plot([0.01645, 0.63816, 1.77632, 2.83882],
-    #        [-0.38591, -0.19720, 0.04641, 0.17912], 
-    #        c='k', ls=':', label='Witt\&Gordon(2000)')
-    # Chevallard+(2013)
-    sub2.plot([0.10835, 0.21592, 0.32572, 0.53347, 1.08204, 1.39621], 
-            [-0.69552, -0.40416, -0.20461, -0.00546, 0.19557, 0.25330], 
-            c='k', ls='-.', label='Chevallard+(2013)')
-    # Salmon+(2016)
-    #sub2.plot([0.25000, 0.45395, 0.65461, 0.86513, 1.06250, 1.25987, 1.46711,
-    #    1.68421, 1.88816, 2.08553, 2.28618, 2.49342, 2.70066], 
-    #    [-0.44029, -0.33634, -0.22886, -0.15658, -0.11245, -0.06656, -0.04002,
-    #        -0.00292, 0.02889, 0.04311, 0.06964, 0.11202, 0.14032], c='g',
-    #    label='Salmon+(2016)') 
-    # Salim+(2018)
-    sub2.fill_between( 
-            [0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900,
-                1.000, 1.100, 1.200, 1.300], 
-            [-1.030, -0.830, -0.636, -0.519, -0.440, -0.381, -0.341, -0.286,
-                -0.198, -0.103, -0.035, 0.054, 0.118], 
-            [-0.499, -0.270, -0.111, -0.007, 0.054, 0.112, 0.134, 0.144, 0.169,
-                0.196, 0.236, 0.282, 0.283], 
-            facecolor='k', alpha=0.2, hatch='X', edgecolor='k', linewidth=0., label='Salim+(2018)') 
-    # Trayford+(2020)
-    #[-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
-    sub2.plot([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
-            [-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
-            '-^', c='k', label='Trayford+(2020)') 
-    #sub2.scatter([0.26801, 0.44502, 0.62433, 0.80357, 0.98036, 1.16435, 1.34110, 1.52263, 1.69932, 1.87595], 
-    #        [-0.61368, -0.27968, -0.05030, 0.12274, 0.26761, 0.36419, 0.47686, 0.54125, 0.60563, 0.62173],
-    #        marker='^', s=40, c='k', label='Trayford+(2020)') 
-    sub2.set_xlabel(r'$A_V$', fontsize=25)
-    sub2.set_xlim(0.1, 1.4)
-    sub2.set_ylabel('$\delta$', fontsize=25)
-    sub2.set_ylim(-1.6, 1.5) 
-
-    # sim legends     
-    _plt_sims = [] 
-    for i in range(1,3): 
-        _plt_sim = sub2.fill_between([], [], [], color=clrs[i], alpha=0.25,
-                linewidth=0)
-        _plt_sims.append(_plt_sim) 
-
-    sim_legend = sub2.legend(_plt_sims, sims[1:], loc='lower right',
-            handletextpad=0.1, prop={'size': 20})
-    sub2.legend(loc='upper left', handletextpad=0.1, fontsize=18) 
-    plt.gca().add_artist(sim_legend)
-
-    fig.subplots_adjust(wspace=0.3)
-
-    ffig = os.path.join(fig_dir, 'abc_slope_AV_starforming.png') 
+    ffig = os.path.join(fig_dir, 'abc_slope_AV.%s.png' % gal_type) 
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
@@ -1279,18 +1098,19 @@ def ABC_slope_AV_subpop():
     i5500 = 225
 
     fig = plt.figure(figsize=(12,10))
-    for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
-        sub1 = fig.add_subplot(2,2,2*isim-1)
-        sub2 = fig.add_subplot(2,2,2*isim)
+
+    for i, sim in enumerate(['TNG', 'EAGLE']):
+        sub1 = fig.add_subplot(2,2,2*i+1)
+        sub2 = fig.add_subplot(2,2,2*i+2)
         sub1.text(0.05, 0.95, sim, transform=sub1.transAxes, fontsize=20, ha='left', va='top')
+
         # read sim 
         # get abc posterior
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-            abc_run(sim), 'theta.t%i.dat' % iabc)) 
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
         theta_median = np.median(theta_T, axis=0) 
 
-        x_sim, sfr0_sim, _sim = _sim_observables(sim.lower(), theta_median,
-                zero_sfr_sample=True, return_sim=True)
+        x_sim, _sim, _sfr0 = _sim_observables(sim.lower(), theta_median)
 
         # galaxies with low M* and high SFR 
         veryhighSFR = (_sim['logsfr.inst'] - _sim['logmstar'] > -9.75)
@@ -1307,7 +1127,6 @@ def ABC_slope_AV_subpop():
         subpops = [veryhighSFR, highSFR, lowSFR, verylowSFR, veryverylowSFR][::-1]
         subclrs = ['C0', 'C2', 'C1', 'r', 'C4'][::-1]
 
-
         # get attenuation curve 
         _A_lambda = dem_attenuate(
                 theta_median, 
@@ -1323,13 +1142,16 @@ def ABC_slope_AV_subpop():
         delta_median = theta_median[3] * (_sim['logmstar'] - 10.) +\
                 theta_median[4] * _sim['logsfr.inst'] + theta_median[5] 
 
-        DFM.hist2d(A_V, S, levels=[0.68, 0.95],
-                range=[(0., 1.4), (0., 14.4)], bins=10, color='k', #contour_kwargs={'linewidths': 0}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub1)
-
-        DFM.hist2d(A_V, delta_median, levels=[0.68, 0.95],
-                range=[(0., 1.4), (-1.5, 1.)], bins=10, color='k', #contour_kwargs={'linewidths': 0}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub2)
+        DFM.hist2d(A_V, S, range=[(0., 1.4), (0., 14.4)], 
+                levels=[0.68, 0.95],
+                bins=10, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub1)
+        DFM.hist2d(A_V, delta_median, range=[(0., 1.4), (-1.5, 1.)], 
+                levels=[0.68, 0.95],
+                bins=10, color='k', #contour_kwargs={'linewidths': 0}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub2)
         
         for subpop, clr in zip(subpops, subclrs): 
             sub1.scatter(A_V[subpop & lowmass], S[subpop & lowmass], c=clr, s=3) 
@@ -1577,40 +1399,52 @@ def ABC_attenuation():
     wave = np.linspace(1000, 10000, 2251) 
     i3000 = 500
 
-    fig = plt.figure(figsize=(11,8))
+    
+    theta_meds, sim_seds = [], [] 
+    for sim in ['TNG', 'EAGLE']:  
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_median = np.median(theta_T, axis=0) 
+        theta_meds.append(theta_median) 
 
+        # get sims posterior
+        _, _sim_sed, _ = _sim_observables(sim.lower(), theta_median)
+        sim_seds.append(_sim_sed) 
+
+    fig = plt.figure(figsize=(11,8))
+    
     # SF or Q  
     for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
         # low or high mass 
         for im, _m in enumerate(['low mass', 'high mass']): 
             sub = fig.add_subplot(2,2, 2 * im + isfq + 1) 
 
-            for isim, sim, iabc in zip(range(len(sims))[1:], sims[1:], nabc[1:]): 
-                # read sim 
-                _sim_sed = dustInfer._read_sed(sim.lower()) 
-
-                cens    = _sim_sed['censat'].astype(bool) 
+            for i, sim in enumerate(['TNG', 'EAGLE']):  
+                # get abc posterior
+                theta_median = theta_meds[i]
+                _sim_sed = sim_seds[i] 
+    
                 mstar   = _sim_sed['logmstar']
                 sfr     = _sim_sed['logsfr.inst']
+                ssfr    = sfr - mstar
+                assert sfr.min() != -999
 
                 # M* and SFR 
-                if _m == 'low mass':
-                    mlim = (mstar > 10.) & (mstar < 11.)
+                if _m == 'low mass': 
+                    mlim = (mstar < 11.)
                 elif _m == 'high mass': 
-                    mlim = (mstar > 11.)
+                    mlim = (mstar >= 11.)
 
                 if _sfq == 'star-forming': 
-                    sfrlim = (sfr > 0.5) & (sfr != -999)
+                    ssfrlim = (ssfr > -10.5) 
+                    #sfrlim = (sfr > 0.5) 
                 elif _sfq == 'quiescent': 
-                    sfrlim = (sfr < -0.5) & (sfr != -999)
+                    ssfrlim = (ssfr < -10.5) 
+                    #sfrlim = (sfr < -0.5) 
 
                 # subpopulation sample cut 
-                subpop = cens & mlim & sfrlim 
-    
-                # get abc posterior
-                theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-                    abc_run(sim), 'theta.t%i.dat' % iabc)) 
-                theta_median = np.median(theta_T, axis=0) 
+                subpop = mlim & ssfrlim 
     
                 # get attenuation curve 
                 _A_lambda = dem_attenuate(
@@ -1625,9 +1459,9 @@ def ABC_attenuation():
 
                 Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
 
-                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[isim],
+                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
                         alpha=0.25, linewidth=0, label=sim) 
-                sub.plot(wave, Al_med, c=clrs[isim])
+                sub.plot(wave, Al_med, c=clrs[sim.lower()])
                 
                 # calzetti
                 A_calzetti = _calzetti(wave) 
@@ -1643,14 +1477,12 @@ def ABC_attenuation():
                             lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
 
                 sub.set_xlim(1.2e3, 1e4)
-                if im == 0: 
-                    sub.set_xticklabels([]) 
+                if im == 0: sub.set_xticklabels([]) 
                 sub.set_ylim(0., 4.) 
-                if isfq == 1: 
-                    sub.set_yticklabels([]) 
+                if isfq == 1: sub.set_yticklabels([]) 
 
                 if im == 0 and isfq == 0: 
-                    sub.set_title(r'Star-forming ($\log {\rm SFR} > 0.5$)', fontsize=20)
+                    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -10.5$)', fontsize=20)
                 #if im == 1 and isfq == 0: 
                     sub.legend(
                             [calz, b2017, n2018, sal], 
@@ -1658,9 +1490,9 @@ def ABC_attenuation():
                                 'Narayanan+(2018)', 'Salim+(2018)'], 
                             loc='upper right', handletextpad=0.2, fontsize=20) 
                 if im == 0 and isfq == 1: 
-                    sub.set_title(r'Quiescent ($\log {\rm SFR} < -0.5$)', fontsize=20)
+                    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -10.5$)', fontsize=20)
                     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
-                    sub.text(1.01, 0.5, r'$10 < \log M_*/M_\odot < 11$', 
+                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot < 11$', 
                             transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
                 if im == 1 and isfq == 1:
                     sub.text(1.01, 0.5, r'$11 < \log M_*/M_\odot$', 
@@ -1675,6 +1507,103 @@ def ABC_attenuation():
     fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
     ffig = os.path.join(fig_dir, 'abc_attenuation.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_attenuation_unnormalized(): 
+    ''' comparison of unnormalized attenuation curves for different subpopulations 
+    '''
+    wave = np.linspace(1000, 10000, 2251) 
+
+    theta_meds, sim_seds = [], [] 
+    for sim in ['TNG', 'EAGLE']:  
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_median = np.median(theta_T, axis=0) 
+        theta_meds.append(theta_median) 
+
+        # get sims posterior
+        _, _sim_sed, _ = _sim_observables(sim.lower(), theta_median)
+        sim_seds.append(_sim_sed) 
+
+    fig = plt.figure(figsize=(11,8))
+    # SF or Q  
+    for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
+        # low or high mass 
+        for im, _m in enumerate(['low mass', 'high mass']): 
+            sub = fig.add_subplot(2,2, 2 * im + isfq + 1) 
+
+            for i, sim in enumerate(['TNG', 'EAGLE']):  
+                # get abc posterior
+                theta_median = theta_meds[i]
+                _sim_sed = sim_seds[i] 
+    
+                mstar   = _sim_sed['logmstar']
+                sfr     = _sim_sed['logsfr.inst']
+                ssfr    = sfr - mstar
+                assert sfr.min() != -999
+
+                # M* and SFR 
+                if _m == 'low mass': 
+                    mlim = (mstar < 11.)
+                elif _m == 'high mass': 
+                    mlim = (mstar >= 11.)
+
+                if _sfq == 'star-forming': 
+                    ssfrlim = (ssfr > -10.5) 
+                    #sfrlim = (sfr > 0.5) 
+                elif _sfq == 'quiescent': 
+                    ssfrlim = (ssfr < -10.5) 
+                    #sfrlim = (sfr < -0.5) 
+
+                # subpopulation sample cut 
+                subpop = mlim & ssfrlim 
+    
+                # get attenuation curve 
+                _A_lambda = dem_attenuate(
+                        theta_median, 
+                        wave, 
+                        np.ones(len(wave)), 
+                        mstar[subpop], 
+                        sfr[subpop])#, nebular=False) 
+                A_lambda = -2.5 * np.log10(_A_lambda)
+
+                Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
+
+                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
+                        alpha=0.25, linewidth=0, label=sim) 
+                sub.plot(wave, Al_med, c=clrs[sim.lower()])
+
+                sub.set_xlim(1.2e3, 1e4)
+                if im == 0: sub.set_xticklabels([]) 
+                sub.set_ylim(0., 8.) 
+                if isfq == 1: sub.set_yticklabels([]) 
+
+                if im == 0 and isfq == 0: 
+                    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -10.5$)', fontsize=20)
+                if im == 0 and isfq == 1: 
+                    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -10.5$)', fontsize=20)
+                    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot < 11$', 
+                            transform=sub.transAxes, ha='left', va='center',
+                            rotation=270, fontsize=20)
+                if im == 1 and isfq == 1:
+                    sub.text(1.01, 0.5, r'$11 < \log M_*/M_\odot$', 
+                            transform=sub.transAxes, ha='left', va='center',
+                            rotation=270, fontsize=20)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
+    bkgd.set_ylabel(r'$A(\lambda)$', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_attenuation_unormalized.png') 
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
@@ -2802,43 +2731,11 @@ def subpops_nodust():
     ''' Where in color-magnitude space without dust attenuation do
     subpopulations lie? 
     '''
-    sims = ['simba', 'tng', 'eagle']
-    iabc = [8, 6, 6] 
-    clrs = ['C1', 'C0', 'C2'] 
-
     fig = plt.figure(figsize=(15,15))
-    for i in range(len(sims)): 
+    for i, sim in enumerate(sims): 
 
-        # run through DEM  
-        _sim_sed = dustInfer._read_sed(sims[i]) 
-        wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
-        downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
-        f_downsample = 1.#0.1
-
-        cens    = _sim_sed['censat'].astype(bool) 
-        mlim    = (_sim_sed['logmstar'] > 9.4) 
-        zerosfr = (_sim_sed['logsfr.inst'] == -999)
-    
-        # sample cut centrals, mass limit, non 0 SFR
-        cuts = cens & mlim & ~zerosfr & downsample 
-
-        sim_sed = {} 
-        sim_sed['sim']          = sims[i] 
-        sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
-        sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
-        sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
-        sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
-        sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
-    
-        # get observables R, G-R, FUV-NUV
-        x_sim = dustInfer.sumstat_model(
-                np.array([0. for i in range(6)]), 
-                sed=sim_sed,
-                dem='slab_noll_msfr_fixbump',
-                f_downsample=f_downsample, 
-                statistic='2d',
-                extra_data=None, 
-                return_datavector=True)
+        x_sim, sim_sed, _ = _sim_observables(sim.lower(), np.zeros(6),
+                no_Mr_cut=True)
         
         # galaxies with low M* and high SFR 
         veryhighSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -9.75)
@@ -2917,42 +2814,17 @@ def subpops():
     ''' Where in color-magnitude space do the low M* high SFR galaxies lie? 
     '''
     fig = plt.figure(figsize=(15,15))
-    for i in range(len(sims)): 
+    for i, sim in enumerate(sims): 
         # read ABC posterior 
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-            abc_run(sims[i].lower()), 'theta.t%i.dat' % nabc[i])) 
-        theta_sim = np.median(theta_T, axis=0) 
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
 
-        # run through DEM  
-        _sim_sed = dustInfer._read_sed(sims[i].lower()) 
-        wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
-        downsample = np.ones(len(_sim_sed['logmstar'])).astype(bool)
-        f_downsample = 1.#0.1
+        # run forward model  
+        x_sim, sim_sed, sfr0 = _sim_observables(sim.lower(), theta_med,
+                no_Mr_cut=True)
+        maglim = (x_sim[0] > 20.) 
 
-        mlim    = (_sim_sed['logmstar'] > 9.4) 
-        zerosfr = (_sim_sed['logsfr.inst'] == -999)
-    
-        # sample cut centrals, mass limit, non 0 SFR
-        cuts = mlim & ~zerosfr & downsample 
-
-        sim_sed = {} 
-        sim_sed['sim']          = sims[i] 
-        sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
-        sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
-        sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
-        sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
-        sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
-    
-        # get observables R, G-R, FUV-NUV
-        x_sim = dustInfer.sumstat_model(
-                theta_sim, 
-                sed=sim_sed,
-                dem='slab_noll_mssfr_fixbump',
-                f_downsample=f_downsample, 
-                statistic='2d',
-                extra_data=None, 
-                return_datavector=True)
-        
         # galaxies with low M* and high SFR 
         veryhighSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -9.75)
         highSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -9.75) & 
@@ -2972,8 +2844,13 @@ def subpops():
                 range=[(9.0, 12.), (-3., 2.)], bins=20, color='k', 
                 plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         for subpop, subclr in zip(subpops, subclrs): 
-            sub.scatter(sim_sed['logmstar'][subpop],
-                    sim_sed['logsfr.inst'][subpop], c=subclr, s=3)
+            sub.scatter(sim_sed['logmstar'][subpop & ~maglim],
+                    sim_sed['logsfr.inst'][subpop & ~maglim],
+                    c=subclr, s=3)
+            sub.scatter(sim_sed['logmstar'][subpop & maglim],
+                    sim_sed['logsfr.inst'][subpop & maglim], 
+                    c=subclr, s=10, marker='o', edgecolors='k')
+
         sub.set_xlabel(r'$\log M_*$', fontsize=20) 
         sub.set_xlim(9.0, 12) 
         sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
@@ -3229,21 +3106,21 @@ if __name__=="__main__":
     #SMF_MsSFR()
     #DEM()
     #Observables()
+
+    # ABC posteriors 
     #ABC_corner() 
-    #_ABC_corner_flexbump() 
-    #_ABC_Observables()
     
     # color magnitude relation for ABC posterior
     #ABC_Observables()
     
     # slope-AV relation for ABC posterior
-    #ABC_slope_AV()
-    #ABC_slope_AV_starforming()
-    ABC_slope_AV_subpop()
-    #_ABC_slope_AV_quiescent()   
+    #ABC_slope_AV(gal_type='all')
+    #ABC_slope_AV(gal_type='starforming')
+    #ABC_slope_AV_subpop()
 
     # amplitude normalized attenuation curves
     #ABC_attenuation()
+    ABC_attenuation_unnormalized()
     
     # sfr=0 galaxies 
     #sfr0_galaxies()
@@ -3252,8 +3129,8 @@ if __name__=="__main__":
     #simba_starbursts()
 
     # subpopulations in color magnitude space 
-    #subpops()
     #subpops_nodust()
+    #subpops()
 
     #_profile_tng()
     
