@@ -2893,6 +2893,218 @@ def subpops():
     return None
 
 
+def subpops_optical_color(): 
+    ''' Where in color-magnitude space do the low M* high SFR galaxies lie? 
+    '''
+    fig = plt.figure(figsize=(15,15))
+    for i, sim in enumerate(sims): 
+        # read ABC posterior 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
+
+        # run forward model on no dust  
+        x_nodust, sim_sed, _ = _sim_observables(sim.lower(), np.zeros(6),
+                no_Mr_cut=True)
+
+        # run forward model on ABC posterior 
+        x_w_dust, _, _ = _sim_observables(sim.lower(), theta_med,
+                no_Mr_cut=True)
+
+        # galaxies with low M* and high SFR 
+        veryhighSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -9.75)
+        highSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -9.75) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -10.5))
+        lowSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -10.5) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -11.))
+        verylowSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -11.) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -12.))
+        veryverylowSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -12.)
+
+        lowmass = (sim_sed['logmstar'] < 10.5) 
+        highmass = (sim_sed['logmstar'] >= 10.5) 
+
+        subpops = [veryhighSFR, highSFR, lowSFR, verylowSFR, veryverylowSFR][::-1]
+        subclrs = ['C0', 'C2', 'C1', 'r', 'C4'][::-1]
+
+        # plot where they lie on the M*-SFR relation 
+        sub = fig.add_subplot(3,3,3*i+1)
+        DFM.hist2d(sim_sed['logmstar'], sim_sed['logsfr.inst'], levels=[0.68, 0.95],
+                range=[(9.0, 12.), (-3., 2.)], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(
+                    sim_sed['logmstar'][subpop & lowmass], 
+                    sim_sed['logsfr.inst'][subpop & lowmass],
+                    c=subclr, s=3)
+            sub.scatter(
+                    sim_sed['logmstar'][subpop & highmass], 
+                    sim_sed['logsfr.inst'][subpop & highmass],
+                    c=subclr, s=10, marker='o', edgecolors='k')
+
+        sub.set_xlabel(r'$\log M_*$', fontsize=20) 
+        sub.set_xlim(9.0, 12) 
+        sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
+        sub.set_ylim((-3., 2.)) 
+        sub.text(0.05, 0.95, sims[i], 
+            transform=sub.transAxes, ha='left', va='top', fontsize=20)
+
+        # plot R vs (G - R)
+        sub = fig.add_subplot(3,3,3*i+2)
+        DFM.hist2d(x_nodust[0], x_nodust[1], range=[(20., 23.), (-0.05, 1.7)],
+                levels=[0.68, 0.95], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(
+                    x_nodust[0][subpop & lowmass], 
+                    x_nodust[1][subpop & lowmass], 
+                    c=subclr, s=2)
+            sub.scatter(
+                    x_nodust[0][subpop & highmass], 
+                    x_nodust[1][subpop & highmass], 
+                    c=subclr, s=10, marker='o', edgecolors='k')
+
+        sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_ylabel(r'$G-R$', fontsize=20) 
+        sub.set_ylim((-0.05, 1.7)) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+        
+        # plot R vs (FUV-NUV)
+        sub = fig.add_subplot(3,3,3*i+3)
+        DFM.hist2d(x_w_dust[0], x_w_dust[1], range=[(20., 23.), (-0.05, 1.7)],
+                levels=[0.68, 0.95], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
+                ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(
+                    x_w_dust[0][subpop & lowmass], 
+                    x_w_dust[1][subpop & lowmass], 
+                    c=subclr, s=2)
+            sub.scatter(
+                    x_w_dust[0][subpop & highmass], 
+                    x_w_dust[1][subpop & highmass], 
+                    c=subclr, s=10, marker='o', edgecolors='k')
+        
+        sub.set_xlabel(r'$M_r$ luminosity', fontsize=20) 
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_ylabel(r'$G-R$', fontsize=20) 
+        sub.set_ylim((-0.05, 1.7)) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+
+    fig.subplots_adjust(wspace=0.3)
+    ffig = os.path.join(fig_dir, 'subpops_optical_color.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None
+
+
+def subpops_uv_color(): 
+    ''' Where in color-magnitude space do the low M* high SFR galaxies lie? 
+    '''
+    fig = plt.figure(figsize=(15,15))
+    for i, sim in enumerate(sims): 
+        # read ABC posterior 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
+        
+        # run forward model on no dust  
+        x_nodust, sim_sed, _ = _sim_observables(sim.lower(), np.zeros(6),
+                no_Mr_cut=True)
+
+        # run forward model on ABC posterior 
+        x_w_dust, _, _ = _sim_observables(sim.lower(), theta_med,
+                no_Mr_cut=True)
+
+        # galaxies with low M* and high SFR 
+        veryhighSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -9.75)
+        highSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -9.75) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -10.5))
+        lowSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -10.5) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -11.))
+        verylowSFR = ((sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -11.) & 
+                (sim_sed['logsfr.inst'] - sim_sed['logmstar'] > -12.))
+        veryverylowSFR = (sim_sed['logsfr.inst'] - sim_sed['logmstar'] < -12.)
+
+        lowmass = (sim_sed['logmstar'] < 10.5) 
+        highmass = (sim_sed['logmstar'] >= 10.5) 
+
+        subpops = [veryhighSFR, highSFR, lowSFR, verylowSFR, veryverylowSFR][::-1]
+        subclrs = ['C0', 'C2', 'C1', 'r', 'C4'][::-1]
+
+        # plot where they lie on the M*-SFR relation 
+        sub = fig.add_subplot(3,3,3*i+1)
+        DFM.hist2d(sim_sed['logmstar'], sim_sed['logsfr.inst'], levels=[0.68, 0.95],
+                range=[(9.0, 12.), (-3., 2.)], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(
+                    sim_sed['logmstar'][subpop & lowmass], 
+                    sim_sed['logsfr.inst'][subpop & lowmass],
+                    c=subclr, s=3)
+            sub.scatter(
+                    sim_sed['logmstar'][subpop & highmass], 
+                    sim_sed['logsfr.inst'][subpop & highmass],
+                    c=subclr, s=10, marker='o', edgecolors='k')
+
+        sub.set_xlabel(r'$\log M_*$', fontsize=20) 
+        sub.set_xlim(9.0, 12) 
+        sub.set_ylabel(r'$\log {\rm SFR}$', fontsize=20) 
+        sub.set_ylim((-3., 2.)) 
+        sub.text(0.05, 0.95, sims[i], 
+            transform=sub.transAxes, ha='left', va='top', fontsize=20)
+
+        # plot R vs (G - R)
+        sub = fig.add_subplot(3,3,3*i+2)
+        DFM.hist2d(x_nodust[0], x_nodust[2], range=[(20., 23.), (-1, 4)],
+                levels=[0.68, 0.95], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(
+                    x_nodust[0][subpop & lowmass], 
+                    x_nodust[2][subpop & lowmass], 
+                    c=subclr, s=2)
+            sub.scatter(
+                    x_nodust[0][subpop & highmass], 
+                    x_nodust[2][subpop & highmass], 
+                    c=subclr, s=10, marker='o', edgecolors='k')
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        sub.set_ylim(-1, 4) 
+        
+        # plot R vs (FUV-NUV)
+        sub = fig.add_subplot(3,3,3*i+3)
+        DFM.hist2d(x_w_dust[0], x_w_dust[2], range=[(20., 23.), (-1, 4)],
+                levels=[0.68, 0.95], bins=20, color='k', 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        for subpop, subclr in zip(subpops, subclrs): 
+            sub.scatter(
+                    x_w_dust[0][subpop & lowmass], 
+                    x_w_dust[2][subpop & lowmass], 
+                    c=subclr, s=2)
+            sub.scatter(
+                    x_w_dust[0][subpop & highmass], 
+                    x_w_dust[2][subpop & highmass], 
+                    c=subclr, s=10, marker='o', edgecolors='k')
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        sub.set_ylim(-1, 4) 
+
+    fig.subplots_adjust(wspace=0.3)
+    ffig = os.path.join(fig_dir, 'subpops_uv_color.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None
+
+
 def _extra_luminous(): 
     ''' Where in M*-SFR are the most luminous galaxies lie? DEM current
     produces exceed luminous galaxies. 
@@ -3120,7 +3332,7 @@ if __name__=="__main__":
 
     # amplitude normalized attenuation curves
     #ABC_attenuation()
-    ABC_attenuation_unnormalized()
+    #ABC_attenuation_unnormalized()
     
     # sfr=0 galaxies 
     #sfr0_galaxies()
@@ -3131,6 +3343,8 @@ if __name__=="__main__":
     # subpopulations in color magnitude space 
     #subpops_nodust()
     #subpops()
+    subpops_optical_color()
+    subpops_uv_color()
 
     #_profile_tng()
     
