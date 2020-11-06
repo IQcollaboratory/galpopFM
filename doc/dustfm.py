@@ -36,7 +36,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 11, 'tng': 19, 'eagle': 22}        # Niteration 
+nabc = {'simba': 13, 'tng': 22, 'eagle': 24}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -1761,24 +1761,16 @@ def ABC_Lir():
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
-    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
-    theta_simba = np.median(theta_T, axis=0) 
-    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('tng'), 'theta.t%i.dat' % nabc[1])) 
-    theta_tng = np.median(theta_T, axis=0) 
-    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
-    theta_eagle = np.median(theta_T, axis=0) 
-
 
     def get_seds(sim, theta): 
         sed = dustInfer._read_sed(sim) 
 
-        mlim    = (sed['logmstar'] > 9.4) 
         zerosfr = (sed['logsfr.inst'] == -999)
 
-        cuts = mlim & ~zerosfr 
+        logsfr_min = sed['logsfr.inst'][~zerosfr].min() # minimum SFR
+        sed['logsfr.inst'][zerosfr] = logsfr_min
+
+        cuts = (sed['logmstar'] > 9.4) 
 
         sed_nodust  = sed['sed_noneb'][cuts,:]
         sed_dust    = dustFM.Attenuate(
@@ -1788,19 +1780,19 @@ def ABC_Lir():
                 sed['sed_onlyneb'][cuts,:], 
                 sed['logmstar'][cuts],
                 sed['logsfr.inst'][cuts],
-                dem=abc_run(sim).split('.')[1]) 
+                dem=dem) 
 
         R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dust, band='r_sdss') 
 
         return sed['wave'], sed_nodust, sed_dust, R_mag 
-    
-    sims = ['simba', 'tng', 'eagle']
-    thetas_abc = [theta_simba, theta_tng, theta_eagle]
-    L_irs, M_rs = [], [] 
-    
-    for _sim, _theta in zip(sims, thetas_abc): 
 
-        wave, sed_nodust, sed_dust, M_r = get_seds(_sim, _theta)
+    L_irs, M_rs = [], [] 
+    for sim in ['TNG', 'EAGLE']: 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
+
+        wave, sed_nodust, sed_dust, M_r = get_seds(sim.lower(), theta_med)
 
         L_nodust    = measureObs.tsum(wave, sed_nodust * cinA / (wave**2)) # Lsun
         L_dust      = measureObs.tsum(wave, sed_dust * cinA / (wave**2)) # Lsun
@@ -1815,35 +1807,30 @@ def ABC_Lir():
     #########################################################################
     # plotting 
     #########################################################################
-    names   = ['SIMBA', 'TNG', 'EAGLE']
-
-    fig = plt.figure(figsize=(5*len(sims), 5))
-    #sub = fig.add_subplot(111)
-    for i, _M_r, _L_ir, name, clr in zip(range(len(sims)), M_rs, L_irs, names, clrs): 
+    fig = plt.figure(figsize=(6,6))
+    sub = fig.add_subplot(111)
+    for i, _M_r, _L_ir, sim in zip(range(2), M_rs, L_irs, ['TNG', 'EAGLE']): 
         # R vs log L_IR  
-        sub = fig.add_subplot(1,len(sims),i+1)
-        DFM.hist2d(_M_r, np.log10(_L_ir), levels=[0.68, 0.95],
-                range=[(20, 23), (8, 12)], bins=20, color=clr, 
+        DFM.hist2d(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
+                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], 
                 contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=True, fill_contours=False, plot_density=True, 
+                plot_datapoints=False, fill_contours=False, plot_density=True, 
                 ax=sub)
-
-        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
-        sub.set_xlim(20., 23) 
-        sub.set_xticks([20., 21., 22., 23]) 
-        sub.set_xticklabels([-20, -21, -22, -23]) 
-        if i == 0: sub.set_ylabel(r'EDP predicted dust emission $L_{\rm IR}$', fontsize=20) 
-        else: sub.set_yticklabels([]) 
-        sub.set_ylim(8, 12) 
     
-    bkgd = fig.add_subplot(111, frameon=False)
-    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
-    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
-    fig.subplots_adjust(wspace=0.1, hspace=0.1)
-
+    _plt1 = sub.fill_between([], [], [], color=clrs['eagle'], alpha=0.25, edgecolor='None')
+    _plt2 = sub.fill_between([], [], [], color=clrs['tng'], alpha=0.25, edgecolor='None')
+    sub.legend([_plt1, _plt2], ['TNG', 'EAGLE'], loc='lower right',
+            handletextpad=0.2, fontsize=20) 
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
+    sub.set_ylabel(r'EDA dust emission $\log(~L_{\rm IR}$ [$L_\odot$] )', fontsize=25) 
+    sub.set_xlabel(r'$M_r$ luminosity', fontsize=25) 
+    sub.set_ylim(9, 12) 
+    
     ffig = os.path.join(fig_dir, 'abc_Lir.png') 
     fig.savefig(ffig, bbox_inches='tight') 
-    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -2183,38 +2170,36 @@ def simba_starbursts():
     # read in posteriors  
     #########################################################################
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('simba'), 'theta.t%i.dat' % nabc[0])) 
+        abc_run('simba'), 'theta.t%i.dat' % nabc['simba'])) 
     theta_simba = np.median(theta_T, axis=0) 
 
     theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
-        abc_run('eagle'), 'theta.t%i.dat' % nabc[2])) 
+        abc_run('tng'), 'theta.t%i.dat' % nabc['tng'])) 
     theta_eagle = np.median(theta_T, axis=0) 
-
     #########################################################################
     # run FM for different scenarios 
     #########################################################################
     # simba with simba posterior 
-    x_simba, sfr0_simba = _sim_observables('simba', theta_simba,
-            no_Mr_cut=True, zero_sfr_sample=True)
+    x_simba, _, sfr0_simba = _sim_observables('simba', theta_simba,
+            no_Mr_cut=True)
     # simba with eagle posterior 
-    x_simba_eagle, sfr0_simba_eagle = _sim_observables('simba', theta_eagle,
-            no_Mr_cut=True, zero_sfr_sample=True)
+    x_simba_eagle, _, sfr0_simba_eagle = _sim_observables('simba', theta_eagle,
+            no_Mr_cut=True)
 
     # simba with eagle posterior excluding starbursts 
-    _x_simba_eagle, sfr0_simba_eagle, sim_simba = _sim_observables('simba', theta_eagle,
-            no_Mr_cut=True, zero_sfr_sample=True, return_sim=True)
+    _x_simba_eagle, sim_simba, _ = _sim_observables('simba',
+            theta_eagle, no_Mr_cut=True)
     
     starburst = (sim_simba['logsfr.inst']  > -0.5 + 0.7 * (sim_simba['logmstar'] - 9))
     print('%i starburst galaxies' % np.sum(starburst))
     # remove starbursts
-    x_simba_eagle_nosb = np.concatenate([_x_simba_eagle[:,~sfr0_simba_eagle &
-        ~starburst], _x_simba_eagle[:,sfr0_simba_eagle]], axis=1) 
+    x_simba_eagle_nosb = _x_simba_eagle[:,~starburst]
 
     #########################################################################
     # plotting 
     #########################################################################
     xs      = [x_simba, x_simba_eagle, x_simba_eagle_nosb]
-    names   = ['SIMBA + EDP', 'SIMBA+EAGLE EDP', 'SIMBA+EAGLE EDP\nno SB']
+    names   = ['SIMBA + EDP', 'SIMBA+TNG EDP', 'SIMBA+TNG EDP\nno SB']
 
     fig = plt.figure(figsize=(5*(len(xs)+1),10))
 
@@ -2242,7 +2227,7 @@ def simba_starbursts():
                 contour_kwargs={'linestyles': 'dashed'}, 
                 plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[1]], bins=20, color=clrs[i], 
+                range=[ranges[0], ranges[1]], bins=20, color='C0', 
                 contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
         if i == 1: 
@@ -2265,7 +2250,7 @@ def simba_starbursts():
                 contour_kwargs={'linestyles': 'dashed'}, 
                 plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
         DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
-                range=[ranges[0], ranges[2]], bins=20, color=clrs[i], 
+                range=[ranges[0], ranges[2]], bins=20, color='C0', 
                 contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
         if i == 1: 
@@ -3310,13 +3295,11 @@ def _profile_tng():
 
 
 if __name__=="__main__": 
-    #SDSS()
-    #NSA()
-    #_sdsses()
-    #SMFs() 
-    #M_SFR()
+
     #SMF_MsSFR()
+
     #DEM()
+
     #Observables()
 
     # ABC posteriors 
@@ -3334,27 +3317,26 @@ if __name__=="__main__":
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
+    # subpopulations in color magnitude space 
+    #subpops_nodust()
+    #subpops()
+    #subpops_optical_color()
+    #subpops_uv_color()
+
     # sfr=0 galaxies 
     #sfr0_galaxies()
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
 
-    # subpopulations in color magnitude space 
-    #subpops_nodust()
-    #subpops()
-    subpops_optical_color()
-    subpops_uv_color()
+    # dust IR emission luminosity 
+    ABC_Lir()
 
-    #_profile_tng()
-    
     # examining what happens if quiiescent galaxies don't have attenuation
     #for sim in ['simba', 'tng', 'eagle']: 
     #    galpop_attenuation(sim)
     #quiescent_attenuation()
 
-    # dust IR emission luminosity 
-    #ABC_Lir()
 
     # testing the noise model  
     #_observables_noise()
