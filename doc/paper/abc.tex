@@ -47,6 +47,25 @@ marginalizing over dust attenuation and understanding the dependence of dust
 attenuation on galaxy properties, so we use uniformative priors on the
 \eda~parameters and not on $\tau_V$ or $\delta$. 
 
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/abc.pdf}
+    \caption{\label{fig:abc}
+    Posterior distributions of the \eda~parameters for the SIMBA (orange), TNG
+    (blue), and EAGLE (green) hydrodynamical simulations. The contours mark the $68\%$
+    and $95\%$ confidence intervals. The posteriors are derived using the
+    simulation-based inference method: Approximate Bayesian Computation with Population Monte Carlo
+    (Section~\ref{sec:abc}). We focus on the \eda~posteriors for TNG and EAGLE
+    since SIMBA requires dust attenuation to reverse the relationship between
+    color and $\sfr$ in order to account for it overpredicting low mass starburst 
+    galaxies. Based on the posteriors, we find that \emph{galaxies with higher
+    $M_*$ have overall higher dust attenuation and galaxies with lower $\sfr$
+    have overall higher dust attenuation.}
+    }
+\end{center}
+\end{figure}
+
+
 ABC also requires a distance metric that quantifies the ``closeness'' of the
 forward model output to the observed data. For our distance metric, we use the
 L2 norm between the summary statistics, $X$, of the SDSS observation and our 
@@ -79,20 +98,3 @@ In Figure~\ref{fig:abc}, we present the posterior distributions of the \eda~para
 derived from ABC-PMC for the SIMBA (orange), TNG (blue), and EAGLE (green) hydrodynamical 
 simulations. The contours mark the $68\%$ and $95\%$ confidence intervals. 
 
-\begin{figure}
-\begin{center}
-    \includegraphics[width=\textwidth]{figs/abc.pdf}
-    \caption{\label{fig:abc}
-    Posterior distributions of the \eda~parameters for the SIMBA (orange), TNG
-    (blue), and EAGLE (green) hydrodynamical simulations. The contours mark the $68\%$
-    and $95\%$ confidence intervals. The posteriors are derived using the
-    simulation-based inference method: Approximate Bayesian Computation with Population Monte Carlo
-    (Section~\ref{sec:abc}). We focus on the \eda~posteriors for TNG and EAGLE
-    since SIMBA requires dust attenuation to reverse the relationship between
-    color and $\sfr$ in order to account for it overpredicting low mass starburst 
-    galaxies. Based on the posteriors, we find that \emph{galaxies with higher
-    $M_*$ have overall higher dust attenuation and galaxies with lower $\sfr$
-    have overall higher dust attenuation.}
-    }
-\end{center}
-\end{figure}
