@@ -1602,7 +1602,7 @@ def ABC_attenuation_unnormalized():
     wave = np.linspace(1000, 10000, 2251) 
 
     theta_meds, sim_seds = [], [] 
-    for sim in ['SIMBA', 'TNG', 'EAGLE']:  
+    for sim in ['TNG', 'EAGLE']:  
         # get abc posterior
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
             abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
@@ -1620,7 +1620,7 @@ def ABC_attenuation_unnormalized():
         for im, _m in enumerate(['low mass', 'high mass']): 
             sub = fig.add_subplot(2,2, 2 * im + isfq + 1) 
 
-            for i, sim in enumerate(['SIMBA', 'TNG', 'EAGLE']):  
+            for i, sim in enumerate(['TNG', 'EAGLE']):  
                 # get abc posterior
                 theta_median = theta_meds[i]
                 _sim_sed = sim_seds[i] 
@@ -3491,8 +3491,8 @@ if __name__=="__main__":
     #ABC_slope_AV_subpop()
 
     # amplitude normalized attenuation curves
-    ABC_attenuation()
-    #ABC_attenuation_unnormalized()
+    #ABC_attenuation()
+    ABC_attenuation_unnormalized()
     
     # dust IR emission luminosity 
     #ABC_Lir()

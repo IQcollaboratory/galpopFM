@@ -113,6 +113,8 @@ observations.
 % attenuation of SDSS observations  
 \input{reproduce.tex} 
 
+\input{quiescent.tex} 
+
 \subsection{The Galaxy -- Dust Attenuation Connection}  
 Next, in Figure~\ref{fig:atten}, we present the normalized attenuation curves 
 of the TNG (blue) and EAGLE (green) DEM for low (top) and high $M_*$ (bottom),
@@ -167,20 +169,6 @@ primarily on star-forming galaxies. With the DEM, we confirm that
 and find that galaxies with lower $\sfr$ have overall higher dust attenuation}. 
 
 
-In addition to the correlation with galaxy properties, the DEM also reveals
-dust attenuation in quiescent galaxies (left panels of Figure~\ref{fig:atten}). 
-This is particularly valuable since there are many challenges to measuring
-attenuation curves for quiescent galaxies directly from observations. For
-instance, methods that rely on IR luminosities can be contaminated by MIR 
-emission from AGN heating nearby dust~\cite{kirkpatrick2015}. Even SED 
-fitting methods require accounting for AGN MIR emission~\citep{salim2016,
-leja2018, salim2018}. SED fitting methods also struggle to tightly constrain
-dust attenuation due to the degeneracies with star formation history and 
-metallicity (\ch{cite?}). By forward modeling the optical and UV photometry
-with the DEM, we do not face these issues. For both TNG and EAGLE, we find 
-that quiescent galaxies have significantly shallower attenuation curve than
-star-forming galaxies. They also have significantly larger variations than
-star-forming galaxies. % \ch{explanation for why DEM model does this} 
 
 %They find that
 %star-forming galaxies with higher SFR have higher attenuation; however, this
@@ -232,31 +220,6 @@ star-forming galaxies. % \ch{explanation for why DEM model does this}
 %\cite{trcka2020}: EAGLE+SKIRT with CIGALE to get physical properties of
 %galaxies. trcka2020 compares to dustpedia~\citep{davies2017} They lok at
 %IRX-beta relation.
-
-\begin{figure}
-\begin{center}
-    \includegraphics[width=0.85\textwidth]{figs/abc_attenuation.pdf}
-    \caption{\label{fig:atten}
-    Attenuation curves of the DEM for TNG (blue) and EAGLE (green) for 
-    low (top) and high $M_*$ (bottom), star-forming (left) and
-    quiescent galaxies (right). The attenuation curves are normalized at
-    $3000\AA$: $A(\lambda)/A(3000\AA)$. We mark the $1\sigma$ standard
-    deviation of the attenuation curves with the shaded region. For comparison,
-    we include measurements of $A(\lambda)/A(3000\AA)$ from 
-    observations~\citep{calzetti2000, battisti2017, salim2018} as well as
-    from simulations~\citep{narayanan2018}. For star-forming galaxies, the 
-    \cite{calzetti2000} and \cite{battisti2017} attenuation curves are shallower 
-    than the DEM attenuation curves. However, this is primarily driven by the
-    differences in $M_*$ ranges. For \cite{salim2018}, which probe a similar
-    $M_*$ range, we find goood agreement. We also find good agreement with 
-    median attenuation curve of star-forming galaxies in \cite{narayanan2018}.
-    With DEM, we can also constrain the attenuation curves of quiescent galaxies,
-    which are challenging to directly constrain from observations. Quiescent 
-    galaxies have significantly shallower attenuation curves and larger
-    variations than star-forming galaxies. 
-    }
-\end{center}
-\end{figure}
 
 % variation of attenuation curve  
 %\ch{what do we learn about quiescent galaxy attenuation?} 
