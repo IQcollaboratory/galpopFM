@@ -1,6 +1,6 @@
 \begin{figure}
 \begin{center}
-    \includegraphics[width=0.6\textwidth]{figs/abc_slope_AV_all.pdf}
+    \includegraphics[width=0.4\textwidth]{figs/abc_slope_AV_all.pdf}
     \caption{\label{fig:slope}
     The attenuation-slope relation of the attenuation curves predicted by the
     \eda~model for median posterior parameter values of TNG (blue) and EAGLE
@@ -85,9 +85,20 @@ $3000\AA$ and we present the variation in the attenuation curves in the shaded
 region, 1$\sigma$ standard deviation about the median. For comparison,
 we include $A(\lambda)/A(3000\AA)$ from observations: \cite{calzetti2000},
 \cite{battisti2017}, and \cite{salim2018}. We also include $A(\lambda)/A(3000\AA)$
-measured from the \cite{narayanan2018} simulation. In the left panels of 
-Figure~\ref{fig:raw_atten}, we present the unnormalized attenuation curves of
-the same star-forming galaxy population. 
+measured from the \cite{narayanan2018} simulation. The left panels of
+Figure~\ref{fig:raw_atten} is the same as in Figure~\ref{fig:atten}, except
+with attenuation curves that are not normalized. 
+
+Based on the \eda, star-forming galaxies have higher dust attenuation at lower
+wavelengths. This is driven by both TNG and EAGLE predicting star-forming
+galaxies that are bluer than observations in the optical and UV wavelengths
+(Figure~\ref{fig:obs}). As a result, the \eda~assigns attenuation curves that
+significantly redden star-forming galaxies. This is also why TNG, which
+predicts a bluer star-forming population, has slightly higher attenuation. 
+In Figure~\ref{fig:raw_atten}, we also find that more massive star-forming
+galaxies have higher attenuation. This is because the simulations overpredict 
+luminous blue star-forming galaxies, which must be attenuated to reproduce
+observations. 
 
 The \eda~attenuation curves for both TNG and EAGLE are in good agreement with the
 observed \cite{salim2018} attenuation curves. They are also consistent with the
@@ -97,8 +108,6 @@ bump, since we keep the UV bump fixed in the \eda. The \eda attenuation curves
 are noticeably steeper than the \cite{calzetti2000} and \cite{battisti2017} curves. 
 These attenuation curves, however, are derived from $M_* < 10^{9.9}M_\odot$ 
 star-forming galaxies --- well below our $M_*$ range. %Since we find $\mdeltam < 0$ for both the TNG and EAGLE posteriors, the \eda~attenuation curves are consistent with \cite{calzetti2000} and \cite{battisti2017}. 
-\todo{interpret why we get these attenuation curves from fitting the
-color-magnitude relation} 
 Overall, the \eda~predicts attenuation curves that are in good agreement with 
 both observations and radiative transfer simulations for star-forming galaxies. 
 Again, the fact that we reproduce the detailed dust attenuation curves of star-forming 
