@@ -4,47 +4,50 @@ The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
 Warning--I didn't find a database entry for "dickey2020"
+Warning--I didn't find a database entry for "dacunha2008"
+Warning--I didn't find a database entry for "ruiz-macias2020"
+Warning--I didn't find a database entry for "meisner2018"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 100 entries,
+You've used 97 entries,
             2881 wiz_defined-function locations,
-            1355 strings with 49005 characters,
-and the built_in function-call counts, 46479 in all, are:
-= -- 3837
-> -- 3482
-< -- 193
-+ -- 1571
-- -- 508
-* -- 5730
-:= -- 7348
+            1338 strings with 47769 characters,
+and the built_in function-call counts, 45124 in all, are:
+= -- 3727
+> -- 3376
+< -- 191
++ -- 1522
+- -- 492
+* -- 5549
+:= -- 7137
 add.period$ -- 0
-call.type$ -- 100
-change.case$ -- 200
-chr.to.int$ -- 96
-cite$ -- 100
-duplicate$ -- 2236
-empty$ -- 2210
-format.name$ -- 824
-if$ -- 7979
+call.type$ -- 97
+change.case$ -- 194
+chr.to.int$ -- 93
+cite$ -- 97
+duplicate$ -- 2171
+empty$ -- 2144
+format.name$ -- 798
+if$ -- 7749
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 100
-newline$ -- 313
-num.names$ -- 670
-pop$ -- 485
+missing$ -- 97
+newline$ -- 304
+num.names$ -- 654
+pop$ -- 470
 preamble$ -- 1
-purify$ -- 400
+purify$ -- 388
 quote$ -- 0
-skip$ -- 1298
+skip$ -- 1263
 stack$ -- 0
-substring$ -- 2697
-swap$ -- 1061
-text.length$ -- 401
+substring$ -- 2620
+swap$ -- 1039
+text.length$ -- 389
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 900
+type$ -- 873
 warning$ -- 0
-while$ -- 728
+while$ -- 708
 width$ -- 0
-write$ -- 1006
-(There was 1 warning)
+write$ -- 976
+(There were 4 warnings)

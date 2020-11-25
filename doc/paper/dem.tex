@@ -116,16 +116,19 @@ in the \eda.
 $\ssfr$ of galaxies are used to calculate $\tau_V$ and $\delta$ in
 Eqs.~\ref{eq:tauv} and~\ref{eq:delta}. However, due to mass and temporal resolutions,
 some galaxies in the simulations have $\sfr=0$ --- \ie~an unmeasurably low
-SFR~\citep{hahn2019c}. $\sfr=0$ galaxies account for 17, 19, 10\% of galaxies
+SFR~\citep{hahn2019c}. They account for 17, 19, 9\% of galaxies
 in SIMBA, TNG, and EAGLE, respectively. Since Eqs.~\ref{eq:tauv}
-and~\ref{eq:delta} depend on $\log\ssfr$, they cannot be used to derive $\tau_V$ 
-and $\delta$ for these galaxies. Since $\sfr=0$ galaxies do
-not account for a large fraction of our simulated galaxies, we directly sample 
-their observables ($G, R, NUV$, and $FUV$) from the distribution of observables
-for SDSS quiescent galaxies. This way, we ensure that the attenuation of $\sfr=0$ 
-galaxies does not impact the rest of the \eda~parameters. In Appendix~\ref{sec:res}, 
-we discuss the resolution effects in more detail and demonstrate that our results
-are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
+and~\ref{eq:delta} depend on $\log\ssfr$, they cannot be used in the equations
+to derive $\tau_V$ and $\delta$ for these galaxies. To account for this issue,
+we assign $\sfr_{\rm min}$, the minimum non-zero $\sfr$ in the simulations, to
+$\sfr=0$ galaxies when calculating $\tau_V$ and $\delta$. For SIMBA, TNG, and
+EAGLE, $\sfr_{\rm min}=0.000816$, $0.000268$, and $0.000707 M_\odot/yr$. Although 
+this assumes that $\sfr=0$ galaxies have similar dust properties as the galaxies 
+with $\sfr = \sfr_{\rm min}$, since the simulations have very low $\sfr_{\rm min}$ 
+we expect galaxies with $\sfr = \sfr_{\rm min}$ to have little recent
+star-formation and low gas mass, similar to $\sfr=0$ galaxies. 
+
+%Since $\sfr=0$ galaxies do not account for a large fraction of our simulated galaxies, we directly sample their observables ($G, R, NUV$, and $FUV$) from the distribution of observables for SDSS quiescent galaxies. This way, we ensure that the attenuation of $\sfr=0$ galaxies does not impact the rest of the \eda~parameters. In Appendix~\ref{sec:res}, we discuss the resolution effects in more detail and demonstrate that our results are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
 
 In practice, to apply the \eda~to a simulated galaxy population, we begin by
 assigning a uniformly sample inclination, $i$, to each galaxy. Then based on

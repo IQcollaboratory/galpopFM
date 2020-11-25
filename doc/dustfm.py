@@ -46,8 +46,8 @@ dem_attenuate = dustFM.DEM_slab_noll_mssfr_fixbump  # dustFM function
 
 # parameters
 param_lbls = np.array([
-        r'$m_{\tau,M_*}$', r'$m_{\tau,{\rm SFR}}$', r'$c_{\tau}$', 
-        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SFR}}$', r'$c_\delta$'])
+        r'$m_{\tau,M_*}$', r'$m_{\tau,{\rm SSFR}}$', r'$c_{\tau}$', 
+        r'$m_{\delta,M_*}$', r'$m_{\delta,{\rm SSFR}}$', r'$c_\delta$'])
 prior_min = np.array([-5., -5., 0., -4., -4., -4.])
 prior_max = np.array([5.0, 5.0, 6., 4.0, 4.0, 4.0])
 
@@ -171,7 +171,7 @@ def SMF_MsSFR():
     Ngal_eag, _     = np.histogram(eag_ms, bins=logms_bin)
     
     phi_simba   = Ngal_simba.astype(float) / simba.cosmic_volume / dlogms
-    phi_tng     = Ngal_tng.astype(float) / tng.cosmic_volume
+    phi_tng     = Ngal_tng.astype(float) / tng.cosmic_volume / dlogms
     phi_eag     = Ngal_eag.astype(float) / eag.cosmic_volume / dlogms
     # read sdss smf 
     fsdss = os.path.join(dat_dir, 'obs', 'tinker.smf.dat') 
@@ -199,7 +199,7 @@ def SMF_MsSFR():
     sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
     sub.set_xlim(9., 12.5)
     sub.set_xticks([9., 10., 11., 12.]) 
-    sub.set_ylabel(r'SMF ($\Phi_{M_*}$)', fontsize=24)
+    sub.set_ylabel(r'$\Phi_{M_*}$ [$({\rm Mpc}/h)^{-3}{\rm dex}^{-1}$]', fontsize=24)
     sub.set_yscale("log")
     sub.set_ylim(5e-6, 1e-1) 
     
@@ -527,6 +527,7 @@ def ABC_corner():
     keep_cols = np.ones(len(param_lbls)).astype(bool) 
     #keep_cols[:-1] = True
 
+    print('\t %s' % ','.join(param_lbls[keep_cols]))
     for i, sim in enumerate(sims):
         dat_dir = os.environ['GALPOPFM_DIR']
         abc_dir = os.path.join(dat_dir, 'abc', abc_run(sim.lower())) 
@@ -560,6 +561,11 @@ def ABC_corner():
                     labels=param_lbls[keep_cols], 
                     label_kwargs={'fontsize': 25}, 
                     fig = fig) 
+        median = np.quantile(theta_T, [0.5], axis=0)[0]
+        m1sig = median - np.quantile(theta_T, [0.16], axis=0)[0]
+        p1sig = np.quantile(theta_T, [0.84], axis=0)[0] - median
+        print('%s: %s' % (sim, '\t'.join(['%.2f +%.2f -%.2f' % (med, m1, p1) for
+            med, m1, p1 in zip(median, m1sig, p1sig)])))
     
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
@@ -1513,9 +1519,9 @@ def ABC_attenuation():
 
                 # M* and SFR 
                 if _m == 'low mass': 
-                    mlim = (mstar < 10.5)
+                    mlim = (mstar < 11)
                 elif _m == 'high mass': 
-                    mlim = (mstar >= 10.5)
+                    mlim = (mstar >= 11)
 
                 if _sfq == 'star-forming': 
                     ssfrlim = (ssfr > -11) 
@@ -1564,7 +1570,7 @@ def ABC_attenuation():
                 if isfq == 1: sub.set_yticklabels([]) 
 
                 if im == 0 and isfq == 0: 
-                    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -10.5$)', fontsize=20)
+                    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -11$)', fontsize=20)
                 #if im == 1 and isfq == 0: 
                     sub.legend(
                             [calz, b2017, n2018, sal], 
@@ -1572,12 +1578,12 @@ def ABC_attenuation():
                                 'Narayanan+(2018)', 'Salim+(2018)'], 
                             loc='upper right', handletextpad=0.2, fontsize=20) 
                 if im == 0 and isfq == 1: 
-                    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -10.5$)', fontsize=20)
+                    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=20)
                     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
-                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot < 10.5$', 
+                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot < 11$', 
                             transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
                 if im == 1 and isfq == 1:
-                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot > 10.5$', 
+                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot > 11$', 
                             transform=sub.transAxes, ha='left', va='center', rotation=270, fontsize=20)
                     #sub.legend([sal], ['Salim+(2018)'], 
                     #        loc='upper right', handletextpad=0.2, fontsize=20) 
@@ -1632,15 +1638,15 @@ def ABC_attenuation_unnormalized():
 
                 # M* and SFR 
                 if _m == 'low mass': 
-                    mlim = (mstar < 11.)
+                    mlim = (mstar < 11)
                 elif _m == 'high mass': 
-                    mlim = (mstar >= 11.)
+                    mlim = (mstar >= 11)
 
                 if _sfq == 'star-forming': 
-                    ssfrlim = (ssfr > -10.5) 
+                    ssfrlim = (ssfr > -11) 
                     #sfrlim = (sfr > 0.5) 
                 elif _sfq == 'quiescent': 
-                    ssfrlim = (ssfr < -10.5) 
+                    ssfrlim = (ssfr < -11) 
                     #sfrlim = (sfr < -0.5) 
 
                 # subpopulation sample cut 
@@ -1667,15 +1673,15 @@ def ABC_attenuation_unnormalized():
                 if isfq == 1: sub.set_yticklabels([]) 
 
                 if im == 0 and isfq == 0: 
-                    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -10.5$)', fontsize=20)
+                    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -11$)', fontsize=20)
                 if im == 0 and isfq == 1: 
-                    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -10.5$)', fontsize=20)
+                    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=20)
                     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
                     sub.text(1.01, 0.5, r'$\log M_*/M_\odot < 11$', 
                             transform=sub.transAxes, ha='left', va='center',
                             rotation=270, fontsize=20)
                 if im == 1 and isfq == 1:
-                    sub.text(1.01, 0.5, r'$11 < \log M_*/M_\odot$', 
+                    sub.text(1.01, 0.5, r'$\log M_*/M_\odot > 11$', 
                             transform=sub.transAxes, ha='left', va='center',
                             rotation=270, fontsize=20)
 
@@ -1894,19 +1900,18 @@ def ABC_Lir():
     for i, _M_r, _L_ir, sim in zip(range(2), M_rs, L_irs, ['TNG', 'EAGLE']): 
         # R vs log L_IR  
         DFM.hist2d(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
-                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], 
-                contour_kwargs={'linewidths': 0.5}, 
-                plot_datapoints=False, fill_contours=False, plot_density=True, 
+                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], #contour_kwargs={'linewidths': 1}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, 
                 ax=sub)
     
-    _plt1 = sub.fill_between([], [], [], color=clrs['eagle'], alpha=0.25, edgecolor='None')
-    _plt2 = sub.fill_between([], [], [], color=clrs['tng'], alpha=0.25, edgecolor='None')
+    _plt1 = sub.fill_between([], [], [], color=clrs['tng'], alpha=0.25, edgecolor='None')
+    _plt2 = sub.fill_between([], [], [], color=clrs['eagle'], alpha=0.25, edgecolor='None')
     sub.legend([_plt1, _plt2], ['TNG', 'EAGLE'], loc='lower right',
             handletextpad=0.2, fontsize=20) 
     sub.set_xlim(20., 23) 
     sub.set_xticks([20., 21., 22., 23]) 
     sub.set_xticklabels([-20, -21, -22, -23]) 
-    sub.set_ylabel(r'EDA dust emission $\log(~L_{\rm IR}$ [$L_\odot$] )', fontsize=25) 
+    sub.set_ylabel(r'IR dust emission $\log(~L_{\rm IR}$ [$L_\odot$] )', fontsize=25) 
     sub.set_xlabel(r'$M_r$ luminosity', fontsize=25) 
     sub.set_ylim(9, 12) 
     
@@ -2456,12 +2461,11 @@ def simba_starbursts():
 def sfr0_galaxies(): 
     ''' fraction of galaxies with SFR=0  
     '''
-    for name in sims: 
-        _, sfr0, sim_sed = _sim_observables(name.lower(), np.zeros(6),
-                zero_sfr_sample=True, return_sim=True)
+    for sim in sims: 
+        _, sim_sed, sfr0 = _sim_observables(sim.lower(), np.zeros(6))
         mass_cut = np.ones(len(sim_sed['logmstar'])).astype(bool) #(sim_sed['logmstar'] > 10.) 
         print('%.1f of %s galaxies' %
-                ((np.sum(mass_cut & sfr0)/np.sum(mass_cut))*100., name))
+                ((np.sum(mass_cut & sfr0)/np.sum(mass_cut))*100., sim))
         print('min SFR = %f' % (10**sim_sed['logsfr.inst'][~sfr0].min()))
     return None 
 
@@ -3477,10 +3481,10 @@ if __name__=="__main__":
     #Observables()
 
     # ABC posteriors 
-    #ABC_corner() 
+    ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    #ABC_Observables()
+    ABC_Observables()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
@@ -3492,7 +3496,7 @@ if __name__=="__main__":
 
     # amplitude normalized attenuation curves
     #ABC_attenuation()
-    ABC_attenuation_unnormalized()
+    #ABC_attenuation_unnormalized()
     
     # dust IR emission luminosity 
     #ABC_Lir()

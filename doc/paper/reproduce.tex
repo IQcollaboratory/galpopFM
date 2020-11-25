@@ -54,8 +54,8 @@ are able to reproduce the observed properties of dust using the \eda.
     values of the TNG (blue) and EAGLE (green) simulations. In the left and
     right panels, we present star-forming and quiescent galaxies classified
     using a $\log {\rm SSFR} = -11$ cut. In the top and bottom panels, we
-    present galaxies with $\log M_* < 10^{10.5} M_\odot$ and $\log M_* >
-    10^{10.5} M_\odot$, respectively. The attenuation curves are normalized at
+    present galaxies with $M_* < 10^{11} M_\odot$ and $M_* > 10^{11} M_\odot$,
+    respectively. The attenuation curves are normalized at
     $3000\AA$ and we mark the $1\sigma$ standard deviation of the attenuation 
     curves with the shaded region. For comparison, we include
     $A(\lambda)/A(3000\AA)$ measurements from observations~\citep{calzetti2000,
@@ -77,8 +77,8 @@ We can more closely compare the attenuation curves predicted by the \eda~to
 observations. In the left panels of Figure~\ref{fig:atten}, we present the 
 attenuation curves of star-forming galaxies predicted by the \eda~model for 
 the median posterior parameter values of TNG (blue) and EAGLE (green). In 
-the top panel, we present galaxies with $\log M_* < 10^{10.5} M_\odot$; in 
-the bottom we present galaxies with $\log M_* > 10^{10.5} M_\odot$. We define
+the top panel, we present galaxies with $M_* < 10^{11} M_\odot$; in 
+the bottom we present galaxies with $M_* > 10^{11} M_\odot$. We define
 galaxies with $\log {\rm SSFR} > -11$ as star-forming. The attenuation curves 
 are normalized at
 $3000\AA$ and we present the variation in the attenuation curves in the shaded
@@ -87,7 +87,9 @@ we include $A(\lambda)/A(3000\AA)$ from observations: \cite{calzetti2000},
 \cite{battisti2017}, and \cite{salim2018}. We also include $A(\lambda)/A(3000\AA)$
 measured from the \cite{narayanan2018} simulation. The left panels of
 Figure~\ref{fig:raw_atten} is the same as in Figure~\ref{fig:atten}, except
-with attenuation curves that are not normalized. 
+with attenuation curves that are not normalized. The normalized attenuation
+curves in Figure~\ref{fig:atten} emphasize the slope while the curves in
+Figure~\ref{fig:raw_atten} emphasize the amplitude. 
 
 Based on the \eda, star-forming galaxies have higher dust attenuation at lower
 wavelengths. This is driven by both TNG and EAGLE predicting star-forming
@@ -111,8 +113,8 @@ star-forming galaxies --- well below our $M_*$ range. %Since we find $\mdeltam <
 Overall, the \eda~predicts attenuation curves that are in good agreement with 
 both observations and radiative transfer simulations for star-forming galaxies. 
 Again, the fact that we reproduce the detailed dust attenuation curves of star-forming 
-galaxies in observations and simulations with the \eda~highlights the
-advantages of a forward modeling approach. 
+galaxies in observations and simulations with the \eda, without fitting for
+them, highlights the advantages of a forward modeling approach. 
 
 %At low attenuation, dust scattering dominates absoprtion so the 
 %attenuation curve steepens because red light scatters isotropically while blue light
