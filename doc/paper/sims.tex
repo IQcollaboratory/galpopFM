@@ -2,14 +2,14 @@
 \begin{center}
     \includegraphics[width=\textwidth]{figs/smf_m_sfr.pdf}
     \caption{\label{fig:smf_msfr}
-    The stellar mass functions, $\Phi(M_*)$ (left-most panel), and $M_*-\sfr$
+    The stellar mass functions, $\Phi_{M_*}$ (left-most panel), and $M_*-\sfr$
     relation (right panels) of galaxies in three cosmological hydrodynamic 
     simulations: SIMBA (orange), TNG (blue), and EAGLE (green). 
-    For reference, we include $\Phi(M_*)$ (black) and the $M_*-\sfr$ relation 
+    For reference, we include $\Phi_{M_*}$ (black) and the $M_*-\sfr$ relation 
     (black dashed) of our observational sample from SDSS. Uncertainties for the 
-    SDSS $\Phi(M_*)$ are derived using jackknife resampling. We describe the
+    SDSS $\Phi_{M_*}$ are derived using jackknife resampling. We describe the
     simulations and observations above in Section~\ref{sec:sims}. \emph{Differences
-    in $\Phi(M_*)$ and the $M_*-\sfr$ relations among the hydrodynamic simulations 
+    in $\Phi_{M_*}$ and the $M_*-\sfr$ relations among the hydrodynamic simulations 
     highlight how they predict galaxy populations with significantly different
     the physical properties.} 
     }
@@ -17,20 +17,19 @@
 \end{figure}
 
 \section{Data}\label{sec:sims}
-In this paper, we present the Empirical Dust Attenuation (\eda) model --- a
-flexible prescription for applying dust attenuation to simulated galaxy
-populations. We also demonstrate how the \eda~can be used in a forward modeling
-approach to compare galaxy populations in simulations and observations. For our
-simulations, we use three cosmological hydrodynamical simulations: the
-Illustris TNG (hereafter TNG), EAGLE, and SIMBA. For our observations, we use a galaxy sample
-derived from SDSS. Below, we briefly describe the hydrodynamical simulations and 
-the SDSS observations used throughout this work.
+In this paper, we present the Empirical Dust Attenuation (\eda) model and
+demonstrate how it can be used in a forward modeling approach to compare galaxy
+populations in simulations and observations. For our simulations, we use three
+cosmological hydrodynamical simulations: the Illustris TNG (hereafter TNG),
+EAGLE, and SIMBA. For our observations, we use a galaxy sample derived from
+SDSS. Below, we briefly describe the hydrodynamical simulations and the SDSS
+observations used throughout this work.
 
 In Figure~\ref{fig:smf_msfr}, we present the stellar mass functions,
-$\Phi(M_*)$ left-most panel, and $M_*-\sfr$ relations (right panels) of
+$\Phi_{M_*}$ left-most panel, and $M_*-\sfr$ relations (right panels) of
 galaxies in the  SIMBA (orange), TNG (blue), and EAGLE (green) cosmological
-hydrodynamic simulations.  We include, for reference, $\Phi(M_*)$ and the 
-$M_*-\sfr$ relation for our observational galaxy sample from SDSS. For the
+hydrodynamic simulations.  For reference, we include $\Phi_{M_*}$ and the 
+$M_*-\sfr$ relation for our observational SDSS galaxy sample. For the
 simulations, $M_*$ is the total stellar mass within the host halo, excluding
 any stellar mass in subhalos; $\sfr$ is the instantaneous $\sfr$ derived from
 dense and cold gas. For SDSS, $M_*$ is estimated using $\mathtt{kcorrect}$~\citep{blanton2007a} 
@@ -69,7 +68,7 @@ which has a comoving volume of $(100\,\mpc)^3$. % baryonic mass resolution of $1
 %that includes a conservative pressure-entropy formulation for the smoothed particle hydrodynamics calculation, artificial viscosity, artificial conduction and the time limiter that improve hydrodynamic computation performance. 
 EAGLE has subgrid models for star formation, stellar mass loss, metal enrichment
 and stellar feedback that stochastically inject thermal energy in the ISM as
-in~\citep{dallavecchia2012}; the feedback energy from AGN is also added to
+in~\citep{dallavecchia2012}. The feedback energy from AGN is also added to
 surrounding gas stochastically~\citep{booth2009}. Parameters of the stellar 
 feedback and SMBH accretion are calibrated to broadly reproduce the $z=0$ 
 stellar mass function and galaxy stellar size-stellar mass relation. Meanwhile, 
@@ -98,7 +97,8 @@ volume-limited sample and then impose a $M_r < -20$ completeness cut.
 The original \cite{tinker2011} sample is derived from the SDSS DR7~\citep{abazajian2009} NYU
 Value-Added Galaxy Catalog~\citep[VAGC;][]{blanton2005}. In this work, we focus 
 on observables that can be consistently defined and derived in both simulations 
-and observables: $M_r$, $\gr$, and $\fnuv$. For our SDSS sample, we use $FUV$,
+and observables: the $r$-band absolute magnitude, $M_r$, the optical $\gr$
+color, and the $\fnuv$ color. For the SDSS sample, we use $FUV$,
 $NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
 Atlas\footnote{\url{http://nsatlas.org/}}, which is re-reduction of SDSS DR8
 \citep{aihara2011} that includes an improved background subtraction~\citep{blanton2011} 
@@ -108,11 +108,11 @@ a~\cite{chabrier2003} initial mass function.
 
 \subsection{Forward Modeling Observations} \label{sec:fm} 
 One of the main goals of this work is to conduct an ``apples-to-apples'' comparison
-between the simulations above and observations using a forward modeling
+between the simulations and observations using a forward modeling
 approach. A crucial step is to forward model the observables for our
-simulations --- in this work, we use $r$-band luminosity ($M_r$), optical color ($G-R$), and 
-UV color ($FUV-NUV$). As the first step, we construct SEDs for all
-of the simulated galaxies based on their star formation and metallicity
+simulations --- in our case $r$-band absolute magnitude ($M_r$), optical color
+($G-R$), and UV color ($FUV-NUV$). As the first step, we construct SEDs for
+all of the simulated galaxies based on their star formation and metallicity
 histories (SFH and ZH) using the Fleixble Stellar Population Synthesis model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. 
 
 For each simulated galaxy, we bin the total stellar mass formed by age ($t$)
@@ -124,17 +124,14 @@ the total stellar mass formed in the bin, to produce the galaxy SED. We use a
 \cite{chabrier2003} initial mass function. For further details on how we
 construct the SEDs, we refer readers to Starkenberg et al. (in prep.).
 
-In the next step of the forward model, we use the \eda~model assign dust 
-attenuation curves for each of the simulated galaxies based on their physical
-properties and apply dust attenuation to their SEDs. We describe the \eda in
-detail in Section~\ref{sec:dem}. 
-
+Next in the forward model, we use the \eda~model to assign dust attenuation
+curves for each of simulated galaxy based on its physical properties and apply
+dust attenuation to its SEDs. We describe the \eda~in detail in Section~\ref{sec:dem}. 
 From the dust attenuated SEDs, we measure the observables by convolving them
 with transmission curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$
 broadband filters. Lastly, we add realistic noise to $M_r$, $\gr$, and $\fnuv$ 
-We sample the noise from normal distributions, where the standard deviations 
-are drawn from $\chi^2$ fits to the the observed uncertainty distributions from 
-NASA-Sloan Atlas.
+by sampling from the observed uncertainty distributions of the NASA
+Sloan-Atlas. 
 
 In Figure~\ref{fig:obs} we present the forward modeled optical and UV color-magnitude
 relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom), for simulated galaxies
@@ -150,8 +147,8 @@ reproduce the observed optical or UV color-magnitude relations.}
     \caption{\label{fig:obs}
     We present the forward modeled optical and UV color-magnitude relations of 
     simulated galaxies in SIMBA (left), TNG (center), and EAGLE (right). The
-    simulations above do {\em not} yet include the \eda or any prescription for
-    dust attenuation.  $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom) are the
+    simulations above do {\em not} yet include any prescription for dust
+    attenuation.  $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom) are the
     main observables used throughout the paper. They are derived using SEDs
     constructed from the star-formation and metallicity of the simulated
     galaxies. These observables are consistently defined and measured as our
