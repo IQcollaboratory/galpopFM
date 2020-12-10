@@ -54,7 +54,7 @@
 
 % cmds for this paper 
 %\newcommand{\gr}{G{-}R}
-\newcommand{\gr}{\textcolor{blue}{$g${-}$r$}}
+\newcommand{\gr}{g{-}r}
 \newcommand{\fnuv}{FUV{-}NUV}
 \newcommand{\sfr}{{\rm SFR}}
 \newcommand{\ssfr}{{\rm SSFR}}
@@ -85,6 +85,7 @@
 \definecolor{orange}{rgb}{1,0.5,0}
 \newcommand{\ch}[1]{{\color{orange}{\bf CH:} #1}}
 \newcommand{\tks}[1]{{\color{blue}{\bf TKS:} #1}}
+\newcommand{\tksedit}[1]{{\color{blue}#1}}
 
 \begin{document} \sloppy\sloppypar\frenchspacing 
 
@@ -106,33 +107,33 @@
 \begin{abstract}
     We present the Empirical Dust Attenuation (\eda) model, an empirical
     framework for applying dust attenuation to simulated galaxy populations.
-    The \eda~uses \tks{an observationally motivated parametrization of attenuation}
+    The \eda~uses \tksedit{an observationally motivated parametrization of attenuation}
     %a parameterization of the attenuation curve based on observations 
     and a statistical prescription for assigning the curves that 
-    includes correlations with galaxy properties. We apply the \eda~\tks{separately/individually} to three
-    state-of-the-art hydrodynamical simulations --- SIMBA, \tks{IllustrisTNG}, 
+    includes correlations with galaxy properties. We apply the \eda~\tksedit{separately} to three
+    state-of-the-art hydrodynamical simulations --- SIMBA, \tksedit{IllustrisTNG}, 
     and EAGLE --- and forward model their optical and UV color-magnitude
-    relations, $(\gr) - M_r$ and $(\fnuv)-M_r$. Then we compare them to \tks{volume limited SDSS and GALEX 
+    relations, $(\gr) - M_r$ and $(\fnuv)-M_r$. Then we compare them to \tksedit{volume-limited SDSS and GALEX 
     observations} using simulation-based inference. 
     %For TNG and EAGLE, with the
     %\eda~we accurately reproduce the SDSS color magnitude relations. Meanwhile, for
-    \tks{When the \eda~is included we accurately reproduce the color magnitude relations
+    \tksedit{When the \eda~is included we accurately reproduce the color magnitude relations
     of the observational sample for EAGLE and TNG.}
-    \tks{For} SIMBA, we struggle to reproduce observations due to an overprediction \tks{or overbrightness(?)}
+    \tksedit{For} SIMBA, we struggle to reproduce observations due to an overprediction \tks{or overbrightness(?)}
     of starburst galaxies. The bestfit \eda~s for TNG and EAGLE also predict
     attenuation--slope relations and attenuation curves of star-forming
     galaxies in good agreement with observations. Beyond reproducing observations,
     the \eda~also sheds light on dust attenuation in quiescent galaxies, which
-    is challenging to measure \tks{observationally.}
+    is challenging to measure \tksedit{observationally.}
     %in observations. Quiescent 
-    \tks{We find that quiescent} galaxies have
-    significant UV and optical \tks{attenuation (?)} with shallow %attenuation 
-    curves\tks{, in contrast to star-forming galaxies}. The \eda, more
+    \tksedit{We find that quiescent} galaxies have
+    significant UV and optical \tksedit{attenuation} with shallow %attenuation 
+    curves\tksedit{, in contrast to star-forming galaxies}. The \eda, more
     broadly, reveals the connections between galaxy properties and dust
     attenuation: more massive galaxies %have
-    \tks{require} higher overall dust attenuation
+    \tksedit{require} higher overall dust attenuation
     while galaxies with higher %SSFR 
-    \tks{specific star formation rates} have steeper attenuation curves. In
+    \tksedit{specific star formation rates} have steeper attenuation curves. In
     addition to improving our understanding of dust in galaxies, our results
     underscore the advantages of the \eda~and the forward modeling approach. 
 \end{abstract}
