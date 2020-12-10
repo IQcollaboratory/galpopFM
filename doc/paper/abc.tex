@@ -12,7 +12,7 @@ model of the observed data, a prior that can be sampled, and a distance metric
 that quantifies the ``closeness'' to the observed data. Since ABC does not
 require evaluating the likelihood, it does not assume any functional form of
 the likelihood, which can significantly bias the inferred
-posterior~\citep{hahn2019}. It also enables us to estimate the posterior using
+posterior~\citep[\eg][]{hahn2019}. It also enables us to estimate the posterior using
 observables with difficult or intractable likelihoods~\citep{hahn2017a}
 
 In the simplest version of ABC, with a rejection sample
@@ -30,9 +30,9 @@ Among these methods, we use ABC in conjuction with Population Monte Carlo (PMC)
 importance sampling~\citep{hahn2017a, hahn2017b, hahn2019a}.
 
 The forward model in our scenario starts with the galaxies from our
-hydrodynamic simulations. Then we construct SEDs using their SFH and ZH,
+hydrodynamic simulations. We construct SEDs using their SFH and ZH,
 apply dust attenuation with the \eda~model, and calculate the observables from
-the attenuated SED. For each hydro simulation and a set of \eda~parameters, our forward model
+the attenuated SED. For each simulation and a set of \eda~parameters, our forward model
 produces $G$, $R$, $NUV$, and $FUV$ absolute magnitudes. We use uninformative uniform priors on each of
 the \eda~parameters and choose ranges to encompass constraints in the
 literature. The prior ranges of $\mtaum, \mtaus, c_\tau$ are chosen to
@@ -56,11 +56,10 @@ attenuation on galaxy properties, so we use uniformative priors on the
     and $95\%$ confidence intervals. The posteriors are derived using the
     simulation-based inference method: Approximate Bayesian Computation with Population Monte Carlo
     (Section~\ref{sec:abc}). We focus on the \eda~posteriors for TNG and EAGLE
-    since SIMBA requires dust attenuation to reverse the relationship between
-    color and $\sfr$ in order to account for it overpredicting low mass starburst 
-    galaxies. Based on the posteriors, we find that \emph{galaxies with higher
-    $M_*$ have overall higher dust attenuation and galaxies with lower $\sfr$
-    have overall higher dust attenuation.}
+    since the \eda~struggles to reproduce SDSS observations with SIMBA, which
+    predicts an overabundance of starburst galaxies. Based on the posteriors, we find that \emph{galaxies with higher
+    $M_*$ have overall higher dust attenuation and galaxies with higher $\ssfr$
+    have steeper attenuation curves.}
     }
 \end{center}
 \end{figure}
@@ -81,8 +80,7 @@ the completeness limit of our SDSS sample (Figure~\ref{fig:obs}).
 More specifically, for $X$, we calculate the number density in 3D bins of $\gr$,
 $\fnuv$, and $M_r$ with widths 0.0625, 0.25, and 0.5 mags. We choose this summary 
 statistic to fully exploit the observable-space predicted by the forward model. 
-Later in Section~\ref{sec:results} we discuss other observables that could be
-used in the analysis. 
+Later in Section~\ref{sec:results} we discuss other potential observables. 
 
 ABC-PMC begins with an arbitrarily large threshold $\epsilon_1$ and $N$ proposals 
 $\bar{\theta}_1$ sampled from the prior distribution. Each proposal is
@@ -91,8 +89,10 @@ threshold, $\epsilon_i$, is set to the median distance of the previous iteration
 proposals. New proposals are drawn from the previous iteration's proposals perturbed 
 by a kernel and kept if their distance is blelow $\epsilon_i$. This is repeated
 until we assemble a new set of $N$ proposals $\bar{\theta}_i$. The entire
-process is repeated for the next iteration until convergence is confirmed. For 
-further details on the ABC-PMC implementation, we refer readers to \cite{hahn2017b}
+process is repeated for the next iteration until convergence is confirmed. 
+We use the Python implementation of
+\cite{akeret2015}\footnote{https://abcpmc.readthedocs.io/en/latest/index.html}.
+For further details on the ABC-PMC implementation, we refer readers to \cite{hahn2017b}
 and \cite{hahn2019a}.
 In Figure~\ref{fig:abc}, we present the posterior distributions of the \eda~parameters
 derived from ABC-PMC for the SIMBA (orange), TNG (blue), and EAGLE (green) hydrodynamical 

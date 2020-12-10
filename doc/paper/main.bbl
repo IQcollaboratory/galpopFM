@@ -27,6 +27,12 @@ Abazajian K.~N.,  et~al., 2009, \mn@doi [The Astrophysical Journal Supplement
 Aihara H.,  et~al., 2011, \mn@doi [The Astrophysical Journal Supplement Series]
   {10.1088/0067-0049/193/2/29}, 193, 29
 
+\bibitem[\protect\citeauthoryear{Akeret, Refregier, Amara, Seehars  \&
+  Hasner}{Akeret et~al.}{2015}]{akeret2015}
+Akeret J.,  Refregier A.,  Amara A.,  Seehars S.,   Hasner C.,  2015, \mn@doi
+  [Journal of Cosmology and Astroparticle Physics]
+  {10.1088/1475-7516/2015/08/043}, 2015, 043
+
 \bibitem[\protect\citeauthoryear{Alsing, Wandelt  \& Feeney}{Alsing
   et~al.}{2018}]{alsing2018}
 Alsing J.,  Wandelt B.,   Feeney S.,  2018, arXiv:1801.01497 [astro-ph]
@@ -178,6 +184,10 @@ Dav{\'e} R.,  {Angl{\'e}s-Alc{\'a}zar} D.,  Narayanan D.,  Li Q.,
 Del~Moral P.,  Doucet A.,   Jasra A.,  2012, \mn@doi [Statistics and Computing]
   {10.1007/s11222-011-9271-y}, 22, 1009
 
+\bibitem[\protect\citeauthoryear{Dickey et~al.,}{Dickey
+  et~al.}{2020}]{dickey2020}
+Dickey C.~M.,  et~al., 2020, arXiv e-prints, 2010, arXiv:2010.01132
+
 \bibitem[\protect\citeauthoryear{Diggle \& Gratton}{Diggle \&
   Gratton}{1984}]{diggle1984}
 Diggle P.~J.,  Gratton R.~J.,  1984, Journal of the Royal Statistical Society.
@@ -316,6 +326,11 @@ Lin C.-A.,  Kilbinger M.,   Pires S.,  2016, \mn@doi [Astronomy and
 McAlpine S.,  et~al., 2016, \mn@doi [Astronomy and Computing]
   {10.1016/j.ascom.2016.02.004}, 15, 72
 
+\bibitem[\protect\citeauthoryear{Meisner, Lang  \& Schlegel}{Meisner
+  et~al.}{2018}]{meisner2018}
+Meisner A.~M.,  Lang D.,   Schlegel D.~J.,  2018, \mn@doi [Research Notes of
+  the American Astronomical Society] {10.3847/2515-5172/aaa4bc}, 2, 1
+
 \bibitem[\protect\citeauthoryear{Narayanan, Conroy, Dav{\'e}, Johnson  \&
   Popping}{Narayanan et~al.}{2018}]{narayanan2018}
 Narayanan D.,  Conroy C.,  Dav{\'e} R.,  Johnson B.~D.,   Popping G.,  2018,
@@ -363,6 +378,10 @@ Reddy N.~A.,  et~al., 2015, \mn@doi [The Astrophysical Journal]
 Rocha M.,  Jonsson P.,  Primack J.~R.,   Cox T.~J.,  2008, \mn@doi [Monthly
   Notices of the Royal Astronomical Society]
   {10.1111/j.1365-2966.2007.12431.x}, 383, 1281
+
+\bibitem[\protect\citeauthoryear{{Ruiz-Macias} et~al.,}{{Ruiz-Macias}
+  et~al.}{2020}]{ruiz-macias2020}
+{Ruiz-Macias} O.,  et~al., 2020, arXiv:2007.14950 [astro-ph]
 
 \bibitem[\protect\citeauthoryear{Salim \& Narayanan}{Salim \&
   Narayanan}{2020}]{salim2020}
@@ -502,6 +521,11 @@ Witt A.~N.,  Gordon K.~D.,  1996, \mn@doi [The Astrophysical Journal]
   Gordon}{2000}]{witt2000}
 Witt A.~N.,  Gordon K.~D.,  2000, \mn@doi [The Astrophysical Journal]
   {10.1086/308197}, 528, 799
+
+\bibitem[\protect\citeauthoryear{{da Cunha}, Charlot  \& Elbaz}{{da Cunha}
+  et~al.}{2008}]{dacunha2008}
+{da Cunha} E.,  Charlot S.,   Elbaz D.,  2008, \mn@doi [Monthly Notices of the
+  Royal Astronomical Society] {10.1111/j.1365-2966.2008.13535.x}, 388, 1595
 
 \makeatother
 \end{thebibliography}

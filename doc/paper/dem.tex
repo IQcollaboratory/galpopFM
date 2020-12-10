@@ -1,5 +1,5 @@
 \section{The Empirical Dust Attenuation Model} \label{sec:dem}
-In this section we present the Empirical Dust Attenuation (\eda) model, a
+In this section we describe the Empirical Dust Attenuation (\eda) model, a
 flexible prescription for applying dust attenuation curves to galaxy
 populations. With the \eda, we can apply a wide variety of dust attenuation and
 include correlation between dust attenuation and physical galaxy properties. 
@@ -20,35 +20,35 @@ so that $A_V$ determines the amplitude of the attenuation, while $k(\lambda)$
 determines the wavelength dependence. 
 
 To determine $A(\lambda)$ for each galaxy, we first assign $A_V$ using the slab
-model from~\cite{somerville1999, somerville2012}. In the slab model, $A_V$ is
+model from~\citep[\eg][]{somerville1999, somerville2012} where $A_V$ is
 calculated based on the inclination of the galaxy, $i$, and its optical depth, $\tau_V$: 
 \begin{equation} \label{eq:slab}
     A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right].
 \end{equation}
 For each galaxy, we uniformly sample $i$ from 0 to $\pi/2$. Then in $\tau_V$ we
-include the correlation between $A_V$ and galaxy properties ($M_*$ and $\sfr$),
+include the correlation between $A_V$ and galaxy properties ($M_*$ and $\ssfr$),
 found in both observations and simulations~\citep[\eg][]{narayanan2018, salim2020}. 
-We parameterize $\tau_V$ with a simple and flexible linear $M_*$ and $\sfr$ 
-dependence:
+We parameterize $\tau_V$ with a simple and linear $M_*$ and $\ssfr$ dependence:
 \begin{equation} \label{eq:tauv}
     \tau_V(M_*, \sfr) = \mtaum \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
     \mtaus \log \left(\frac{\ssfr}{10^{-10}yr^{-1}}\right) + c_\tau.
 \end{equation}
-$\mtaum$ quantifies the $M_*$ dependence, $\mtaus$ quantifies the $\ssfr$
-dependence, and $c_\tau$ quantifies the overall amplitude. Since $\tau_V$ is
-optical depth, we impose a $\tau_V \ge 0$ limit. The slab model is a naive 
-approximation. In reality, $A_V$ for a galaxy depends on complexities 
+$\mtaum$, $\mtaus$, and $c_\tau$ represent the $M_*$ dependence, the $\ssfr$
+dependence, and overall amplitude of $\tau_V$. Since $\tau_V$ is
+optical depth, we impose a $\tau_V \ge 0$ limit.
+
+The slab model is a naive approximation. In reality, $A_V$ for a galaxy depends on complexities 
 of its star-to-dust geometry, variations in the extinction curves, and other
 properties beyond just inclination and $\tau_V$. The purpose of the \eda,
 however, is not to accurately model dust attenuation for individual galaxies,
-but rather to accurately model the distribution of dust attenuation for galaxy
-populations. In this regard, the slab model qualitatively reproduces the
+but rather to accurately represent the distribution of dust attenuation for galaxy
+populations. In this regard, the slab model is consistent with the
 correlation between $A_V$ and $i$ found in the literature: edge-on galaxies
 have higher $A_V$ than face-on galaxies~\citep[\eg][]{conroy2010, wild2011,
 battisti2017, salim2020}. More
 importantly, the $A_V$ distribution, $p(A_V)$, produced using the slab model with
 uniformly sampled inclinations closely matches the $p(A_V)$ of our SDSS sample
-(Figure~\ref{fig:av_dist}). Replacing the slab model with a more flexible
+(Figure~\ref{fig:av_dist}). Also, replacing the slab model with a more flexible
 prescription for sampling $A_V$ does not significant impact our analysis 
 (Appendix~\ref{sec:nonslab}). Therefore, we conclude that the slab model is a
 sufficient, flexible empirical prescription for sampling $A_V$. 
@@ -63,13 +63,13 @@ Here $k_{\rm Cal}(\lambda)$ is the \cite{calzetti2001} curve:
 \[
     k_{\rm Cal}(\lambda) = 
     \begin{cases} 
-        2.659 (-1.857 + 1.040/\lambda) + R_V, & 6300 \AA \le \lambda \le
-        22000 \AA \\ 
+        2.659 (-1.857 + 1.040/\lambda) + R_V, & 6300 A \le \lambda \le
+        22000 A \\ 
         2.659 (-2.156 + 1.509/\lambda - 0.198/\lambda^2 + 0.011/\lambda^3) +
-        R_V & 1200 \AA \le \lambda \le 6300 \AA
+        R_V & 1200 A \le \lambda \le 6300 A
     \end{cases}
 \]
-where $\lambda_V = 5500 \AA$ is the $V$ band wavelength. $\delta$ is the slope
+where $\lambda_V = 5500 A$ is the $V$ band wavelength and $\delta$ is the slope
 offset of the attenuation curve from $k_{\rm Cal}$. Since $\delta$ correlates 
 with galaxy properties~\citep[\eg][]{leja2017, salim2018},
 we parameterize $\delta$ with a similar $M_*$ and $\ssfr$ dependence as
@@ -92,14 +92,15 @@ the standard Lorentzian-like Drude profile:
 \end{equation}
 where $\lambda_0$, $\Delta \lambda$, and $E_b$ are the central wavelength,
 FWHM, and strength of the bump, respectively. We assume fixed $\lambda_0 = 2175
-\AA$ and $\Delta \lambda = 350\AA$. \cite{kriek2013} and \cite{tress2018} find
+A$ and $\Delta \lambda = 350A$. \cite{kriek2013} and \cite{tress2018} find
 that $E_b$ correlates with the $\delta$ for star-forming galaxies $z\sim2$.
-\cite{narayanan2018} confirmed this dependence in simulations. In our 
+\cite{narayanan2018} confirmed this dependence in simulations. For the
 \eda~model, we assume a fixed relation between $E_B$ and $\delta$ from \cite{kriek2013}: 
 $E_b = -1.9~\delta + 0.85$. Allowing the slope and amplitude of the $E_B$ and
-$\delta$ relation to vary does {\em not} impact our results.
-In Table~\ref{tab:free_param}, we list and describe all of the free parameters
-in the \eda. 
+$\delta$ relation to vary does {\em not} impact our results; however, we do not
+derive any meaningful constraints on them either. In
+Table~\ref{tab:free_param}, we list and describe all of the free parameters in
+the \eda. 
 
 %Next, to attenuate the galaxy SEDs, we apply $A(\lambda)$ we separately to the
 %star light and nebular emssion: 
@@ -131,9 +132,9 @@ star-formation and low gas mass, similar to $\sfr=0$ galaxies.
 %Since $\sfr=0$ galaxies do not account for a large fraction of our simulated galaxies, we directly sample their observables ($G, R, NUV$, and $FUV$) from the distribution of observables for SDSS quiescent galaxies. This way, we ensure that the attenuation of $\sfr=0$ galaxies does not impact the rest of the \eda~parameters. In Appendix~\ref{sec:res}, we discuss the resolution effects in more detail and demonstrate that our results are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
 
 In practice, to apply the \eda~to a simulated galaxy population, we begin by
-assigning a uniformly sample inclination, $i$, to each galaxy. Then based on
-the \eda~parameters, $\tau_V$, and $\delta$ are calculated for the galaxy using
-its $i$, $M_*$, and $\sfr$. From $\tau_V$ and $\delta$, we determine $A_V$ and
+assigning a uniformly sample inclination, $i$, to each galaxy. Then $\tau_V$,
+and $\delta$ are calculated for the galaxy based on its $i$, $M_*$, $\ssfr$ and
+the \eda~parameters. From $\tau_V$ and $\delta$, we determine $A_V$ and
 $k(\lambda)$, which together gives $A(\lambda)$.  Afterwards, we attenuate the
 galaxy SEDs using Eq.~\ref{eq:full_atten} and use the attenuated SEDs to
 calculate the observables: $G, R, NUV$, and $FUV$
@@ -146,8 +147,8 @@ mass ($10^{11}M_\odot$; red). All galaxies are edge-on (\ie~$i=0$) and we use
 \eda~parameters: $\{\mtaum, \mtaus, c_\tau, \mdeltam, \mdeltas, c_\delta\} =
 \{2., -2., 2., -0.1, -0.1, -0.2\}$, arbitrarily chosen within the prior range
 listed in Table~\ref{tab:free_param}. For comparison, we include the
-\cite{calzetti2001} attenuation curve. The \eda~model provides a flexible
-prescription for applying dust attenuation with a wide range of amplitude and
+\cite{calzetti2001} attenuation curve. Even for only edge-on galaxies, the
+\eda~produces attenuation curves with a wide range of amplitude and
 slope to galaxies based on their physical properties. 
 
 \begin{figure}
@@ -161,8 +162,8 @@ slope to galaxies based on their physical properties.
     ($\sfr=10^{-2}M_\odot/yr$) low mass galaxy ($10^{10}M_\odot$; orange), 
     high mass galaxy ($10^{11}M_\odot$; red). All galaxies are edge-on
     (\ie~$i=0$) and we use \eda~parameter values near the center of our prior
-    range (Table~\ref{tab:free_param}):$\{\mtaum, \mtaus, c_\tau, \mdeltam,
-    \mdeltas, c_\delta\} = \{2., -2., 2., -0.1, -0.1, -0.2\}$. For comparison, 
+    range:$\{\mtaum, \mtaus, c_\tau, \mdeltam, \mdeltas, c_\delta\} = \{2.,
+    -2., 2., -0.1, -0.1, -0.2\}$ (Table~\ref{tab:free_param}). For comparison,
     we include the \cite{calzetti2001} attenuation curve. In the \eda, the
     amplitude and slope of $A(\lambda)$ depend on $M_*$, and $\ssfr$ (Eqs.~\ref{eq:tauv}
     and~\ref{eq:delta}). {\em The \eda~provides a flexible model for
@@ -176,14 +177,14 @@ slope to galaxies based on their physical properties.
 % table of free parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table}
-    \caption{Parameters of the Dust Empirical Model}
+    \caption{Free parameters of the Empirical Dust Attenuation Model}
     \begin{center}
         \begin{tabular}{ccc} \toprule
             Parameter & Definition & prior\\[3pt] \hline\hline
             %\multicolumn{3}{c}{DEM with slab model}\\ \hline
-            $\mtaum$ & Slope of the optical depth, $\tau_V$, $\log M_*$ dependence & flat $[-5., 5.]$\\
-            $\mtaus$ & Slope of the optical depth, $\tau_V$, $\log {\rm SFR}$ dependence & flat $[-5., 5.]$\\
-            $c_{\tau}$ & amplitude of the optical depth, $\tau_V$ & flat $[0., 6.]$\\
+            $\mtaum$ & $M_*$ dependence of the optical depth, $\tau_V$ & flat $[-5., 5.]$\\
+            $\mtaus$ & $\ssfr$ dependence of $\tau_V$  & flat $[-5., 5.]$\\
+            $c_{\tau}$ & amplitude of $\tau_V$ & flat $[0., 6.]$\\
             %\hline
             %\multicolumn{3}{c}{DEM with $\mathcal{N}_T$ model}\\ \hline
             %$m_{\mu,1}$ & Slope of the $\log M_*$ dependence of optical depth,
@@ -195,9 +196,9 @@ slope to galaxies based on their physical properties.
             %$m_{\sigma,2}$ & Slope of the $\log {\rm SFR}$ dependence of optical depth, $\tau_V$ & flat $[-5., 5.]$\\
             %$c_{\sigma}$ & amplitude of the optical depth, $\tau_V$ & flat $[0.1, 3.]$\\ 
             %\hline
-            $\mdeltam$ & Slope of the attenuation curve slope offset, $\delta$, $\log M_*$ dependence & flat $[-4., 4.]$\\
-            $\mdeltas$ & Slope of the attenuation curve slope offset, $\delta$, $\log {\rm SFR}$ dependence of  & flat $[-4., 4.]$\\
-            $c_{\delta}$ & amplitude of the attenuation curve slope offset, $\delta$ & flat $[-4., 4.]$\\
+            $\mdeltam$ & $M_*$ dependence of $\delta$, the attenuation curve slope offset & flat $[-4., 4.]$\\
+            $\mdeltas$ & $\ssfr$ dependence of $\delta$ & flat $[-4., 4.]$\\
+            $c_{\delta}$ & amplitude of $\delta$ & flat $[-4., 4.]$\\
             %$f_{\rm neb}$ & nebular attenuation fraction & flat $[1., 4.]$\\
             \hline
         \end{tabular} \label{tab:free_param}
