@@ -118,13 +118,13 @@ histories (SFH and ZH) using the Fleixble Stellar Population Synthesis model~\ci
 For each simulated galaxy, we bin the total stellar mass formed by age ($t$)
 and metallicity ($Z$). We use a consistent $t$, $Z$ grid for all of the simulations
 to account for the variable time and mass resolutions. For each point in the
-$t, Z$ grid, we generate the spectrum of a simple stellar population (SSP)
-using $\mathtt{FSPS}$ and take the linear combination of them, weighted by 
-the total stellar mass formed in the bin, to produce the galaxy SED. We use a
+$t, Z$ grid, we generate a spectrum assuming a simple stellar population (SSP)
+using $\mathtt{FSPS}$ and take the mass-weighted linear combination of them to
+produce the galaxy SED. We use a
 \cite{chabrier2003} initial mass function. For further details on how we
 construct the SEDs, we refer readers to Starkenberg et al. (in prep.).
 
-Next in the forward model, we use the \eda~model to assign dust attenuation
+Next in the forward model, we apply the \eda~model to assign dust attenuation
 curves for each of simulated galaxy based on its physical properties and apply
 dust attenuation to its SEDs. We describe the \eda~in detail in Section~\ref{sec:dem}. 
 From the dust attenuated SEDs, we measure the observables by convolving them

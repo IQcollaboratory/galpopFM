@@ -1,5 +1,5 @@
 \section{The Empirical Dust Attenuation Model} \label{sec:dem}
-In this section we describe the Empirical Dust Attenuation (\eda) model, a
+In this section, we describe the Empirical Dust Attenuation (\eda) model --- a
 flexible prescription for applying dust attenuation curves to galaxy
 populations. With the \eda, we can apply a wide variety of dust attenuation and
 include correlation between dust attenuation and physical galaxy properties. 
@@ -12,7 +12,7 @@ We define the dust attenuation curve, $A(\lambda)$, as
     F_o (\lambda) = F_i (\lambda) 10^{-0.4 A(\lambda)}
 \end{equation}
 where $F_o$ is the observed flux and $F_i$ is the intrinsic flux. We normalize
-the attenuation at the $V$ band, 
+the attenuation to the $V$ band attenuation, 
 \begin{equation} 
     A(\lambda) = A_V \frac{k(\lambda)}{k_V}
 \end{equation}
@@ -91,7 +91,8 @@ the standard Lorentzian-like Drude profile:
     \lambda_0^2)^2 + (\lambda~\Delta \lambda)^2}
 \end{equation}
 where $\lambda_0$, $\Delta \lambda$, and $E_b$ are the central wavelength,
-FWHM, and strength of the bump, respectively. We assume fixed $\lambda_0 = 2175
+full width at half maximum, and strength of the bump, respectively. We assume
+fixed $\lambda_0 = 2175
 A$ and $\Delta \lambda = 350A$. \cite{kriek2013} and \cite{tress2018} find
 that $E_b$ correlates with the $\delta$ for star-forming galaxies $z\sim2$.
 \cite{narayanan2018} confirmed this dependence in simulations. For the
@@ -132,7 +133,8 @@ star-formation and low gas mass, similar to $\sfr=0$ galaxies.
 %Since $\sfr=0$ galaxies do not account for a large fraction of our simulated galaxies, we directly sample their observables ($G, R, NUV$, and $FUV$) from the distribution of observables for SDSS quiescent galaxies. This way, we ensure that the attenuation of $\sfr=0$ galaxies does not impact the rest of the \eda~parameters. In Appendix~\ref{sec:res}, we discuss the resolution effects in more detail and demonstrate that our results are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
 
 In practice, to apply the \eda~to a simulated galaxy population, we begin by
-assigning a uniformly sample inclination, $i$, to each galaxy. Then $\tau_V$,
+assigning an inclincation, $i$, uniformly sampled between $0$ and $\pi$ to each
+galaxy. Then $\tau_V$,
 and $\delta$ are calculated for the galaxy based on its $i$, $M_*$, $\ssfr$ and
 the \eda~parameters. From $\tau_V$ and $\delta$, we determine $A_V$ and
 $k(\lambda)$, which together gives $A(\lambda)$.  Afterwards, we attenuate the

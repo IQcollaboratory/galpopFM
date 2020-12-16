@@ -66,7 +66,7 @@ hou2017}. Dust attenuation has also been examined in a cosmological context
 using semi-analytic models (SAMs) that do not track baryonic growth directly 
 but make simple physically motivated assumptions about the resulting galaxy
 properties from dark matter growth~\citep[\eg][]{granato2000,
-fontanot2009, wilkins2012, gonzalez-perez2013}. Lastly, radiative transfer
+fontanot2009, wilkins2012, gonzalez-perez2013, popping2017}. Lastly, radiative transfer
 models have recently been applied to cosmological hydrodynamical
 simulations~\cite[\eg][]{camps2015, narayanan2018, trayford2020}. As in
 observations, simulations find significant variation in attenuation
@@ -82,22 +82,22 @@ systematic uncertainties that are difficult to quanitfy~\citep[see][for a
 review]{steinacker2013}. Lastly, radiative transfer models 
 are computationally expensive. Applying a range of radiative transfer dust
 models to multiple simulations for comparisons is prohibitive. Using Markov
-Chain Monte Carlo sampling with them for parameter exploration or to marginalize
+Chain Monte Carlo to sample them for parameter exploration or to marginalize
 over the impact of dust would be {\em intractable}. 
 
 %motivation for an empirical dust attenuation model
 In this paper, we take a different approach and present the Empirical Dust
 Attenuation (\eda) model, a flexible framework for statistically applying dust
 attenuation to galaxy populations. The \eda~model assigns, to every galaxy, a
-different dust attenuation curve. The attenuation curves are parameterized with
+different dust attenuation curve. We present attenuation curves that are parameterized with
 a functional-form used in observational studies~\citep{noll2009} and the
-parameters of the curve for each galaxy (\eg~optical depth, slope) is sampled
+parameters of the curve for each galaxy (\eg~optical depth, slope) are sampled
 from distributions set by the \eda~model parameters and the galaxy's properties.  
 By sampling the attenuation curve parameters, it produces realistic variations 
 among the attenuation curves. The \eda~does not seek to produce realistic dust 
 attenuation for individual galaxies, like radiative transfer models. Instead, 
-it aims to produce realistic dust attenuations for the entire galaxy sample and
-enable galaxy population-to-population comparisons.
+it aims to produce realistic dust attenuations for a large ensemble of galaxies
+that enables direct comparison across galaxy populations. 
 
 There are a number of advantages to our \eda~approach. The \eda~uses the same
 functional-form for the attenuation curves as observational studies, so
@@ -109,9 +109,9 @@ Lastly, the \eda~model is computationally inexpensive.
 The \eda~model, with its flexibility and speed, provides a crucial step in a
 {\em forward modeling approach} to comparing simulations to
 observations~\citep[\eg][]{nelson2018, baes2019, trcka2020, dickey2020}.
-In the standadrd approach, the galaxy properties (\eg~SFR, $M_*$) predicted by
+In the standard approach, the galaxy properties (\eg~SFR, $M_*$) predicted by
 simulations are compared to those derived from observations. In the forward
-modeling approach, observables (\eg~magnitude, color) are {\em forward
+modeling approach, observable quantities (\eg~magnitude, color) are {\em forward
 modeled} for each galaxy in the simulations; then the simulations are compared 
 to observations in observational space. With a forward modeling approach, 
 comparisons are not limited by variations, inconsistencies, and biases of different
