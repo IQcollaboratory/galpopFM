@@ -417,7 +417,7 @@ def _sim_observables(sim, theta, model='slab', noise=True,
     _sim_sed = dustInfer._read_sed(sim) 
     wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
 
-    mlim    = (_sim_sed['logmstar'] > 9.4) 
+    mlim    = np.ones(len(_sim_sed['logmstar'])).astype(bool)#(_sim_sed['logmstar'] > 9.4) 
     zerosfr = (_sim_sed['logsfr.inst'] == -999)
     cuts    = mlim 
 
@@ -1001,9 +1001,13 @@ def ABC_slope_AV(gal_type='all'):
     sub.text(0.125, 2.2, 'Calzetti+(2000)', ha='left', va='top', fontsize=15) 
 
     # Salim & Naryanan (2020) 
+    #_plt_obs = sub.fill_between(np.linspace(0., 1.4, 100), 
+    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
+    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
+    #        color='k', alpha=0.25, linewidth=0)
     _plt_obs = sub.fill_between(np.linspace(0., 1.4, 100), 
-            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
-            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
+            np.exp(-0.68 * np.log(np.linspace(0., 1.4, 100))+0.424-0.12), 
+            np.exp(-0.68 * np.log(np.linspace(0., 1.4, 100))+0.424+0.12), 
             color='k', alpha=0.25, linewidth=0)
     sub.set_xlabel(r'$A_V$', fontsize=25)
     sub.set_xlim(0.1, 1.4)
@@ -2890,6 +2894,77 @@ def _SIMBA_oddities():
     return None
 
 
+def _simba_close_examination():
+    ''' closer examination of simba. Reproducing some of Romeel's figures 
+    '''
+    # read in SDSS measurements
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d',
+            return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
+
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
+
+    # read in simulations without dust attenuation
+    nontheta = np.zeros(6) 
+    x_simba, simba, sfr0_simba  = _sim_observables('simba', nontheta)
+
+    logssfr = simba['logsfr.inst'] - simba['logmstar']
+
+    # R vs (G - R)
+    fig = plt.figure(figsize=(12,5))
+    sub = fig.add_subplot(111)
+    DFM.hist2d(x_obs[0], x_obs[1], range=[ranges[0], ranges[1]],
+            levels=[0.68, 0.95], bins=20, color='k',
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, 
+            ax=sub)
+    sc = sub.scatter(x_simba[0], x_simba[1], c=logssfr, s=1, vmin=-12, vmax=-9,
+            cmap='jet_r', rasterized=True)
+    sub.text(0.95, 0.95, 'SIMBA (no dust)', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.set_xlabel('$r$', fontsize=25)
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
+    sub.set_ylabel(r'$g-r$', fontsize=25) 
+    sub.set_ylim(0., 0.9) 
+    fig.colorbar(sc)
+    ffig = os.path.join(fig_dir, '_simba_close_exam.optical_colormag.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+
+    # R vs FUV-NUV
+    fig = plt.figure(figsize=(12,5))
+    sub = fig.add_subplot(111)
+    DFM.hist2d(x_obs[0], x_obs[2], range=[ranges[0], ranges[2]],
+            levels=[0.68, 0.95], bins=20, color='k',
+            contour_kwargs={'linestyles': 'dashed'}, 
+            plot_datapoints=False, fill_contours=False, plot_density=False, 
+            ax=sub)
+    sc = sub.scatter(x_simba[0], x_simba[2], c=logssfr, s=1, vmin=-12, vmax=-9,
+            cmap='jet_r', rasterized=True)
+    sub.text(0.95, 0.95, 'SIMBA (no dust)', ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    sub.set_xlabel('$r$', fontsize=25)
+    sub.set_xlim(20., 23) 
+    sub.set_xticks([20., 21., 22., 23]) 
+    sub.set_xticklabels([-20, -21, -22, -23]) 
+    sub.set_ylabel(r'$FUV-NUV$', fontsize=25) 
+    sub.set_ylim(-1., 4.) 
+    fig.colorbar(sc)
+    ffig = os.path.join(fig_dir, '_simba_close_exam.uv_colormag.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def subpops_nodust(): 
     ''' Where in color-magnitude space without dust attenuation do
     subpopulations lie? 
@@ -3481,16 +3556,16 @@ if __name__=="__main__":
     #Observables()
 
     # ABC posteriors 
-    ABC_corner() 
+    #ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    ABC_Observables()
+    #ABC_Observables()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
     
     # slope-AV relation for ABC posterior
-    #ABC_slope_AV(gal_type='all')
+    ABC_slope_AV(gal_type='all')
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
@@ -3512,6 +3587,7 @@ if __name__=="__main__":
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
+    #_simba_close_examination()
 
     # examining what happens if quiiescent galaxies don't have attenuation
     #for sim in ['simba', 'tng', 'eagle']: 
