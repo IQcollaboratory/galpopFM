@@ -1001,13 +1001,9 @@ def ABC_slope_AV(gal_type='all'):
     sub.text(0.125, 2.2, 'Calzetti+(2000)', ha='left', va='top', fontsize=15) 
 
     # Salim & Naryanan (2020) 
-    #_plt_obs = sub.fill_between(np.linspace(0., 1.4, 100), 
-    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
-    #        10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
-    #        color='k', alpha=0.25, linewidth=0)
     _plt_obs = sub.fill_between(np.linspace(0., 1.4, 100), 
-            np.exp(-0.68 * np.log(np.linspace(0., 1.4, 100))+0.424-0.12), 
-            np.exp(-0.68 * np.log(np.linspace(0., 1.4, 100))+0.424+0.12), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
+            10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
             color='k', alpha=0.25, linewidth=0)
     sub.set_xlabel(r'$A_V$', fontsize=25)
     sub.set_xlim(0.1, 1.4)
@@ -3565,7 +3561,7 @@ if __name__=="__main__":
     #ABC_color_distribution()
     
     # slope-AV relation for ABC posterior
-    ABC_slope_AV(gal_type='all')
+    #ABC_slope_AV(gal_type='all')
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
@@ -3587,7 +3583,7 @@ if __name__=="__main__":
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
-    #_simba_close_examination()
+    _simba_close_examination()
 
     # examining what happens if quiiescent galaxies don't have attenuation
     #for sim in ['simba', 'tng', 'eagle']: 
