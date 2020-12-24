@@ -10,6 +10,7 @@ import sys
 import h5py 
 import numpy as np 
 import corner as DFM 
+from astrologs.astrologs import Astrologs
 # -- galpopfm --
 from galpopfm.catalogs import Catalog
 from galpopfm import dustfm as dustFM
@@ -446,6 +447,69 @@ def _sim_observables(sim, theta, model='slab', noise=True,
     sim_sed['logsfr.inst'] = sim_sed['logsfr.inst'][mr_cut] 
 
     return x_mod[:,mr_cut], sim_sed, zerosfr[cuts][mr_cut]
+
+
+def slab_model(): 
+    ''' figure comparing the A_V distributions of the slab model to the
+    observed SDSS distribution 
+    '''
+    from pydl.pydlutils.spheregroup import spherematch
+    # MPA-JHU Av from SED fitting 
+    mpajhu_av, gal_type, mpajhu_ra, mpajhu_dec  = np.loadtxt(os.path.join(dat_dir, 'obs', 'SDSS_Av.txt'),
+            unpack=True, usecols=[1, 2, -2, -1]) 
+    starforming = (gal_type == 1) 
+    mpajhu_av = mpajhu_av[starforming]
+    mpajhu_ra = mpajhu_ra[starforming] 
+    mpajhu_dec = mpajhu_dec[starforming]
+
+    # read in SDSS (Jeremy's catalog) 
+    tinker = Astrologs('tinkergroup', mlim='9.7') 
+    
+    R_mag   = tinker.data['M_r']
+    ra      = tinker.data['ra'] 
+    dec     = tinker.data['dec'] 
+
+         
+    Rlim = (R_mag < -20.) & (ra != -999.) & (dec != -999.)
+    ra      = ra[Rlim] 
+    dec     = dec[Rlim] 
+
+    # match MPAJHU star forming AV to SDSS  
+    match = spherematch(ra, dec, mpajhu_ra, mpajhu_dec, 0.000277778)
+    m_sdss = match[0] 
+    m_mpajhu = match[1] 
+    print('%i matches out of %i, %i SDSS R < -20.' % (len(m_sdss), np.sum(Rlim), np.sum(R_mag < -20.))) 
+
+    logms   = tinker.data['log.M_star'][Rlim]#[m_sdss]
+    logssfr = tinker.data['log.ssfr'][Rlim]#[m_sdss]
+
+    #Eq. 14 of Somerville+(1999) 
+    # randomly sample cos(inclinatiion) from 0 - 1
+    cos_i = np.random.uniform(0., 1., size=len(logms))
+    sec_incl = 1./cos_i
+
+    #[-0.14806716 -0.55586142  1.8306104  -0.44204573 -0.56640125  0.0114204 ]
+
+    tauV = np.clip(-0.3 * (logms - 10.) - 0.6 * (logssfr + 10.) + 0.7, 1e-3, None)
+    slab_AV = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
+
+    fig = plt.figure(figsize=(10,5))
+    sub = fig.add_subplot(111) 
+    _ = sub.hist(mpajhu_av[m_mpajhu], range=(-3., 7), bins=51, density=True, 
+            color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
+    _ = sub.hist(np.array(slab_AV), range=(-3., 7), bins=51, density=True, 
+            color='k', linestyle='-', linewidth=2, histtype='step', 
+            label=r'slab model')
+    sub.legend(loc='upper right', handletextpad=0.3, fontsize=20) 
+    sub.set_xlabel(r'$A_V$', fontsize=25) 
+    sub.set_ylabel(r'$p(A_V)$', fontsize=25) 
+    sub.set_xlim(-0.2, 5.) 
+    sub.set_ylim(0., 1.) 
+    
+    ffig = os.path.join(fig_dir, 'slab_model.png')
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
 
 
 def slab_tnorm_comparison(): 
@@ -3583,7 +3647,7 @@ if __name__=="__main__":
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
-    _simba_close_examination()
+    #_simba_close_examination()
 
     # examining what happens if quiiescent galaxies don't have attenuation
     #for sim in ['simba', 'tng', 'eagle']: 
@@ -3598,6 +3662,7 @@ if __name__=="__main__":
     # tnorm Av model  
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
+    slab_model()
     #slab_tnorm_comparison()
     
     #_observables_sfr0()
