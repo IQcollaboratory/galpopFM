@@ -99,6 +99,12 @@ def DEM_slab_noll_mssfr_fixbump(theta, lam, flux_i, logmstar, logsfr, incl=None)
     :param nebular: 
         if True nebular flux has an attenuation that is scaled from the
         continuum attenuation.
+
+    Notes
+    -----
+    * 12/23/2020: cos(inclination) rather than inclination should be uniformly
+      sampled from 0 to 1. See http://keatonb.github.io/archivers/uniforminclination 
+      for explanation 
     '''
     assert theta.shape[0] == 6, print(theta) 
 
@@ -121,10 +127,14 @@ def DEM_slab_noll_mssfr_fixbump(theta, lam, flux_i, logmstar, logsfr, incl=None)
     # Narayanan+(2018) 
     # E_b = -0.46 * delta + 0.69 
     
-    # randomly sample the inclinatiion angle from 0 - pi/2 
     if incl is None: 
-        incl = np.random.uniform(0., 0.5*np.pi, size=_logmstar.shape[0])
-    sec_incl = 1./np.cos(incl) 
+        # defunct: randomly sample the inclinatiion angle from 0 - pi/2 
+        # defunct: incl = np.random.uniform(0., 0.5*np.pi, size=_logmstar.shape[0])
+        # randomly sample cos(incl) from [0, 1] 
+        cosi = np.random.uniform(0, 1, size=_logmstar.shape[0])
+    else: 
+        cosi = np.cos(incl) 
+    sec_incl = 1./cosi
 
     #Eq. 14 of Somerville+(1999) 
     A_V = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
