@@ -42,10 +42,10 @@ This difference, which was also recently highlighted in \cite{hahn2019c},
 demonstrates that \emph{the hydrodynamical simulations predict galaxy
 populations with significantly different physical properties}.
 
-\subsection{Illustris TNG} \label{sec:tng}
-The Illustris TNG simulation\footnote{\url{https://www.tng-project.org/}}
+\subsection{IllustrisTNG100} \label{sec:tng}
+The IllustrisTNG100, hereafter TNG, simulation\footnote{\url{https://www.tng-project.org/}}
 is a cosmological hydrodynamic simulation of comoving volume 
-$(110.7\,\mpc)^3$~\citep{nelson2018, pillepich2018, springel2018}. It improves on
+$(110.7\,\mpc)^3$, with a particle mass resolution of $7.6 \times 10^{6}\ M_\odot$ for dark matter and $1.4 \times 10^{6}\ M_\odot$ for baryonic particles~\citep{nelson2018, pillepich2018, springel2018}. It improves on
 the original Illustris simulation\footnote{\url{http://www.illustris-project.org}}~(\citealt{vogelsberger2014, genel2014};
 public data release by~\citealt{nelson2015}), by including
 magneto-hydrodynamics and updated treatments for galactic winds, metal
@@ -54,7 +54,7 @@ feedback from SMBH~\citep{weinberger2018}, where feedback energy is injected in
 the form of a kinetic AGN-driven wind at low SMBH accretion rates. This new
 implementation has been shown to alleviate discrepancies found between the
 original Illustris and observations for $> 10^{13-14} M_\odot$ massive halos. 
-%TNG has a baryonic mass resolution of $1.4\times10^6M_{\sun}$ \ch{temporal resolution?}.
+%TNG has a baryonic mass resolution of $1.4\times10^6M_{\sun}$ \ch{temporal resolution?}\tks{why would you need to know temporal resolution? for the SFH?}.
 %\todo{details on the following properties that we use in the paper: SFH, ZH}
 
 \subsection{EAGLE} \label{sec:eagle} 
@@ -64,7 +64,7 @@ mcalpine2016} is a publicly available suite of cosmological hydrodynamic
 simulations constructed using {\sc Anarchy} (Dalla Vecchia et al. in prep.; 
 see also Appendix A of \citealt{schaye2015}), a modified version of the 
 {\sc GADGET-3} code~\citep{springel2005}. We use the L0100Ref simulation,
-which has a comoving volume of $(100\,\mpc)^3$. % baryonic mass resolution of $1.81\times 10^6M_{\sun}$. It 
+which has a comoving volume of $(100\,\mpc)^3$, and a baryonic mass resolution of $1.81\times 10^6M_{\sun}$. %It 
 %that includes a conservative pressure-entropy formulation for the smoothed particle hydrodynamics calculation, artificial viscosity, artificial conduction and the time limiter that improve hydrodynamic computation performance. 
 EAGLE has subgrid models for star formation, stellar mass loss, metal enrichment
 and stellar feedback that stochastically inject thermal energy in the ISM as
