@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 14, 'tng': 23, 'eagle': 26}        # Niteration 
+nabc = {'simba': 13, 'tng': 25, 'eagle': 27}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -1089,6 +1089,154 @@ def ABC_slope_AV(gal_type='all'):
     fig.savefig(ffig, bbox_inches='tight') 
 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def ABC_A_MsSFR(): 
+    ''' A_1500 and A_V as a function of M_*-SFR heat map 
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i1500 = 25
+    i5500 = 225
+
+    # plotting 
+    fig = plt.figure(figsize=(11,10))
+
+    for i, sim in enumerate(['TNG', 'EAGLE']): 
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, _sim, _sfr0 = _sim_observables(sim.lower(), theta_median,
+                no_Mr_cut=True)
+        
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                _sim['logmstar'], 
+                _sim['logsfr.inst'])
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        
+        cuts = (x_sim[0] > 20.)
+    
+        scs = [] 
+        for ii, ilambda in enumerate([i1500, i5500]): 
+            A = A_lambda[:,ilambda]
+
+            sub = fig.add_subplot(2,2,2*ii+i+1)
+
+            DFM.hist2d(_sim['logmstar'], _sim['logsfr.inst'], levels=[0.68, 0.95],	
+                    range=[[9., 12.], [-4., 2.]], color='k', 	
+                    contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 	
+                    plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+
+            scs.append(
+                    sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts], 
+                        C=A[cuts], reduce_C_function=np.median, gridsize=15,
+                        vmin=[2.0, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10))
+            
+            if ii == 0: 
+                sub.text(0.05, 0.95, sim, transform=sub.transAxes, ha='left', va='top', fontsize=25) 
+            sub.set_xlim([9.5, 12.]) 
+            if ii == 0: sub.set_xticklabels([])
+            sub.set_ylim([-2.5, 2.]) 
+            if i != 0: sub.set_yticklabels([]) 
+            sub.set_xticks([10., 11., 12.]) 
+            sub.set_yticks([-2., -1., 0., 1., 2.]) 
+            if i == 1: 
+                sub.text(0.95, 0.05, [r'$A_{1500}$', r'$A_V$'][ii],
+                        transform=sub.transAxes, ha='right', va='bottom', fontsize=25) 
+
+    fig.subplots_adjust(wspace=0.1, right=0.85)
+    
+    cbar_ax = fig.add_axes([0.9, 0.5, 0.025, 0.4])
+    cbar = fig.colorbar(scs[0], cax=cbar_ax)
+    cbar.ax.set_ylabel(r'median $A_{1500}$', labelpad=25, fontsize=25, rotation=270)
+    
+    cbar_ax = fig.add_axes([0.9, 0.05, 0.025, 0.4])
+    cbar = fig.colorbar(scs[1], cax=cbar_ax)
+    cbar.ax.set_ylabel(r'median $A_V$', labelpad=25, fontsize=25, rotation=270)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=10, fontsize=25) 
+    bkgd.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', labelpad=15, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_av_mssfr.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def _ABC_stdA_MsSFR(): 
+    ''' scatter in A_V as a function of M_*-SFR heat map 
+    '''
+    wave = np.linspace(1000, 10000, 451) 
+    i5500 = 225
+
+    # plotting 
+    fig = plt.figure(figsize=(11,5))
+
+    for i, sim in enumerate(['TNG', 'EAGLE']): 
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_median = np.median(theta_T, axis=0) 
+
+        x_sim, _sim, _sfr0 = _sim_observables(sim.lower(), theta_median,
+                no_Mr_cut=True)
+        
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                _sim['logmstar'], 
+                _sim['logsfr.inst'])
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        
+        cuts = (x_sim[0] > 20.)
+    
+        A_V = A_lambda[:,i5500]
+
+        sub = fig.add_subplot(1,2,i+1)
+
+        DFM.hist2d(_sim['logmstar'], _sim['logsfr.inst'], levels=[0.68, 0.95],	
+                range=[[9., 12.], [-4., 2.]], color='k', 	
+                contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 	
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+
+        sc = sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts], 
+                C=A_V[cuts], reduce_C_function=np.std, gridsize=15,
+                vmin=0., vmax=5., mincnt=10)
+        
+        sub.text(0.05, 0.95, sim, transform=sub.transAxes, ha='left', va='top', fontsize=25) 
+        sub.set_xlim([9.5, 12.]) 
+        sub.set_ylim([-2.5, 2.]) 
+        if i != 0: sub.set_yticklabels([]) 
+        sub.set_xticks([10., 11., 12.]) 
+        sub.set_yticks([-2., -1., 0., 1., 2.]) 
+
+    fig.subplots_adjust(wspace=0.1, right=0.85)
+    
+    cbar_ax = fig.add_axes([0.9, 0.15, 0.025, 0.4])
+    cbar = fig.colorbar(sc, cax=cbar_ax)
+    cbar.ax.set_ylabel(r'$\sigma_{A_V}$', labelpad=25, fontsize=25, rotation=270)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=10, fontsize=25) 
+    bkgd.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', labelpad=15, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, '_abc_stda_mssfr.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -3629,6 +3777,9 @@ if __name__=="__main__":
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
+    #ABC_A_MsSFR()
+    _ABC_stdA_MsSFR()
+
     # amplitude normalized attenuation curves
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
@@ -3662,7 +3813,7 @@ if __name__=="__main__":
     # tnorm Av model  
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
-    slab_model()
+    #slab_model()
     #slab_tnorm_comparison()
     
     #_observables_sfr0()
