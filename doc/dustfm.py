@@ -321,6 +321,7 @@ def Observables():
     sdss = Catalog('tinker') 
     sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
     mr_complete = (sdss_M_r < -20.) 
+    print('%i galaxies in the SDSS sample' % len(sdss_M_fuv)) 
 
     x_obs = [-1.*sdss_M_r[mr_complete], 
             sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
@@ -357,7 +358,7 @@ def Observables():
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([])
-        if i == 0: sub.set_ylabel(r'$G-R$', fontsize=25) 
+        if i == 0: sub.set_ylabel(r'$g-r$', fontsize=25) 
         else: sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
         sub.set_yticks([0., 0.5, 1., 1.5])
@@ -3761,7 +3762,7 @@ if __name__=="__main__":
 
     #DEM()
 
-    #Observables()
+    Observables()
 
     # ABC posteriors 
     #ABC_corner() 
@@ -3778,7 +3779,7 @@ if __name__=="__main__":
     #ABC_slope_AV_subpop()
 
     #ABC_A_MsSFR()
-    _ABC_stdA_MsSFR()
+    #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
     #ABC_attenuation()

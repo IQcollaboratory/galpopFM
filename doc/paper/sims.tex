@@ -91,13 +91,18 @@ Bondi-based accretion for hot gas, and two-mode AGN feedback. %which ejects bipo
 %\todo{details on the following properties that we use in the paper: SFH, ZH}
 
 \subsection{SDSS Galaxies} \label{sec:obs} 
-For our observations, we use a galaxy sample derived from SDSS observations. We
-start with the $M_* > 10^{9.4} h^{-2}M_\odot$ complete \cite{tinker2011}
-volume-limited sample and then impose a $M_r < -20$ completeness cut. 
-The original \cite{tinker2011} sample is derived from the SDSS DR7~\citep{abazajian2009} NYU
-Value-Added Galaxy Catalog~\citep[VAGC;][]{blanton2005}. In this work, we focus 
+For our observations, we use a galaxy sample derived from SDSS observations. 
+\chedit{
+    We impose a $M_r < -20$ completeness limit on a volume-limited sample from
+    \cite{tinker2011}. The \cite{tinker2011} sample is derived from the SDSS
+    DR7~\citep{abazajian2009} NYU Value-Added Galaxy
+    Catalog~\citep[VAGC;][]{blanton2005} and has a $M_* > 10^{9.4}
+    h^{-2}M_\odot$ completeness limit. In total, our SDSS sample has 16,970
+    galaxies.
+} 
+In this work, we focus 
 on observables that can be consistently defined and derived in both simulations 
-and observables: the $r$-band absolute magnitude, $M_r$, the optical $\gr$
+and observations: the $r$-band absolute magnitude, $M_r$, the optical $\gr$
 color, and the $\fnuv$ color. For the SDSS sample, we use $FUV$,
 $NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
 Atlas\footnote{\url{http://nsatlas.org/}}, which is re-reduction of SDSS DR8
@@ -107,16 +112,26 @@ derived using $\mathtt{kcorrect}$~\citep{blanton2007a}, assuming
 a~\cite{chabrier2003} initial mass function. 
 
 \subsection{Forward Modeling Observations} \label{sec:fm} 
-One of the main goals of this work is to conduct an ``apples-to-apples'' comparison
-between the simulations and observations using a forward modeling
-approach. A crucial step is to forward model the observables for our
-simulations --- in this work, we use $r$-band luminosity ($M_r$), optical color ($\gr$), and 
-UV color ($\fnuv$). As the first step, we construct SEDs for all
-of the simulated galaxies based on their star formation and metallicity
-histories (SFH and ZH) using the Fleixble Stellar Population Synthesis model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. 
+One of the main goals of this work is to conduct an ``apples-to-apples''
+comparison between the simulations and observations. 
+\chedit{
+    A crucial step in this comparison is to \emph{forward model} the
+    observables for the simulations. We use $r$-band luminosity ($M_r$),
+    optical color ($\gr$), and UV color ($\fnuv$) as our observables in this
+    work. Using a forward model, the simulations can be directly compared to
+    observations in observational-space (\eg~color-magnitude relation). This
+    means that the comparison does not rely on measured galaxy properties,
+    which are impacted by variations, inconsistencies, and biases of different
+    methods. The comparison can also include selection functions and systematic
+    effects of the observations through the forward model. 
+}
 
-For each simulated galaxy, we bin the total stellar mass formed by age ($t$)
-and metallicity ($Z$). We use a consistent $t$, $Z$ grid for all of the simulations
+As the first step in our forward model, we construct SEDs for all
+of the simulated galaxies based on their star formation and metallicity
+histories (SFH and ZH) using the Fleixble Stellar Population Synthesis
+model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. For each simulated
+galaxy, we bin the total stellar mass formed by age ($t$) and metallicity
+($Z$). We use a consistent $t$, $Z$ grid for all of the simulations
 to account for the variable time and mass resolutions. For each point in the
 $t, Z$ grid, we generate a spectrum assuming a simple stellar population (SSP)
 using $\mathtt{FSPS}$ and take the mass-weighted linear combination of them to
@@ -124,20 +139,29 @@ produce the galaxy SED. We use a
 \cite{chabrier2003} initial mass function. For further details on how we
 construct the SEDs, we refer readers to Starkenberg et al. (in prep.).
 
-Next in the forward model, we apply the \eda~model to assign dust attenuation
-curves for each of simulated galaxy based on its physical properties and apply
-dust attenuation to its SEDs. We describe the \eda~in detail in Section~\ref{sec:dem}. 
-From the dust attenuated SEDs, we measure the observables by convolving them
-with transmission curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$
-broadband filters. Lastly, we add realistic noise to $M_r$, $\gr$, and $\fnuv$ 
-by sampling from the observed uncertainty distributions of the NASA
-Sloan-Atlas. 
+\chedit{
+    Next, we apply dust attenuation to the SEDs. We use a \eda~model to assign
+    dust attenuation curves for each simulated galaxy based on its physical
+    properties, a randomly sampled inclination, and \eda~model parameters. We
+    describe the \eda~framework in detail later in Section~\ref{sec:dem}. We
+    measure the observables by convolving the attenuated SEDs with transmission
+    curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$ broadband
+    filters. We add realistic noise to $M_r$, $\gr$, and $\fnuv$ by sampling
+    from the observed uncertainty distributions of the NASA Sloan-Atlas (see
+    Appendix~\ref{sec:unc} for further details). Lastly, we apply the 
+    $M_r < -20$ absolute magnitude completeness limit of our SDSS sample to the
+    simulated galaxies. 
+}
 
-In Figure~\ref{fig:obs} we present the forward modeled optical and UV color-magnitude
-relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom), for simulated galaxies
-of SIMBA (left), TNG (center) and EAGLE (right). The observables for the
-simulations do not yet include any prescription for dust attenuation.
-Comparison to SDSS observations (black dashed) clearly demonstrate
+\chedit{
+    In Figure~\ref{fig:obs}, we present the forward modeled optical and UV
+    color-magnitude relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom),
+    for simulated galaxies of SIMBA (left), TNG (center) and EAGLE (right)
+    \emph{assuming no dust attenuation}. We mark the 68 and 95\% contours and
+    include, for reference, the optical and UV color-magnitude relations of our
+    SDSS sample (black dashed). 
+}
+Comparison to SDSS observations clearly demonstrate
 that {\em without dust attenuation, the hydrodynamical simulations cannot
 reproduce the observed optical or UV color-magnitude relations.}
 
@@ -145,16 +169,18 @@ reproduce the observed optical or UV color-magnitude relations.}
 \begin{center}
 \includegraphics[width=0.9\textwidth]{figs/observables.pdf} 
     \caption{\label{fig:obs}
-    We present the forward modeled optical and UV color-magnitude relations of 
-    simulated galaxies in SIMBA (left), TNG (center), and EAGLE (right). The
-    simulations above do {\em not} yet include any prescription for dust
-    attenuation.  $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom) are the
-    main observables used throughout the paper. They are derived using SEDs
-    constructed from the star-formation and metallicity of the simulated
-    galaxies. These observables are consistently defined and measured as our
-    SDSS sample (Section~\ref{sec:fm}), which we include for comparison (black
-    dashed). {\em Without dust, the hydrodynamical simulations cannot reproduce
-    the observed optical or UV color-magnitude.}
+    \chedit{
+        We present the forward modeled optical and UV color-magnitude relations
+        of SIMBA (left), TNG (center), and EAGLE (right) galaxies
+        \emph{assuming no dust attenuation}. We present $(\gr)-M_r$ in the top
+        panels and $(\fnuv)-M_r$ in the bottom panels. The contours represent
+        the 68 and 95\% of the distribution. We derive observables $M_r$, $\gr$, 
+        and $\fnuv$ for the simulations using our forward model
+        (Section~\ref{sec:fm}). For comparison, we include the color-magnitude
+        relations of our SDSS sample (black dashed; Section~\ref{sec:obs}). 
+        {\em Without dust attenuation, the hydrodynamical simulations do  
+        reproduce the SDSS optical or UV color-magnitude relations.}
+    }
     }
 \end{center}
 \end{figure}

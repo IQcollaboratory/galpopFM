@@ -83,12 +83,13 @@
 \newcommand{\todo}[1]{\marginpar{\color{red}TODO}{\color{red}#1}}
 \definecolor{orange}{rgb}{1,0.5,0}
 \newcommand{\ch}[1]{{\color{orange}{\bf CH:} #1}}
+\newcommand{\chedit}[1]{{\color{orange}#1}}
 \newcommand{\tks}[1]{{\color{blue}{\bf TKS:} #1}}
 \newcommand{\tksedit}[1]{{\color{blue}#1}}
 
 \begin{document} \sloppy\sloppypar\frenchspacing 
 
-\title{Empirical Dust Attenuation Models: Taking Hydrodynamical Simulatons with a Grain of Dust}
+\title{IQ Collaboratory III Empirical Dust Attenuation Models: Taking Hydrodynamical Simulatons with a Grain of Dust}
 \date{\texttt{DRAFT~---~\githash~---~\gitdate~---~NOT READY FOR DISTRIBUTION}}
 
 \newcounter{affilcounter}
@@ -116,7 +117,7 @@
     using simulation-based inference. With the \eda, we accurately reproduce
     the color magnitude relations of the observational sample for TNG and
     EAGLE. For SIMBA, we struggle to reproduce observations due to an overprediction 
-    of starburst galaxies. The best-fit \eda~s for TNG and EAGLE also predict
+    of starburst galaxies. The best-fit EDAs for TNG and EAGLE also predict
     attenuation--slope relations and attenuation curves of star-forming
     galaxies in good agreement with observations. Beyond reproducing observations,
     the \eda~also sheds light on dust attenuation in quiescent galaxies, which
@@ -160,6 +161,7 @@ the Office of Science of the U.S.  Department of Energy under Contract No.
 DE-AC02-05CH11231. 
 
 \appendix
+\input{unc.tex}
 \input{res.tex} 
 \input{slab.tex} 
 
