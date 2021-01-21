@@ -32,15 +32,23 @@ hydrodynamic simulations.  For reference, we include $\Phi_{M_*}$ and the
 $M_*-\sfr$ relation for our observational SDSS galaxy sample. For the
 simulations, $M_*$ is the total stellar mass within the host halo, excluding
 any stellar mass in subhalos; $\sfr$ is the instantaneous $\sfr$ derived from
-dense and cold gas. For SDSS, $M_*$ is estimated using $\mathtt{kcorrect}$~\citep{blanton2007a} 
+dense and cold gas. 
+\chedit{
+    We do not impose any selection cuts on the simulations in
+    Figure~\ref{fig:smf_msfr}. 
+}
+For SDSS, $M_*$ is estimated using $\mathtt{kcorrect}$~\citep{blanton2007a} 
 assuming a~\cite{chabrier2003} initial mass function and $\sfr$ is from the
 current release of \cite{brinchmann2004}\footnote{\url{http://www.mpa-garching.mpg.de/SDSS/DR7/}}.
 The uncertainties for the SDSS SMF are derived from jackknife resampling.
 Figure~\ref{fig:smf_msfr} illustrates that the hydrodynamical simulations
-predict significantly different SMFs and $M_*-\sfr$ relations. 
-This difference, which was also recently highlighted in \cite{hahn2019c}, 
-demonstrates that \emph{the hydrodynamical simulations predict galaxy
-populations with significantly different physical properties}.
+predict significantly different SMFs and $M_*-\sfr$ relations.
+\chedit{
+    This difference, which was also recently highlighted in \cite{hahn2019c},
+    demonstrates that \emph{the hydrodynamical simulations predict galaxy
+    populations with significantly different physical properties from one
+    another}.
+}
 
 \subsection{IllustrisTNG100} \label{sec:tng}
 The IllustrisTNG100, hereafter TNG, simulation\footnote{\url{https://www.tng-project.org/}}
@@ -128,7 +136,7 @@ comparison between the simulations and observations.
 
 As the first step in our forward model, we construct SEDs for all
 of the simulated galaxies based on their star formation and metallicity
-histories (SFH and ZH) using the Fleixble Stellar Population Synthesis
+histories (SFH and ZH) using the Flexible Stellar Population Synthesis
 model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. For each simulated
 galaxy, we bin the total stellar mass formed by age ($t$) and metallicity
 ($Z$). We use a consistent $t$, $Z$ grid for all of the simulations
