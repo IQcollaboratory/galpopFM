@@ -1,13 +1,18 @@
-\section{The Empirical Dust Attenuation Model} \label{sec:dem}
-In this section, we describe the Empirical Dust Attenuation (\eda) model --- a
-flexible prescription for applying dust attenuation curves to galaxy
-populations. With the \eda, we can apply a wide variety of dust attenuation and
-include correlation between dust attenuation and physical galaxy properties. 
-Later, we demonstrate that we can accurately reproduce SDSS observations with
-the \eda~and use it to test galaxy formation models and shed light on dust in
-galaxies. 
+\section{The Empirical Dust Attenuation Framework} \label{sec:dem}
+\chedit{
+    In this section, we describe the Empirical Dust Attenuation (\eda)
+    framework and present one particular \eda~prescription. The \eda~is a
+    flexible framework for applying dust attenuation curves to simulated galaxy
+    populations. For each simulated galaxy, the \eda~assigns a dust attenuation
+    curve assigned that is parameterized as a function of the galaxy's
+    properties (\eg~$M_*$, ${\rm SSFR}$), the \eda~parameters, and randomly
+    sampled inclincation. With the \eda, we can apply a wide variety of dust
+    attenuation that include correlation between dust attenuation and physical
+    galaxy properties. 
+}
+% Later, we demonstrate that we can accurately reproduce SDSS observations with the \eda~and use it to test galaxy formation models and shed light on dust in galaxies. 
 
-We define the dust attenuation curve, $A(\lambda)$, as 
+We begin by defining the dust attenuation curve, $A(\lambda)$, as 
 \begin{equation} \label{eq:full_atten}
     F_o (\lambda) = F_i (\lambda) 10^{-0.4 A(\lambda)}
 \end{equation}
@@ -19,39 +24,61 @@ the attenuation to the $V$ band attenuation,
 so that $A_V$ determines the amplitude of the attenuation, while $k(\lambda)$
 determines the wavelength dependence. 
 
-To determine $A(\lambda)$ for each galaxy, we first assign $A_V$ using the slab
-model from~\citep[\eg][]{somerville1999, somerville2012} where $A_V$ is
-calculated based on the inclination of the galaxy, $i$, and its optical depth, $\tau_V$: 
+\chedit{
+    The \eda~framework assigns $A(\lambda)$ to every galaxy in the simulations
+    using some flexible prescription. For the \eda~prescription in this work,
+    we assign $A_V$ for each galaxy using the slab model, where $A_V$ is a
+    function of galaxy inclination, $i$, and its optical depth,
+    $\tau_V$~\citep[\eg][]{somerville1999, somerville2012}: 
+}
 \begin{equation} \label{eq:slab}
     A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right].
 \end{equation}
-For each galaxy, we uniformly sample $i$ from 0 to $\pi/2$. Then in $\tau_V$ we
-include the correlation between $A_V$ and galaxy properties ($M_*$ and $\ssfr$),
-found in both observations and simulations~\citep[\eg][]{narayanan2018, salim2020}. 
-We parameterize $\tau_V$ with a simple and linear $M_*$ and $\ssfr$ dependence:
+\chedit{
+    To include correlation between $A_V$ and the galaxy's properties ($M_*$ and
+    $\ssfr$), we parameterize $\tau_V$ using a linear $M_*$ and $\ssfr$ dependence:
+}
 \begin{equation} \label{eq:tauv}
     \tau_V(M_*, \sfr) = \mtaum \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
     \mtaus \log \left(\frac{\ssfr}{10^{-10}yr^{-1}}\right) + c_\tau.
 \end{equation}
 $\mtaum$, $\mtaus$, and $c_\tau$ represent the $M_*$ dependence, the $\ssfr$
-dependence, and overall amplitude of $\tau_V$. Since $\tau_V$ is
-optical depth, we impose a $\tau_V \ge 0$ limit.
+dependence, and amplitude of $\tau_V$. Since $\tau_V$ is optical depth, we
+impose a $\tau_V \ge 0$ limit.
+\chedit{
+    For each galaxy, we uniformly sample $cos(i)$ from 0 to 1. By sampling
+    $cos(i)$, our \eda~prescription includes significant variance in
+    $A(\lambda)$. Galaxies with the same galaxy properties do not have the same
+    dust attenuation.
+}
 
-The slab model is a naive approximation. In reality, $A_V$ for a galaxy depends on complexities 
-of its star-to-dust geometry, variations in the extinction curves, and other
-properties beyond just inclination and $\tau_V$. The purpose of the \eda,
-however, is not to accurately model dust attenuation for individual galaxies,
-but rather to accurately represent the distribution of dust attenuation for galaxy
-populations. In this regard, the slab model is consistent with the
-correlation between $A_V$ and $i$ found in the literature: edge-on galaxies
-have higher $A_V$ than face-on galaxies~\citep[\eg][]{conroy2010, wild2011,
-battisti2017, salim2020}. More
-importantly, the $A_V$ distribution, $p(A_V)$, produced using the slab model with
-uniformly sampled inclinations closely matches the $p(A_V)$ of our SDSS sample
-(Figure~\ref{fig:av_dist}). Also, replacing the slab model with a more flexible
-prescription for sampling $A_V$ does not significant impact our analysis 
-(Appendix~\ref{sec:nonslab}). Therefore, we conclude that the slab model is a
-sufficient, flexible empirical prescription for sampling $A_V$. 
+\chedit{
+    We use the slab model primarily as a flexible prescription for $A_V$ that
+    depend on a randomly sampled $i$, with \emph{loose} physical motivations.
+    The slab model is a naive approximation. $A_V$, in reality, depends on
+    properties such as the detailed star-to-dust geometry or variations in the
+    extinction curves. However, the purpose ~\eda~is to assign an accurate
+    distribution of dust attenuation curves for the galaxy population --- 
+    \emph{not} to accurately model dust attenuation for individual galaxies.
+    In Appendix~\ref{sec:slab}, we present how our slab model based \eda~with
+    randomly sampled $i$, produces a $A_V$ distribution, $p(A_V)$ that 
+    matches $p(A_V)$ of the \cite{salim2018} GSWLC2 catalog. 
+}
+
+\chedit{
+    All galaxies in the simulations are assigned $A_V$ from the slab model.
+    For star-forming galaxies, which typically have disc-like morphologies, the
+    slab model produces $A_V$ that is correlated with $i$ in a way consistent
+    with the literature: edge-on galaxies have higher $A_V$ than face-on
+    galaxies~\citep[\eg][]{conroy2010, wild2011, battisti2017, salim2020}. 
+    Quiescent galaxies, however, typically have ellipitcal morphologies. In
+    this case, the slab model is an \emph{empirical} prescription for statistically 
+    sampling $A_V$. In Appendix~\ref{sec:slab}, we demonstrate that slab model 
+    can match $p(A_V)$ of quiescent galaxies ($\ssfr < 10^{-11}yr^{-1}$) 
+    in GSWLC2. We, therefore, conclude that the slab model is a sufficiently 
+    flexible prescription for sampling $A_V$ for all galaxies. 
+}
+
 
 For the wavelength dependence of the attenuation curve, $k(\lambda)$, we
 use the \cite{noll2009} parameterization: 
@@ -95,25 +122,22 @@ full width at half maximum, and strength of the bump, respectively. We assume
 fixed $\lambda_0 = 2175
 A$ and $\Delta \lambda = 350A$. \cite{kriek2013} and \cite{tress2018} find
 that $E_b$ correlates with the $\delta$ for star-forming galaxies $z\sim2$.
-\cite{narayanan2018} confirmed this dependence in simulations. For the
-\eda~model, we assume a fixed relation between $E_B$ and $\delta$ from \cite{kriek2013}: 
-$E_b = -1.9~\delta + 0.85$. Allowing the slope and amplitude of the $E_B$ and
-$\delta$ relation to vary does {\em not} impact our results; however, we do not
-derive any meaningful constraints on them either. In
+\cite{narayanan2018} confirmed this dependence in simulations. 
+\chedit{
+    For our \eda~prescription, we include the UV dust bump since we use UV
+    colors as one of our observables.
+}
+However, we assume a fixed relation between $E_B$ and $\delta$ from
+\cite{kriek2013}: $E_b = -1.9~\delta + 0.85$. Allowing the slope and amplitude
+of the $E_B$ and $\delta$ relation to vary does {\em not} impact our results;
+however, we do not derive any meaningful constraints on them either. In
 Table~\ref{tab:free_param}, we list and describe all of the free parameters in
 the \eda. 
 
-%Next, to attenuate the galaxy SEDs, we apply $A(\lambda)$ we separately to the
-%star light and nebular emssion: 
-%\begin{equation} \label{eq:full_atten}
-%    F_o (\lambda) = F^{\rm star}_i (\lambda) 10^{-0.4 A(\lambda)} + F^{\rm
-%    neb}_i (\lambda) 10^{-0.4 A_{\rm neb}(\lambda)}.
-%\end{equation}
-%We parameterize
-%\begin{equation}
-%    A_{\rm neb}(\lambda) = f_{\rm neb}  A(\lambda) 
-%\end{equation} 
-%and allow $f_{\rm neb}$ to vary freely. 
+% motivation for the M* and SSFR dependence 
+\todo{motivation for $M_*$ and $\ssfr$ dependence}
+%In $\tau_V$ we include the correlation between $A_V$ and the galaxy's properties , found in both observations and simulations~\citep[\eg][]{narayanan2018, salim2020}. 
+
 
 $\ssfr$ of galaxies are used to calculate $\tau_V$ and $\delta$ in
 Eqs.~\ref{eq:tauv} and~\ref{eq:delta}. However, due to mass and temporal resolutions,
@@ -132,15 +156,18 @@ star-formation and low gas mass, similar to $\sfr=0$ galaxies.
 
 %Since $\sfr=0$ galaxies do not account for a large fraction of our simulated galaxies, we directly sample their observables ($G, R, NUV$, and $FUV$) from the distribution of observables for SDSS quiescent galaxies. This way, we ensure that the attenuation of $\sfr=0$ galaxies does not impact the rest of the \eda~parameters. In Appendix~\ref{sec:res}, we discuss the resolution effects in more detail and demonstrate that our results are \emph{not} impacted by other prescriptions for attenuating $\sfr=0$ galaxies.
 
-In practice, to apply the \eda~to a simulated galaxy population, we begin by
-assigning an inclincation, $i$, uniformly sampled between $0$ and $\pi$ to each
-galaxy. Then $\tau_V$,
-and $\delta$ are calculated for the galaxy based on its $i$, $M_*$, $\ssfr$ and
-the \eda~parameters. From $\tau_V$ and $\delta$, we determine $A_V$ and
-$k(\lambda)$, which together gives $A(\lambda)$.  Afterwards, we attenuate the
-galaxy SEDs using Eq.~\ref{eq:full_atten} and use the attenuated SEDs to
-calculate the observables: $G, R, NUV$, and $FUV$
-absolute magnitudes. In Figure~\ref{fig:dem_av}, we present attenuation curves,
+In practice, to apply the \eda~to a simulated galaxy population, we first
+assign a randomly sampled inclincation, $i$, to each galaxy. 
+\chedit{
+    $\tau_V$ and $\delta$ are calculated for the galaxy based on its $M_*$,
+    $\ssfr$ and the \eda~parameters. We then determine $A_V$ from $i$ and
+    $\tau_V$ and $k(\lambda)$ from $\delta$, which combined gives us
+    $A(\lambda)$ for each galaxy.
+} 
+Afterwards, we attenuate the galaxy SEDs using Eq.~\ref{eq:full_atten} and use
+the attenuated SEDs to calculate the observables: $g, r, NUV$, and $FUV$
+absolute magnitudes. In Figure~\ref{fig:dem_av}, we present attenuation
+curves,
 $A(\lambda)$, generated by the \eda~for galaxies with different $\sfr$ and $M_*$: 
 star-forming ($\sfr=10^{0.5}M_\odot/yr$) with low mass ($10^{10}M_\odot$;
 blue), with high mass ($10^{11}M_\odot$; green) and quiescent

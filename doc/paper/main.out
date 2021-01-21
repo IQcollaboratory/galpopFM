@@ -5,7 +5,7 @@
 \BOOKMARK [2][-]{subsection.2.3}{SIMBA}{section.2}% 5
 \BOOKMARK [2][-]{subsection.2.4}{SDSS Galaxies}{section.2}% 6
 \BOOKMARK [2][-]{subsection.2.5}{Forward Modeling Observations}{section.2}% 7
-\BOOKMARK [1][-]{section.3}{The Empirical Dust Attenuation Model}{}% 8
+\BOOKMARK [1][-]{section.3}{The Empirical Dust Attenuation Framework}{}% 8
 \BOOKMARK [1][-]{section.4}{Simulation-Based Inference: Approximate Bayesian Computation}{}% 9
 \BOOKMARK [1][-]{section.5}{Results}{}% 10
 \BOOKMARK [2][-]{subsection.5.1}{Reproducing Dust Observations}{section.5}% 11
@@ -15,4 +15,4 @@
 \BOOKMARK [1][-]{section.6}{Summary}{}% 15
 \BOOKMARK [1][-]{appendix.A}{Modeling Observational Uncertainties}{}% 16
 \BOOKMARK [1][-]{appendix.B}{Resolution Effects}{}% 17
-\BOOKMARK [1][-]{appendix.C}{Beyond the Slab DEM}{}% 18
+\BOOKMARK [1][-]{appendix.C}{The Slab Model Based EDA}{}% 18
