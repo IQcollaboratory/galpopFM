@@ -970,7 +970,7 @@ def ABC_Observables():
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([])
-        if i == 0: sub.set_ylabel(r'$G-R$', fontsize=20) 
+        if i == 0: sub.set_ylabel(r'$g-r$', fontsize=20) 
         else: sub.set_yticklabels([]) 
         sub.set_ylim(ranges[1]) 
         sub.set_yticks([0., 0.5, 1., 1.5])
@@ -1099,6 +1099,7 @@ def ABC_A_MsSFR():
     wave = np.linspace(1000, 10000, 451) 
     i1500 = 25
     i5500 = 225
+    gridsize=[15, 13]
 
     # plotting 
     fig = plt.figure(figsize=(11,10))
@@ -1136,7 +1137,7 @@ def ABC_A_MsSFR():
 
             scs.append(
                     sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts], 
-                        C=A[cuts], reduce_C_function=np.median, gridsize=15,
+                        C=A[cuts], reduce_C_function=np.median, gridsize=gridsize[i],
                         vmin=[2.0, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10))
             
             if ii == 0: 
@@ -1169,7 +1170,7 @@ def ABC_A_MsSFR():
 
     ffig = os.path.join(fig_dir, 'abc_av_mssfr.png') 
     fig.savefig(ffig, bbox_inches='tight') 
-    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -3759,7 +3760,7 @@ if __name__=="__main__":
 
     #SMF_MsSFR()
 
-    DEM()
+    #DEM()
 
     #Observables()
 
@@ -3767,7 +3768,7 @@ if __name__=="__main__":
     #ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    #ABC_Observables()
+    ABC_Observables()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
@@ -3777,7 +3778,7 @@ if __name__=="__main__":
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
-    #ABC_A_MsSFR()
+    ABC_A_MsSFR()
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
