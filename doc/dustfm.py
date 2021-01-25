@@ -256,17 +256,16 @@ def DEM():
         * Reddy+(2015)    
     '''
     _dem = lambda lam, logm, logsfr: -2.5 * np.log10(dem_attenuate(
-        np.array([2., -2., 2., -0.1, -0.1, -0.2, 1.]), 
+        np.array([2., -2., 2., -0.1, -0.1, -0.2]), 
         lam, 
         np.ones(len(lam)), 
         logm, 
         logsfr, 
-        incl=0.,
-        nebular=False)).flatten()
+        incl=0.)).flatten()
 
     wave = np.linspace(1000, 10000, 1000) 
 
-    fig = plt.figure(figsize=(8,5))
+    fig = plt.figure(figsize=(10,5))
     
     logSFR_sf = 0.5
     logSFR_q = -2.
@@ -276,16 +275,16 @@ def DEM():
     sub = fig.add_subplot(111) 
     # low mass SFing galaxies
     sub.plot(wave, _dem(wave, M_low, logSFR_sf), c='C0',  
-            label=r'star-forming, low $M_*$')
+            label=r'${\rm SFR} = 10^{0.5}M_\odot/yr, M_* = 10^{10}M_\odot$')
     # high mass SFing galaxies
     sub.plot(wave, _dem(wave, M_high, logSFR_sf), c='C2',  
-            label=r'star-forming, high $M_*$')
+            label=r'${\rm SFR} = 10^{0.5}M_\odot/yr, M_* = 10^{11}M_\odot$')
     # low mass Quiescent galaxies
     sub.plot(wave, _dem(wave, M_low, logSFR_q), c='C1',  
-            label=r'quiescent, low $M_*$')
+            label=r'${\rm SFR} = 10^{-2}M_\odot/yr, M_* = 10^{10}M_\odot$')
     # high mass Quiescent galaxies
     sub.plot(wave, _dem(wave, M_high, logSFR_q), c='C3',  
-            label=r'quiescent, high $M_*$')
+            label=r'${\rm SFR} = 10^{-2}M_\odot/yr, M_* = 10^{11}M_\odot$')
     # calzetti for reference
     sub.plot(wave, dustFM.calzetti_absorption(wave), c='k', 
             ls='--', label='Calzetti+(2001)') 
@@ -3760,9 +3759,9 @@ if __name__=="__main__":
 
     #SMF_MsSFR()
 
-    #DEM()
+    DEM()
 
-    Observables()
+    #Observables()
 
     # ABC posteriors 
     #ABC_corner() 
