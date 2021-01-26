@@ -2,18 +2,24 @@
 \begin{center}
     \includegraphics[width=0.9\textwidth]{figs/abc_observables.pdf}
     \caption{\label{fig:dem}
-    The optical and UV color-magnitude relations predicted by the DEM with 
-    the median ABC posteriors for the SIMBA (orange), TNG (blue), and EAGLE
-    (green) hydrodynamical simulations. For comparison, we include the 
-    $(\gr) - M_r$ (top panels) and $(\fnuv) - M_r$ (bottom panels) relations
-    for SDSS (black dashed). With the DEM, the simulations produce dramatically 
-    different observables than without any dust prescription (Figure~\ref{fig:obs}). 
-    Hence, dust must be account for when interpreting and comparing simulations.
-    Moreover, with the DEMs, all three simulations produce color-magnitude
-    relations consistent with SDSS. Since different simulations can 
-    produce reproduce observations by varying dust, dust significantly limits
-    our ability to constrain the physical processes that go into galaxy
-    simulations. 
+    \chedit{
+        The optical ($(\gr) - M_r$; top) and UV ($(\fnuv) - M_r$; bottom
+        panels) color-magnitude relations predicted by our \eda~prescription
+        for the SIMBA (orange), TNG (blue), and EAGLE (green) hydrodynamical
+        simulations. For the \eda~parameters of each simulation, we use the
+        median of the posterior distributions inferred using ABC. For
+        comparison, we include the color-magnitude relations of SDSS (black
+        dashed). Comparing the color-magnitude relations above to those without
+        dust attenuation in Figure~\ref{fig:obs}, we see that dust
+        \emph{dramatically} impacts the color-magnitude relations. Therefore,
+        dust attenuation must be accounted for when interpreting and comparing
+        simulations. Furthermore, with our \eda~prescription, all three
+        simulations reproduce the color-magnitude relations of SDSS
+        observations.  \emph{Since the different simulations can reproduce
+        observations just by varying dust, dust significantly limits our ability to
+        constrain the underlying physical processes of galaxy formation
+        models.}
+    }
     }
 \end{center}
 \end{figure}
@@ -22,62 +28,78 @@
 % dust model can reproduce color magnitude relation
 Without dust attenuation, all of the hydrodynamical simulations struggle to 
 reproduce the $(\gr) - M_r$ and $(\fnuv) - M_r$ relations of SDSS (Figure~\ref{fig:obs}). 
-In optical, the simulations predict significantly bluer colors and find  
+In the optical, the simulations predict significantly bluer colors and find  
 broader differences in color, ${\sim}0.5~mag$, between star-forming and
 quiescent galaxies. In the UV, they predict quiescent galaxies with $\ssfr <
 10^{-12}yr^{-1}$ that have redder $\fnuv$ colors beyond SDSS observations. 
 Meanwhile, for the rest of the galaxies, the simulations predict significantly
 bluer UV colors than SDSS. 
 
-\emph{With the \eda~model, all of the simulations are able to
-reproduce the color-magnitude relations of SDSS.} In Figure~\ref{fig:dem}, 
+\emph{With our \eda~prescription, however, all three simulations reproduce the
+color-magnitude relations of SDSS observations.} In Figure~\ref{fig:dem}, 
 we present the optical and UV color-magnitude relations predicted by the 
 \eda~for the SIMBA (orange), TNG (blue), and EAGLE (green) simulations. 
 For the \eda~parameters, we use the median of the posterior distributions 
-inferred using ABC (Figure~\ref{fig:abc}). The contours mark the $68\%$ and 
-$95\%$ confidence intervals of the distributions.
-
-%By comparing the color-magnitude relations produced with and without the \eda, we can examine how dust attenuation can produce observations. 
+inferred using ABC (Figure~\ref{fig:abc}). We include the color-magnitude
+relations of SDSS observations (black-dashed) comparison. The contours mark 
+the $68$ and $95$ percentiles of the distributions. 
 
 Dust dramatically impacts the observables of simulations. The \eda~affects the 
 the optical and UV color-magnitude relations in three major ways to produce
-good agreement with SDSS. First, the \eda~significantly reddens simulated galaxies in both 
-the optical and UV.  Overall, $\gr$ colors are ${\sim}0.25~mag$ redder and 
-$\fnuv$ colors ${\sim}0.5~mag$ redder. Second, the \eda~significantly attenuates
-(${\sim}0.5~mag$) intrinsically blue galaxies (\ie~star-forming galaxies with
-$\log~{\rm SSFR} > -10.5$). As a result, there are no longer luminous optically blue 
-galaxies ($M_r < -21$ and $\gr < 0.5$) --- consistent with observations.
+good agreement with SDSS. 
+First, the \eda~significantly reddens simulated galaxies in both the optical
+and UV. Overall, $\gr$ colors are ${\sim}0.25~mag$ redder and $\fnuv$ colors
+are ${\sim}0.5~mag$ redder. 
+Second, the \eda~significantly attenuates (${\sim}0.5~mag$) intrinsically blue
+galaxies (\ie~star-forming galaxies with $\log~{\rm SSFR} > -10.5$). As a
+result, there are no luminous optically blue galaxies ($M_r < -21$ and $\gr <
+0.5$) --- consistent with observations.
 Lastly, in the UV, the \eda~attenuates low SSFR quiescent galaxies that are 
 intrinsically red in the UV ($\fnuv{\sim}3~mag$) by ${\sim}1~mag$. Thus, unlike in
 Figure~\ref{fig:obs}, the UV color-magnitude relations from the \eda~do not
-have galaxies with high $\fnuv$ as in SDSS.
+have a significant number of galaxies with high $\fnuv$, in agreement with SDSS.
 
-% Do we want to comment on the variation in the eda attenuation curve and how
-% that mixes up the color for a given SSFR? 
+% SIMBA discrepancy
+\chedit{
+    For SIMBA, although the \eda~prescription predicts optical and UV
+    color-magnitude relations consistent with observations, there are still
+    some discrepancies in the color-magnitude relations with SDSS and the
+    overall agreement is worse than TNG and EAGLE.
+}
+SIMBA+\eda~produces a $\gr$ color distribution that is narrower and a $\fnuv$
+distribution that is broader than SDSS. The inferred \eda~parameters for SIMBA
+also differ significantly from the parameters of TNG and EAGLE
+(Figure~\ref{fig:abc}). 
+\chedit{
+    These discrepancies are primarily driven by the excess of high
+    $\log{\rm SSFR} > -9.5$ ``starburst'' galaxies with $M_*<10^{10}M_\odot$
+    that lie significantly above the SFS, which are {\em only} present in SIMBA
+    (Figure~\ref{fig:smf_msfr}). This starburst population, which has also been
+    identified in \cite{dave2019} (see their Figures~5 and 6) is caused by
+    excess gas in low-mass galaxies at $z=0$. If we exclude $\log{\rm SSFR} >
+    -9.5 {yr}^{-1}$ starburst galaxies and run the \eda~for SIMBA using median 
+    values of the TNG and EAGLE posteriors for the \eda~parameters, we find 
+    similar level of agreement with SDSS as TNG and EAGLE. 
+}
 
-% paragraph on SIMBA discrepancy
-For SIMBA, the \eda~substantially improves the agreement with observations;
-however, there are still some significant discrepancies in the color-magnitude
-relations with SDSS. The \eda~produces a $\gr$ color distribution that is too
-narrow and a $\fnuv$ distribution that is too wide. Also, the inferred \eda~parameters 
-for SIMBA differ significantly from the parameters of TNG and EAGLE
-(Figure~\ref{fig:abc}). These discrepancies are primarily driven by the
-large population of high $\log{\rm SSFR} > -9.5$ ``starburst'' galaxies that
-lie above the SFS, which are {\em only} present in SIMBA (Figure~\ref{fig:smf_msfr}). 
-Without dust attenuation, these starburst galaxies are blue $\gr\sim0.1$ and
-have high luminosity, $M_r < -22$. Such high luminosity blue galaxies are not
-present in observations, so these SIMBA galaxies need to be both strongly 
-attenuated and reddened. This would, however, contradict the attenuation-slope 
-relation established in both observations and simulations where galaxies with 
-higher attenuation have shallower
-slopes~\citep{inoue2005,chevallard2013,salim2018,salim2020,trayford2020}.
-To further examine the impact of the starburst galaxies in SIMBA, we ran the \eda~for SIMBA excluding galaxies with $\log{\rm SSFR} > -9.5$ and 
-with median parameter values of the TNG and EAGLE posteriors. Without its starburst
-galaxies, SIMBA produces color-magnitude relations in good agreement 
-with observations. {\em We conclude that the excess starburst population in 
-SIMBA is in tension with observations}. Examining the prescriptions that
-produce the starburst in SIMBA is beyond the scope of this paper. Therefore,
-for the rest of the paper, we focus on the TNG and EAGLE simulations.  
+Without dust attenuation, the excess starburst galaxies in SIMBA are blue
+$\gr\sim0.1$ and have high luminosity, $M_r < -22$.
+\chedit{
+    Since such high luminosity blue galaxies do not exist in observations, they
+    need to be both strongly attenuated and reddened. In our \eda~prescription,
+    dust attenuation and reddening is a linear function of $\log\ssfr$ so it
+    cannot strongly attenuate and redden the starburst population in
+    particular. Although we can increase the flexibility of our
+    \eda~prescription, the attenuation and reddening necessary for the
+    starburst galaxies conflict with the attenuation-slope relation
+    well-established in observations and
+    simulations~\citep{inoue2005,chevallard2013,salim2018,salim2020,trayford2020}.
+    The SIMBA starbursts require both high attenuation and steeper slopes but,
+    based oo the attenuation-slope relations, galaxies with higher attenuation
+    have shallower slopes. We therefore do not explore extending our
+    \eda~prescription and focus on the TNG and EAGLE simulations for the rest
+    of the paper. 
+}
 
 % comparison to literature 
 Previous works in the literature have also compared simulations with different
@@ -105,7 +127,7 @@ We find neither of these discrepancies for the TNG with the~\eda. The
 \eda~is a simpler prescription for applying dust attenuation than the dust
 models in these works. Yet, with its flexibility, we are able to produce
 optical and UV color-magnitude relations that are in good agreement with
-observations. Furthermore, with its low computation costs we were able o fully
+observations. Furthermore, with its low computation costs we were able to fully
 explore our dust parameters. 
 %better agreement than observations than these works.
 
