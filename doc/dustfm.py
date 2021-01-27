@@ -1950,21 +1950,22 @@ def ABC_SF_attenuation():
     #smc,    = sub.plot(wave_smc, Asmc, c='r') 
     #b2017,  = sub.plot(wave, A_battisti/A_battisti[i3000],
     #        c='k', ls=':')
-    n2018, = sub.plot(wave_n2018, av_n2018, c='k', ls='--') 
-    sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', 
-            lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
-
-    sub.set_xlim(1.2e3, 1e4)
-    sub.set_ylim(0., 3.) 
-
-    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -11$)', fontsize=25)
-    sub.legend([n2018, sal], ['Narayanan+(2018)', 'Salim+(2018)'], 
-            loc='upper right', handletextpad=0.2, fontsize=25) 
+    #n2018, = sub.plot(wave_n2018, av_n2018, c='k', ls='--', ) 
+    #sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', 
+    #        lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
     #sub.legend(
     #        [calz, b2017, n2018, sal], 
     #        ['Calzetti+(2001)', 'Battisti+(2017)',
     #            'Narayanan+(2018)', 'Salim+(2018)'], 
     #        loc='upper right', handletextpad=0.2, fontsize=20) 
+
+    sub.plot(wave_n2018, av_n2018, c='k', ls='--', label='Narayanan+(2018)')
+    sub.plot(wave, A_salim/A_salim[i3000], c='k', lw=3, ls=':', label='Salim+(2018)') 
+    sub.legend(loc='upper right', fontsize=25) 
+
+    sub.set_xlim(1.2e3, 1e4)
+    sub.set_ylim(0., 3.) 
+    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -11$)', fontsize=25)
 
     sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
     sub.set_ylabel(r'$A(\lambda)/A(3000\AA)$', fontsize=25) 
@@ -1975,6 +1976,76 @@ def ABC_SF_attenuation():
     plt.close()
     return None 
 
+
+def ABC_Q_attenuation_unnormalized(): 
+    ''' comparison of unnormalized attenuation curves for quiescent galaxies 
+    '''
+    wave = np.linspace(1000, 10000, 2251) 
+
+    theta_meds, sim_seds = [], [] 
+    for sim in ['TNG', 'EAGLE']:  
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_median = np.median(theta_T, axis=0) 
+        theta_meds.append(theta_median) 
+
+        # get sims posterior
+        _, _sim_sed, _ = _sim_observables(sim.lower(), theta_median)
+        sim_seds.append(_sim_sed) 
+
+    fig = plt.figure(figsize=(8,6))
+    sub = fig.add_subplot(111) 
+    # SF or Q  
+    for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
+
+        for i, sim in enumerate(['TNG', 'EAGLE']):  
+            # get abc posterior
+            theta_median = theta_meds[i]
+            _sim_sed = sim_seds[i] 
+
+            mstar   = _sim_sed['logmstar']
+            sfr     = _sim_sed['logsfr.inst']
+            ssfr    = sfr - mstar
+            assert sfr.min() != -999
+
+            if _sfq == 'star-forming': ssfrlim = (ssfr > -11) 
+            elif _sfq == 'quiescent': ssfrlim = (ssfr < -11) 
+
+            # subpopulation sample cut 
+            subpop =  ssfrlim 
+
+            # get attenuation curve 
+            _A_lambda = dem_attenuate(
+                    theta_median, 
+                    wave, 
+                    np.ones(len(wave)), 
+                    mstar[subpop], 
+                    sfr[subpop])#, nebular=False) 
+            A_lambda = -2.5 * np.log10(_A_lambda)
+
+            Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
+            
+            if isfq == 1: 
+                sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
+                        alpha=0.25, linewidth=0, label=sim) 
+                sub.plot(wave, Al_med, c=clrs[sim.lower()])
+            else: 
+                sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', label='%s SF' % sim)
+
+    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+
+    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=25)
+    sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
+    sub.set_xlim(1.2e3, 1e4)
+    sub.set_ylabel(r'$A(\lambda)/A(3000\AA)$', fontsize=25) 
+    sub.set_ylim(0., 8.) 
+
+    ffig = os.path.join(fig_dir, 'abc_q_atten_unnorm.png') 
+    #fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
 
 def ABC_attenuation_unnormalized(): 
     ''' comparison of unnormalized attenuation curves for different subpopulations 
@@ -3944,6 +4015,7 @@ if __name__=="__main__":
 
     # amplitude normalized attenuation curves
     ABC_SF_attenuation()
+    ABC_Q_attenuation_unnormalized()
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
