@@ -940,7 +940,10 @@ def ABC_Observables():
     for sim in sims: 
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
             abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        rho_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'rho.t%i.dat' % nabc[sim.lower()])) 
         theta_med = np.median(theta_T, axis=0) 
+        print('%s median rho = %.3e' % (sim, np.median(rho_T)))
 
         x_mod, _, sfr0 = _sim_observables(sim.lower(), theta_med)
         xs.append(x_mod) 
@@ -3778,7 +3781,7 @@ if __name__=="__main__":
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
-    ABC_A_MsSFR()
+    #ABC_A_MsSFR()
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
