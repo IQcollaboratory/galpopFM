@@ -1818,6 +1818,164 @@ def ABC_attenuation():
     return None 
 
 
+def ABC_SF_attenuation(): 
+    ''' comparison of attenuation curves of DEM models to standard attenuation curves in
+    the literature.
+
+    todo: 
+    * compile the following attenuation curves: 
+        * Cardelli+(1989) MW
+        * Wild+(2011)
+        * Kriek & Conroy (2013)
+        * Reddy+(2015)    
+    '''
+    def _salim2018(_lam, logm, logsfr): 
+        # Salim(2018) table 1 and Eq. 10
+        logssfr = logsfr - logm 
+
+        lam = _lam/10000. 
+        if logssfr < -11:  # quiescent
+            RV = 2.61
+            B = 2.21
+            a0 = -3.72
+            a1 = 2.20
+            a2 = -0.062
+            a3 = 0.0080
+        elif logm > 9.5 and logm < 10.5: 
+            RV  = 2.99 
+            B   = 1.73 
+            a0  = -4.13
+            a1  = 2.56
+            a2  = -0.153    
+            a3  = 0.0105
+        elif logm > 10.5: 
+            RV  = 3.47
+            B   = 1.09
+            a0  = -4.66
+            a1  = 3.03
+            a2  = -0.271
+            a3  = 0.0147
+
+        Dl = B * lam**2 * 0.035**2 / ((lam**2 - 0.2175**2)**2 + lam**2 * 0.035**2)
+        kl = a0 + a1/lam + a2 / lam**2 + a3/lam**3 + Dl + RV
+        return kl / RV
+
+    def _calzetti(lam): 
+        return dustFM.calzetti_absorption(lam)
+    
+    # Battisti+(2017) Eq. 9
+    def _battisti2017(_lam): 
+        lam = np.atleast_1d(_lam/1e4)
+        x = 1./lam 
+        lowlam = (lam < 0.63) 
+        highlam = (lam >= 0.63) 
+        kl = np.zeros(len(lam))
+        kl[lowlam] = 2.40 * (-2.488 + 1.803 * x[lowlam] - 0.261 * x[lowlam]**2 + 0.0145 *
+                x[lowlam]**3) + 3.67
+        kl[highlam] = 2.30 * (-1.996 + 1.135 * x[highlam] - 0.0124 * x[highlam]**2) + 3.67
+        return kl  
+
+    # read Narayanan+(2018) attenuation curves
+    fnara = os.path.join(dat_dir, 'obs', 'narayanan_median_Alambda.dat.txt')
+    _wave_n2018, av_n2018 = np.loadtxt(fnara, skiprows=1, unpack=True, usecols=[0, 1]) 
+    wave_n2018 = 1e4/_wave_n2018
+
+    ## read SMC from Pei(1992)
+    #fsmc = os.path.join(dat_dir, 'obs', 'pei1992_smc.txt') 
+    #_1_lam, E_ratio = np.loadtxt(fsmc, skiprows=1, unpack=True, usecols=[0, 1]) 
+    #wave_smc = 1e4/_1_lam
+    #RV_smc = 2.93
+    #Asmc = (E_ratio + RV_smc)/(1+RV_smc)
+    ## normalize at 3000 
+    #Asmc3000 = np.interp([3000.], wave_smc, Asmc)[0]
+    #Asmc /= Asmc3000
+
+    wave = np.linspace(1000, 10000, 2251) 
+    i3000 = 500
+
+    
+    theta_meds, sim_seds = [], [] 
+    for sim in ['TNG', 'EAGLE']:  
+        # get abc posterior
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_median = np.median(theta_T, axis=0) 
+        theta_meds.append(theta_median) 
+
+        # get sims posterior
+        _, _sim_sed, _ = _sim_observables(sim.lower(), theta_median)
+        sim_seds.append(_sim_sed) 
+
+    fig = plt.figure(figsize=(8,6))
+    sub = fig.add_subplot(111) 
+
+    for i, sim in enumerate(['TNG', 'EAGLE']):  
+        # get abc posterior
+        theta_median = theta_meds[i]
+        _sim_sed = sim_seds[i] 
+
+        mstar   = _sim_sed['logmstar']
+        sfr     = _sim_sed['logsfr.inst']
+        ssfr    = sfr - mstar
+        assert sfr.min() != -999
+
+        ssfrlim = (ssfr > -11) 
+
+        # subpopulation sample cut 
+        subpop = ssfrlim 
+    
+        # get attenuation curve 
+        _A_lambda = dem_attenuate(
+                theta_median, 
+                wave, 
+                np.ones(len(wave)), 
+                mstar[subpop], 
+                sfr[subpop])#, nebular=False) 
+        A_lambda = -2.5 * np.log10(_A_lambda)
+        # normalize to 3000A 
+        A_lambda /= A_lambda[:,i3000][:,None]
+
+        Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
+
+        sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
+                alpha=0.25, linewidth=0, label=sim) 
+        sub.plot(wave, Al_med, c=clrs[sim.lower()])
+                
+    # calzetti
+    #A_calzetti = _calzetti(wave) 
+    A_salim = _salim2018(wave, np.median(mstar[subpop]), 1)
+    #A_battisti = _battisti2017(wave)
+
+    #calz,   = sub.plot(wave, A_calzetti/A_calzetti[i3000], c='k', ls='--')
+    #smc,    = sub.plot(wave_smc, Asmc, c='r') 
+    #b2017,  = sub.plot(wave, A_battisti/A_battisti[i3000],
+    #        c='k', ls=':')
+    n2018, = sub.plot(wave_n2018, av_n2018, c='k', ls='--') 
+    sal, = sub.plot(wave, A_salim/A_salim[i3000], c='k', 
+            lw=3, ls=(0, (1, 5))) #ls=(0, (3, 5, 1, 5, 1, 5)))
+
+    sub.set_xlim(1.2e3, 1e4)
+    sub.set_ylim(0., 3.) 
+
+    sub.set_title(r'Star-forming ($\log {\rm SSFR} > -11$)', fontsize=25)
+    sub.legend([n2018, sal], ['Narayanan+(2018)', 'Salim+(2018)'], 
+            loc='upper right', handletextpad=0.2, fontsize=25) 
+    #sub.legend(
+    #        [calz, b2017, n2018, sal], 
+    #        ['Calzetti+(2001)', 'Battisti+(2017)',
+    #            'Narayanan+(2018)', 'Salim+(2018)'], 
+    #        loc='upper right', handletextpad=0.2, fontsize=20) 
+
+    sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
+    sub.set_ylabel(r'$A(\lambda)/A(3000\AA)$', fontsize=25) 
+
+    ffig = os.path.join(fig_dir, 'abc_sf_attenuation.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def ABC_attenuation_unnormalized(): 
     ''' comparison of unnormalized attenuation curves for different subpopulations 
     '''
@@ -3771,7 +3929,7 @@ if __name__=="__main__":
     #ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    ABC_Observables()
+    #ABC_Observables()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
@@ -3785,6 +3943,7 @@ if __name__=="__main__":
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
+    ABC_SF_attenuation()
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
