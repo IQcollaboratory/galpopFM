@@ -1997,7 +1997,7 @@ def ABC_Q_attenuation_unnormalized():
     fig = plt.figure(figsize=(8,6))
     sub = fig.add_subplot(111) 
     # SF or Q  
-    for isfq, _sfq in enumerate(['star-forming', 'quiescent']): 
+    for isfq, _sfq in enumerate(['quiescent', 'star-forming']): 
 
         for i, sim in enumerate(['TNG', 'EAGLE']):  
             # get abc posterior
@@ -2026,19 +2026,20 @@ def ABC_Q_attenuation_unnormalized():
 
             Al_1m, Al_med, Al_1p = np.quantile(A_lambda, [0.16, 0.5, 0.84], axis=0) 
             
-            if isfq == 1: 
+            if _sfq == 'quiescent': 
                 sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
-                        alpha=0.25, linewidth=0, label=sim) 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()])
+                        alpha=0.5, linewidth=0, label=sim) 
+                sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=2)
             else: 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', label='%s SF' % sim)
+                sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', lw=1)
 
+    sub.plot([0], [0], c='k', ls='--', lw=1, label='star-forming')
     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
 
     sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=25)
     sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
     sub.set_xlim(1.2e3, 1e4)
-    sub.set_ylabel(r'$A(\lambda)/A(3000\AA)$', fontsize=25) 
+    sub.set_ylabel(r'$A(\lambda)$', fontsize=25) 
     sub.set_ylim(0., 8.) 
 
     ffig = os.path.join(fig_dir, 'abc_q_atten_unnorm.png') 
@@ -2046,6 +2047,7 @@ def ABC_Q_attenuation_unnormalized():
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
+
 
 def ABC_attenuation_unnormalized(): 
     ''' comparison of unnormalized attenuation curves for different subpopulations 
@@ -4014,7 +4016,7 @@ if __name__=="__main__":
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
-    ABC_SF_attenuation()
+    #ABC_SF_attenuation()
     ABC_Q_attenuation_unnormalized()
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()

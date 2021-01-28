@@ -7,58 +7,82 @@
         median posterior parameter values of TNG (blue) and EAGLE (green).
         Galaxies are classified as quiescent using a $\log \ssfr < -11~yr^{-1}$
         cut.
-        We mark the $1\sigma$ standard deviation of the attenuation curves with the shaded region.
-        Unlike Figure~\ref{fig:sfatten}, the attenuation curves are \emph{not}
-        normalized at $3000\AA$. 
+        We mark the $1\sigma$ standard deviation of the attenuation curves with
+        the shaded region and include the predicted attenuation curves of
+        star-forming galaxies for comparison (dashed). 
+        For both TNG and EAGLE, \emph{the \eda~predicts significant UV and
+        optical dust attenuation in quiescent galaxies with an overall shallow
+        attenuation curve}.
     }
-    Based on the \eda, quiescent galaxies have
-    significant UV and optical dust attenuation. However, they have 
-    significantly lower attenuation in the UV compared to star-forming 
-    galaxies and have shallow attenuation curves overall.
     }
 \end{center}
 \end{figure}
 \subsection{The Attenuation Curves of Quiescent Galaxies}  
-We have demonstrated so far that the \eda~is able reproduce the observed UV and
-optical color-magnitude relations and also predict dust attenuation curves
-of star-forming galaxies consistent with observations and radiative transfer 
-simulations. In addition, the \eda~also predicts dust attenuation curves of
-quiescent galaxies. This is particularly valuable since there are many challenges 
-to measuring attenuation curves for quiescent galaxies directly from observations. 
-Methods that rely on IR luminosities can be contaminated by MIR emission from AGN
-heating nearby dust~\citep{kirkpatrick2015}. Even SED fitting methods require 
-accounting for AGN MIR emission~\citep{salim2016, leja2018, salim2018}. They
-also struggle to tightly constrain dust attenuation for quiescent 
-galaxies since they are limited by the degeneracies with star formation history and 
-metallicity.
+\chedit{
+    We have demonstrated so far that the \eda~can reproduce the observed UV and
+    optical color-magnitude relations.  
+    In doing so, it also predicts attenuation-slope relation and dust
+    attenuation curves of star-forming galaxies that are in good agreement with
+    observations and radiative transfer simulations. 
+    Beyond reproducing previous work, the \eda~also makes predictions on the dust
+    attenuation of quiescent galaxies, which is still poorly constrained by
+    obsevations. 
+    There are many challenges to measuring the attenuation curves of quiescent galaxies directly from observations.
+    Methods that rely on IR luminosities can be contaminated by MIR emission
+    from AGN heating nearby dust~\citep{kirkpatrick2015}. 
+    SED fitting methods must also account for AGN MIR
+    emission~\citep{salim2016, leja2018, salim2018} and struggle to tightly
+    constrain dust attenuation for quiescent galaxies due to the degeneracies
+    with star formation history and metallicity.
+}
 
-With a forward modeling approach, we circumvent these challenges. We derive the 
-attenuation curves necessary for quiescent galaxy population in simulations to
-reproduce the observed optical and UV photometry.  In right panels of
-Figure~\ref{fig:atten}, we present the attenuation curves of quiescent galaxies 
-predicted by the \eda~model for the median posterior parameter values of TNG (blue) 
-and EAGLE (green). In the top and bottom panels, we present galaxies with 
-$M_* < 10^{11} M_\odot$ and $M_* > 10^{11} M_\odot$, respectively. 
-We define galaxies with $\log {\rm SSFR} < -11$ as quiescent. The right panels 
-of Figure~\ref{fig:raw_atten} are the same as in Figure~\ref{fig:atten}, except
-the attenuation curves are not normalized. 
+With a forward modeling approach, we circumvent these challenges. 
+Instead, we derive the attenuation curves necessary for the simulated quiescent population to reproduce the observed optical and UV photometry. 
+\chedit{
+    In Figure~\ref{fig:q_raw_atten}, we present the attenuation curves of
+    quiescent galaxies predicted by the \eda~for the median posterior parameter
+    values of TNG (blue) and EAGLE (green). 
+    Quiescent galaxies are classified using a $\log\ssfr < -11~{yr}^{-1}$ cut. 
+    Unlike Figure~\ref{fig:sfatten}, the attenuation curves are \emph{not}
+    normalized at $3000\AA$. 
+    For comparison, we include $A(\lambda)$ of star-forming galaxies predicted
+    by the \eda~(dotted).
+    Both TNG+\eda~and EAGLE+\eda predict significant dust attenuation in
+    quiescent galaxies: $A(\lambda) \gtrsim 1$ throughout the UV and optical. 
+    Their attenuation curves are also significantly shallower than the
+    attenuation curves of star-forming galaxies. 
+}
 
-For both TNG and EAGLE posteriors, the \eda~predicts significant dust attenuation 
-in quiescent galaxies. Compared to star-forming galaxies, however, they have 
-lower attenuation in the UV and much shallower attenuation curves. The amplitude 
-of the attenuation is driven by the fact that both TNG and EAGLE --- without dust --- predict quiescent galaxies that are too 
-luminous compared to observations. Hence, significant attenuation is necessary 
-to lower their luminosity. Meanwhile, the shallow slope is driven by the
-simulations predicting quiescent galaxies that are bluer in the optical but
-redder in the UV than observations. The \eda~optically reddens the quiescent
-galaxies but maintains a shallow enough slope to reproduce the UV
-color-magnitude relation. This is also why TNG has a shallower slope than
-EAGLE: TNG has an optically redder quiescent population and more quiescent
-galaxies with high $\fnuv$ color. 
 
-Given the challenges in observationally measuring attenuation curves of quiescent
-galaxies, the predictions of the bestfit \eda~models for TNG and EAGLE again 
-highlight the advantages of a forward modeling approach and provide valuable 
-insights into dust attenuation in quiescent galaxies. \emph{Quiescent galaxies
-have significant UV and optical attenuation with shallow slopes.} 
+\chedit{
+    The quiescent galaxy dust attenuation we predict is not a consequence of
+    the parameterization of our \eda~prescription. 
+    Without dust both TNG and EAGLE predict quiescent galaxies that are too
+    luminous and bluer in the optical than SDSS observations (Figure~\ref{fig:obs}). 
+    Therefore, to match the SDSS color-magnitude relations, significant
+    attenuation is necessary to lower their luminosities but with a shallow
+    slope that reddens their $\gr$ colors while maintaining their $\fnuv$ colors.
+    This is also the reason why TNG has a shallower slope than EAGLE: without
+    dust, TNG has a quiescent population that is redder in both UV and optical.   
+}
 
+\chedit{    
+    Dust attenuation in quiescent galaxies, which is typically neglected, has
+    significant implications.  
+    For instance, it strengthens the evidence for the UV upturn phenomenon, the
+    unexpected detections of UV flux in quiescent galaxies~\citep[\eg][]{code1969,
+    oconnell1999, lecras2016, ali2018, dantas2021}. 
+    Better constraints on the attenuation in quiescent galaxies may help
+    discern among the different hypotheses: residual star formation activity~\citep[\eg~][]{kaviraj2007}, post-main-sequence stellar
+    evolutionary phases~\citep[\eg~][]{yi1997}, or binary systems~\citep[\eg~][]{han2007}.
+    Since the attenuation curves of quiescent galaxies are difficult to measure
+    from observations, the \eda~predictions highlight the advantages of a
+    forward modeling approach and its complementarity with standard approaches. 
+    We, however, note that since we only vary the \eda~parameters in our forward
+    model, we do not explore whether the discrepancy between the quiescent
+    populations in simulations and observations is due to shortcomings of the
+    galaxy formation models. 
+    In principle, and in future work, we can vary both the \eda~parameters and
+    the parameters of the galaxy formation models and infer them simultaneously
+    with a foward modeling approach. 
+}
