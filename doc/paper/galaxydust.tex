@@ -3,24 +3,72 @@
 \begin{center}
     \includegraphics[width=0.9\textwidth]{figs/abc_av_mssfr.pdf}
     \caption{\label{fig:avmsfr}
+    \chedit{ 
+        $M_*$ and $\ssfr$ dependence of dust attenuation at $1500 \AA$, $A_{1500}$,
+        and at $5500\AA$, $A_{V}$.
+    }
     }
 \end{center}
 \end{figure}
 
 \subsection{The Galaxy -- Dust Connection}  
-Since the \eda~models predict dust attenuation for all galaxies in the sample,
-they allow us to shed light on the
-connection between galaxy properties and dust attenuation.  More specifically, 
-the \eda~parameters constraints (Figure~\ref{fig:abc}) and the predicted
-attenuation curves (Figures~\ref{fig:atten} and~\ref{fig:raw_atten}) reveal the
-stellar mass and SSFR dependence of dust attenuation. 
-Focusing first on the $M_*$ dependence, we find that TNG has little $M_*$
-dependence in $\tau_V$ ($\mtaum = -0.15\substack{+0.83 \\ -0.91}$) while EAGLE
-has a significant $M_*$ dependence ($\mtaum = 0.55\substack{+0.40 \\ -0.37}$).
-Meanwhile, we find significant $M_*$ dependence in $\delta$ for both TNG 
-($\mdeltam = -0.44\substack{+0.27\\-0.26}$) and EAGLE ($\mdeltam =
--0.20\substack{+0.17\\-0.17}$) --- \ie~more massive galaxies have steeper
-slopes (Figure~\ref{fig:abc}). The $M_*$ dependence in $\tau_V$ and $\delta$
+\chedit{
+    With the \eda~framework, we can also shed light on the connection between
+    the physical properties of galaxies and dust attenuations.
+    In our \eda~prescription, we included a flexible $M_*$ and $\ssfr$ dependence in both the
+    amplitude and slope of the attenuation curve~(Eqs~\ref{eq:tauv}
+    and~\ref{eq:delta}. 
+    Hence, we can reveal the $M_*$ and $\ssfr$ dependence of dust attenuation
+    through the \eda~parameter constraints (Figure~\ref{fig:abc}) and the
+    predicted attenuation curves. 
+}
+
+
+\chedit{
+    Focusing first on the amplitude of dust attenuation, we find that TNG has
+    little $M_*$ dependence in $\tau_V$: 
+    $\mtaum = 0.14\substack{+0.64 \\ -0.58}$. 
+    EAGLE has a more significant positive $M_*$ dependence:
+    $\mtaum = 0.53\substack{+0.36 \\ -0.36}$.
+    Though neither TNG nor EAGLE has a strong dependence, $V$-band dust
+    attenuation is higher for more massive galaxies.  
+    Meanwhile, we find significant $\ssfr$ dependences in both TNG 
+    ($\mtaus = -0.42\substack{+0.2 \\ -0.18}$)
+    and EAGLE
+    ($\mtaus = -0.24\substack{+0.22 \\ -0.19}$): galaxies with higher $\ssfr$
+    have lower $V$-band dust attenuation. 
+    For the slope of the dust attenuation, we find significant $M_*$
+    dependence in both TNG 
+    ($\mdeltam = -0.36\substack{+0.23\\-0.19}$)
+    and EAGLE
+    ($\mdeltam = -0.2\substack{+0.16\\-0.16}$). 
+    More massive galaxies have steeper attenuation curves. 
+    We also find strong $\ssfr$ dependence in both TNG 
+    ($\mdeltas = -0.55\substack{+0.08 \\ -0.08}$)
+    and EAGLE
+    ($\mdeltas = -0.43\substack{+0.08 \\ -0.08}$).
+    Galaxies with higher $\ssfr$ have steeper attenuation curves.
+
+}
+
+\chedit{
+    Next, we take a closer look at the $M_*$ and $\ssfr$ dependence of the
+    attenuation curve in Figure~\ref{fig:avmsfr}. We present dust attenuation
+    at $1500\AA$ ($A_{1500}$; top) and $5500\AA$ ($A_V$; bottom) as a function
+    of $\log M_*$ and $\log {\rm SFR}$ predicted by the \eda~for TNG (left) and
+    EAGLE (right). For each hexagonal bin, the colormap represents the median
+    attenuation for all simulated galaxies in the bin. We only include
+    $A_{1500}$ or $A_V$ values for galaxies that satisfy our $M_r < -20$
+    completeness limit. The bottom panels of Figure~\ref{fig:avmsfr}
+    corroborate our conclusions on $V$-band dust attenuation from the
+    \eda~parameter posteriors (Figure~\ref{fig:abc}): $A_V$ has a slight $M_*$
+    dependence but a significant $\ssfr$ dependence. 
+    Furthermore, by comparing the top to the bottom panels, we can confirm the
+    $M_*$ and $\ssfr$ dependence of the  attenuation curve slopes. 
+}
+
+
+The $M_*$ dependence in $\tau_V$ and $\delta$
 are further illustrated in the attenuation curves in Figure~\ref{fig:raw_atten}.
 For TNG, there is little difference in the $V$-band attenuation between the 
 top and bottom panels. However, more massive galaxies have steeper slopes 
@@ -34,13 +82,7 @@ also find higher attenuation in more massive SDSS star-forming galaxies. Most
 recently, \cite{salim2018} find higher $V$ and $FUV$ attenuation for more
 masssive star-forming galaxies in GSWLC2. 
 
-Next, we examine the SSFR dependence of dust attenuation. For both TNG and
-EAGLE, we find a significantly negative SSFR dependence in $\tau_V$ 
-($\mtaus = -0.56\substack{+0.36 \\ -0.30}$ and
-$-0.24\substack{+0.21 \\ -0.20}$, respectively) as well as $\delta$ 
-($\mdeltas = -0.57\substack{+0.14 \\ -0.112}$ and $-0.43\substack{+0.10 \\ -0.09}$,
-respectively). In other words, galaxies with higher SSFR have lower $V$-band
-attenuation and steeper attenuation curves. From the attenuation curves in
+From the attenuation curves in
 Figure~\ref{fig:raw_atten}, we similarly find that star-forming galaxies have
 attenuation curves with slightly lower $A_V$ but substantially higher UV 
 attenuation. Quiescent galaxies, on the other hand, have significantly 

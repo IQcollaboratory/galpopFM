@@ -1141,7 +1141,8 @@ def ABC_A_MsSFR():
             scs.append(
                     sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts], 
                         C=A[cuts], reduce_C_function=np.median, gridsize=gridsize[i],
-                        vmin=[2.0, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10))
+                        vmin=[2.0, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10, cmap=['Blues', 'Oranges'][ii]))
+                        #vmin=0.2, vmax=5., mincnt=10, cmap=['Blues', 'Oranges'][ii]))#'gist_rainbow'))
             
             if ii == 0: 
                 sub.text(0.05, 0.95, sim, transform=sub.transAxes, ha='left', va='top', fontsize=25) 
@@ -4012,12 +4013,12 @@ if __name__=="__main__":
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
-    #ABC_A_MsSFR()
+    ABC_A_MsSFR()
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
     #ABC_SF_attenuation()
-    ABC_Q_attenuation_unnormalized()
+    #ABC_Q_attenuation_unnormalized()
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
