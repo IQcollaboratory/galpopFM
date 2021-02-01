@@ -1132,43 +1132,44 @@ def ABC_A_MsSFR():
             A = A_lambda[:,ilambda]
 
             sub = fig.add_subplot(2,2,2*ii+i+1)
-
-            DFM.hist2d(_sim['logmstar'], _sim['logsfr.inst'], levels=[0.68, 0.95],	
-                    range=[[9., 12.], [-4., 2.]], color='k', 	
+            
+            DFM.hist2d(_sim['logmstar'][_sim['logsfr.inst'] > -2.],
+                    (_sim['logsfr.inst'] - _sim['logmstar'])[_sim['logsfr.inst'] > -2.], levels=[0.68, 0.95],	
+                    range=[[9., 12.], [-14., -9.]], color='k', 	
                     contour_kwargs={'linewidths': 0.75, 'linestyles': 'dashed'}, 	
                     plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
 
             scs.append(
-                    sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts], 
+                    sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts] - _sim['logmstar'][cuts], 
                         C=A[cuts], reduce_C_function=np.median, gridsize=gridsize[i],
-                        vmin=[2.0, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10, cmap=['Blues', 'Oranges'][ii]))
-                        #vmin=0.2, vmax=5., mincnt=10, cmap=['Blues', 'Oranges'][ii]))#'gist_rainbow'))
+                        vmin=0.5, vmax=5., mincnt=10, cmap='Spectral_r'))
+                        #vmin=[1.5, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10, cmap=['Blues', 'Oranges'][ii]))
+                        #vmin=0.2, vmax=5., mincnt=10, cmap='Spectral'))
+
+            #sub.plot([9., 12.], [-11., -11.], c='k', ls='--', linewidth=2) 
             
             if ii == 0: 
-                sub.text(0.05, 0.95, sim, transform=sub.transAxes, ha='left', va='top', fontsize=25) 
+                sub.text(0.95, 0.95, sim, transform=sub.transAxes, ha='right', va='top', fontsize=25) 
             sub.set_xlim([9.5, 12.]) 
             if ii == 0: sub.set_xticklabels([])
-            sub.set_ylim([-2.5, 2.]) 
+            #sub.set_ylim([-2.5, 2.]) 
+            sub.set_ylim([-13.2, -9.])
             if i != 0: sub.set_yticklabels([]) 
             sub.set_xticks([10., 11., 12.]) 
-            sub.set_yticks([-2., -1., 0., 1., 2.]) 
+            sub.set_yticks([-13, -12., -11., -10., -9.]) 
             if i == 1: 
                 sub.text(0.95, 0.05, [r'$A_{1500}$', r'$A_V$'][ii],
                         transform=sub.transAxes, ha='right', va='bottom', fontsize=25) 
 
     fig.subplots_adjust(wspace=0.1, right=0.85)
     
-    cbar_ax = fig.add_axes([0.9, 0.5, 0.025, 0.4])
+    cbar_ax = fig.add_axes([0.9, 0.15, 0.025, 0.7])
     cbar = fig.colorbar(scs[0], cax=cbar_ax)
-    cbar.ax.set_ylabel(r'median $A_{1500}$', labelpad=25, fontsize=25, rotation=270)
-    
-    cbar_ax = fig.add_axes([0.9, 0.05, 0.025, 0.4])
-    cbar = fig.colorbar(scs[1], cax=cbar_ax)
-    cbar.ax.set_ylabel(r'median $A_V$', labelpad=25, fontsize=25, rotation=270)
+    cbar.ax.set_ylabel(r'median attenuation $A$', labelpad=25, fontsize=25, rotation=270)
 
     bkgd = fig.add_subplot(111, frameon=False)
     bkgd.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=10, fontsize=25) 
-    bkgd.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', labelpad=15, fontsize=25) 
+    bkgd.set_ylabel(r'log ( SSFR $[M_\odot \, yr^{-1}]$ )', labelpad=20, fontsize=25) 
     bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
     fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
