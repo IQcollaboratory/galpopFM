@@ -1,4 +1,4 @@
-\section{The Slab Model Based EDA}  \label{sec:nslab} 
+\section{The Slab Model Based EDA}  \label{sec:slab} 
 A major assumption of our fiducial DEM is that we sample the amplitude of
 attenuation from the slab model. The slab model makes the simplifying assumption 
 that dust in galaxies are in a slab-like geometry and illuminated by the
@@ -70,4 +70,28 @@ it in our analysis.
 \end{figure}
 
 
-% In this regard, the slab model is consistent with the correlation between $A_V$ and $i$ found in the literature: edge-on galaxies have higher $A_V$ than face-on galaxies~\citep[\eg][]{conroy2010, wild2011, battisti2017, salim2020}. More
+% In this regard, the slab model is consistent with the correlation between
+% $A_V$ and $i$ found in the literature: edge-on galaxies have higher $A_V$
+% than face-on galaxies~\citep[\eg][]{conroy2010, wild2011, battisti2017,
+% salim2020}. MoreA
+
+
+
+\tksedit{
+
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/gswlc_Av_mstar_ssfr_dependence.pdf}
+    \caption{\label{fig:dep}
+    Dependence of the V-band attenuation on stellar mass (left, for $-11 <$ log(sSFR [yr$^{-1}$]) $< -10.5$ (purple),   
+    $-10.5 <$ log(sSFR [yr$^{-1}$]) $< -10$ (red), and  $-10 <$ log(sSFR [yr$^{-1}$]) (orange)),
+    and sSFR (right, for  $9.5 <$ log($M_* [M_{\odot}]) < 10.5$ (blue) and $10.5 <$ log($M_* [M_{\odot}]) < 11.5$ (green)) for the GALEX-SDSS-WISE Legacy Catalog (GSWLC)\footnote{\url{https://salims.pages.iu.edu/gswlc/}} \citep{salim2016}. 
+    At lower stellar masses the $A_V$ and $M_*$ are more strongly correlated than $A_V$ and sSFR, while the opposite is true at higher stellar masses.
+    The correlation between $A_V$ and sSFR is most noticeable at intermediate sSFR (${\sim}-11 <$ log(sSFR [yr$^{-1}$]) $< {\sim}-10$), 
+    where there is no apparent correlation with stellar mass. At higher sSFR (e.g. for galaxies on the SFS) the correlation with stellar mass is stronger.
+    \tks{not sure we want to include this figure because it is confusing that it uses different data. We could also move it to another appendix if we want?}
+    }
+\end{center}
+\end{figure}
+}
