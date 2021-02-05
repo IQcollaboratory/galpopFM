@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 13, 'tng': 25, 'eagle': 27}        # Niteration 
+nabc = {'simba': 15, 'tng': 25, 'eagle': 27}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -256,7 +256,7 @@ def DEM():
         * Reddy+(2015)    
     '''
     _dem = lambda lam, logm, logsfr: -2.5 * np.log10(dem_attenuate(
-        np.array([2., -2., 2., -0.1, -0.1, -0.2]), 
+        np.array([0.5, -0.5, 1.5, -0.2, -0.3, -0.2]), 
         lam, 
         np.ones(len(lam)), 
         logm, 
@@ -277,11 +277,11 @@ def DEM():
     sub.plot(wave, _dem(wave, M_low, logSFR_sf), c='C0',  
             label=r'${\rm SFR} = 10^{0.5}M_\odot/yr, M_* = 10^{10}M_\odot$')
     # high mass SFing galaxies
-    sub.plot(wave, _dem(wave, M_high, logSFR_sf), c='C2',  
-            label=r'${\rm SFR} = 10^{0.5}M_\odot/yr, M_* = 10^{11}M_\odot$')
+    sub.plot(wave, _dem(wave, M_high, 1), c='C2',  
+            label=r'${\rm SFR} = 10^{1}~M_\odot/yr,~M_* = 10^{11}M_\odot$')
     # low mass Quiescent galaxies
-    sub.plot(wave, _dem(wave, M_low, logSFR_q), c='C1',  
-            label=r'${\rm SFR} = 10^{-2}M_\odot/yr, M_* = 10^{10}M_\odot$')
+    #sub.plot(wave, _dem(wave, M_low, logSFR_q), c='C1',  
+    #        label=r'${\rm SFR} = 10^{-2}M_\odot/yr, M_* = 10^{10}M_\odot$')
     # high mass Quiescent galaxies
     sub.plot(wave, _dem(wave, M_high, logSFR_q), c='C3',  
             label=r'${\rm SFR} = 10^{-2}M_\odot/yr, M_* = 10^{11}M_\odot$')
@@ -289,7 +289,7 @@ def DEM():
     sub.plot(wave, dustFM.calzetti_absorption(wave), c='k', 
             ls='--', label='Calzetti+(2001)') 
     sub.set_xlim(1.2e3, 1e4)
-    sub.set_ylim(0., 7.) 
+    sub.set_ylim(0., 5.) 
     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
 
     sub.set_xlabel(r'Wavelength [$\AA$]', labelpad=5, fontsize=20) 
@@ -453,61 +453,45 @@ def slab_model():
     ''' figure comparing the A_V distributions of the slab model to the
     observed SDSS distribution 
     '''
-    from pydl.pydlutils.spheregroup import spherematch
-    # MPA-JHU Av from SED fitting 
-    mpajhu_av, gal_type, mpajhu_ra, mpajhu_dec  = np.loadtxt(os.path.join(dat_dir, 'obs', 'SDSS_Av.txt'),
-            unpack=True, usecols=[1, 2, -2, -1]) 
-    starforming = (gal_type == 1) 
-    mpajhu_av = mpajhu_av[starforming]
-    mpajhu_ra = mpajhu_ra[starforming] 
-    mpajhu_dec = mpajhu_dec[starforming]
+    # read GSWLC data: https://salims.pages.iu.edu/gswlc/#catalog-download
+    # data column details: https://salims.pages.iu.edu/gswlc/table2.pdf
+    fgswlc = os.path.join(os.environ['GALPOPFM_DIR'], 'obs', 'GSWLC-M2.dat')
+    gswlc = np.loadtxt(fgswlc, unpack=True)
 
-    # read in SDSS (Jeremy's catalog) 
-    tinker = Astrologs('tinkergroup', mlim='9.7') 
-    
-    R_mag   = tinker.data['M_r']
-    ra      = tinker.data['ra'] 
-    dec     = tinker.data['dec'] 
+    logms = gswlc[9]
+    logsfr = gswlc[11]
+    logssfr = logsfr-logms
+    Av = gswlc[17]
 
-         
-    Rlim = (R_mag < -20.) & (ra != -999.) & (dec != -999.)
-    ra      = ra[Rlim] 
-    dec     = dec[Rlim] 
+    has_Av = (Av != -99.)
+    mlim = (logms > 10.)
 
-    # match MPAJHU star forming AV to SDSS  
-    match = spherematch(ra, dec, mpajhu_ra, mpajhu_dec, 0.000277778)
-    m_sdss = match[0] 
-    m_mpajhu = match[1] 
-    print('%i matches out of %i, %i SDSS R < -20.' % (len(m_sdss), np.sum(Rlim), np.sum(R_mag < -20.))) 
-
-    logms   = tinker.data['log.M_star'][Rlim]#[m_sdss]
-    logssfr = tinker.data['log.ssfr'][Rlim]#[m_sdss]
+    cuts = has_Av & mlim
 
     #Eq. 14 of Somerville+(1999) 
     # randomly sample cos(inclinatiion) from 0 - 1
-    cos_i = np.random.uniform(0., 1., size=len(logms))
+    cos_i = np.random.uniform(0., 1., size=np.sum(cuts))
     sec_incl = 1./cos_i
 
-    #[-0.14806716 -0.55586142  1.8306104  -0.44204573 -0.56640125  0.0114204 ]
-
-    tauV = np.clip(-0.3 * (logms - 10.) - 0.6 * (logssfr + 10.) + 0.7, 1e-3, None)
+    tauV = np.clip(-0.1 * (logms[cuts] - 10.) - 0.1 * logssfr[cuts] - 0.75, 1e-3, None)
     slab_AV = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
 
     fig = plt.figure(figsize=(10,5))
     sub = fig.add_subplot(111) 
-    _ = sub.hist(mpajhu_av[m_mpajhu], range=(-3., 7), bins=51, density=True, 
-            color='C0', linestyle='-', histtype='stepfilled', label='SDSS')
-    _ = sub.hist(np.array(slab_AV), range=(-3., 7), bins=51, density=True, 
+    _ = sub.hist(Av[cuts], range=(0., 3), bins=51, density=True, 
+            color='C0', linestyle='-', histtype='stepfilled', label='GSWLC2 $M_* > 10^{10}M_\odot$')
+    _ = sub.hist(np.array(slab_AV), range=(0., 3), bins=51, density=True, 
             color='k', linestyle='-', linewidth=2, histtype='step', 
             label=r'slab model')
     sub.legend(loc='upper right', handletextpad=0.3, fontsize=20) 
     sub.set_xlabel(r'$A_V$', fontsize=25) 
     sub.set_ylabel(r'$p(A_V)$', fontsize=25) 
-    sub.set_xlim(-0.2, 5.) 
-    sub.set_ylim(0., 1.) 
+    sub.set_xlim(0., 3.) 
+    sub.set_ylim(0., 4.) 
     
     ffig = os.path.join(fig_dir, 'slab_model.png')
-    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(ffig, bbox_inches='tight') 
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
 
@@ -2030,19 +2014,19 @@ def ABC_Q_attenuation_unnormalized():
             
             if _sfq == 'quiescent': 
                 sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
-                        alpha=0.5, linewidth=0, label=sim) 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=2)
+                        alpha=0.3, linewidth=0, label=sim) 
+                sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=1)
             else: 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', lw=1)
+                sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', lw=2)
 
-    sub.plot([0], [0], c='k', ls='--', lw=1, label='star-forming')
+    sub.plot([0], [0], c='k', ls='--', lw=3, label='star-forming')
     sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
 
     sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=25)
     sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
     sub.set_xlim(1.2e3, 1e4)
     sub.set_ylabel(r'$A(\lambda)$', fontsize=25) 
-    sub.set_ylim(0., 8.) 
+    sub.set_ylim(0., 6.) 
 
     ffig = os.path.join(fig_dir, 'abc_q_atten_unnorm.png') 
     #fig.savefig(ffig, bbox_inches='tight') 
@@ -3996,7 +3980,7 @@ if __name__=="__main__":
 
     #SMF_MsSFR()
 
-    #DEM()
+    DEM()
 
     #Observables()
 
@@ -4014,7 +3998,7 @@ if __name__=="__main__":
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
-    ABC_A_MsSFR()
+    #ABC_A_MsSFR()
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
@@ -4052,7 +4036,7 @@ if __name__=="__main__":
     # tnorm Av model  
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
-    #slab_model()
+    slab_model()
     #slab_tnorm_comparison()
     
     #_observables_sfr0()
