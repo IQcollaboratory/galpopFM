@@ -4,8 +4,8 @@
     framework and present one particular \eda~prescription. The \eda~is a
     flexible framework for applying dust attenuation curves to simulated galaxy
     populations. For each simulated galaxy, the \eda~assigns a dust attenuation
-    curve assigned that is parameterized as a function of the galaxy's
-    properties (\eg~$M_*$, ${\rm SSFR}$), the \eda~parameters, and randomly
+    curve that is parameterized as a function of the galaxy's properties 
+    ($M_*$, ${\rm SSFR}$), the \eda~parameters, and randomly
     sampled inclincation. With the \eda, we can apply a wide variety of dust
     attenuation that include correlation between dust attenuation and physical
     galaxy properties. 
@@ -35,8 +35,11 @@ determines the wavelength dependence.
     A_V = -2.5 \log \left[ \frac{1 - e^{-\tau_V\,\sec i}}{\tau_V\,\sec i} \right].
 \end{equation}
 \chedit{
-    To include correlation between $A_V$ and the galaxy's properties ($M_*$ and
-    $\ssfr$), we parameterize $\tau_V$ using a linear $M_*$ and $\ssfr$ dependence:
+    Since observations have established that $A_V$ correlates with galaxy
+    properties~\citep[\eg~][]{garn2010, battisti2016, salim2020}, 
+    we include correlations between $A_V$ and galaxy $M_*$ and $\ssfr$ through
+    $\tau_V$ (see Appendix~\ref{sec:slab} for details). 
+    We parameterize $\tau_V$ using a linear $M_*$ and $\ssfr$ dependence:
 }
 \begin{equation} \label{eq:tauv}
     \tau_V(M_*, \sfr) = \mtaum \log \left(\frac{M_*}{10^{10} M_\odot}\right) +
@@ -98,7 +101,7 @@ Here $k_{\rm Cal}(\lambda)$ is the \cite{calzetti2001} curve:
 \]
 where $\lambda_V = 5500 A$ is the $V$ band wavelength and $\delta$ is the slope
 offset of the attenuation curve from $k_{\rm Cal}$. Since $\delta$ correlates 
-with galaxy properties~\citep[\eg][]{leja2017, salim2018},
+with galaxy properties~\citep[\eg][; see also Appendix~\ref{sec:slab}]{wild2011, battisti2016, leja2017, salim2018},
 we parameterize $\delta$ with a similar $M_*$ and $\ssfr$ dependence as
 $\tau_V$:  
 \begin{align} \label{eq:delta}
@@ -125,7 +128,7 @@ that $E_b$ correlates with the $\delta$ for star-forming galaxies $z\sim2$.
 \cite{narayanan2018} confirmed this dependence in simulations. 
 \chedit{
     For our \eda~prescription, we include the UV dust bump since we use UV
-    colors as one of our observables.
+    color as one of our observables.
 }
 However, we assume a fixed relation between $E_B$ and $\delta$ from
 \cite{kriek2013}: $E_b = -1.9~\delta + 0.85$. Allowing the slope and amplitude
@@ -134,8 +137,6 @@ however, we do not derive any meaningful constraints on them either. In
 Table~\ref{tab:free_param}, we list and describe all of the free parameters in
 the \eda. 
 
-% motivation for the M* and SSFR dependence 
-\todo{@tks: motivation for $M_*$ and $\ssfr$ dependence}
 %In $\tau_V$ we include the correlation between $A_V$ and the galaxy's properties , found in both observations and simulations~\citep[\eg][]{narayanan2018, salim2020}. 
 
 
