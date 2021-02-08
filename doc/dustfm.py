@@ -453,6 +453,47 @@ def slab_model():
     ''' figure comparing the A_V distributions of the slab model to the
     observed SDSS distribution 
     '''
+    from pydl.pydlutils.spheregroup import spherematch
+    # MPA-JHU Av from SED fitting 
+    mpajhu_av, gal_type, mpajhu_ra, mpajhu_dec  = np.loadtxt(os.path.join(dat_dir, 'obs', 'SDSS_Av.txt'),
+            unpack=True, usecols=[1, 2, -2, -1]) 
+    starforming = (gal_type == 1) 
+    mpajhu_av = mpajhu_av[starforming]
+    mpajhu_ra = mpajhu_ra[starforming] 
+    mpajhu_dec = mpajhu_dec[starforming]
+
+    # read in SDSS (Jeremy's catalog) 
+    tinker = Astrologs('tinkergroup', mlim='9.7') 
+    
+    R_mag   = tinker.data['M_r']
+    ra      = tinker.data['ra'] 
+    dec     = tinker.data['dec'] 
+
+         
+    Rlim = (R_mag < -20.) & (ra != -999.) & (dec != -999.)
+    ra      = ra[Rlim] 
+    dec     = dec[Rlim] 
+
+    # match MPAJHU star forming AV to SDSS  
+    match = spherematch(ra, dec, mpajhu_ra, mpajhu_dec, 0.000277778)
+    m_sdss = match[0] 
+    m_mpajhu = match[1] 
+    print('%i matches out of %i, %i SDSS R < -20.' % (len(m_sdss), np.sum(Rlim), np.sum(R_mag < -20.))) 
+
+    logms   = tinker.data['log.M_star'][Rlim]#[m_sdss]
+    logssfr = tinker.data['log.ssfr'][Rlim]#[m_sdss]
+
+    #Eq. 14 of Somerville+(1999)
+    # randomly sample cos(inclinatiion) from 0 - 1
+    cos_i = np.random.uniform(0., 1., size=len(logms))
+    sec_incl = 1./cos_i
+
+    #[-0.14806716 -0.55586142  1.8306104  -0.44204573 -0.56640125  0.0114204 ]
+
+    tauV = np.clip(-0.3 * (logms - 10.) - 0.6 * (logssfr + 10.) + 0.7, 1e-3, None)
+    slab_AV_sdss = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl))
+
+
     # read GSWLC data: https://salims.pages.iu.edu/gswlc/#catalog-download
     # data column details: https://salims.pages.iu.edu/gswlc/table2.pdf
     fgswlc = os.path.join(os.environ['GALPOPFM_DIR'], 'obs', 'GSWLC-M2.dat')
@@ -473,21 +514,30 @@ def slab_model():
     cos_i = np.random.uniform(0., 1., size=np.sum(cuts))
     sec_incl = 1./cos_i
 
-    tauV = np.clip(-0.1 * (logms[cuts] - 10.) - 0.1 * logssfr[cuts] - 0.75, 1e-3, None)
+    #tauV = np.clip(-0.15 * (logms[cuts] - 10.) - 0.09 * logssfr[cuts] - 0.75, 1e-3, None)
+    tauV = np.clip(-0.15 * (logms[cuts] - 10.) - 0.09 * logssfr[cuts] - 0.6, 1e-3, None)
     slab_AV = -2.5 * np.log10((1.0 - np.exp(-tauV * sec_incl)) / (tauV * sec_incl)) 
 
     fig = plt.figure(figsize=(10,5))
     sub = fig.add_subplot(111) 
-    _ = sub.hist(Av[cuts], range=(0., 3), bins=51, density=True, 
-            color='C0', linestyle='-', histtype='stepfilled', label='GSWLC2 $M_* > 10^{10}M_\odot$')
-    _ = sub.hist(np.array(slab_AV), range=(0., 3), bins=51, density=True, 
-            color='k', linestyle='-', linewidth=2, histtype='step', 
-            label=r'slab model')
+    _ = sub.hist(mpajhu_av[m_mpajhu], range=(0., 5), bins=51, density=True,
+            color='C0', linestyle='-', histtype='stepfilled', alpha=0.5, 
+            label='SDSS star-forming')
+    _ = sub.hist(np.array(slab_AV_sdss), range=(0., 5), bins=51, density=True, 
+            color='k', linestyle='--', linewidth=2, histtype='step')
+    _ = sub.hist(Av[cuts], range=(0., 5), bins=51, density=True, 
+            color='C1', linestyle='-', histtype='stepfilled', alpha=0.5, 
+            label='GSWLC2 $M_* > 10^{10}M_\odot$')
+    _ = sub.hist(np.array(slab_AV), range=(0., 5), bins=51, density=True, 
+            color='k', linestyle='--', linewidth=2, histtype='step') 
+    sub.plot([0], [0], color='k', linestyle='--', label=r'slab model')
+
     sub.legend(loc='upper right', handletextpad=0.3, fontsize=20) 
     sub.set_xlabel(r'$A_V$', fontsize=25) 
     sub.set_ylabel(r'$p(A_V)$', fontsize=25) 
-    sub.set_xlim(0., 3.) 
+    sub.set_xlim(0., 4.) 
     sub.set_ylim(0., 4.) 
+    sub.set_yticks([0., 1., 2., 3., 4])
     
     ffig = os.path.join(fig_dir, 'slab_model.png')
     #fig.savefig(ffig, bbox_inches='tight') 
@@ -3980,7 +4030,7 @@ if __name__=="__main__":
 
     #SMF_MsSFR()
 
-    DEM()
+    #DEM()
 
     #Observables()
 
