@@ -6,12 +6,12 @@
     relation (right panels) of galaxies in three cosmological hydrodynamic 
     simulations: SIMBA (orange), TNG (blue), and EAGLE (green). 
     For reference, we include $\Phi_{M_*}$ (black) and the $M_*-\sfr$ relation 
-    (black dashed) of our observational sample from SDSS. Uncertainties for the 
+    (black dashed) of from SDSS observations. Uncertainties for the 
     SDSS $\Phi_{M_*}$ are derived using jackknife resampling. We describe the
-    simulations and observations above in Section~\ref{sec:sims}. \emph{Differences
+    simulations and observations in Section~\ref{sec:sims}. \emph{Differences
     in $\Phi_{M_*}$ and the $M_*-\sfr$ relations among the hydrodynamic simulations 
     highlight how they predict galaxy populations with significantly different
-    the physical properties.} 
+    physical properties.} 
     }
 \end{center}
 \end{figure}
@@ -29,8 +29,8 @@ In Figure~\ref{fig:smf_msfr}, we present the stellar mass functions,
 $\Phi_{M_*}$ left-most panel, and $M_*-\sfr$ relations (right panels) of
 galaxies in the  SIMBA (orange), TNG (blue), and EAGLE (green) cosmological
 hydrodynamic simulations.  For reference, we include $\Phi_{M_*}$ and the 
-$M_*-\sfr$ relation for our observational SDSS galaxy sample. For the
-simulations, $M_*$ is the total stellar mass within the host halo, excluding
+$M_*-\sfr$ relation for SDSS observations. For the simulations, $M_*$ is the
+total stellar mass within the host halo, excluding
 any stellar mass in subhalos; $\sfr$ is the instantaneous $\sfr$ derived from
 dense and cold gas. 
 \chedit{
@@ -42,7 +42,7 @@ assuming a~\cite{chabrier2003} initial mass function and $\sfr$ is from the
 current release of \cite{brinchmann2004}\footnote{\url{http://www.mpa-garching.mpg.de/SDSS/DR7/}}.
 The uncertainties for the SDSS SMF are derived from jackknife resampling.
 Figure~\ref{fig:smf_msfr} illustrates that the hydrodynamical simulations
-predict significantly different SMFs and $M_*-\sfr$ relations.
+predict significantly different SMFs and $M_*-\sfr$ relations from each other.
 \chedit{
     This difference, which was also recently highlighted in \cite{hahn2019c},
     demonstrates that \emph{the hydrodynamical simulations predict galaxy
@@ -51,15 +51,15 @@ predict significantly different SMFs and $M_*-\sfr$ relations.
 }
 
 \subsection{IllustrisTNG100} \label{sec:tng}
-The IllustrisTNG100, hereafter TNG, simulation\footnote{\url{https://www.tng-project.org/}}
+The IllustrisTNG100 simulation\footnote{\url{https://www.tng-project.org/}}
 is a cosmological hydrodynamic simulation of comoving volume 
 $(110.7\,\mpc)^3$, with a particle mass resolution of $7.6 \times 10^{6}\ M_\odot$ for dark matter and $1.4 \times 10^{6}\ M_\odot$ for baryonic particles~\citep{nelson2018, pillepich2018, springel2018}. It improves on
 the original Illustris simulation\footnote{\url{http://www.illustris-project.org}}~(\citealt{vogelsberger2014, genel2014};
 public data release by~\citealt{nelson2015}), by including
 magneto-hydrodynamics and updated treatments for galactic winds, metal
 enrichment, and AGN feedback. Most notably, TNG uses a new implementation for
-feedback from SMBH~\citep{weinberger2018}, where feedback energy is injected in
-the form of a kinetic AGN-driven wind at low SMBH accretion rates. This new
+feedback from SMBH, where feedback energy is injected in the form of a kinetic
+AGN-driven wind at low SMBH accretion rates~\citep{weinberger2018}. This new
 implementation has been shown to alleviate discrepancies found between the
 original Illustris and observations for $> 10^{13-14} M_\odot$ massive halos. 
 %TNG has a baryonic mass resolution of $1.4\times10^6M_{\sun}$ \ch{temporal resolution?}\tks{why would you need to know temporal resolution? for the SFH?}.
@@ -92,8 +92,7 @@ code~\citep{hopkins2015, hopkins2017}. Of the simulations, we use
 mass resolution of $1.82 \times 10^7\ M_\odot$. The simulation uses the same
 subgrid models as {\sc Mufasa} for $\rm H_2$ based star formation, decoupled
 two-phase winds for star formation driven galactic winds, and feedback from 
-Type I supernovae and AGB stars. Meanwhile, it uses updated models for AGN
-feedback and on-the-fly dust model. {\sc Simba} uses a two-mode SMBH accretion 
+Type I supernovae and AGB stars. {\sc Simba} uses a two-mode SMBH accretion 
 model, torque-limited accretion for cold gas~\citep{angles-alcazar2017} and 
 Bondi-based accretion for hot gas, and two-mode AGN feedback. %which ejects bipolar kinetic winds with $\sim 10^3 \kms$ for high SMBH accretion rate, and launches winds with increased velocity of $\sim 8000 \kms$ for low SMBH accretion of Eddington ratio below 2 \%.
 %\todo{details on the following properties that we use in the paper: SFH, ZH}
@@ -124,14 +123,16 @@ One of the main goals of this work is to conduct an ``apples-to-apples''
 comparison between the simulations and observations. 
 \chedit{
     A crucial step in this comparison is to \emph{forward model} the
-    observables for the simulations. We use $r$-band luminosity ($M_r$),
-    optical color ($\gr$), and UV color ($\fnuv$) as our observables in this
-    work. Using a forward model, the simulations can be directly compared to
-    observations in observational-space (\eg~color-magnitude relation). This
-    means that the comparison does not rely on measured galaxy properties,
+    observables for the simulations. 
+    The simulations can then be directly compared to observations in
+    observational-space. 
+    This means that the comparison does not rely on measured galaxy properties,
     which are impacted by variations, inconsistencies, and biases of different
-    methods. The comparison can also include selection functions and systematic
+    methods. 
+    The comparison can also include selection functions and systematic
     effects of the observations through the forward model. 
+    In this work, we use $r$-band luminosity ($M_r$), optical color ($\gr$),
+    and UV color ($\fnuv$) as our observables. 
 }
 
 As the first step in our forward model, we construct SEDs for all
@@ -148,23 +149,22 @@ produce the galaxy SED. We use a
 construct the SEDs, we refer readers to Starkenberg et al. (in prep.).
 
 \chedit{
-    Next, we apply dust attenuation to the SEDs. We use a \eda~model to assign
-    dust attenuation curves for each simulated galaxy based on its physical
+    Next, we apply dust attenuation to the SEDs. We use the \eda~prescription
+    to assign dust attenuation curves for each simulated galaxy based on its physical
     properties, a randomly sampled inclination, and \eda~model parameters. We
     describe the \eda~framework in detail later in Section~\ref{sec:dem}. We
     measure the observables by convolving the attenuated SEDs with transmission
     curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$ broadband
     filters. We add realistic noise to $M_r$, $\gr$, and $\fnuv$ by sampling
-    from the observed uncertainty distributions of the NASA Sloan-Atlas (see
-    Appendix~\ref{sec:unc} for further details). Lastly, we apply the 
-    $M_r < -20$ absolute magnitude completeness limit of our SDSS sample to the
-    simulated galaxies. 
+    from the observed uncertainty distributions of the NASA Sloan-Atlas.
+    Lastly, we apply the $M_r < -20$ absolute magnitude completeness limit of
+    our SDSS sample to the simulated galaxies. 
 }
 
 \chedit{
     In Figure~\ref{fig:obs}, we present the forward modeled optical and UV
     color-magnitude relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom),
-    for simulated galaxies of SIMBA (left), TNG (center) and EAGLE (right)
+    for simulated galaxies in SIMBA (left), TNG (center) and EAGLE (right)
     \emph{assuming no dust attenuation}. We mark the 68 and 95\% contours and
     include, for reference, the optical and UV color-magnitude relations of our
     SDSS sample (black dashed). 
@@ -186,7 +186,7 @@ reproduce the observed optical or UV color-magnitude relations.}
         and $\fnuv$ for the simulations using our forward model
         (Section~\ref{sec:fm}). For comparison, we include the color-magnitude
         relations of our SDSS sample (black dashed; Section~\ref{sec:obs}). 
-        {\em Without dust attenuation, the hydrodynamical simulations do  
+        {\em Without dust attenuation, the hydrodynamical simulations do not
         reproduce the SDSS optical or UV color-magnitude relations.}
     }
     }

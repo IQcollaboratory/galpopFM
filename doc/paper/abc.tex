@@ -1,7 +1,7 @@
 \section{Simulation-Based Inference: Approximate Bayesian Computation} \label{sec:abc}
 \chedit{
-    With our forward model, which includes a \eda~prescription for applying 
-    dust attenuation, we can now generate synthetic observations for simulated
+    With our forward model, which includes the \eda~prescription for dust
+    attenuation, we can now generate synthetic observations for simulated
     galaxies and make an ``apples-to-apples'' comparison to SDSS. Next, we want
     to use this comparison to infer the posterior probability distribution of
     the \eda~parameters. Typically in astronomy, this inference is done
@@ -10,7 +10,7 @@
     Chain Monte Carlo) to estimate the posterior distribution. The functional form of the
     likelihood, however, depends on the summary statistic and assuming an
     incorrect form of the likelihood can significantly bias the inferred
-    posterior~\citep[\eg][]{hahn2019}. In this work, we use the optical and UV
+    posteriors~\citep[\eg][]{hahn2019}. In this work, we use the optical and UV
     color-magnitude relations as our summary statistic. Since the statistic is
     three-dimensional histogram, its likelihood is {\em not} Gaussian but
     rather a Poisson distribution.
@@ -46,7 +46,7 @@ from the prior. The forward model is run with the proposal parameter values.
 }
 If the distance is within some small threshold, we keep the proposed
 parameters; otherwise, we discard them.  Proposals are
-drawn until enough of them pass the threshold to sample the posterior. A
+drawn until enough pass the threshold to sample the posterior. A
 rejection sampling framework requires a large number of evaluations of the
 forward model, which
 can be computationally costly. Many variations of ABC with more efficient
@@ -57,11 +57,11 @@ importance sampling~\citep{hahn2017a, hahn2017b, hahn2019a}.
 
 ABC-PMC begins with an arbitrarily large threshold $\epsilon_1$ and $N$ proposals 
 $\bar{\theta}_1$ sampled from the prior distribution. Each proposal is
-assigned a weight $w^i_1 = 1/N$. Then for subsequent iterations ($i > 1$), the 
-threshold, $\epsilon_i$, is set to the median distance of the previous iteration's
+assigned a weight $w^i_1 = 1/N$. Then for subsequent iterations ($n > 1$), the 
+threshold, $\epsilon_n$, is set to the median distance of the previous iteration's
 proposals. New proposals are drawn from the previous iteration's proposals perturbed 
-by a kernel and kept if their distance is blelow $\epsilon_i$. This is repeated
-until we assemble a new set of $N$ proposals $\bar{\theta}_i$. The entire
+by a kernel and kept if their distance is blelow $\epsilon_n$. This is repeated
+until we assemble a new set of $N$ proposals $\bar{\theta}_n$. The entire
 process is repeated for the next iteration until convergence is confirmed. 
 We use the Python implementation of
 \cite{akeret2015}\footnote{https://abcpmc.readthedocs.io/en/latest/index.html}.
@@ -98,10 +98,10 @@ $\mdeltam, \mdeltas, c_\delta$ are chosen to conservatively include the $\delta$
 range and $M_*$ and $\sfr$ dependence of \cite{leja2017} and \cite{salim2018}. 
 We list the range of the priors in Table~\ref{tab:free_param}. 
 \chedit{
-    For our forward model, we use the model described described in
+    For our forward model, we use the model described in
     Section~\ref{sec:fm}: we construct SEDs for every simulated galaxies from
     the hydrodynamic simulations, apply dust attenuation with our
-    \eda~prescription, calculate the observables ($M_r$, $\gr$, and $\fnuv$),
+    \eda, calculate the observables ($M_r$, $\gr$, and $\fnuv$),
     add uncertainties to them, and apply a $M_r < -20$ completeness 
     limit. 
     We use the optical and UV color-magnitude relation, $(\gr)- M_r$ and
@@ -110,8 +110,8 @@ We list the range of the priors in Table~\ref{tab:free_param}.
     calculating the number density in bins of $(\gr, \fnuv, M_r)$ with widths
     $(0.0625, 0.25, 0.5)$ mags. For our distance metric, $\rho$, we use the L2
     norm between the summary statistics of 
-    the SDSS observation, $X^{\rm SDSS}$ and our forward model as a function of
-    the \eda~parameters, $X^{\rm FM}(\theta_{\rm \eda})$: 
+    the SDSS observation, $X^{\rm SDSS}$ and of our forward model, $X^{\rm
+    FM}(\theta_{\rm \eda})$: 
 }
 \begin{equation} \label{eq:distance}
     \rho(\theta_{\rm \eda}) = \left[X^{\rm SDSS} - X^{\rm FM}(\theta_{\rm

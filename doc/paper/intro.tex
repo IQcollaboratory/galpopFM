@@ -9,14 +9,14 @@
     In the UV, attenuation curves steeply rise due to absorptions by small grains.
     At $2175\AA$, in the near-UV (NUV), there is an absorption bump referred to as
     the ``UV dust bump''. 
-    At longer wavelengths, the curves take on a power-law shape. 
+    At longer optical wavelengths, the curves take on a power-law shape. 
     Finally, dust reemits the attenuated light in the optical and UV in the
     infrared~\citep[for an overview see][]{calzetti2001, draine2003,
     galliano2018}.
     By impacting the SED, dust also affects the physical properties that are
     inferred from the SED, such as star formation rate ($\sfr$), stellar
     mass ($M_*$), or stellar ages~\citep[see reviews by][]{walcher2011, conroy2013}. 
-    Assumptions on dust attenuation can dramatically vary the derived physical
+    Assumptions on dust attenuation can dramatically vary these
     properties~\citep{kriek2013, reddy2015, salim2016, salim2020}.
 }
 Since these properties are the building blocks to our understanding of
@@ -42,7 +42,7 @@ insights into dust, but also underpins all galaxy studies.
 Also, studies so far have focused solely on star-forming galaxies and little is known
 about dust attenuation in quiescent galaxies. 
 \ch{
-    Furthermore, galaxy properties, including dust attenuation, measured from
+    Furthermore, galaxy properties and dust attenuation measured from
     galaxy SEDs are subject to variations, inconsistencies, and biases of
     different methodologies, which can be significant even for the same
     observations~\citep[\eg][]{speagle2014, katsianis2020}.
@@ -55,8 +55,8 @@ about dust attenuation in quiescent galaxies.
     Significant progress has also been made in theoretically modeling dust. 
     Simulations can now model the radiative transfer of stellar light
     through a dusty ISM for a wide range of configurations:
-    from simple slab-like dust geometries illuminated
-    by stellar radiation~\citep[\eg][]{witt1996, witt2000, seon2016} to 
+    from simple slab-like dust geometries~\citep[\eg][]{witt1996, witt2000,
+    seon2016} to 
     3D hydrodynamic simulations of entire galaxies~\citep[\eg][]{jonsson2006,
     rocha2008, hayward2015, natale2015, hou2017}. 
     Radiative transfer models have even been applied to cosmological
@@ -69,7 +69,7 @@ about dust attenuation in quiescent galaxies.
     Dust models in cosmological simulations currently do not reproduce the
     redshift evolution of dust properties~\citep{somerville2012, yung2019,
     vogelsberger2020}. 
-    Radiative transfer models produce attenuation-slope relations that are
+    Also, radiative transfer models produce attenuation-slope relations that are
     significantly steeper than observations. 
 }
 Many models also require significant hand-tuning (\eg~propagating rays/photons into
@@ -91,13 +91,12 @@ particular cells) and make assumptions on the underlying dust grain models~\cite
     %We take three major large-scale hydrodynamical simulations (EAGLE, IllustrisTNG, and SIMBA) and use their outputs (\eg~star formation history) to build SEDs for the simulated galaxies. 
     We then apply dust attenuation to all the SEDs using an Empirical Dust
     Attenuation framework, which we describe shortly.
-    Finally, we construct synthetic photometric observations from the
-    attenuated SEDs by applying a realistic noise model and survey selection
-    function. 
+    Finally, we apply a realistic noise model and survey selection function on
+    the attenudated SEDs and construct synthetic photometric observations. 
     Afterwards, we compare the synthetic observations from the forward model to
     actual observations. 
     The comparisons are made in observational space, so they are not impacted
-    by the inconsistencies of observational methods for measuring galaxy
+    by the inconsistencies of observational methods in measuring galaxy
     properties.
     Furthermore, since the forward models can directly include the selection
     functions and observational systematic effects, forward modeling makes it
@@ -112,16 +111,19 @@ particular cells) and make assumptions on the underlying dust grain models~\cite
     The \eda~first assigns attenuation curves to every simulated galaxy. 
     In this work, we use the \cite{noll2009} parameterization for the
     attenuation curves and determine the amplitude and slope of the curves from
-    the simulated galaxy's stellar mass ($M_*$) and specific star formation
+    the simulated galaxy's $M_*$ and specific star formation
     rate ($\ssfr$) as well as a randomly sampled inclination ($i$). 
     We use the same parameterization as observational studies so that the
     \eda~attenuation curves can easily be compared to observational constraints. 
     Also, the $M_*$ and $\ssfr$ dependence is motivated by
     observations~\citep[\eg~][]{garn2010, wild2011, battisti2016, leja2017,
-    salim2018, salim2020}.
+    salim2018, salim2020} and allows us to easily explore the correlation
+    between galaxy properties and dust attenuation.
     After the assignment, we simply apply the attenuation curves to the SEDs of
     the simulated galaxies.
-    The \eda, as we later demonstrate, can produce realistic distributions of
+    The \eda, unlike radiative transfer models, does not produce realistic dust
+    attenuation for individual galaxies. 
+    However, as we later demonstrate, it produces realistic distributions of
     dust attenuation for galaxy populations. 
     Unlike radiative transfer models, however, the \eda~does not produce
     realistic dust attenuation for individual galaxies.  
@@ -131,8 +133,8 @@ particular cells) and make assumptions on the underlying dust grain models~\cite
 }
 
 \ch{
-    In principle, a radiative transfer model can be used instead of the \eda;
-    however, radiative transfer models are computationally expensive.  
+    In principle, a radiative transfer model can be used instead of the \eda in
+    the forward modeling approach; however, radiative transfer models are computationally expensive.  
     Applying a range of radiative transfer dust models to multiple simulations
     for comparisons would require huge computational resources.
     Using them with Monte Carlo methods for parameter exploration would be
@@ -152,9 +154,9 @@ particular cells) and make assumptions on the underlying dust grain models~\cite
 }
 
 \ch{
-    In Section~\ref{sec:sims}, we describe the three state-of-the-art
-    cosmological large-scale hydrodynamical simulations (SIMBA, IllustrisTNG,
-    and EAGLE) that we use in our forward model.
+    In Section~\ref{sec:sims}, we describe the three large-scale cosmological
+    hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE) that we use in
+    our forward model.
     We also describe the observed SDSS galaxy sample used for the comparison. 
     Next, we present the specific \eda~prescription used in this work in
     Section~\ref{sec:dem} and the simulation-based inference method for
