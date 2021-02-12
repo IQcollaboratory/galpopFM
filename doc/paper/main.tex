@@ -65,7 +65,7 @@
 \newcommand{\mdeltam}{m_{\delta,M_*}}
 \newcommand{\mdeltas}{m_{\delta,{\rm SFR}}}
 \newcommand{\cdelta}{c_\delta}
-\newcommand{\eda}{EDA}
+\newcommand{\eda}{FADE}
 
 
 \newcommand{\specialcell}[2][c]{%
@@ -107,37 +107,49 @@
 \author{IQ Collaboratory}
 
 \begin{abstract}
-    We present the Empirical Dust Attenuation (\eda) framework for applying
-    dust attenuation to galaxy formation models.
-    \ch{
-        The \eda~provides a flexible prescription for assigning realistic dust
-        attenuation to simulated galaxies based on their physical properties
-        ($M_*$, $\ssfr$) and the \cite{noll2009} attenuation curve. 
+    We present the Framework for Attenuation by Dust Empirically (\eda) for applying
+    dust attenuation 
+    \tksedit{
+         to galaxies from theoretical models. 
+        \eda~provides a flexible prescription for assigning realistic dust
+        attenuation to simulated galaxies related to their physical properties
+        ($M_*$, $\ssfr$) and using the \cite{noll2009} attenuation curve
+        parameterization. 
     }
-    We apply the \eda~separately to three state-of-the-art cosmological
-    hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE) and forward
-    model their optical and UV
-    color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$. 
-    We then compare the simulations to a $M_r < -20$ complete SDSS galaxy sample
-    using likelihood-free inference. 
     \ch{
-        We find that dust attenuation is necessary for any of the simulations
-        to match the observations. 
+        Using the \eda, we forward model synthetic observations for a $M_r <
+        -20$ complete galaxy sample for three state-of-the-art large-scale 
+        cosmological hydrodynamical simulations: SIMBA, IllustrisTNG, and
+        EAGLE.
+        We then compare the optical and UV color-magnitude relations, $(\gr) -
+        M_r$ and $(\fnuv)-M_r$, for the forward modeled simulations to SDSS
+        observations using likelihood-free inference. 
     }
-    With the \eda, we accurately reproduce the color-magnitude relations of the
+    \tksedit{
+        As expected, for all three of the simulations dust attenuation is
+        necessary to match the observations.
+    }
+    %With \eda, we infer the dust attenuation curves as a function of galaxy properties so that the synthetic galaxy surveys best match the observed sample.
+    We find that we can accurately reproduce the color-magnitude relations of the
     observational sample for TNG and EAGLE. 
     For SIMBA, we struggle to reproduce observations due to an overprediction
-    of starburst galaxies. 
-    \ch{ 
-        Examining the attenuation curves predicted by the \eda~for TNG and
-        EAGLE, we find good agreement with the observed attenuation--slope
-        relations and attenuation curve of star-forming galaxies.
+    \tksedit{
+        of low-mass galaxies with high star-formation rates.
+        }
+    \ch{
+        Examining the attenuation curves predicted by \eda~for TNG and EAGLE,
+        we find good agreement with observed attenuation--slope relations and
+        attenuation curves of star-forming galaxies.
     }
-    Beyond reproducing observations,
-    the \eda~also sheds light on dust attenuation in quiescent galaxies, which
-    is challenging to measure observationally. We find that quiescent galaxies 
-    have significant UV and optical attenuation but with much shallower
-    slopes than star-forming galaxies. 
+    \tksedit{
+        Additionally, \eda~provides unprecedented predictions for the
+        attenuation curves of quiescent galaxies, which are challenging to
+        measure observationally. 
+    }
+    \ch{
+        To match observations, simulated quiescent galaxies require significant
+        UV and optical attenuation but with much shallower slopes than star-forming galaxies. 
+    }
     \ch{ 
         Overall, we find that more massive galaxies in the simulations require
         higher dust attenuation, 
@@ -145,7 +157,39 @@
     while galaxies with higher specific star formation rates have steeper 
     attenuation curves.
     In addition to improving our understanding of dust in galaxies, our results
-    underscore the advantages of the \eda~and the forward modeling approach. 
+    underscore the advantages of \eda~and the forward modeling approach. 
+    %We apply \eda~separately to three state-of-the-art cosmological
+    %hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE), forward
+    %model their optical and UV
+    %color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$. 
+    %We then compare the simulations to a $M_r < -20$ complete SDSS galaxy sample
+    %using simulation-based inference. 
+    %\ch{
+     %   We find that dust attenuation is necessary for any of the simulations
+     %   to match the observations. 
+    %}
+    %With the \eda, we accurately reproduce the color-magnitude relations of the
+    %observational sample for TNG and EAGLE. 
+    %For SIMBA, we struggle to reproduce observations due to an overprediction
+    %of starburst galaxies. 
+    %\ch{ 
+     %   Examining the attenuation curves predicted by the \eda~for TNG and
+     %   EAGLE, we find good agreement with the observed attenuation--slope
+     %   relations and attenuation curve of star-forming galaxies.
+    %}
+   % Beyond reproducing observations,
+    %the \eda~also sheds light on dust attenuation in quiescent galaxies, which
+    %is challenging to measure observationally. We find that quiescent galaxies 
+    %have significant UV and optical attenuation but with much shallower
+    %slopes than star-forming galaxies. 
+    %\ch{ 
+    %    Overall, we find that more massive galaxies in the simulations require
+    %    higher dust attenuation, 
+  %  }
+  %  while galaxies with higher specific star formation rates have steeper 
+ %   attenuation curves.
+ %   In addition to improving our understanding of dust in galaxies, our results
+%    underscore the advantages of the \eda~and the forward modeling approach. 
 \end{abstract}
 
 \keywords{
