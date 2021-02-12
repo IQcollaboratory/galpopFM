@@ -1,4 +1,4 @@
-\section{Simulation-Based Inference: Approximate Bayesian Computation} \label{sec:abc}
+\section{Likelihood-Free Inference: Approximate Bayesian Computation} \label{sec:abc}
 \chedit{
     With our forward model, which includes the \eda~prescription for dust
     attenuation, we can now generate synthetic observations for simulated
@@ -23,7 +23,7 @@
     ABC;][]{diggle1984, tavare1997, pritchard1999, beaumont2009, delmoral2012}
     for our inference. 
 }
-ABC is a simulation-based (or ``likelihood-free'') parameter inference
+ABC is a likelihood-free (or ``simulation-based'') parameter inference
 framework that approximates the posterior probability distribution, $p(\theta\given{\rm data})$, without
 requiring evaluations of the likelihood.  Instead, ABC only requires a forward
 model of the observed data, a prior that can be sampled, and a distance metric
@@ -75,7 +75,7 @@ and \cite{hahn2019a}.
     Posterior distributions of the \eda~parameters for the SIMBA (orange), TNG
     (blue), and EAGLE (green) hydrodynamical simulations. The contours mark the $68$
     and $95$ percentiles of the distributions. The posteriors are derived using the
-    simulation-based inference method: Approximate Bayesian Computation with
+    likelihood-free inference method: Approximate Bayesian Computation with
     Population Monte Carlo (Section~\ref{sec:abc}). We focus on the
     \eda~posteriors for TNG and EAGLE since the \eda~struggles to reproduce
     SDSS observations with SIMBA, which predicts an overabundance of starburst
