@@ -1,9 +1,9 @@
 \section{Summary}
 In this work, we present the \eda, a framework for statistically applying dust
 attenuation to simulated galaxy populations. It uses a parameterization of 
-the attenuation curves motivated from observations~\citep{noll2009} and a
-flexible method for sampling the attenuation curve parameters that includes
-correlations with galaxy properties ($M_*$ and SSFR). We apply the \eda~to 
+the attenuation curves motivated from observations~\citep{noll2009} and
+assigns attenuation curves to simulated galaxies based on their physical properties ($M_*$ and SSFR).
+We apply the \eda~to 
 three state-of-the-art hydrodynamical simulations (SIMBA, TNG, and EAGLE) and
 forward model the optical and UV color-magnitude relations. We then compare
 the forward modeled simulations to a $M_r < -20$ complete SDSS galaxy sample  
@@ -16,21 +16,21 @@ following results:
         to reproduce the observed UV and optical color-magnitude relation. 
     \item With the \eda, the TNG and EAGLE simulations are able to produce UV and
         optical color-magnitude relations in good agreement with SDSS observations. 
-        SIMBA, however, overpredicts a substantial starburst galaxy population
-        and in order to reproduce observations, these galaxies require
+        SIMBA, however, overpredicts a substantial population of low mass high
+        SFR galaxies. In order for SIMBA to reproduce SDSS, these galaxies require
         both high attenuation and reddening, which goes against the observed 
         attenuation-slope relation. 
     \item The attenuation curves predicted by the \eda~for TNG and EAGLE are in
         excellent agreement with the observed attenuation-slope
         relation. They also closely reproduce the observed attenuation curves
         of star-forming galaxies. The success of the \eda~in reproducing these
-        observations, which were not included in the comparison, highlights the 
-        advantages of a forward modeling approach. 
+        observations, which were not included in the comparison, demonstrates
+        the robustness of the \eda~framework. 
     \item Lastly, the \eda~sheds light on dust attenuation in quiescent
         galaxies, which remains poorly understood due to observations
         challenges. 
         \ch{ 
-            We find that simulated quiescent galaixes require significant 
+            Simulated quiescent galaixes require significant 
             UV and optical attenuation with shallow attenuation curves. 
         } 
         For all galaxies, we find that more massive galaxies have higher overall dust
@@ -40,8 +40,9 @@ following results:
 
 Our results clearly demonstrate that the \eda~and a forward modeling approach
 provides key insights into dust attenuation. For those uninterested in dust,
-the \eda~also provides a framework for marginalizing over dust when comparing
-simulations to observations. In the case of SIMBA, we found that the \eda~dust
+the \eda~also provides a computationally feasible framework for marginalizing
+over dust when comparing simulations to observations. In the case of SIMBA, we
+found that the \eda~dust
 attenuation is insufficient to accurately reproduce observations due to its 
 excess starburst population. For TNG and EAGLE, however, dust attenuation is highly
 degenerate with differences in their galaxy physics
@@ -56,17 +57,23 @@ our ability to distinguish between the various hydrodynamical models and is a
 major bottleneck for investigating galaxy formation using simulations.
 
 The forward modeling approach we present offers many avenues for improving on
-our understanding of dust. In this paper, we used a relatively restrictive 
+our understanding of dust. In this paper, we used a restrictive 
 $M_r$ complete SDSS galaxy sample. Comparison to a larger observed galaxy
 sample will place tighter constraints on \eda~parameters and enable better
 differentiation between the simulations. One way to expand the observed galaxy
 sample would be to remove the $M_r$ completeness limit by including the
 selection function to our forward model. Upcoming surveys, such as the DESI
 Bright Galaxy Survey and the PFS Galaxy Evolution Survey, will also soon
-provide much larger galaxy samples. Furthermore, IR observations, which measure
+provide much larger observational galaxy samples. Furthermore, IR observations, which measure
 dust emission and trace dust attenuation, also have the potential to tightly 
 constrain the \eda~parameters and therefore break degeneracies between dust
-and the galaxy physics in simulations. In future works, we will apply the
+and the galaxy physics in simulations. 
+\ch{
+    In the next paper of the series, we will use the forward modeling approach
+    with the \eda~to investigate star formation quenching in galaxy formation
+    models. 
+}
+In other future works, we will apply the
 \eda~and a forward mdoeling approach to more statistically powerful samples and
 include IR observables in order to tightly constrain and reveal new insights 
 into dust attenuation. 

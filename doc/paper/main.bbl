@@ -33,6 +33,12 @@ Akeret J.,  Refregier A.,  Amara A.,  Seehars S.,   Hasner C.,  2015, \mn@doi
   [Journal of Cosmology and Astroparticle Physics]
   {10.1088/1475-7516/2015/08/043}, 2015, 043
 
+\bibitem[\protect\citeauthoryear{Ali, Bremer, Phillipps  \& De~Propris}{Ali
+  et~al.}{2018}]{ali2018}
+Ali S.~S.,  Bremer M.~N.,  Phillipps S.,   De~Propris R.,  2018, \mn@doi
+  [Monthly Notices of the Royal Astronomical Society] {10.1093/mnras/sty227},
+  476, 1010
+
 \bibitem[\protect\citeauthoryear{Alsing, Wandelt  \& Feeney}{Alsing
   et~al.}{2018}]{alsing2018}
 Alsing J.,  Wandelt B.,   Feeney S.,  2018, arXiv:1801.01497 [astro-ph]
@@ -124,6 +130,10 @@ Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
 Chevallard J.,  Charlot S.,  Wandelt B.,   Wild V.,  2013, \mn@doi [Monthly
   Notices of the Royal Astronomical Society] {10.1093/mnras/stt523}, 432, 2061
 
+\bibitem[\protect\citeauthoryear{Code}{Code}{1969}]{code1969}
+Code A.~D.,  1969, \mn@doi [Publications of the Astronomical Society of the
+  Pacific] {10.1086/128809}, 81, 475
+
 \bibitem[\protect\citeauthoryear{Conroy}{Conroy}{2010}]{conroy2010b}
 Conroy C.,  2010, \mn@doi [Monthly Notices of the Royal Astronomical Society]
   {10.1111/j.1365-2966.2010.16266.x}, 404, 247
@@ -155,6 +165,12 @@ DESI{\textasciitilde}Collaboration et~al., 2016, arXiv:1611.00036 [astro-ph]
   Schaye}{2012}]{dallavecchia2012}
 Dalla~Vecchia C.,  Schaye J.,  2012, \mn@doi [Monthly Notices of the Royal
   Astronomical Society] {10.1111/j.1365-2966.2012.21704.x}, 426, 140
+
+\bibitem[\protect\citeauthoryear{Dantas, Coelho  \&
+  {S{\'a}nchez-Bl{\'a}zquez}}{Dantas et~al.}{2021}]{dantas2021}
+Dantas M. L.~L.,  Coelho P. R.~T.,   {S{\'a}nchez-Bl{\'a}zquez} P.,  2021,
+  \mn@doi [Monthly Notices of the Royal Astronomical Society]
+  {10.1093/mnras/staa3447}, 500, 1870
 
 \bibitem[\protect\citeauthoryear{Dav{\'e}, Thompson  \& Hopkins}{Dav{\'e}
   et~al.}{2016}]{dave2016}
@@ -257,6 +273,12 @@ Hahn C.,  Beutler F.,  Sinha M.,  Berlind A.,  Ho S.,   Hogg D.~W.,  2019b,
 Hahn C.,  et~al., 2019c, \mn@doi [The Astrophysical Journal]
   {10.3847/1538-4357/aafedd}, 872, 160
 
+\bibitem[\protect\citeauthoryear{Han, Podsiadlowski  \& {Lynas-Gray}}{Han
+  et~al.}{2007}]{han2007}
+Han Z.,  Podsiadlowski P.,   {Lynas-Gray} A.~E.,  2007, \mn@doi [Monthly
+  Notices of the Royal Astronomical Society]
+  {10.1111/j.1365-2966.2007.12151.x}, 380, 1098
+
 \bibitem[\protect\citeauthoryear{Hayward \& Smith}{Hayward \&
   Smith}{2015}]{hayward2015}
 Hayward C.~C.,  Smith D. J.~B.,  2015, \mn@doi [Monthly Notices of the Royal
@@ -294,6 +316,11 @@ Jonsson P.,  2006, \mn@doi [Monthly Notices of the Royal Astronomical Society]
 Katsianis A.,  et~al., 2020, \mn@doi [Monthly Notices of the Royal Astronomical
   Society] {10.1093/mnras/staa157}, 492, 5592
 
+\bibitem[\protect\citeauthoryear{Kaviraj et~al.,}{Kaviraj
+  et~al.}{2007}]{kaviraj2007}
+Kaviraj S.,  et~al., 2007, \mn@doi [The Astrophysical Journal Supplement
+  Series] {10.1086/516633}, 173, 619
+
 \bibitem[\protect\citeauthoryear{Kirkpatrick, Pope, Sajina, Roebuck, Yan,
   Armus, {D{\'i}az-Santos}  \& Stierwalt}{Kirkpatrick
   et~al.}{2015}]{kirkpatrick2015}
@@ -305,6 +332,11 @@ Kirkpatrick A.,  Pope A.,  Sajina A.,  Roebuck E.,  Yan L.,  Armus L.,
   Conroy}{2013}]{kriek2013}
 Kriek M.,  Conroy C.,  2013, \mn@doi [The Astrophysical Journal Letters]
   {10.1088/2041-8205/775/1/L16}, 775, L16
+
+\bibitem[\protect\citeauthoryear{Le~Cras, Maraston, Thomas  \& York}{Le~Cras
+  et~al.}{2016}]{lecras2016}
+Le~Cras C.,  Maraston C.,  Thomas D.,   York D.~G.,  2016, \mn@doi [Monthly
+  Notices of the Royal Astronomical Society] {10.1093/mnras/stw1024}, 461, 766
 
 \bibitem[\protect\citeauthoryear{Leja, Johnson, Conroy, {van Dokkum}  \&
   Byler}{Leja et~al.}{2017}]{leja2017}
@@ -362,6 +394,10 @@ Nelson D.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
 Noll S.,  Burgarella D.,  Giovannoli E.,  Buat V.,  Marcillac D.,
   {Mu{\~n}oz-Mateos} J.~C.,  2009, \mn@doi [Astronomy and Astrophysics]
   {10.1051/0004-6361/200912497}, 507, 1793
+
+\bibitem[\protect\citeauthoryear{O'Connell}{O'Connell}{1999}]{oconnell1999}
+O'Connell R.~W.,  1999, \mn@doi [Annual Review of Astronomy and Astrophysics]
+  {10.1146/annurev.astro.37.1.603}, 37, 603
 
 \bibitem[\protect\citeauthoryear{Pillepich et~al.,}{Pillepich
   et~al.}{2018}]{pillepich2018}
@@ -537,6 +573,11 @@ Witt A.~N.,  Gordon K.~D.,  1996, \mn@doi [The Astrophysical Journal]
   Gordon}{2000}]{witt2000}
 Witt A.~N.,  Gordon K.~D.,  2000, \mn@doi [The Astrophysical Journal]
   {10.1086/308197}, 528, 799
+
+\bibitem[\protect\citeauthoryear{Yi, Demarque  \& Kim}{Yi
+  et~al.}{1997}]{yi1997}
+Yi S.,  Demarque P.,   Kim Y.-C.,  1997, \mn@doi [The Astrophysical Journal]
+  {10.1086/304192}, 482, 677
 
 \bibitem[\protect\citeauthoryear{Yung, Somerville, Finkelstein, Popping  \&
   Dav{\'e}}{Yung et~al.}{2019}]{yung2019}

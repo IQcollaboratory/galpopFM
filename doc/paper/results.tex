@@ -75,14 +75,17 @@ The inferred \eda~parameters for SIMBA
 also differ significantly from the parameters of TNG and EAGLE
 (Figure~\ref{fig:abc}). 
 \chedit{
+    For instance, we infer the opposite $M_*$ and $\ssfr$ dependence for
+    $\tau_V$ than TNG or EAGLE.
     These discrepancies are primarily driven by the excess of high
-    $\log{\rm SSFR} > -9.5$ ``starburst'' galaxies with $M_*<10^{10}M_\odot$
-    that lie significantly above the SFS, which are {\em only} present in SIMBA
-    (Figure~\ref{fig:smf_msfr}). This starburst population, which has also been
+    $\ssfr > 10{-9.5}yr^{-1}$ ``starburst'' galaxies with
+    $M_*<10^{10}M_\odot$, which lie significantly above the SFS and  are {\em
+    only} present in SIMBA (Figure~\ref{fig:smf_msfr}). 
+    This starburst population, which has also been
     identified in \cite{dave2019} (see their Figures~5 and 6) is caused by
-    excess gas in low-mass galaxies at $z=0$. If we exclude $\log{\rm SSFR} >
-    -9.5 {yr}^{-1}$ starburst galaxies and run the \eda~for SIMBA using median 
-    values of the TNG and EAGLE posteriors for the \eda~parameters, we find 
+    excess gas in low-mass galaxies at $z=0$. If we exclude $\ssfr > 10^{-9.5}
+    -9.5 {yr}^{-1}$ starburst galaxies and run the \eda~for SIMBA using median
+    values of the TNG and EAGLE posteriors for the \eda~parameters, we find
     similar level of agreement with SDSS as TNG and EAGLE. 
 }
 
@@ -92,17 +95,19 @@ $\gr\sim0.1$ and have high luminosity, $M_r < -22$.
     Since such high luminosity blue galaxies do not exist in observations, they
     need to be both strongly attenuated and reddened. In our \eda~prescription,
     dust attenuation and reddening is a linear function of $\log\ssfr$ so it
-    cannot strongly attenuate and redden the starburst population in
-    particular. Although we can increase the flexibility of our
-    \eda~prescription, the attenuation and reddening necessary for the
-    starburst galaxies conflict with the attenuation-slope relation
-    well-established in observations and
+    cannot strongly attenuate and redden just the starburst population.
+    Consequently, the quiescent galaxies are not sufficiently attenuated.
+    Although we can increase the flexibility of our \eda~prescription, the
+    attenuation and reddening necessary for the starburst galaxies conflict
+    with the attenuation-slope relation well-established in observations and
     simulations~\citep{inoue2005,chevallard2013,salim2018,salim2020,trayford2020}.
     The SIMBA starbursts require both high attenuation and steeper slopes but,
-    based oo the attenuation-slope relations, galaxies with higher attenuation
-    have shallower slopes. We therefore do not explore extending our
-    \eda~prescription and focus on the TNG and EAGLE simulations for the rest
-    of the paper. 
+    according to the attenuation-slope relations, galaxies with higher attenuation
+    have shallower slopes. 
+    Since the excess starburst population is a known discrepancy that
+    dramatically impacts the inferred \eda~parameters, we do not explore
+    extending our \eda~prescription and focus on the TNG and EAGLE simulations
+    for the rest of the paper. 
 }
 
 % comparison to literature 
@@ -121,7 +126,8 @@ to successfully reproduce the position of the SDSS red sequence and does not
 predict a significant excess of luminous blue galaxies. Also using EAGLE and 
 {\sc Skirt}, \cite{baes2019} find that they overesimtate the observed cosmic 
 SED (CSED) in the UV regime and produce significantly higher $\fnuv$ color 
-than GAMA. The \eda~predicts $\fnuv$ in good agreement with SDSS. 
+than GAMA. The \eda~for TNG and EAGLE predict $\fnuv$ in good agreement with
+SDSS. 
 %\cite{baes2019}: EAGLE+SKIRT SED compparison with GAMA Far UV is not attenuated enough. underrestimates optical and NIR
 For TNG, \cite{nelson2018} calculate optical colors using a dust model that
 includes attenuation due to dense gas birth clouds surrounding young stellar

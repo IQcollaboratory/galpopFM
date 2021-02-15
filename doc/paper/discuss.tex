@@ -3,16 +3,18 @@ We make a number of assumptions and choices in our \eda~prescription.
 \ch{
     First, we use the slab model (Eq.~\ref{eq:slab}) to assign $A_V$ as a
     function of the randomly sampled $i$ and $\tau_V$. 
-    This choice is based on the fact that the slab model reproduces the 
-    correlation between attenuations and inclination found in 
-    observations~\citep{conroy2010b, wild2011, battisti2017, salim2020} as well
-    as simulations~\citep[\eg][]{chevallard2013, narayanan2018, trayford2020}.
+    This choice is loosely motivatd by the fact that the slab model reproduces
+    the correlation between attenuations and inclination found in star-forming
+    galaxies from observations~\citep{conroy2010b, wild2011, battisti2017,
+    salim2020} as well as simulations~\citep[\eg][]{chevallard2013,
+    narayanan2018, trayford2020}.
+    More importantly, the slab model can reproduce the $A_V$ distribution of
+    SDSS star-forming galaxies as well as the GSWLC2 sample, which includes
+    quiescent galaxies (Appendix~\ref{sec:slab}).
+    We therefore conclude that the slab model provides a sufficiently flexible empirical
+    prescription for sampling $A_V$ in our \eda.
 }
-It can also reproduce the SDSS $A_V$ distribution (Figure~\ref{fig:av_dist}). If
-we replace the slab model with a more flexible model for sampling $A_V$ using
-truncated normal distributions, we find that our results are not significantly
-impacted (see Appendix~\ref{sec:slab} for details). Therefore, we conclude
-that our results do not sigificantly depend on our choice of the slab model. 
+%It can also reproduce the SDSS $A_V$ distribution (Figure~\ref{fig:av_dist}). If we replace the slab model with a more flexible model for sampling $A_V$ using truncated normal distributions, we find that our results are not significantly impacted (see Appendix~\ref{sec:slab} for details). Therefore, we conclude that our results do not sigificantly depend on our choice of the slab model. 
 \ch{
     In our \eda, we also use a parameterization of $\tau_V$ and $\delta$ that
     depend linearly on $\log M_*$ and $\log {\rm SSFR}$. 
@@ -36,8 +38,8 @@ finding a well-motivated parameterization.
 }
 
 \ch{
-    We demonstrate in this work that accounting for dust attenuation is
-    essential when comparing simulations to observations. 
+    We demonstrate that accounting for dust attenuation is essential when
+    comparing simulations to observations. 
 }
 None of the simulations reproduce the UV and optical color-magnitude relation
 without dust attenuation (Figure~\ref{fig:obs}). 
@@ -46,7 +48,7 @@ without dust attenuation (Figure~\ref{fig:obs}).
     for different hydrodynamical simulations highlights how our current lack of 
     understanding of dust limits our ability to closely compare galaxy
     formation models. 
-    Our \eda~prescription is built on our current understanding of dust
+    Our \eda~prescription is built on what we currently know about dust
     attenuation in galaxies: \eg~the \citealt{noll2009} parameterization, the
     UV bump, the slab model, etc.
 }
@@ -141,8 +143,8 @@ therefore break degeneracies between dust and the galaxy physics in simulations.
 \ch{
     Upcoming will provide crucial observation on this front.  
     BGS, for instance, will have IR photometry from NEOWISE~\citep{meisner2018}. 
-    \emph{James Webb Space Telecope (JWST)} will also provide valuable IR
-    observations.
+    Moreover, \emph{James Webb Space Telecope (JWST)} and \emph{Nancy Grace
+    Roman Space Telescope} will also provide valuable IR observations.
 }
 
 % Salim(2020): Chevallard et al. (2013), who aggregated and analyzed a diverse series of theoretical attenuation law studies by Pierini et al. (2004), Tuffs et al. (2004), Silva et al. (1998) and Jonsson et al. (2006), and showed that all the stud- ies predict, with some normalization differences, a relationship between the optical depth AV and attenuation law slope.

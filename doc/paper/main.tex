@@ -65,7 +65,7 @@
 \newcommand{\mdeltam}{m_{\delta,M_*}}
 \newcommand{\mdeltas}{m_{\delta,{\rm SFR}}}
 \newcommand{\cdelta}{c_\delta}
-\newcommand{\eda}{FADE}
+\newcommand{\eda}{EDA}
 
 
 \newcommand{\specialcell}[2][c]{%
@@ -95,7 +95,7 @@
 \date{\texttt{DRAFT~---~\githash~---~\gitdate~---~NOT READY FOR DISTRIBUTION}}
 
 \newcounter{affilcounter}
-\author{ChangHoon Hahn}
+\author[0000-0003-1197-0902]{ChangHoon Hahn}
 \altaffiliation{hahn.changhoon@gmail.com}
 \affil{Department of Astrophysical Sciences, Princeton University, Peyton Hall, Princeton NJ 08544, USA} 
 %\affil{Lawrence Berkeley National Laboratory, 1 Cyclotron Rd, Berkeley CA 94720, USA}
@@ -104,10 +104,29 @@
 \author{Tjitske K. Starkenburg}
 \affil{Center for Interdisciplinary Exploration and Research in Astrophysics (CIERA) and \\Department of Physics and Astronomy, 1800 Sherman Ave, Evanston IL 60201, USA}
 
+\author[0000-0002-8131-6378]{Ena Choi}
+\affil{Quantum Universe Center, 
+        Korea Institute for Advanced Study, 
+        Hoegiro 85, Seoul 02455, Korea}
+
+\author[0000-0002-1081-3991]{Claire Dickey} 
+\affil{Department of Astronomy, Yale University, New Haven CT 06520 USA}
+
+
+\author[0000-0001-9298-3523]{Kartheik G. Iyer}
+\affil{Dunlap Institute for Astronomy and Astrophysics, University of Toronto,
+50 St George St, Toronto, ON M5S 3H4, Canada}
+
+\author{Rachel S. Somerville}
+\affil{Department of Physics and Astronomy, Rutgers University, 136
+Frelinghuysen Road, Piscataway, NJ 08854, USA}
+\affil{Center for Computational Astrophysics, Flatiron Institute, 162 5th Ave,
+New York, NY 10010, USA}
+
 \author{IQ Collaboratory}
 
 \begin{abstract}
-    We present the Framework for Attenuation by Dust Empirically (\eda) for applying
+    We present the Empirical Dust Attenuation (\eda) framework for applying
     dust attenuation 
     \tksedit{
          to galaxies from theoretical models. 
@@ -210,11 +229,15 @@ keyword1 -- keyword2 -- keyword3
 
 \section*{Acknowledgements}
 It's a pleasure to thank
+    Marla Geha, 
+    Shy Genel, 
     Daniel Kelson, 
     Mariska Kriek, 
+    Ariyeh H. Maller,
     Desika Narayanan,
-    Katherine Suess 
-    ... \tks{Shy gave comments but declined being an author right? More IQ-people that helped in discussions but didn't request bing an author?}
+    Katherine Suess, 
+    Aaron Yung
+    ... 
 \ch{TBD}.
 This material is based upon work supported by the U.S. Department of Energy,
 Office of Science, Office of High Energy Physics, under contract No.
@@ -222,10 +245,33 @@ DE-AC02-05CH11231.  This project used resources of the National Energy Research
 Scientific Computing Center, a DOE Office of Science User Facility supported by
 the Office of Science of the U.S.  Department of Energy under Contract No.
 DE-AC02-05CH11231. 
-We thank the Illustris collaboration and the Virgo Consortium for making their simulation data publicly available, and the SIMBA collaboration for sharing their data with us. The EAGLE and SIMBA simulations were performed using the DiRAC-2 facility at Durham, managed by the ICC, and the PRACE facility Curie based in France at TGCC, CEA, Bruy\`{e}res-le-Ch\^{a}tel.
-This research was supported in part through the computational resources and staff contributions provided by the Quest high performance computing facility at North- western University, which is jointly supported by the Office of the Provost, the Office for Research, and Northwestern University Information Technology. The data used in this work were, in part, hosted on facilities sup- ported by the Scientific Computing Core at the Flatiron Institute, a division of the Simons Foundation, and the analysis was largely done using those facilities.
-The IQ~(Isolated \& Quiescent)~Collaboratory thanks the Flatiron Institute for hosting the collaboratory and its meetings. The Flatiron Institute is supported by the Simons Foundation.
-\tks{want to include the SDSS acknowledgements? (the above is copied from Claire's paper and would be good to include I think)}
+
+We thank the Illustris collaboration and the Virgo Consortium for making their
+simulation data publicly available, and the SIMBA collaboration for sharing
+their data with us.
+The EAGLE and SIMBA simulations were performed using the DiRAC-2 facility at
+Durham, managed by the ICC, and the PRACE facility Curie based in France at
+TGCC, CEA, Bruy\`{e}res-le-Ch\^{a}tel.
+
+This research was supported in part through the computational resources and
+staff contributions provided by the Quest high performance computing facility
+at Northwestern University, which is jointly supported by the Office of the
+Provost, the Office for Research, and Northwestern University Information
+Technology. 
+
+The data used in this work were, in part, hosted on facilities supported by the
+Scientific Computing Core at the Flatiron Institute, a division of the Simons
+Foundation, and the analysis was largely done using those facilities.
+The IQ~(Isolated \& Quiescent)~Collaboratory thanks the Flatiron Institute for hosting the collaboratory and its meetings. 
+The Flatiron Institute is supported by the Simons Foundation.
+Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P.
+
+Sloan Foundation, the U.S. Department of Energy Office of Science, and the
+Participating Institutions. SDSS acknowledges support and resources from the
+Center for High-Performance Computing at the University of Utah. The SDSS web
+site is www.sdss.org.
+The SDSS is managed by the Astrophysical Research Consortium for the
+Participating Institutions.
 
 \appendix
 %\input{unc.tex}
