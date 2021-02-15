@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 15, 'tng': 25, 'eagle': 27}        # Niteration 
+nabc = {'simba': 24, 'tng': 25, 'eagle': 27}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -190,11 +190,11 @@ def SMF_MsSFR():
     sub = plt.subplot(gs1[0])
     sub.errorbar(0.5*(logms_low + logms_high)[logms_low > 9.7], phi_sdss[logms_low > 9.7], 
             yerr=err_phi_sdss[logms_low > 9.7],	fmt='.k', label='SDSS')
-    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_simba, c='C0',
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_simba, c=clrs['simba'],
             label='SIMBA')
-    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c='C1', 
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_tng, c=clrs['tng'], 
             label='TNG')
-    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_eag, c='C2', 
+    sub.plot(0.5*(logms_bin[1:] + logms_bin[:-1]), phi_eag, c=clrs['eagle'], 
             label='EAGLE')
     sub.legend(loc='lower left', handletextpad=0.3, fontsize=20)
     sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
@@ -205,7 +205,6 @@ def SMF_MsSFR():
     sub.set_ylim(5e-6, 1e-1) 
     
     names   = ['SIMBA', 'TNG', 'EAGLE']
-    clrs    = ['C1', 'C0', 'C2']
     ms      = [simba_ms, tng_ms, eag_ms]
     sfrs    = [simba_sfr, tng_sfr, eag_sfr]
 
@@ -217,7 +216,7 @@ def SMF_MsSFR():
                 plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
 
 
-        DFM.hist2d(ms[i], sfrs[i], color=clrs[i], 
+        DFM.hist2d(ms[i], sfrs[i], color=clrs[names[i].lower()],
                 levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
                 contour_kwargs={'linewidths': 0.5}, 
                 plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
@@ -622,10 +621,10 @@ def ABC_corner():
     '''
     import abcpmc
     # parameters of interest
-    keep_cols = np.ones(len(param_lbls)).astype(bool) 
-    #keep_cols[:-1] = True
+    plot_range = np.array([(-3., 3.), (-2., 2.), (0., 3.), (-1.6, 1.6), (-1.5,
+        1.), (-1., 0.5)]) 
 
-    print('\t %s' % ','.join(param_lbls[keep_cols]))
+    print('\t %s' % ','.join(param_lbls))
     for i, sim in enumerate(sims):
         dat_dir = os.environ['GALPOPFM_DIR']
         abc_dir = os.path.join(dat_dir, 'abc', abc_run(sim.lower())) 
@@ -638,25 +637,25 @@ def ABC_corner():
         
         if i == 0: 
             fig = DFM.corner(
-                    theta_T[:,keep_cols], 
-                    range=prior_range[keep_cols],
+                    theta_T, 
+                    range=plot_range, #prior_range[keep_cols],
                     weights=w_T,# quantiles=[0.16, 0.5, 0.84], 
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
                     color=clrs[sim.lower()], 
-                    labels=param_lbls[keep_cols], 
+                    labels=param_lbls, 
                     label_kwargs={'fontsize': 25}) 
         else: 
             DFM.corner(
-                    theta_T[:,keep_cols], 
-                    range=prior_range[keep_cols],
+                    theta_T, 
+                    range=plot_range, #prior_range[keep_cols],
                     weights=w_T, #quantiles=[0.16, 0.5, 0.84], 
                     levels=[0.68, 0.95],
                     nbin=20, 
                     smooth=True, 
                     color=clrs[sim.lower()], 
-                    labels=param_lbls[keep_cols], 
+                    labels=param_lbls, 
                     label_kwargs={'fontsize': 25}, 
                     fig = fig) 
         median = np.quantile(theta_T, [0.5], axis=0)[0]
@@ -2953,6 +2952,78 @@ def sfr0_galaxies():
     return None 
 
 
+def gswlc2_dep(): 
+    '''
+    '''
+    fgswlc = os.path.join(os.environ['GALPOPFM_DIR'], 'obs', 'GSWLC-M2.dat')
+    gswlc = np.loadtxt(fgswlc, unpack=True)
+
+    logm = gswlc[9]
+    logsfr = gswlc[11]
+    logssfr = logsfr-logm
+    Av = gswlc[17]
+
+    has_Av = (Av != -99.)
+    mlim = (logm > 9.)
+
+    cuts = has_Av & mlim
+
+    ssfrsel1 = (logssfr > -10)
+    ssfrsel2 = (logssfr > -11) & (logssfr < -10)
+    ssfrsel3 = (logssfr < -11)
+    msel2 = (logm > 10.5)# & (logm < 11.5)
+    msel3 = (logm > 9.5) & (logm < 10.5)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13,6))
+    DFM.hist2d(logm[cuts & ssfrsel3], Av[cuts & ssfrsel3], 
+            range=[[9.,12.],[0,2]], ax = ax1, color='C4', 
+            levels=[0.68, 0.95], plot_datapoints=False, fill_contours=True, plot_density=False)
+    DFM.hist2d(logm[cuts & ssfrsel2], Av[cuts & ssfrsel2], 
+            range = [[9.,12.],[0,2]], ax = ax1, color = 'C3', 
+            levels=[0.68, 0.95], plot_datapoints=False, fill_contours=True, plot_density=False)
+    DFM.hist2d(logm[cuts & ssfrsel1], Av[cuts & ssfrsel1], 
+            range = [[9.,12.],[0,2]], ax = ax1, color = 'C1', 
+            levels=[0.68, 0.95], plot_datapoints=False, fill_contours=True, plot_density=False)
+    ax1.set_xlabel('$\log(~M_*$ [$M_{\odot}$]~)', fontsize=25)
+    ax1.set_xlim(9., 12.)
+    ax1.set_xticks([9., 10., 11., 12.]) 
+    ax1.set_ylabel('$A_V$', fontsize=25)
+    ax1.set_ylim(0, 1.4)
+
+    DFM.hist2d(logssfr[cuts & msel3], Av[cuts & msel3], 
+            range = [[-14,-8],[0,2]], ax = ax2, color = 'C0', 
+            levels=[0.68, 0.95], plot_datapoints=False, fill_contours=True, plot_density=False)
+    DFM.hist2d(logssfr[cuts & msel2], Av[cuts & msel2], 
+            range = [[-14,-8],[0,2]], ax = ax2, color = 'C2',
+            levels=[0.68, 0.95], plot_datapoints=False, fill_contours=True, plot_density=False)
+    #dfm.hist2d(logssfr[cuts & msel1], Av[cuts & msel1], range = [[-14,-8],[0,2]], 
+    #           ax = ax2, color = 'C5')
+    ax2.set_xlabel('$\log($ SSFR [yr$^{-1}$] )', fontsize=25)
+    ax2.set_xlim(-14, -8)
+    ax2.set_xticks([-14., -12., -10., -8]) 
+    ax2.set_ylim(0, 1.4)
+    ax2.set_yticklabels([])
+
+    import matplotlib.patches as mpatches
+    patch11 = mpatches.Patch(color='C4', label='SSFR $< 10^{-11} yr^{-1}$')
+    patch12 = mpatches.Patch(color='C3', label='$10^{-11} <$ SSFR $< 10^{-10} yr^{-1}$')
+    patch13 = mpatches.Patch(color='C1', label='SSFR $> 10^{-10} yr^{-1}$')
+    ax1.legend(handles=[patch11, patch12, patch13], fontsize=16, loc='upper left',
+            handletextpad=0.2)
+
+    patch21 = mpatches.Patch(color='C0', label='$10^{9.5} < M_*  < 10^{10.5} M_\odot$')
+    patch22 = mpatches.Patch(color='C2', label='$10^{10.5} M_\odot < M_*$')
+    #patch23 = mpatches.Patch(color='C5', label='$11 <$ log( $M_* [M_{\odot}])$')
+    ax2.legend(handles=[patch21, patch22], fontsize=16, loc='upper left',
+            handletextpad=0.2)
+
+    fig.subplots_adjust(wspace=0.1)
+    ffig = os.path.join(fig_dir, 'gswlc_dep.png')
+    fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def _observables_noise(): 
     ''' comparison of color-magnitude relation of simulations + DEM with and
     without the noise model 
@@ -4060,6 +4131,8 @@ if __name__=="__main__":
     # dust IR emission luminosity 
     #ABC_Lir()
 
+    gswlc2_dep()
+
     # subpopulations in color magnitude space 
     #subpops_nodust()
     #subpops()
@@ -4086,7 +4159,7 @@ if __name__=="__main__":
     # tnorm Av model  
     #ABC_tnorm_corner()
     #ABC_tnorm_Observables()
-    slab_model()
+    #slab_model()
     #slab_tnorm_comparison()
     
     #_observables_sfr0()
