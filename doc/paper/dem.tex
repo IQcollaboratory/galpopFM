@@ -7,7 +7,7 @@
     For each simulated galaxy, the \eda~assigns a dust attenuation
     curve that is parameterized as a function of the galaxy's properties 
     ($M_*$, ${\rm SSFR}$), the \eda~parameters, and randomly
-    sampled inclincation. With the \eda, we can apply a wide variety of dust
+    sampled inclination. With the \eda, we can apply a wide variety of dust
     attenuation that include correlation between dust attenuation and physical
     galaxy properties. 
 }
@@ -67,13 +67,13 @@ impose a $\tau_V \ge 0$ limit.
     depends on the detailed star-to-dust geometry.
     Furthermore, all galaxies in the simulations are assigned $A_V$ from the
     slab model.
-    For quiescent galaxies, which typically have ellipitcal morphologies, the
+    For quiescent galaxies, which typically have elliptical morphologies, the
     slab model serves only as an \emph{empirical} prescription for statistically 
     sampling $A_V$. 
-    However, the purpose ~\eda~is to assign an accurate distribution of dust
+    However, the purpose of the~\eda~is to assign an accurate distribution of dust
     attenuation curves for the galaxy population --- \emph{not} to accurately
     model dust attenuation for individual galaxies.
-    In Appendix~\ref{sec:slab}, we demonstrate that the slab model based \eda
+    In Appendix~\ref{sec:slab}, we demonstrate that the slab model based \eda~
     can produce $A_V$ values that match $p(A_V)$ of observations, which include
     quiescent galaxies. 
     Hence, the slab model is a sufficiently flexible prescription for sampling
@@ -157,8 +157,8 @@ star-formation and low gas mass, similar to $\sfr=0$ galaxies.
 
 \chedit{
     In practice, to apply the \eda~to a simulated galaxy population, we first
-    assign a randomly sampled inclincation, $i$, to each galaxy ($\cos i$
-    uniformly sampled from 0 to 1).  $\tau_V$ and $\delta$ are calculated for
+    assign a randomly sampled $i$ to each galaxy ($\cos i$ uniformly sampled from 0 to 1).
+    $\tau_V$ and $\delta$ are calculated for
     the galaxy based on its $M_*$,
     $\ssfr$ and the \eda~parameters. We then combine $A_V$ from $i$ and
     $\tau_V$ with $k(\lambda)$ from $\delta$ to determine $A(\lambda)$ for each

@@ -10,14 +10,14 @@
         Meanwhile, for the slab model, we generate $A_V$ values for each galaxy
         in the SDSS and GSWLC2 samples using Eq.~\ref{eq:slab} with its
         measured $M_*$ and $\ssfr$. 
-        The significant difference betweeen the $p(A_V)$ of SDSS and GSWLC2 is
+        The significant difference between the $p(A_V)$ of SDSS and GSWLC2 is
         due to inconsistencies in the $A_V$ measurements of the two catalogs. 
         It illustrates the challenges in observationally measuring $A_V$ and,
         again, highlights the advantages of our forward modeling approach. 
         Despite the significant differences between the two, the slab model is
         able to generate $p(A_V)$ in good agreement with $p(A_V)$ from both
         observations with parameter values chosen within the
-        Table~\ref{tab:prior} prior range. 
+        Table~\ref{tab:free_param} prior range. 
         Therefore, the slab model provides a sufficiently flexible prescription
         for our \eda.
         }
@@ -38,7 +38,7 @@ For a given $\tau_V$, the attenuation depends solely on the orientation of the g
 \ch{
     While this simplification reproduces the correlation between $A_V$ and $i$
     found in observed star-forming galaxies~\citep[\eg][]{conroy2010, wild2011,
-    battisti2017, salim2020}, it ignores the detailed star-to-dust geomtry that
+    battisti2017, salim2020}, it ignores the detailed star-to-dust geometry that
     impacts the attenuation curve. 
     It also does not provide a well-motivated prescription for quiescent
     galaxies, which typically have elliptical morphologies.
@@ -63,14 +63,14 @@ For a given $\tau_V$, the attenuation depends solely on the orientation of the g
     galaxy's measured $M_*$ and $\ssfr$. 
     We pick $\mtaum, \mtaus, c_\tau$ values within the prior range
     (Table~\ref{tab:free_param}) by hand to roughly reproduce the SDSS and GSWLC2 $p(A_V)$
-    distirbutions. 
+    distributions. 
 }
 
 \ch{
     Galaxies in SDSS and GSWLC2 have substantially different $p(A_V)$. 
     This is due to inconsistencies in the $A_V$ measurements of MPA-JHU and
     GSWLC2 --- even for the same galaxy, the $A_V$ measurements from the two
-    catalogs differ significiantly.
+    catalogs differ significantly.
     This difference in $p(A_V)$ illustrates the challenges in directly measuring
     dust attenuation and yet again highlights the advantages of our forward
     modeling approach. 

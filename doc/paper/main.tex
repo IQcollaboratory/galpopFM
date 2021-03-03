@@ -84,14 +84,14 @@
 %% collaborating
 \newcommand{\todo}[1]{\marginpar{\color{red}TODO}{\color{red}#1}}
 \definecolor{orange}{rgb}{1,0.5,0}
-\newcommand{\ch}[1]{{\color{orange}#1}}
-\newcommand{\chedit}[1]{{\color{orange}#1}}
-\newcommand{\tks}[1]{{\color{blue}{\bf TKS:} #1}}
-\newcommand{\tksedit}[1]{{\color{blue}#1}}
+\newcommand{\ch}[1]{#1}%{\color{orange}#1}}
+\newcommand{\chedit}[1]{#1}%{\color{orange}#1}}
+\newcommand{\tks}[1]{#1}%{\color{orange} #1}}
+\newcommand{\tksedit}[1]{#1}%{\color{orange}#1}}
 
 \begin{document} \sloppy\sloppypar\frenchspacing 
 
-\title{IQ Collaboratory III Empirical Dust Attenuation Models: Taking Hydrodynamical Simulatons with a Grain of Dust}
+\title{IQ Collaboratory III: The Empirical Dust Attenuation Framework --- Taking Hydrodynamical Simulatons with a Grain of Dust}
 \date{\texttt{DRAFT~---~\githash~---~\gitdate~---~NOT READY FOR DISTRIBUTION}}
 
 \newcounter{affilcounter}
@@ -127,56 +127,34 @@ New York, NY 10010, USA}
 
 \begin{abstract}
     We present the Empirical Dust Attenuation (\eda) framework for applying
-    dust attenuation 
-    \tksedit{
-         to galaxies from theoretical models. 
-        \eda~provides a flexible prescription for assigning realistic dust
-        attenuation to simulated galaxies related to their physical properties
-        ($M_*$, $\ssfr$) and using the \cite{noll2009} attenuation curve
-        parameterization. 
-    }
-    \ch{
-        Using the \eda, we forward model synthetic observations for a $M_r <
-        -20$ complete galaxy sample for three state-of-the-art large-scale 
-        cosmological hydrodynamical simulations: SIMBA, IllustrisTNG, and
-        EAGLE.
-        We then compare the optical and UV color-magnitude relations, $(\gr) -
-        M_r$ and $(\fnuv)-M_r$, for the forward modeled simulations to SDSS
-        observations using likelihood-free inference. 
-    }
-    \tksedit{
-        As expected, for all three of the simulations dust attenuation is
-        necessary to match the observations.
-    }
+    dust attenuation to galaxies from theoretical models. \eda~provides a
+    flexible prescription for assigning realistic dust attenuation to simulated
+    galaxies related to their physical properties ($M_*$, $\ssfr$) and using
+    the \cite{noll2009} attenuation curve parameterization. Using the \eda, we
+    forward model synthetic observations for a $M_r < -20$ complete galaxy
+    sample for three state-of-the-art large-scale cosmological hydrodynamical
+    simulations: SIMBA, IllustrisTNG, and EAGLE.  We then compare the optical
+    and UV color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$, for the
+    forward modeled simulations to SDSS observations using likelihood-free
+    inference. As expected, for all three of the simulations dust attenuation
+    is necessary to match the observations.
     %With \eda, we infer the dust attenuation curves as a function of galaxy properties so that the synthetic galaxy surveys best match the observed sample.
     We find that we can accurately reproduce the color-magnitude relations of the
-    observational sample for TNG and EAGLE. 
-    For SIMBA, we struggle to reproduce observations due to an overprediction
-    \tksedit{
-        of low-mass galaxies with high star-formation rates.
-        }
-    \ch{
-        Examining the attenuation curves predicted by \eda~for TNG and EAGLE,
-        we find good agreement with observed attenuation--slope relations and
-        attenuation curves of star-forming galaxies.
-    }
-    \tksedit{
-        Additionally, \eda~provides unprecedented predictions for the
-        attenuation curves of quiescent galaxies, which are challenging to
-        measure observationally. 
-    }
-    \ch{
-        To match observations, simulated quiescent galaxies require significant
-        UV and optical attenuation but with much shallower slopes than star-forming galaxies. 
-    }
-    \ch{ 
-        Overall, we find that more massive galaxies in the simulations require
-        higher dust attenuation, 
-    }
+    observational sample for TNG and EAGLE. For SIMBA, we struggle to reproduce
+    observations due to its overprediction of luminous low-mass galaxies with
+    high star-formation rates.  Examining the attenuation curves predicted by
+    \eda~for TNG and EAGLE, we find good agreement with observed
+    attenuation--slope relations and attenuation curves of star-forming
+    galaxies. Additionally, the \eda~provides, for the first time, predictions
+    on the attenuation curves of quiescent galaxies, which are challenging to
+    measure observationally. To match observations, simulated quiescent
+    galaxies require significant UV and optical attenuation but with much
+    shallower slopes than star-forming galaxies. Overall, we find that more
+    massive galaxies in the simulations require higher dust attenuation, 
     while galaxies with higher specific star formation rates have steeper 
-    attenuation curves.
-    In addition to improving our understanding of dust in galaxies, our results
-    underscore the advantages of \eda~and the forward modeling approach. 
+    attenuation curves. In addition to improving our understanding of dust in
+    galaxies, our results underscore the advantages of \eda~and the forward
+    modeling approach. 
     %We apply \eda~separately to three state-of-the-art cosmological
     %hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE), forward
     %model their optical and UV

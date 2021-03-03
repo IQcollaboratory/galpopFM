@@ -60,7 +60,7 @@ $\bar{\theta}_1$ sampled from the prior distribution. Each proposal is
 assigned a weight $w^i_1 = 1/N$. Then for subsequent iterations ($n > 1$), the 
 threshold, $\epsilon_n$, is set to the median distance of the previous iteration's
 proposals. New proposals are drawn from the previous iteration's proposals perturbed 
-by a kernel and kept if their distance is blelow $\epsilon_n$. This is repeated
+by a kernel and kept if their distance is below $\epsilon_n$. This is repeated
 until we assemble a new set of $N$ proposals $\bar{\theta}_n$. The entire
 process is repeated for the next iteration until convergence is confirmed. 
 We use the Python implementation of
