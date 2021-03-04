@@ -1060,7 +1060,6 @@ def ABC_slope_AV(gal_type='all'):
     sub = fig.add_subplot(111) 
 
     for i, sim in enumerate(['TNG', 'EAGLE']): 
-
         # get abc posterior
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
             abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
@@ -1087,17 +1086,24 @@ def ABC_slope_AV(gal_type='all'):
         A_V = A_lambda[:,i5500]
         S = A_lambda[:,i1500]/A_V
         
-
-        DFM.hist2d(A_V[subpop], S[subpop], range=[(0., 1.4), (0., 14.4)], 
-                levels=[0.68, 0.95], bins=10, color=clrs[sim.lower()],
-                plot_datapoints=False, fill_contours=True, plot_density=False, 
-                ax=sub)
+        bins = 25
+        if sim == 'EAGLE': 
+            _hist2d_hack(A_V[subpop], S[subpop], bins=bins, levels=[0.68, 0.95],
+                    range=[(0., 1.4), (0., 14.4)], sub=sub, alpha=0.33,
+                    smooth=True, color=clrs[sim.lower()])
+        else: 
+            DFM.hist2d(A_V[subpop], S[subpop], range=[(0., 1.4), (0., 14.4)], 
+                    levels=[0.68, 0.95], bins=bins, color=clrs[sim.lower()], smooth=True, 
+                    plot_datapoints=False, fill_contours=True, plot_density=False, 
+                    contour_kwargs={'linewidths': 0}, 	
+                    ax=sub)
 
     # MW
-    sub.scatter([1.15], [2.8], c='k', marker='*', s=60) 
-    sub.text(1.2, 2.8, 'MW', ha='left', va='bottom', fontsize=20) 
+    #sub.scatter([1.15], [2.8], c='k', marker='*', s=60) 
+    #sub.text(1.2, 2.8, 'MW', ha='left', va='bottom', fontsize=20) 
+
     # Calzetti 
-    sub.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--')
+    sub.plot([0.0, 1.4], [2.4, 2.4], c='k', ls='--', dashes=(5,10))
     sub.text(0.125, 2.2, 'Calzetti+(2000)', ha='left', va='top', fontsize=15) 
 
     # Salim & Naryanan (2020) 
@@ -1105,10 +1111,11 @@ def ABC_slope_AV(gal_type='all'):
             10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424-0.12), 
             10**(-0.68 * np.log10(np.linspace(0., 1.4, 100))+0.424+0.12), 
             color='k', alpha=0.25, linewidth=0)
+            #hatch='X', edgecolor='k', linewidth=1, facecolor='none')
     sub.set_xlabel(r'$A_V$', fontsize=25)
     sub.set_xlim(0.1, 1.4)
     sub.set_ylabel('$S = A_{1500}/A_V$', fontsize=25)
-    sub.set_ylim(0., 14.4) 
+    sub.set_ylim(0., 13) 
 
 
     _plt_sims = [_plt_obs] 
@@ -1122,8 +1129,6 @@ def ABC_slope_AV(gal_type='all'):
 
 
     ffig = os.path.join(fig_dir, 'abc_slope_AV.%s.png' % gal_type) 
-    fig.savefig(ffig, bbox_inches='tight') 
-
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
@@ -2064,7 +2069,7 @@ def ABC_Q_attenuation_unnormalized():
             if _sfq == 'quiescent': 
                 sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
                         alpha=0.3, linewidth=0, label=sim) 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=1)
+                sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=2)
             else: 
                 sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', lw=2)
 
@@ -2381,10 +2386,15 @@ def ABC_Lir():
     sub = fig.add_subplot(111)
     for i, _M_r, _L_ir, sim in zip(range(2), M_rs, L_irs, ['TNG', 'EAGLE']): 
         # R vs log L_IR  
-        DFM.hist2d(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
-                levels=[0.68, 0.95], bins=20, color=clrs[sim.lower()], #contour_kwargs={'linewidths': 1}, 
-                plot_datapoints=False, fill_contours=False, plot_density=False, 
-                ax=sub)
+        if sim == 'TNG': 
+            DFM.hist2d(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
+                    levels=[0.68, 0.95], bins=30, smooth=True, color=clrs[sim.lower()], 
+                    plot_datapoints=False, fill_contours=True, plot_density=False, 
+                    contour_kwargs={'linewidths': 0}, ax=sub)
+        elif sim == 'EAGLE': 
+            _hist2d_hack(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
+                    levels=[0.68, 0.95], bins=30, color=clrs[sim.lower()],
+                    alpha=0.33, smooth=True, sub=sub)
     
     _plt1 = sub.fill_between([], [], [], color=clrs['tng'], alpha=0.25, edgecolor='None')
     _plt2 = sub.fill_between([], [], [], color=clrs['eagle'], alpha=0.25, edgecolor='None')
@@ -4097,6 +4107,81 @@ def _profile_tng():
     return None 
 
 
+def _hist2d_hack(x, y, bins=20, levels=None, range=None, sub=None, alpha=1.,
+        smooth=False, color='k'): 
+    ''' hack of corner.hist2d to make it transparent
+    '''
+    H, X, Y = np.histogram2d(
+        x.flatten(),
+        y.flatten(),
+        bins=bins,
+        range=list(map(np.sort, range))
+    )
+    
+    if smooth: 
+        from scipy.ndimage import gaussian_filter
+        H = gaussian_filter(H, smooth)
+
+    # Compute the density levels.
+    Hflat = H.flatten()
+    inds = np.argsort(Hflat)[::-1]
+    Hflat = Hflat[inds]
+    sm = np.cumsum(Hflat)
+    sm /= sm[-1]
+    V = np.empty(len(levels))
+    for i, v0 in enumerate(levels):
+        try:
+            V[i] = Hflat[sm <= v0][-1]
+        except IndexError:
+            V[i] = Hflat[0]
+    V.sort()
+    m = np.diff(V) == 0
+    while np.any(m):
+        V[np.where(m)[0][0]] *= 1.0 - 1e-4
+        m = np.diff(V) == 0
+    V.sort()
+
+    # Compute the bin centers.
+    X1, Y1 = 0.5 * (X[1:] + X[:-1]), 0.5 * (Y[1:] + Y[:-1])
+
+    # Extend the array for the sake of the contours at the plot edges.
+    H2 = H.min() + np.zeros((H.shape[0] + 4, H.shape[1] + 4))
+    H2[2:-2, 2:-2] = H
+    H2[2:-2, 1] = H[:, 0]
+    H2[2:-2, -2] = H[:, -1]
+    H2[1, 2:-2] = H[0]
+    H2[-2, 2:-2] = H[-1]
+    H2[1, 1] = H[0, 0]
+    H2[1, -2] = H[0, -1]
+    H2[-2, 1] = H[-1, 0]
+    H2[-2, -2] = H[-1, -1]
+    X2 = np.concatenate(
+        [
+            X1[0] + np.array([-2, -1]) * np.diff(X1[:2]),
+            X1,
+            X1[-1] + np.array([1, 2]) * np.diff(X1[-2:]),
+        ]
+    )
+    Y2 = np.concatenate(
+        [
+            Y1[0] + np.array([-2, -1]) * np.diff(Y1[:2]),
+            Y1,
+            Y1[-1] + np.array([1, 2]) * np.diff(Y1[-2:]),
+        ]
+    )
+
+    sub.contourf(
+        X2,
+        Y2,
+        H2.T,
+        np.concatenate([V, [H.max() * (1 + 1e-4)]]),
+        colors=color,
+        alpha=alpha,
+        antialiased=False,
+    )
+    sub.contour(X2, Y2, H2.T, V, colors=color)
+
+
 if __name__=="__main__": 
 
     #SMF_MsSFR()
@@ -4124,14 +4209,14 @@ if __name__=="__main__":
 
     # amplitude normalized attenuation curves
     #ABC_SF_attenuation()
-    #ABC_Q_attenuation_unnormalized()
+    ABC_Q_attenuation_unnormalized()
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
     # dust IR emission luminosity 
     #ABC_Lir()
 
-    gswlc2_dep()
+    #gswlc2_dep()
 
     # subpopulations in color magnitude space 
     #subpops_nodust()
