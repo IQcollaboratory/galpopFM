@@ -2861,7 +2861,7 @@ def simba_starbursts():
     _x_simba_eagle, sim_simba, _ = _sim_observables('simba',
             theta_eagle, no_Mr_cut=True)
     
-    starburst = (sim_simba['logsfr.inst']  > -0.5 + 0.7 * (sim_simba['logmstar'] - 9))
+    starburst = (sim_simba['logsfr.inst']  > -0.2 + 0.7 * (sim_simba['logmstar'] - 9))
     print('%i starburst galaxies' % np.sum(starburst))
     # remove starbursts
     x_simba_eagle_nosb = _x_simba_eagle[:,~starburst]
@@ -2945,6 +2945,260 @@ def simba_starbursts():
     fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
     ffig = os.path.join(fig_dir, 'simba_starburst.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def simba_Mparticlelim(): 
+    ''' examine the impact of imposing a star particle limit on SIMBA 
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
+
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    #########################################################################
+    # read in posteriors  
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('simba'), 'theta.t%i.dat' % nabc['simba'])) 
+    theta_simba = np.median(theta_T, axis=0) 
+
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('tng'), 'theta.t%i.dat' % nabc['tng'])) 
+    theta_tng = np.median(theta_T, axis=0) 
+    #########################################################################
+    # run FM for different scenarios 
+    #########################################################################
+    # simba without dust 
+    x_simba_nodust, sim_simba, _ = _sim_observables('simba', np.zeros(6),
+            no_Mr_cut=True)
+    mp_lim = sim_simba['logmstar'] > np.log10(1.82e9)
+    x_simba_nodust_mplim = x_simba_nodust[:,mp_lim]
+    
+    x_simba, _, _ = _sim_observables('simba', theta_simba,
+            no_Mr_cut=True)
+    x_simba_mplim = x_simba[:,mp_lim]
+    #########################################################################
+    # plotting 
+    #########################################################################
+    xs      = [x_simba_nodust, x_simba_nodust_mplim, x_simba, x_simba_mplim]
+    names   = ['SIMBA + no dust', 'SIMBA + no dust + $M_*$ limit', 'SIMBA + EDP', 'SIMBA + EDP + $M_*$ limit']
+
+    fig = plt.figure(figsize=(5*(len(xs)+1),10))
+
+    # SFR-M* relation 
+    sub = fig.add_subplot(2, len(xs)+1, 1) 
+    DFM.hist2d(sim_simba['logmstar'], sim_simba['logsfr.inst'],
+            levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(sim_simba['logmstar'][~mp_lim],
+            sim_simba['logsfr.inst'][~mp_lim],
+            c='r', s=2) 
+
+    sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
+    sub.set_xlim(9., 12.5)
+    sub.set_xticks([9., 10., 11., 12.]) 
+    sub.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', fontsize=25) 
+    sub.set_ylim([-3., 2.]) 
+
+    for i, _x, name in zip(range(len(xs)), xs, names): 
+        # R vs (G - R)
+        sub = fig.add_subplot(2,len(xs)+1,i+2)
+        DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='C0', 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        if i in [0]:
+            sub.scatter(_x[0][~mp_lim], _x[1][~mp_lim], c='r', s=2)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+
+        # R vs FUV-NUV
+        sub = fig.add_subplot(2,len(xs)+1,i+len(xs)+3)
+        DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='C0', 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        if i in [0]:
+            sub.scatter(_x[0][~mp_lim], _x[2][~mp_lim], c='r', s=2)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.1,
+            fontsize=20)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'simba_Mparticle_limit.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
+def simba_subpops(): 
+    ''' examine where different SIMBA subpopulations end up 
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    mr_complete = (sdss_M_r < -20.) 
+
+    x_obs = [-1.*sdss_M_r[mr_complete], 
+            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
+            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
+    sfr0_obs = np.zeros(len(x_obs[0])).astype(bool)
+    #########################################################################
+    # read in posteriors  
+    #########################################################################
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('simba'), 'theta.t%i.dat' % nabc['simba'])) 
+    theta_simba = np.median(theta_T, axis=0) 
+    
+    theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+        abc_run('tng'), 'theta.t%i.dat' % nabc['tng'])) 
+    theta_tng = np.median(theta_T, axis=0) 
+    #########################################################################
+    # run FM for different scenarios 
+    #########################################################################
+    # simba without dust 
+    x_simba_nodust, sim_simba, _ = _sim_observables('simba', np.zeros(6), no_Mr_cut=True)
+    x_simba, _, _ = _sim_observables('simba', theta_simba, no_Mr_cut=True)
+    x_simba_tng, _, _ = _sim_observables('simba', theta_tng, no_Mr_cut=True)
+
+    # get different subpopulations 
+    mp_lim = sim_simba['logmstar'] > np.log10(1.82e9) # below 100 star particles 
+    lowm_starburst = mp_lim & (sim_simba['logmstar'] < 10.) & (sim_simba['logsfr.inst']  > -0.2 + 0.7 * (sim_simba['logmstar'] - 9))
+    #########################################################################
+    # plotting 
+    #########################################################################
+    xs      = [x_simba_nodust, x_simba, x_simba_tng]
+    names   = ['SIMBA + no dust', 'SIMBA + EDA', 'SIMBA + TNG EDA']
+
+    fig = plt.figure(figsize=(5*(len(xs)+1),10))
+
+    # SFR-M* relation 
+    sub = fig.add_subplot(2, len(xs)+1, 1) 
+    DFM.hist2d(sim_simba['logmstar'], sim_simba['logsfr.inst'],
+            levels=[0.68, 0.95], range=[[7.8, 12.], [-4., 2.]], 
+            contour_kwargs={'linewidths': 0.5}, 
+            plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+    sub.scatter(sim_simba['logmstar'][~mp_lim],
+            sim_simba['logsfr.inst'][~mp_lim],
+            c='r', s=2) 
+    sub.scatter(sim_simba['logmstar'][lowm_starburst],
+            sim_simba['logsfr.inst'][lowm_starburst],
+            c='C1', s=2) 
+
+    sub.set_xlabel(r'log( $M_*$ [$M_\odot$] )', labelpad=5, fontsize=25)
+    sub.set_xlim(9., 12.5)
+    sub.set_xticks([9., 10., 11., 12.]) 
+    sub.set_ylabel(r'log ( SFR $[M_\odot \, yr^{-1}]$ )', fontsize=25) 
+    sub.set_ylim([-3., 2.]) 
+
+    for i, _x, name in zip(range(len(xs)), xs, names): 
+        # R vs (G - R)
+        sub = fig.add_subplot(2,len(xs)+1,i+2)
+        DFM.hist2d(x_obs[0], x_obs[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x[0], _x[1], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[1]], bins=20, color='C0', 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub)
+        sub.scatter(_x[0][lowm_starburst], _x[1][lowm_starburst], c='C1', s=2)
+        sub.scatter(_x[0][~mp_lim], _x[1][~mp_lim], c='r', s=2)
+        sub.text(0.95, 0.95, name, ha='right', va='top', transform=sub.transAxes, fontsize=25)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([])
+        if i == 0: 
+            sub.set_ylabel(r'$G-R$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[1]) 
+        sub.set_yticks([0., 0.5, 1., 1.5])
+
+        # R vs FUV-NUV
+        sub = fig.add_subplot(2,len(xs)+1,i+len(xs)+3)
+        DFM.hist2d(x_obs[0], x_obs[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='k', 
+                contour_kwargs={'linestyles': 'dashed'}, 
+                plot_datapoints=False, fill_contours=False, plot_density=False, ax=sub)
+        DFM.hist2d(_x[0], _x[2], levels=[0.68, 0.95],
+                range=[ranges[0], ranges[2]], bins=20, color='C0', 
+                contour_kwargs={'linewidths': 0.5}, 
+                plot_datapoints=True, fill_contours=False, plot_density=True, ax=sub) 
+        sub.scatter(_x[0][lowm_starburst], _x[2][lowm_starburst], c='C1', s=2)
+        sub.scatter(_x[0][~mp_lim], _x[2][~mp_lim], c='r', s=2)
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'$FUV - NUV$', fontsize=20) 
+        else: 
+            sub.set_yticklabels([]) 
+        sub.set_ylim(ranges[2]) 
+    
+    _plth0, = sub.plot([], [], c='k', ls='--')
+    sub.legend([_plth0], ['SDSS'], loc='lower right', handletextpad=0.1,
+            fontsize=20)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'simba_Mparticle_limit.png') 
     fig.savefig(ffig, bbox_inches='tight') 
     plt.close()
     return None 
@@ -4209,7 +4463,7 @@ if __name__=="__main__":
 
     # amplitude normalized attenuation curves
     #ABC_SF_attenuation()
-    ABC_Q_attenuation_unnormalized()
+    #ABC_Q_attenuation_unnormalized()
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
@@ -4229,7 +4483,11 @@ if __name__=="__main__":
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
+    simba_subpops()
     #_simba_close_examination()
+    
+    # simba with particle mass limit 
+    #simba_Mparticlelim()
 
     # examining what happens if quiiescent galaxies don't have attenuation
     #for sim in ['simba', 'tng', 'eagle']: 
