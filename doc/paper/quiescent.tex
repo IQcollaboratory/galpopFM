@@ -51,34 +51,40 @@ Instead, we derive the attenuation curves necessary for the simulated quiescent 
 }
 
 
-\chedit{
-    The quiescent galaxy dust attenuation we predict is not a consequence of
-    the parameterization of our \eda~prescription. 
-    Without dust both TNG and EAGLE predict quiescent galaxies that are too
-    luminous and bluer in the optical than SDSS observations (Figure~\ref{fig:obs}). 
-    Therefore, to match the SDSS color-magnitude relations, significant
-    attenuation is necessary to lower their luminosities but with a shallow
-    slope that reddens their $\gr$ colors while maintaining their $\fnuv$ colors.
-    This is also the reason why TNG has a shallower slope than EAGLE: without
-    dust, TNG has a quiescent population that is redder in both UV and optical.   
-}
+The quiescent galaxy dust attenuation we predict is not a consequence of
+the parameterization of our \eda~prescription. 
+Without dust both TNG and EAGLE predict quiescent galaxies that are too
+luminous and bluer in the optical than SDSS observations (Figure~\ref{fig:obs}). 
+Therefore, to match the SDSS color-magnitude relations, significant
+attenuation is necessary to lower their luminosities but with a shallow
+slope that reddens their $\gr$ colors while maintaining their $\fnuv$ colors.
+This is also the reason why TNG has a shallower slope than EAGLE: without
+dust, TNG has a quiescent population that is redder in both UV and optical.   
 
-\chedit{    
-    Dust attenuation in quiescent galaxies, which is typically neglected, has
-    significant implications.  
-    For instance, it strengthens the evidence for the UV upturn phenomenon, the
-    unexpected detections of UV flux in quiescent galaxies~\citep[\eg][]{code1969,
-    oconnell1999, lecras2016, ali2018, dantas2021}. 
-    Better constraints on the attenuation in quiescent galaxies may help
-    discern among the different hypotheses: residual star formation activity~\citep[\eg~][]{kaviraj2007}, post-main-sequence stellar
-    evolutionary phases~\citep[\eg~][]{yi1997}, or binary systems~\citep[\eg~][]{han2007}.
-    Since the attenuation curves of quiescent galaxies are difficult to measure
-    from observations, the \eda~predictions highlight the advantages of a
-    forward modeling approach and its complementarity with standard approaches. 
-    We, however, note that since we only vary the \eda~parameters in our forward
-    model, we do not explore whether the discrepancy between the quiescent
-    populations in simulations and observations is due to shortcomings of the
-    galaxy formation models. 
+Dust attenuation in quiescent galaxies, which is typically neglected, has
+significant implications.  
+For instance, it strengthens the evidence for the UV upturn phenomenon, the
+unexpected detections of UV flux in quiescent galaxies~\citep[\eg][]{code1969,
+oconnell1999, lecras2016, ali2018, dantas2021}. 
+Better constraints on the attenuation in quiescent galaxies may help
+discern among the different hypotheses: residual star formation activity~\citep[\eg~][]{kaviraj2007}, post-main-sequence stellar
+evolutionary phases~\citep[\eg~][]{yi1997}, or binary systems~\citep[\eg~][]{han2007}.
+Since the attenuation curves of quiescent galaxies are difficult to measure
+from observations, the \eda~predictions highlight the advantages of a
+forward modeling approach and its complementarity with standard approaches. 
+
+\chedit{
+    Despite the advantages of our forward modeling approach, we caution readers
+    that we only vary the \eda~parameters in this work.     
+    Therefore, the \eda~predictions of the quiescent galaxy dust attenuation
+    described in this section assumes that the simulations accurately model the
+    star formation and metallicity histories of quiescent galaxies. 
+    Shortcomings in the galaxy formation models, and not the lack of dust
+    attenuation, may be responsible for the discrepancy between the quiescent
+    populations in simulations and observations. 
+    For instance, the simulations may be producing quiescent galaxies that are
+    intrinsically too luminous and optically blue, which then requires
+    significant dust attenuation to match SDSS observations.
     In principle, and in future work, we can vary both the \eda~parameters and
     the parameters of the galaxy formation models and infer them simultaneously
     with a foward modeling approach. 

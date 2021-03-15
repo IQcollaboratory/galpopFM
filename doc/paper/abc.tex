@@ -11,15 +11,16 @@
     likelihood, however, depends on the summary statistic and assuming an
     incorrect form of the likelihood can significantly bias the inferred
     posteriors~\citep[\eg][]{hahn2019}. In this work, we use the optical and UV
-    color-magnitude relations as our summary statistic. Since the statistic is
-    a three-dimensional histogram, its likelihood is {\em not} Gaussian but
-    rather a Poisson distribution.
+    color-magnitude relations as our summary statistic. Since this statistic is
+    a three-dimensional histogram, the likelihood is {\em not} Gaussian.
+    Furthermore, since the bins are not independent the true likelihood is
+    difficult to analytically write down.
 }
 
 \chedit{
     Rather than \emph{incorrectly} assuming a Gaussian likelihood or attempting
-    to estimate the true Poisson likelihood of the optical and UV
-    color-magnitude relations, we use Approximate Bayesian Computation~\citep[hereafter
+    to estimate the true likelihood of the optical and UV color-magnitude
+    relations, we use Approximate Bayesian Computation~\citep[hereafter
     ABC;][]{diggle1984, tavare1997, pritchard1999, beaumont2009, delmoral2012}
     for our inference. 
 }
@@ -33,7 +34,8 @@ that quantifies the ``closeness'' to the observed data.
     any functional form of the likelihood and so we avoid any biases from such
     assumptions. Furthermore, it also allows us to infer the posterior using
     summary statistics with likelihoods that are difficult or intractable to
-    directly estimate~\citep{hahn2017a}.
+    directly estimate and, thus, provides a more general inference framework
+    for our forward modeling approach~\citep{hahn2017a}. 
 }
 
 In the simplest version of ABC, with a rejection sample
@@ -107,13 +109,12 @@ We list the range of the priors in Table~\ref{tab:free_param}.
     \fnuv)$ observational-space. We measure the color-magnitude relations by
     calculating the number density in bins of $(\gr, \fnuv, M_r)$ with widths
     $(0.0625, 0.25, 0.5)~mags$. For our distance metric, $\rho$, we use the L2
-    norm between the summary statistics of 
-    the SDSS observation, $X^{\rm SDSS}$ and of our forward model, $X^{\rm
-    FM}(\theta_{\rm \eda})$: 
+    norm between the number density of the SDSS observation, $n^{\rm SDSS}$ and
+    of our forward model, $n^{\rm FM}(\theta_{\rm \eda})$: 
 }
 \begin{equation} \label{eq:distance}
-    \rho(\theta_{\rm \eda}) = \left[X^{\rm SDSS} - X^{\rm FM}(\theta_{\rm
-    \eda}) \right]^2.
+    \rho(\theta_{\rm \eda}) = \sum\limits_{i,j} \left[n_{ij}^{\rm SDSS} -
+    n_{ij}^{\rm FM}(\theta_{\rm \eda}) \right]^2.
 \end{equation}
 In Figure~\ref{fig:abc}, we present the posterior distributions of the \eda~parameters
 derived using ABC-PMC for the SIMBA (orange), TNG (blue), and EAGLE (green) hydrodynamical 
