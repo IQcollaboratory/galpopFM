@@ -145,6 +145,14 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     G_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='g_sdss') 
     R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='r_sdss') 
 
+    # apply FUV and NUV cut
+    uv_cut = (F_mag < -10) & (N_mag < -10) 
+    F_mag = F_mag[uv_cut]
+    N_mag = N_mag[uv_cut]
+    G_mag = G_mag[uv_cut]
+    R_mag = R_mag[uv_cut]
+    
+    # calculate color 
     FUV_NUV = F_mag - N_mag 
     G_R = G_mag - R_mag
     
@@ -160,10 +168,11 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
         if seed is not None: 
             np.random.seed(seed)
         # noise model (simplest model) 
-        sig_R = chi2.rvs(3, loc=0.02, scale=0.00005, size=n_gal)
+        sig_R = chi2.rvs(3, loc=0.02, scale=0.00003, size=n_gal)
         sig_FN = chi2.rvs(2, loc=0.05, scale=0.05, size=n_gal)
-        sig_GR = chi2.rvs(3, size=n_gal) * (0.000025 * (R_mag + 20.1) + 0.000075) + 0.0283
-        
+        sig_GR = chi2.rvs(3, size=n_gal) * (0.00001 * (R_mag + 20.1) + 0.00005)\
+                + (0.000025 * (R_mag + 20.1) + 0.02835)
+
         R_mag += np.random.normal(size=n_gal) * sig_R
         FUV_NUV += np.random.normal(size=n_gal) * sig_FN
         G_R += np.random.normal(size=n_gal) * sig_GR
