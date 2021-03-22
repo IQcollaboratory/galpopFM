@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 24, 'tng': 25, 'eagle': 27}        # Niteration 
+nabc = {'simba': 11, 'tng': 12, 'eagle': 21}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -417,19 +417,17 @@ def _sim_observables(sim, theta, model='slab', noise=True,
     _sim_sed = dustInfer._read_sed(sim) 
     wlim = (_sim_sed['wave'] > 1e3) & (_sim_sed['wave'] < 8e3) 
 
-    mlim    = np.ones(len(_sim_sed['logmstar'])).astype(bool)#(_sim_sed['logmstar'] > 9.4) 
     zerosfr = (_sim_sed['logsfr.inst'] == -999)
-    cuts    = mlim 
 
     sim_sed = {} 
     sim_sed['sim']          = sim 
-    sim_sed['logmstar']     = _sim_sed['logmstar'][cuts].copy()
-    sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'][cuts].copy() 
+    sim_sed['logmstar']     = _sim_sed['logmstar'].copy()
+    sim_sed['logsfr.inst']  = _sim_sed['logsfr.inst'].copy() 
     sim_sed['wave']         = _sim_sed['wave'][wlim].copy()
-    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][cuts,:][:,wlim].copy() 
-    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][cuts,:][:,wlim].copy() 
+    sim_sed['sed_noneb']    = _sim_sed['sed_noneb'][:,wlim].copy() 
+    sim_sed['sed_onlyneb']  = _sim_sed['sed_onlyneb'][:,wlim].copy() 
     
-    x_mod = dustInfer.sumstat_model(
+    x_mod, cuts = dustInfer.sumstat_model(
             theta, 
             sed=sim_sed, 
             dem=dem,
@@ -442,8 +440,8 @@ def _sim_observables(sim, theta, model='slab', noise=True,
     if not no_Mr_cut: mr_cut = x_mod[0] > 20
     else: mr_cut = np.ones(len(x_mod[0])).astype(bool) 
 
-    sim_sed['logmstar'] = sim_sed['logmstar'][mr_cut] 
-    sim_sed['logsfr.inst'] = sim_sed['logsfr.inst'][mr_cut] 
+    sim_sed['logmstar'] = sim_sed['logmstar'][cuts][mr_cut] 
+    sim_sed['logsfr.inst'] = sim_sed['logsfr.inst'][cuts][mr_cut] 
 
     return x_mod[:,mr_cut], sim_sed, zerosfr[cuts][mr_cut]
 
@@ -621,8 +619,7 @@ def ABC_corner():
     '''
     import abcpmc
     # parameters of interest
-    plot_range = np.array([(-3., 3.), (-2., 2.), (0., 3.), (-1.6, 1.6), (-1.5,
-        1.), (-1., 0.5)]) 
+    plot_range = prior_range #np.array([(-3., 3.), (-2., 2.), (0., 3.), (-1.6, 1.6), (-1.5, 1.), (-1., 0.5)]) 
 
     print('\t %s' % ','.join(param_lbls))
     for i, sim in enumerate(sims):
@@ -961,11 +958,17 @@ def ABC_Observables():
 
     sdss = Catalog('tinker') 
     sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
-    mr_complete = (sdss_M_r < -20.) 
+    sdss_nmgy_fuv, sdss_nmgy_nuv = sdss.data['NSA_NMGY'][:,0], sdss.data['NSA_NMGY'][:,1]
 
-    x_obs = [-1.*sdss_M_r[mr_complete], 
-            sdss_M_g[mr_complete] - sdss_M_r[mr_complete], 
-            sdss_M_fuv[mr_complete] - sdss_M_nuv[mr_complete]] 
+    obs_cuts = ((sdss_M_r < -20.) &
+        (sdss_M_fuv != -999) & (sdss_M_fuv < -10) & 
+        (sdss_M_nuv != -999) & (sdss_M_nuv < -10) & 
+        (sdss_nmgy_fuv > 0) & (sdss_nmgy_nuv > 0)
+       ) 
+
+    x_obs = [-1.*sdss_M_r[obs_cuts], 
+            sdss_M_g[obs_cuts] - sdss_M_r[obs_cuts], 
+            sdss_M_fuv[obs_cuts] - sdss_M_nuv[obs_cuts]] 
     #########################################################################
     # read in simulations without dust attenuation
     #########################################################################
@@ -1042,7 +1045,6 @@ def ABC_Observables():
     fig.subplots_adjust(wspace=0.1, hspace=0.1)
 
     ffig = os.path.join(fig_dir, 'abc_observables.png') 
-    fig.savefig(ffig, bbox_inches='tight') 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
@@ -4454,7 +4456,8 @@ if __name__=="__main__":
     #ABC_color_distribution()
     
     # slope-AV relation for ABC posterior
-    #ABC_slope_AV(gal_type='all')
+    ABC_slope_AV(gal_type='all')
+
     #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV_subpop()
 
@@ -4462,8 +4465,9 @@ if __name__=="__main__":
     #_ABC_stdA_MsSFR()
 
     # amplitude normalized attenuation curves
-    #ABC_SF_attenuation()
-    #ABC_Q_attenuation_unnormalized()
+    ABC_SF_attenuation()
+    ABC_Q_attenuation_unnormalized()
+
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
@@ -4483,7 +4487,7 @@ if __name__=="__main__":
 
     # examine starburst galaxies in simba 
     #simba_starbursts()
-    simba_subpops()
+    #simba_subpops()
     #_simba_close_examination()
     
     # simba with particle mass limit 

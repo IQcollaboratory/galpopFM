@@ -180,7 +180,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     data_vector = np.array([-1.*R_mag, G_R, FUV_NUV]).T
 
     if return_datavector: 
-        return data_vector.T
+        return data_vector.T, uv_cut
 
     Nbins, _ = np.histogramdd(data_vector, bins=nbins, range=ranges)
     
