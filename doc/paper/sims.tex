@@ -119,23 +119,34 @@ Bondi-based accretion for hot gas, and two-mode AGN feedback. %which ejects bipo
 
 \subsection{SDSS Galaxies} \label{sec:obs} 
 For our observations, we use a galaxy sample derived from SDSS observations. 
-\chedit{
-    We impose a $M_r < -20$ completeness limit on a volume-limited sample from
-    \cite{tinker2011}. The \cite{tinker2011} sample is derived from the SDSS
-    DR7~\citep{abazajian2009} NYU Value-Added Galaxy
-    Catalog~\citep[VAGC;][]{blanton2005} and has a $M_* > 10^{9.7} M_\odot$ completeness limit. In total, our SDSS sample has 16,970
-    galaxies.
-} 
-In this work, we focus 
-on observables that can be consistently defined and derived in both simulations 
+We begin with the volume-limited \cite{tinker2011} sample derived from the SDSS
+DR7~\citep{abazajian2009} NYU Value-Added Galaxy
+Catalog~\citep[VAGC;][]{blanton2005},which has a $M_* > 10^{9.7} M_\odot$
+completeness limit. 
+We focus on observables that can be consistently defined and derived in both simulations 
 and observations: the $r$-band absolute magnitude, $M_r$, the optical $\gr$
-color, and the $\fnuv$ color. For the SDSS sample, we use $FUV$,
-$NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
+color, and the $\fnuv$ color. 
+We use $FUV$, $NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
 Atlas\footnote{\url{http://nsatlas.org/}}, which is re-reduction of SDSS DR8
 \citep{aihara2011} that includes an improved background subtraction~\citep{blanton2011} 
 and near and far UV photometry from GALEX. These absolute magnitudes are
 derived using $\mathtt{kcorrect}$~\citep{blanton2007a}, assuming
 a~\cite{chabrier2003} initial mass function. 
+
+We impose a $M_r < -20$ completeness limit on the \cite{tinker2011} sample.
+\chedit{
+    We also impose a $FUV$ and $NUV$ flux limit --- exclude galaxies
+    with galactic-extinction corrected $FUV$ and $NUV$ fluxes below 0.
+    UV fluxes in the NASA-Sloan Atlas are measured using forced photometry on
+    GALEX so they can be negative. 
+    The $\mathtt{kcorrect}$ UV absolute magnitudes derived from these fluxes,
+    however, are poorly constrained.
+    In addition to the UV flux limit, we also impose a 
+    $M_{\rm FUV}, M_{\rm NUV} < -10$
+    absolute magnitude completeness limit, which corresponds to the
+    $\mathtt{kcorrect}$ absolute magnitude at the flux limit.
+    In total, our SDSS sample has 5,341 galaxies.
+} 
 
 \subsection{Forward Modeling Observations} \label{sec:fm} 
 One of the main goals of this work is to conduct an ``apples-to-apples''
@@ -174,8 +185,9 @@ construct the SEDs, we refer readers to Starkenberg et al. (in prep.).
     curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$ broadband
     filters. We add realistic noise to $M_r$, $\gr$, and $\fnuv$ by sampling
     from the observed uncertainty distributions of the NASA Sloan-Atlas.
-    Lastly, we apply the $M_r < -20$ absolute magnitude completeness limit of
-    our SDSS sample to the simulated galaxies. 
+    Lastly, we apply the $M_r < -20$ and $M_{\rm FUV}, M_{\rm NUV} < -10$
+    absolute magnitude completeness limits of our SDSS sample to the simulated 
+    galaxies. 
 }
 
 \chedit{
