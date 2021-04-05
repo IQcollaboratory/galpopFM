@@ -3,46 +3,48 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
+Warning--I didn't find a database entry for "dave2020"
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 114 entries,
+You've used 113 entries,
             2881 wiz_defined-function locations,
-            1429 strings with 51743 characters,
-and the built_in function-call counts, 53610 in all, are:
-= -- 4492
-> -- 3984
-< -- 223
-+ -- 1787
-- -- 586
-* -- 6575
-:= -- 8474
+            1424 strings with 51602 characters,
+and the built_in function-call counts, 53195 in all, are:
+= -- 4454
+> -- 3960
+< -- 219
++ -- 1775
+- -- 584
+* -- 6528
+:= -- 8407
 add.period$ -- 0
-call.type$ -- 114
-change.case$ -- 228
-chr.to.int$ -- 110
-cite$ -- 114
-duplicate$ -- 2552
-empty$ -- 2519
-format.name$ -- 932
-if$ -- 9231
+call.type$ -- 113
+change.case$ -- 226
+chr.to.int$ -- 109
+cite$ -- 113
+duplicate$ -- 2531
+empty$ -- 2497
+format.name$ -- 928
+if$ -- 9159
 int.to.chr$ -- 5
 int.to.str$ -- 0
-missing$ -- 114
-newline$ -- 355
-num.names$ -- 774
-pop$ -- 559
+missing$ -- 113
+newline$ -- 352
+num.names$ -- 768
+pop$ -- 554
 preamble$ -- 1
-purify$ -- 456
+purify$ -- 452
 quote$ -- 0
-skip$ -- 1477
+skip$ -- 1464
 stack$ -- 0
-substring$ -- 3253
-swap$ -- 1231
-text.length$ -- 457
+substring$ -- 3225
+swap$ -- 1225
+text.length$ -- 453
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 1026
+type$ -- 1017
 warning$ -- 0
-while$ -- 836
+while$ -- 828
 width$ -- 0
-write$ -- 1145
+write$ -- 1135
+(There was 1 warning)
