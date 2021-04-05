@@ -35,9 +35,12 @@ quiescent galaxies. In the UV, they predict quiescent galaxies with $\ssfr <
 Meanwhile, for the rest of the galaxies, the simulations predict significantly
 bluer UV colors than SDSS. 
 
-\emph{With our \eda~prescription, however, all three simulations reproduce the
-color-magnitude relations of SDSS observations.} In Figure~\ref{fig:dem}, 
-we present the optical and UV color-magnitude relations predicted by the 
+\chedit{
+    \emph{With our \eda~prescription, all three simulations produce
+    color-magnitude relations much more consistent with SDSS observations.}
+}
+In Figure~\ref{fig:dem}, we present the optical and UV color-magnitude
+relations predicted by the 
 \eda~for the SIMBA (orange), TNG (blue), and EAGLE (green) simulations. 
 For the \eda~parameters, we use the median of the inferred posterior distributions (Figure~\ref{fig:abc}). 
 We include the color-magnitude
@@ -61,53 +64,85 @@ have a significant number of galaxies with high $\fnuv$, in agreement with SDSS.
 
 % SIMBA discrepancy
 \chedit{
-    For SIMBA, although the \eda~prescription predicts optical and UV
-    color-magnitude relations consistent with observations, there are still
-    some discrepancies in the color-magnitude relations with SDSS. Furthermore,
-    the overall agreement is significantly worse than TNG and EAGLE: the median
-    ABC distance metric (Eq.~\ref{eq:distance}) of the posterior $\rho =
-    3.7\times10^{-3}, 3.2\times10^{-3}$ for TNG and EAGLE while 
-    $\rho = 6.6\times10^{-3}$ for SIMBA. 
-    Most notably, SIMBA+\eda~produces a population of galaxies with $\fnuv >
-    2.5~mag$ that lie well above the SDSS observations.
+    For SIMBA, although the \eda~prescription significantly improves the
+    agreement, it still struggles to reproduce the SDSS color-magnitude relations. 
+    The overall agreement is significantly worse than TNG and EAGLE: the median
+    ABC distance metric (Eq.~\ref{eq:distance}) of the posterior 
 }
-The inferred \eda~parameters for SIMBA
-also differ significantly from the parameters of TNG and EAGLE
-(Figure~\ref{fig:abc}). 
+\todo{UPDATE NUMBERS: 
+    $\rho = 3.7\times10^{-3}, 3.2\times10^{-3}$ for TNG and EAGLE while 
+    $\rho = 6.6\times10^{-3}$ for SIMBA. 
+}
+\todo{UPDATE: 
+    Moreover, SIMBA+\eda~preoduces a optically bluer red sequence and a much
+    broader UV color-magnitude relation. 
+}
+The inferred \eda~parameters for SIMBA also differ significantly from the
+parameters of TNG and EAGLE (Figure~\ref{fig:abc}). 
 \chedit{
-    For instance, we infer the opposite $M_*$ and $\ssfr$ dependence for
-    $\tau_V$ than TNG or EAGLE.
-    These discrepancies are primarily driven by the excess of high
+    We infer the opposite $\ssfr$ dependence for the amplitude and slope of
+    dust attenuation than TNG or EAGLE.
+    These discrepancies are primarily driven by the excess of two galaxy
+    subpopulations in SIMBA. 
+    First, are quiescent galaxies with $\sfr=0$ at $z=0$ and SFHs that peak at
+    $z\sim2$ and fully quenched at $z\sim1$.
+    Unlike other quiescent galaxies in SIMBA, they have had no star formation
+    in the past $\gtrssim 2{\rm Gyr}$.  
+    These galaxies have highly red intrinsic (without dust) UV color:
+    $\fnuv > 2.5{\rm mag}$.
+    While, TNG and EAGLE also have galaxies with $\fnuv > 2.5{\rm mag}$, they
+    do not have high luminosity $M_r > -22$ (Figure~\ref{fig:obs}). 
+    Furthermore, unlike the UV red galaxies in SIMBA, they do not have fully 
+    quenched SFHs with no recent star formation; instead, they have SFHs that
+    are similar to other quiescent galaxies. 
+    The other population that drives the SIMBA discrepancy is the high
     $\ssfr > 10^{-9.5}yr^{-1}$ ``starburst'' galaxies with
-    $M_*<10^{10}M_\odot$, which lie significantly above the SFS and  are {\em
+    $M_*<10^{10}M_\odot$, which lie significantly above the SFS and are {\em
     only} present in SIMBA (Figure~\ref{fig:smf_msfr}). 
-    This starburst population, which has also been
-    identified in \cite{dave2019} (see their Figures~5 and 6) is caused by
-    excess gas in low-mass galaxies at $z=0$. If we exclude $\ssfr >
-    10^{-9.5}{yr}^{-1}$ starburst galaxies and run the \eda~for SIMBA using
-    median values of the TNG and EAGLE posteriors for the \eda~parameters, we
-    find similar level of agreement with SDSS as TNG and EAGLE. 
+    This starburst population, which has also been identified in
+    \cite{dave2019} (see their Figures~5 and 6) is caused by excess gas in
+    low-mass galaxies at $z=0$. 
 }
 
-Without dust attenuation, the excess starburst galaxies in SIMBA are blue
-$\gr\sim0.1$ and have high luminosity, $M_r < -22$.
 \chedit{
-    Since such high luminosity blue galaxies do not exist in observations, they
-    need to be both strongly attenuated and reddened. In our \eda~prescription,
-    dust attenuation and reddening is a linear function of $\log\ssfr$ so it
-    cannot strongly attenuate and redden just the starburst population.
-    Consequently, the quiescent galaxies are not sufficiently attenuated.
-    Although we can increase the flexibility of our \eda~prescription, the
-    attenuation and reddening necessary for the starburst galaxies conflict
-    with the attenuation-slope relation well-established in observations and
-    simulations~\citep{inoue2005,chevallard2013,salim2018,salim2020,trayford2020}.
-    The SIMBA starbursts require both high attenuation and steeper slopes but,
-    according to the attenuation-slope relations, galaxies with higher attenuation
-    have shallower slopes. 
-    Since the excess starburst population is a known discrepancy that
-    dramatically impacts the inferred \eda~parameters, we do not explore
-    extending our \eda~prescription and focus on the TNG and EAGLE simulations
-    for the rest of the paper. 
+    Without dust attenuation, both SIMBA populations strongly disagree with the
+    SDSS color-magnitude relation (Figure~\ref{fig:obs}). 
+    The UV red SIMBA galaxies have $\fnuv > 2.5$ over the entire luminosity
+    range.  
+    This is significantly redder than SDSS, which has only few galaxies with 
+    $\fnuv > 2.5$ and none that are luminous, $M_r > -21.5$.
+    Meanwhile the low mass starbursts have blue $\gr < 0.25$ and 
+    $-20 < M_r < -21$. 
+    This is significantly bluer than the SDSS $\gr \gtrssim 0.4$ limit and also
+    bluer than the SF galaxies in TNG and EAGLE. 
+    In order to reconcile these differences between SIMBA and SDSS, the
+    \eda~prescription imposes a steep attenuation curve with significant UV
+    attenutaion on the UV red galaxies so that they are excluded by our $M_{\rm
+    FUV}, M_{\rm NUV} < -10$ completeness limit. 
+    On the other hand, the \eda~prescription imposes a shallower attenuation
+    curve with high $A_V$ for the low mass starburst galaxies so that they are
+    excluded by our $M_r < -20$ completeness limit.
+    Despite removing the excess $\fnuv > 2.5$  and $\gr < 0.25$ galaxies, our
+    \eda~prescription, with its linear dependence on $\log M_*$ and $\log\ssfr$
+    struggles to accurately reproduce the SDSS color-magnitude relations. 
+    If we exclude the UV red and $\ssfr > 10^{-9.5}{yr}^{-1}$ starburst galaxies 
+    and run the \eda~for SIMBA using median values of the TNG or EAGLE posteriors 
+    for the \eda~parameters, we find similar level of agreement with SDSS as TNG 
+    and EAGLE. 
+}
+
+\chedit{
+    The UV red galaxies in SIMBA have distinct SFHs that differ from the SFHs
+    of other quiescent galaxies and are not found in TNG and EAGLE.
+    In another paper of the IQ series (Choi et al. in prep), we examine this
+    SFH difference in further detail and how it impacts the the quiescent fraction
+    evolution over $0 < z < 3$. 
+    Furthermore, the starburst population in SIMBA is a known discrepancy that
+    is also not present in TNG and EAGLE. 
+    Since SIMBA has these discrepant populations that dramatically impact the 
+    inferred \eda~parameters, we do not explore extending our \eda~prescription
+    so that SIMBA may better match the SDSS observations.
+    We instead focus on the TNG and EAGLE simulations for the rest of the paper. 
 }
 
 % comparison to literature 
