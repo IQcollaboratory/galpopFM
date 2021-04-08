@@ -126,6 +126,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
         #        sed['sed_noneb'][sfr0,:])
     elif sfr0_prescription == 'sfrmin': 
         logsfr_min = sed['logsfr.inst'][~sfr0].min() # minimum SFR
+        print(logsfr_min)
         sed['logsfr.inst'][sfr0] = logsfr_min
     else: 
         raise NotImplementedError
@@ -146,7 +147,7 @@ def sumstat_model(theta, sed=None, dem='slab_calzetti', f_downsample=1.,
     R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dusty, band='r_sdss') 
 
     # apply FUV and NUV cut
-    uv_cut = (F_mag < -10) & (N_mag < -10) 
+    uv_cut = (F_mag < -13.5) & (N_mag < -14) 
     F_mag = F_mag[uv_cut]
     N_mag = N_mag[uv_cut]
     G_mag = G_mag[uv_cut]
