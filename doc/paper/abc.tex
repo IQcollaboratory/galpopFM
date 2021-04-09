@@ -1,51 +1,47 @@
 \section{Likelihood-Free Inference: Approximate Bayesian Computation} \label{sec:abc}
-\chedit{
-    With our forward model, which includes the \eda~prescription for dust
-    attenuation, we can now generate synthetic observations for simulated
-    galaxies and make an ``apples-to-apples'' comparison to SDSS. Next, we want
-    to use this comparison to infer the posterior probability distribution of
-    the \eda~parameters. Typically in astronomy, this inference is done
-    assuming a Gaussian likelihood to compare the ``summary statistic''
-    (\eg~SMF) of the model to observations and some sampling method (\eg~Markov
-    Chain Monte Carlo) to estimate the posterior distribution. The functional form of the
-    likelihood, however, depends on the summary statistic and assuming an
-    incorrect form of the likelihood can significantly bias the inferred
-    posteriors~\citep[\eg][]{hahn2019}. In this work, we use the optical and UV
-    color-magnitude relations as our summary statistic. Since this statistic is
-    a three-dimensional histogram, the likelihood is {\em not} Gaussian.
-    Furthermore, since the bins are not independent the true likelihood is
-    difficult to analytically write down.
-}
+With our forward model, which includes the \eda~prescription for dust
+attenuation, we can now generate synthetic observations for simulated
+galaxies and make an ``apples-to-apples'' comparison to SDSS. Next, we want
+to use this comparison to infer the posterior probability distribution of
+the \eda~parameters. Typically in astronomy, this inference is done
+assuming a Gaussian likelihood to compare the ``summary statistic''
+(\eg~SMF) of the model to observations and some sampling method (\eg~Markov
+Chain Monte Carlo) to estimate the posterior distribution. The functional form of the
+likelihood, however, depends on the summary statistic and assuming an
+incorrect form of the likelihood can significantly bias the inferred
+posteriors~\citep[\eg][]{hahn2019}. In this work, we use the optical and UV
+color-magnitude relations as our summary statistic. Since this statistic is
+a three-dimensional histogram, the likelihood is {\em not} Gaussian.
+Furthermore, since the bins are not independent the true likelihood is
+difficult to analytically write down.
 
-\chedit{
-    Rather than \emph{incorrectly} assuming a Gaussian likelihood or attempting
-    to estimate the true likelihood of the optical and UV color-magnitude
-    relations, we use Approximate Bayesian Computation~\citep[hereafter
-    ABC;][]{diggle1984, tavare1997, pritchard1999, beaumont2009, delmoral2012}
-    for our inference. 
-}
+Rather than \emph{incorrectly} assuming a Gaussian likelihood or attempting
+to estimate the true likelihood of the optical and UV color-magnitude
+relations, we use Approximate Bayesian Computation~\citep[hereafter
+ABC;][]{diggle1984, tavare1997, pritchard1999, beaumont2009, delmoral2012}
+for our inference. 
 ABC is a likelihood-free (or ``simulation-based'') parameter inference
 framework that approximates the posterior probability distribution, $p(\theta\given{\rm data})$, without
 requiring evaluations of the likelihood.  Instead, ABC only requires a forward
 model of the observed data, a prior that can be sampled, and a distance metric
 that quantifies the ``closeness'' to the observed data. 
+Since ABC does not require evaluating the likelihood, it does not assume
+any functional form of the likelihood and so we avoid any biases from such
+assumptions. 
 \chedit{
-    Since ABC does not require evaluating the likelihood, it does not assume
-    any functional form of the likelihood and so we avoid any biases from such
-    assumptions. Furthermore, it also allows us to infer the posterior using
-    summary statistics with likelihoods that are difficult or intractable to
-    directly estimate and, thus, provides a more general inference framework
-    for our forward modeling approach~\citep{hahn2017a}. 
+    Furthermore, it also allows us to infer the posterior using summary
+    statistics with likelihoods that are difficult or intractable to directly
+    estimate. 
+    ABC, therefore, provides a more general inference framework for our forward
+    modeling approach~\citep{hahn2017a}. 
 }
 
 In the simplest version of ABC, with a rejection sample
 framework~\citep{pritchard1999}, a proposal set of parameter values are drawn
 from the prior. The forward model is run with the proposal parameter values.
-\chedit{
-    The output of the forward model is then compared to the observed data using
-    a distance metric that quantifies the ``closeness'' of the forward model
-    output to the observed data. 
-}
+The output of the forward model is then compared to the observed data using
+a distance metric that quantifies the ``closeness'' of the forward model
+output to the observed data. 
 If the distance is within some small threshold, we keep the proposed
 parameters; otherwise, we discard them.  Proposals are
 drawn until enough pass the threshold to sample the posterior. A
@@ -86,32 +82,28 @@ and \cite{hahn2019a}.
 \end{center}
 \end{figure}
 
-\chedit{
-    In this work, we use ABC-PMC with uninformative uniform priors on each of
-    the \eda~parameters and choose ranges that encompass constraints in the
-    literature.
-}
+In this work, we use ABC-PMC with uninformative uniform priors on each of
+the \eda~parameters and choose ranges that encompass constraints in the
+literature.
 The prior ranges of $\mtaum, \mtaus, c_\tau$ are chosen to
 conservatively include the $A_V$ range and $M_*$ and $\sfr$ dependence of
 \cite{narayanan2018} and \cite{salim2020}. Meanwhile, the prior ranges of 
 $\mdeltam, \mdeltas, c_\delta$ are chosen to conservatively include the $\delta$
 range and $M_*$ and $\sfr$ dependence of \cite{leja2017} and \cite{salim2018}. 
 We list the range of the priors in Table~\ref{tab:free_param}. 
-\chedit{
-    For our forward model, we use the model described in
-    Section~\ref{sec:fm}: we construct SEDs for every simulated galaxy from
-    the hydrodynamic simulations, apply dust attenuation with our
-    \eda, calculate the observables ($M_r$, $\gr$, and $\fnuv$),
-    add uncertainties to them, and apply a $M_r < -20$ completeness 
-    limit. 
-    We use the optical and UV color-magnitude relation, $(\gr)- M_r$ and
-    $(\fnuv)-M_r$ as our summary statistic to fully exploit the $(M_r, \gr,
-    \fnuv)$ observational-space. We measure the color-magnitude relations by
-    calculating the number density in bins of $(\gr, \fnuv, M_r)$ with widths
-    $(0.0625, 0.25, 0.5)~mags$. For our distance metric, $\rho$, we use the L2
-    norm between the number density of the SDSS observation, $n^{\rm SDSS}$ and
-    of our forward model, $n^{\rm FM}(\theta_{\rm \eda})$: 
-}
+For our forward model, we use the model described in
+Section~\ref{sec:fm}: we construct SEDs for every simulated galaxy from
+the hydrodynamic simulations, apply dust attenuation with our
+\eda, calculate the observables ($M_r$, $\gr$, and $\fnuv$),
+add uncertainties to them, and apply a $M_r < -20$ completeness 
+limit. 
+We use the optical and UV color-magnitude relation, $(\gr)- M_r$ and
+$(\fnuv)-M_r$ as our summary statistic to fully exploit the $(M_r, \gr,
+\fnuv)$ observational-space. We measure the color-magnitude relations by
+calculating the number density in bins of $(\gr, \fnuv, M_r)$ with widths
+$(0.0625, 0.25, 0.5)~mags$. For our distance metric, $\rho$, we use the L2
+norm between the number density of the SDSS observation, $n^{\rm SDSS}$ and
+of our forward model, $n^{\rm FM}(\theta_{\rm \eda})$: 
 \begin{equation} \label{eq:distance}
     \rho(\theta_{\rm \eda}) = \sum\limits_{i,j} \left[n_{ij}^{\rm SDSS} -
     n_{ij}^{\rm FM}(\theta_{\rm \eda}) \right]^2.
