@@ -1,6 +1,6 @@
 \begin{figure}
 \begin{center}
-    \includegraphics[width=0.5\textwidth]{figs/abc_q_atten_unnorm.pdf}
+    \includegraphics[width=0.9\textwidth]{figs/abc_q_atten_unnorm.pdf}
     \caption{\label{fig:q_raw_atten}
     \chedit{
         The attenuation curves of quiescent galaxies predicted by the \eda~for
@@ -20,35 +20,31 @@
 \subsection{The Attenuation Curves of Quiescent Galaxies}  
 %We have demonstrated so far that the \eda~can reproduce the observed UV and optical color-magnitude relations.  
 %In doing so, it also predicts attenuation-slope relation and dust attenuation curves of star-forming galaxies that are in good agreement with observations and radiative transfer simulations. 
-\chedit{
-    Beyond reproducing previous work, the \eda~also makes predictions on the dust
-    attenuation of quiescent galaxies, which is still poorly constrained by
-    observations. 
-    There are many challenges to measuring the attenuation curves of quiescent galaxies directly from observations.
-    Methods that rely on IR luminosities can be contaminated by MIR emission
-    from AGN heating nearby dust~\citep{kirkpatrick2015}. 
-    SED fitting methods must also account for AGN MIR
-    emission~\citep{salim2016, leja2018, salim2018} and struggle to tightly
-    constrain dust attenuation for quiescent galaxies due to the degeneracies
-    with star formation history and metallicity.
-}
+Beyond the star-forming galaxies of the last section, the \eda~also makes
+predictions on the dust attenuation of quiescent galaxies, which is still
+poorly constrained by observations. 
+There are many challenges to measuring the attenuation curves of quiescent galaxies directly from observations.
+Methods that rely on IR luminosities can be contaminated by MIR emission
+from AGN heating nearby dust~\citep{kirkpatrick2015}. 
+SED fitting methods must also account for AGN MIR
+emission~\citep{salim2016, leja2018, salim2018} and struggle to tightly
+constrain dust attenuation for quiescent galaxies due to the degeneracies
+with star formation history and metallicity.
 
 With a forward modeling approach, we circumvent these challenges. 
-Instead, we derive the attenuation curves necessary for the simulated quiescent population to reproduce the observed optical and UV photometry. 
-\chedit{
-    In Figure~\ref{fig:q_raw_atten}, we present the attenuation curves of
-    quiescent galaxies predicted by the \eda~for the median posterior parameter
-    values of TNG (blue) and EAGLE (green). 
-    Quiescent galaxies are classified using a $\ssfr < 10^{-11}{yr}^{-1}$ cut. 
-    Unlike Figure~\ref{fig:sfatten}, the attenuation curves are \emph{not}
-    normalized at $3000\AA$. 
-    For comparison, we include $A(\lambda)$ of star-forming galaxies predicted
-    by the \eda~(dotted).
-    Both TNG+\eda~and EAGLE+\eda~predict significant dust attenuation in
-    quiescent galaxies: $A(\lambda) \gtrsim 1$ throughout the UV and optical. 
-    Their attenuation curves are also significantly shallower than the
-    attenuation curves of star-forming galaxies. 
-}
+Instead, we derive the attenuation curves necessary for the simulated quiescent
+population to reproduce the observed optical and UV photometry. 
+In Figure~\ref{fig:q_raw_atten}, we present the attenuation curves of
+quiescent galaxies predicted by the \eda~for the median posterior parameter
+values of SIMBA (left), TNG (center), and EAGLE (right). 
+Quiescent galaxies are classified using a $\ssfr < 10^{-11}{yr}^{-1}$ cut. 
+Unlike Figure~\ref{fig:sfatten}, we do not normalize the attenuation curves at $3000\AA$. 
+For comparison, we include $A(\lambda)$ of star-forming galaxies predicted
+by the \eda~in each panel (dotted).
+Both TNG+\eda~and EAGLE+\eda~predict significant dust attenuation in
+quiescent galaxies: $A(\lambda) \gtrsim 1$ throughout the UV and optical. 
+Their attenuation curves are also significantly shallower than the
+attenuation curves of star-forming galaxies. 
 
 
 The quiescent galaxy dust attenuation we predict is not a consequence of

@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 21, 'tng': 22, 'eagle': 25}        # Niteration 
+nabc = {'simba': 23, 'tng': 23, 'eagle': 26}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -1384,13 +1384,15 @@ def ABC_Observables_UVred():
                 linestyle='-', linewidth=0.8)
         sub.plot(0.5 * (t_sfh_low + t_sfh_high), sfh_t_q[1], c='C1',
                 linestyle='--', linewidth=1)
-        sub.set_xlim(0, 13.7)
-        sub.set_ylim(0., 1e-9)
+        sub.set_xlim(0, 13.25)
+        sub.set_ylim(1e-13, 1e-9)
+        sub.set_yscale('log') 
         
         if i == 0:
             sub.set_ylabel(r'SSFR [$yr^{-1}$]', fontsize=25)
-            sub.legend(loc='upper left', fontsize=18, handletextpad=0.1) 
-        else: sub.set_yticklabels([]) 
+        else: 
+            sub.set_yticklabels([]) 
+            sub.legend(loc='lower right', fontsize=18, handletextpad=0.1) 
 
     bkgd = fig.add_subplot(gs1[:,:], frameon=False)
     bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
@@ -2506,12 +2508,11 @@ def ABC_Q_attenuation_unnormalized():
         _, _sim_sed, _ = _sim_observables(sim.lower(), theta_median)
         sim_seds.append(_sim_sed) 
 
-    fig = plt.figure(figsize=(8,6))
-    sub = fig.add_subplot(111) 
+    fig = plt.figure(figsize=(16,4))
     # SF or Q  
-    for isfq, _sfq in enumerate(['quiescent', 'star-forming']): 
-
-        for i, sim in enumerate(sims): 
+    for i, sim in enumerate(sims): 
+        sub = fig.add_subplot(1,3, i+1) 
+        for isfq, _sfq in enumerate(['quiescent', 'star-forming']): 
             # get abc posterior
             theta_median = theta_meds[i]
             _sim_sed = sim_seds[i] 
@@ -2540,19 +2541,28 @@ def ABC_Q_attenuation_unnormalized():
             
             if _sfq == 'quiescent': 
                 sub.fill_between(wave, Al_1m, Al_1p, color=clrs[sim.lower()],
-                        alpha=0.3, linewidth=0, label=sim) 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=2)
+                        alpha=0.3, linewidth=0) 
+                if sim == 'SIMBA': 
+                    sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=3)
+                else: 
+                    sub.plot(wave, Al_med, c=clrs[sim.lower()], lw=2)
             else: 
-                sub.plot(wave, Al_med, c=clrs[sim.lower()], ls='--', lw=2)
+                sub.plot(wave, Al_med, c='k', ls='--', lw=1)
+        
+        sub.set_xlim(1.2e3, 1e4)
+        sub.set_ylim(0., 6.) 
+        if i == 0: 
+            sub.set_ylabel(r'$A(\lambda)$', fontsize=25) 
+        else: 
+            sub.set_yticklabels([])
+        if i == 1: 
+            sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=25)
+            sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
 
-    sub.plot([0], [0], c='k', ls='--', lw=3, label='star-forming')
-    sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
-
-    sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=25)
-    sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
-    sub.set_xlim(1.2e3, 1e4)
-    sub.set_ylabel(r'$A(\lambda)$', fontsize=25) 
-    sub.set_ylim(0., 6.) 
+        sub.text(0.95, 0.95, sim, 
+                ha='right', va='top', transform=sub.transAxes, fontsize=25)
+    #sub.plot([0], [0], c='k', ls='--', lw=3, label='star-forming')
+    #sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
 
     ffig = os.path.join(fig_dir, 'abc_q_atten_unnorm.png') 
     #fig.savefig(ffig, bbox_inches='tight') 
