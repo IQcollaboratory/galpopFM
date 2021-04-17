@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 23, 'tng': 23, 'eagle': 26}        # Niteration 
+nabc = {'simba': 25, 'tng': 24, 'eagle': 26}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -5236,15 +5236,15 @@ if __name__=="__main__":
 
     #DEM()
 
-    #Observables()
-    #_Observables_subpop()
+    Observables()
+    _Observables_subpop()
 
     # ABC posteriors 
     #ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    #ABC_Observables()
-    #_ABC_Observables_subpop()
+    ABC_Observables()
+    _ABC_Observables_subpop()
     ABC_Observables_UVred()
     
     # color distriution in Mr bins 
