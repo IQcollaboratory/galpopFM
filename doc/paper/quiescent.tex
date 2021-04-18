@@ -20,45 +20,50 @@
 \subsection{The Attenuation Curves of Quiescent Galaxies}  
 %We have demonstrated so far that the \eda~can reproduce the observed UV and optical color-magnitude relations.  
 %In doing so, it also predicts attenuation-slope relation and dust attenuation curves of star-forming galaxies that are in good agreement with observations and radiative transfer simulations. 
-Beyond the star-forming galaxies of the last section, the \eda~also makes
-predictions on the dust attenuation of quiescent galaxies, which is still
-poorly constrained by observations. 
-There are many challenges to measuring the attenuation curves of quiescent galaxies directly from observations.
-Methods that rely on IR luminosities can be contaminated by MIR emission
-from AGN heating nearby dust~\citep{kirkpatrick2015}. 
+\chedit{
+    In addition to star-forming galaxies, the \eda~also makes predictions on the
+    dust attenuation of quiescent galaxies. 
+    This is particularly valuable since dust attenuation in quiescent galaxies is
+    still poorly constrained by observations due to challenges in directly
+    measuring it from observations. 
+}
+For instance, methods that rely on IR luminosities can be contaminated by MIR
+emission from AGN heating nearby dust~\citep{kirkpatrick2015}. 
 SED fitting methods must also account for AGN MIR
 emission~\citep{salim2016, leja2018, salim2018} and struggle to tightly
 constrain dust attenuation for quiescent galaxies due to the degeneracies
 with star formation history and metallicity.
-
 With a forward modeling approach, we circumvent these challenges. 
 Instead, we derive the attenuation curves necessary for the simulated quiescent
 population to reproduce the observed optical and UV photometry. 
+
 In Figure~\ref{fig:q_raw_atten}, we present the attenuation curves of
 quiescent galaxies predicted by the \eda~for the median posterior parameter
 values of SIMBA (left), TNG (center), and EAGLE (right). 
 Quiescent galaxies are classified using a $\ssfr < 10^{-11}{yr}^{-1}$ cut. 
-Unlike Figure~\ref{fig:sfatten}, we do not normalize the attenuation curves at $3000\AA$. 
+Unlike Figure~\ref{fig:sfatten}, we do not normalize the attenuation curves at
+$3000\AA$.  
 For comparison, we include $A(\lambda)$ of star-forming galaxies predicted
 by the \eda~in each panel (dotted).
 \chedit{
     In all three simulations with the \eda, quiescent galaxies have
-    attenuation curves with overall lower amplitude and shallower slope than
+    attenuation curves with overall lower amplitudes and shallower slopes than
     star forming galaxies.
 }
 
 \chedit{
-    We predict $A(\lambda)$ with lower attenuation for quiescent galaxies because
-    quiescent galaxies in SIMBA, TNG, and EAGLE, without dust, is only slightly
+    We predict $A(\lambda)$ with lower amplitude for quiescent galaxies because
+    quiescent galaxies in SIMBA, TNG, and EAGLE without dust, are only slightly
     more luminous than observations. 
     In the top panels of Figure~\ref{fig:obs}, we see that the most luminous
     galaxies with the highest $\gr$ color is $<0.5~mag$ brighter than the tip of
     the red sequence in the SDSS color-magnitude relation. 
+    For SIMBA+\eda, where we predict $A(\lambda) \sim 0$, the most luminous and
+    optically red galaxies have comparable $M_r$ as the tip of the SDSS red sequence.
     In contrast, the most luminous blue, star-forming, galaxies are $>1~mag$
     brighter than the luminous end of the SDSS blue cloud.
-    Although in SIMBA+\eda, we predict $A(\lambda) \sim 0$, for TNG and EAGLE,
-    despite it being lower than star-forming galaxies', there is significant
-    dust attenuation in quiescent galaxies, $A_V > 0.5$.
+    Despite having lower attenuation than star-forming galaxies, in TNG and
+    EAGLE we predict significant dust attenuation in quiescent galaxies, $A_V > 0.5$.
 }
 The prescence of dust attenuation in quiescent galaxies, which is typically
 neglected, has significant implications.  
@@ -73,21 +78,20 @@ Since the attenuation curves of quiescent galaxies are difficult to measure
 from observations, the \eda~predictions highlight the advantages of a
 forward modeling approach and its complementarity with standard approaches. 
 
-
 \chedit{
-    We also find that quiescent galaxies have shallower attenuation curves
-    than star-formign galaxies. 
+    In Figure~\ref{fig:q_raw_atten}, we also find that quiescent galaxies have
+    shallower attenuation curves than star-forming galaxies. 
     This is consequence of the fact that SIMBA, TNG, and EAGLE all predict
     intrinsically UV red galaxies that do not require significant reddening by
     dust. 
     This is especially true for SIMBA and TNG, which predict significant
     number of galaxies with intrinsic $\fnuv > 1$ (Figure~\ref{fig:obs}
     and~\ref{fig:uv_sfh}).
-    These galaxies are quiescent with $\ssfr < 10^{-11}yr^{-1}$ and have high
+    These galaxies are quiescent ($\ssfr < 10^{-11}yr^{-1}$) and have high
     $\fnuv$ due to a lack of recent star formation contributing the
     SED~\citep{leja2017}. 
     When we examine their SFHs, we find that although they have more star
-    formation than the luminous UV red galaxies we discuss in
+    formation than the luminous UV red galaxies we discuss earlier in
     Section~\ref{sec:results}, they have little star formation in the last 1
     Gyr. 
     This implies that SIMBA, whose quiescent galaxies have the shallowest
@@ -96,20 +100,22 @@ forward modeling approach and its complementarity with standard approaches.
 }
 
 \chedit{
-    We note that the mass resolution of the simulations impact the SFHs of
-    quiescent galaxies and can also impact their observables.
-    Since the SFHs of simulated galaxies cannot include any star formation
-    below the resolution limit, the SEDs we compute from them do not include
-    any star formation below the mass resolution. 
+    We note here that the mass resolution of the simulations can impact the
+    SFHs of quiescent galaxies and, thus, can also impact their observables.
+    The SFHs of simulated galaxies cannot include any star formation below the
+    resolution limit, so the SEDs we compute from them do not include any star
+    formation below the mass resolution. 
     For recent star formation, this can significantly impact on the SED,
     especially in the FUV and NUV wavelength ranges~\citep{leja2017}. 
     SIMBA, in particular, has a significantly higher mass resolution
     ($1.82\times10^7M_\odot$) than TNG or EAGLE ($1.4\times10^{6}M_\odot$,
     $1.81\times10^6M_\odot$).
     Fortunately, the quiescent galaxies that pass the $M_r$ and $UV$ selection
-    in our forward model have $M_* \gtrsim 10^{10}M_\odot$. 
+    in our forward model have $M_* \gtrsim 10^{10}M_\odot$ (see
+    Figure~\ref{fig:avmsfr} later). 
     So even for SIMBA, the effect of mass resolution on $\fnuv$ is
-    $<0.1~mag$; for TNG and EAGLE, the effect is even smaller $\lesssim 0.01~mag$. 
+    $<0.1~mag$; the effect is even smaller, $\lesssim 0.01~mag$, for TNG and
+    EAGLE. 
     Therefore, mass resolution does not significantly impact the dust
     attenuation we predict for quiescent galaxies.  
 }
@@ -121,17 +127,17 @@ forward modeling approach and its complementarity with standard approaches.
 }
 we caution readers
 that we only vary the \eda~parameters in this work.     
-Therefore, the \eda~predictions of the quiescent galaxy dust attenuation
-described in this section assumes that the simulations accurately model the
-star formation and metallicity histories of quiescent galaxies. 
-Shortcomings in the galaxy formation models, and not the lack of dust
-attenuation, may be responsible for the discrepancy between the quiescent
-populations in simulations and observations. 
+The \eda~predictions of the quiescent galaxy dust attenuation described in this
+section assumes that the simulations accurately model the star formation and
+metallicity histories of quiescent galaxies. 
+Shortcomings in the galaxy formation models, and not the dust attenuation, may
+be responsible for the differences between the quiescent populations in
+simulations and observations. 
 \chedit{
     For instance, we already find in Section~\ref{sec:results} that quenching
     is too efficient in certain SIMBA and TNG quiescent galaxies and results
-    in luminous red galaxies not found in SDSS that cannot be
-    reconciled by dust attenuation. 
+    in luminous UV red galaxies not found in SDSS that cannot be reconciled by
+    dust attenuation. 
     TNG and EAGLE may also be producing quiescent galaxies that are
     intrinsically too luminous, which then requires significant dust
     attenuation to match observations.
