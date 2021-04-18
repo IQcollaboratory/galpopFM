@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 25, 'tng': 24, 'eagle': 26}        # Niteration 
+nabc = {'simba': 26, 'tng': 25, 'eagle': 27}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -2556,13 +2556,14 @@ def ABC_Q_attenuation_unnormalized():
         else: 
             sub.set_yticklabels([])
         if i == 1: 
-            sub.set_title(r'Quiescent ($\log {\rm SSFR} < -11$)', fontsize=25)
             sub.set_xlabel(r'Wavelength [$\AA$]', fontsize=25) 
 
         sub.text(0.95, 0.95, sim, 
                 ha='right', va='top', transform=sub.transAxes, fontsize=25)
-    #sub.plot([0], [0], c='k', ls='--', lw=3, label='star-forming')
-    #sub.legend(loc='upper right', handletextpad=0.2, fontsize=20) 
+
+    sub.fill_between([0], [0], [0], color='k', alpha=0.3, linewidth=0, label='quiescent') 
+    sub.plot([0], [0], c='k', ls='--', lw=3, label='star-forming')
+    sub.legend(loc='center right', handletextpad=0.2, fontsize=20) 
 
     ffig = os.path.join(fig_dir, 'abc_q_atten_unnorm.png') 
     #fig.savefig(ffig, bbox_inches='tight') 
@@ -5236,16 +5237,16 @@ if __name__=="__main__":
 
     #DEM()
 
-    Observables()
-    _Observables_subpop()
+    #Observables()
+    #_Observables_subpop()
 
     # ABC posteriors 
     #ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    ABC_Observables()
-    _ABC_Observables_subpop()
-    ABC_Observables_UVred()
+    #ABC_Observables()
+    #_ABC_Observables_subpop()
+    #ABC_Observables_UVred()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
@@ -5265,7 +5266,7 @@ if __name__=="__main__":
     #ABC_attenuation_unnormalized()
     
     # Av and A1500 
-    #ABC_A_MsSFR()
+    ABC_A_MsSFR()
     ##_ABC_A_MsSFR_SIMBA()
     ##_ABC_stdA_MsSFR()
 
