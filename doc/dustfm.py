@@ -2845,7 +2845,7 @@ def ABC_Lir():
         return sed['wave'], sed_nodust, sed_dust, R_mag 
 
     L_irs, M_rs = [], [] 
-    for sim in ['TNG', 'EAGLE']: 
+    for sim in sims: #['TNG', 'EAGLE']: 
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
             abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
         theta_med = np.median(theta_T, axis=0) 
@@ -2867,31 +2867,32 @@ def ABC_Lir():
     #########################################################################
     fig = plt.figure(figsize=(6,6))
     sub = fig.add_subplot(111)
-    for i, _M_r, _L_ir, sim in zip(range(2), M_rs, L_irs, ['TNG', 'EAGLE']): 
+    for i, _M_r, _L_ir, sim in zip(range(3), M_rs, L_irs, sims): #['TNG', 'EAGLE']): 
         # R vs log L_IR  
-        if sim == 'TNG': 
-            DFM.hist2d(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
+        if i == 0:# sim == 'TNG': 
+            DFM.hist2d(_M_r, np.log10(_L_ir), range=[(20, 23), (5, 12)],
                     levels=[0.68, 0.95], bins=30, smooth=True, color=clrs[sim.lower()], 
                     plot_datapoints=False, fill_contours=True, plot_density=False, 
                     contour_kwargs={'linewidths': 0}, ax=sub)
-        elif sim == 'EAGLE': 
-            _hist2d_hack(_M_r, np.log10(_L_ir), range=[(20, 23), (8, 12)],
+        else: #elif sim == 'EAGLE': 
+            _hist2d_hack(_M_r, np.log10(_L_ir), range=[(20, 23), (5, 12)],
                     levels=[0.68, 0.95], bins=30, color=clrs[sim.lower()],
                     alpha=0.33, smooth=True, sub=sub)
     
-    _plt1 = sub.fill_between([], [], [], color=clrs['tng'], alpha=0.25, edgecolor='None')
-    _plt2 = sub.fill_between([], [], [], color=clrs['eagle'], alpha=0.25, edgecolor='None')
-    sub.legend([_plt1, _plt2], ['TNG', 'EAGLE'], loc='lower right',
+    _plt0 = sub.fill_between([], [], [], color=clrs['simba'], alpha=0.25, edgecolor='none')
+    _plt1 = sub.fill_between([], [], [], color=clrs['tng'], alpha=0.25, edgecolor='none')
+    _plt2 = sub.fill_between([], [], [], color=clrs['eagle'], alpha=0.25, edgecolor='none')
+    sub.legend([_plt0, _plt1, _plt2], ['SIMBA', 'TNG', 'EAGLE'], loc='lower right',
             handletextpad=0.2, fontsize=20) 
     sub.set_xlim(20., 23) 
     sub.set_xticks([20., 21., 22., 23]) 
     sub.set_xticklabels([-20, -21, -22, -23]) 
     sub.set_ylabel(r'IR dust emission $\log(~L_{\rm IR}$ [$L_\odot$] )', fontsize=25) 
     sub.set_xlabel(r'$M_r$ luminosity', fontsize=25) 
-    sub.set_ylim(9, 12) 
+    sub.set_ylim(4.5, 12) 
     
     ffig = os.path.join(fig_dir, 'abc_Lir.png') 
-    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(ffig, bbox_inches='tight') 
     fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
     plt.close()
     return None 
@@ -5266,12 +5267,12 @@ if __name__=="__main__":
     #ABC_attenuation_unnormalized()
     
     # Av and A1500 
-    ABC_A_MsSFR()
+    #ABC_A_MsSFR()
     ##_ABC_A_MsSFR_SIMBA()
     ##_ABC_stdA_MsSFR()
 
     # dust IR emission luminosity 
-    #ABC_Lir()
+    ABC_Lir()
 
     #gswlc2_dep()
 

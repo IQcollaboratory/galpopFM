@@ -1,103 +1,103 @@
 \subsection{Discussion}  
 We make a number of assumptions and choices in our \eda~prescription. 
-\ch{
-    First, we use the slab model (Eq.~\ref{eq:slab}) to assign $A_V$ as a
-    function of $\tau_V$ and randomly sampled $i$. 
-    This choice is loosely motivated by the fact that the slab model reproduces
-    the correlation between attenuations and inclination found in star-forming
-    galaxies from observations~\citep{conroy2010b, wild2011, battisti2017,
-    salim2020} as well as simulations~\citep[\eg][]{chevallard2013,
-    narayanan2018, trayford2020}.
-    More importantly, the slab model can reproduce the $A_V$ distribution of
-    SDSS star-forming galaxies as well as the GSWLC2 sample, which includes
-    quiescent galaxies (Appendix~\ref{sec:slab}).
-    We therefore conclude that we can sample $A_V$ in our \eda~with sufficient
-    flexibility using the slab model. 
-}
+First, we use the slab model (Eq.~\ref{eq:slab}) to assign $A_V$ as a
+function of $\tau_V$ and randomly sampled $i$. 
+This choice is loosely motivated by the fact that the slab model reproduces
+the correlation between attenuations and inclination found in star-forming
+galaxies from observations~\citep{conroy2010b, wild2011, battisti2017,
+salim2020} as well as simulations~\citep[\eg][]{chevallard2013,
+narayanan2018, trayford2020}.
+More importantly, the slab model can reproduce the $A_V$ distribution of
+SDSS star-forming galaxies as well as the GSWLC2 sample, which includes
+quiescent galaxies (Appendix~\ref{sec:slab}).
+We therefore conclude that we can sample $A_V$ in our \eda~with sufficient
+flexibility using the slab model. 
 %It can also reproduce the SDSS $A_V$ distribution (Figure~\ref{fig:av_dist}). If we replace the slab model with a more flexible model for sampling $A_V$ using truncated normal distributions, we find that our results are not significantly impacted (see Appendix~\ref{sec:slab} for details). Therefore, we conclude that our results do not sigificantly depend on our choice of the slab model. 
-\ch{
-    In our \eda, we also use a parameterization of $\tau_V$ and $\delta$ that
-    depend linearly on $\log M_*$ and $\log {\rm SSFR}$. 
-    While the $M_*$ and $\ssfr$ dependence of $A_V$ is well-motivated and is
-    found in, for instance, the \cite{salim2018} GSWLC2 catalog (Appendix~\ref{sec:slab}), 
-    the linear dependence was chosen primarily for its simplicity.
-    The \eda~framework can be easily extended to more flexible
-    parameterizations. 
+
+In our \eda, we also use a parameterization of $\tau_V$ and $\delta$ that
+depend linearly on $\log M_*$ and $\log {\rm SSFR}$. 
+While the $M_*$ and $\ssfr$ dependence of $A_V$ is well-motivated and is
+found in, for instance, the \cite{salim2018} GSWLC2 catalog (Appendix~\ref{sec:slab}), 
+the linear dependence was chosen primarily for its simplicity.
+The \eda~framework can be easily extended to more flexible
+parameterizations. 
+\chedit{
+    Though we find good agreement with SDSS observations with our
+    \eda~prescription a more flexible parameterization would likely produce
+    even better agreement with the SDSS color-magnitude relations. 
 }
-In fact, a more flexible parameterization would likely produce even better
-agreement with the SDSS color-magnitude relations. The \eda~produces broader
-distributions of optical colors than SDSS. Few galaxies in SDSS have $\gr > 1.$
-while some galaxies in the \eda~broadly extend beyond this cut-off. In the UV,
-the \eda~struggles to accurately reproduce the redder portions ($\fnuv > 1.5$)
-of the UV color-magnitude relation. The main challenges for a more flexible
-parameterization would be model selection and finding a well-motivated
-parameterization. 
-\ch{
-    Notwithstanding, for SDSS observations, our \eda~prescription using
-    parameter values from the TNG and EAGLE posteriors find good agreement.
-}
+Our \eda~prescription, for instance, produces slightly broader distributions of
+optical colors than SDSS. 
+The main challenges for a more flexible parameterization would be model
+selection and finding a well-motivated parameterization. 
 
 % do we want to mention the FUV and NUV absolute magnitude measurements for
 % SDSS? 
-
 \chedit{
-    Figure~\ref{fig:avmsfr} also highlights the selection function imposed by
-    our forward model. 
-    We impose a $M_r < -20$, $M_{FUV} < 13.5$, and $M_{NUV} < -14$
-    absolute magnitude completeness limits of our SDSS sample to the
-    observables of each simulation. 
-    The forward modeled samples expectedly include lower mass star-forming
-    galaxies that are more luminous, while they exclude lower mass quiescent
-    galaxies that are less luminous. 
-    While the forward modeled samples of TNG and EAGLE have comparable $M_*$
-    and $\ssfr$ coverage, we find that SIMBA includes a significant population
-    of lower mass star-forming and quiescent galaxies. 
-    One reason for this is that SIMBA has much fewer massive galaxies above
-    $M_* > 10^{11}M_\odot$ than TNG or EAGLE (see SMFs in
-    Figure~\ref{fig:smf_msfr}). 
-    With fewer massive galaxies, SIMBA requires less attenuation for quiescent
-    galaxies and, thus, its forward model includes lower mass quiescent
-    galaxies.
-    Meanwhile, the $M_* < 10^{10}M_\odot$ lower mass star-forming galaxies included in
-    SIMBA are high $\ssfr > 10^{-9.5}yr^{-1}$ starburst galaxies that lie
-    significantly above the SFS (Figure~\ref{fig:smf_msfr}).
-    This starburst population has also been identified in \cite{dave2019} (see
-    their Figures~5 and 6) and is caused by large gas in low-mass galaxies at $z=0$. 
-} 
-
-
-
-
-\ch{
-    We demonstrate that accounting for dust attenuation is essential when
-    comparing simulations to observations. 
+    We demonstrate in this work that accounting for dust attenuation is
+    essential when comparing simulations to observations. 
+    First of all, none of the simulations reproduce the UV and optical
+    color-magnitude relation without dust attenuation (Figure~\ref{fig:obs}). 
 }
-None of the simulations reproduce the UV and optical color-magnitude relation
-without dust attenuation (Figure~\ref{fig:obs}). 
-\ch{ 
-    Furthermore, the fact that we can use the \eda~to reproduce SDSS observations 
-    for different hydrodynamical simulations highlights how our current lack of 
-    understanding of dust limits our ability to closely compare galaxy
-    formation models. 
-    Our \eda~prescription is built on what we currently know about dust
-    attenuation in galaxies: \eg~the \citealt{noll2009} parameterization, the
-    UV bump, the slab model, etc.
-}
-Yet with the \eda, two simulations that predict galaxy populations with
+Furthermore, the fact that we can use the \eda~to reproduce SDSS observations 
+for different hydrodynamical simulations highlights how our current lack of 
+understanding of dust limits our ability to closely compare galaxy
+formation models. 
+Our \eda~prescription is built on what we currently know about dust attenuation
+in galaxies: \eg~the \citealt{noll2009} parameterization, the UV bump, the slab model, etc.
+Yet with the \eda, simulations that predict galaxy populations with
 significantly different physical properties (Figure~\ref{fig:smf_msfr}) can
 reproduce the same SDSS observations. 
-This suggests that dust is highly degenerate with the differences between simulations. 
-Put another way --- if we were to marginalize over dust in our comparison to observations, we would not
-be able to differentiate between the different galaxy physics prescriptions in
-the simulations. 
-Hence, current limitations in our understanding of dust is 
-a major bottleneck for investigating galaxy formation using simulations.
+\chedit{
+    For instance, SIMBA has significantly fewer massive galaxies above $M_* >
+    10^{11}M_\odot$ than TNG or EAGLE (see SMFs in Figure~\ref{fig:smf_msfr}). 
+    It also has $M_* < 10^{10}M_\odot$ starburst galaxies with $\ssfr >
+    10^{-9.5}yr^{-1}$, also identified in \cite{dave2019}(see their Figures~5 and 6),  
+    that are not found in TNG or EAGLE (Figure~\ref{fig:avmsfr}). 
+    Despite these differences, aside from the luminous UV red galaxies, the
+    forward modeled color-magnitude relations of SIMBA is able to comparably
+    reproduce SDSS observations (Figure~\ref{fig:dem})
+}
+
+All this suggests that dust is highly degenerate with the differences between simulations. 
+Put another way --- if we were to marginalize over dust in our comparison to
+observations, we would not be able to differentiate between the different
+galaxy physics prescriptions in the simulations. 
+Hence, current limitations in our understanding of dust is a major bottleneck
+for investigating galaxy formation using simulations.
 \ch{
     In the next paper of the series, Starkenburg et al. (in preparation), we
     will examine whether we can compare the prescriptions for star formation
     quenching in different galaxy formation models once we include the
     \eda~framework.
 } 
+
+
+%\chedit{
+%    Figure~\ref{fig:avmsfr} also highlights the selection function imposed by
+%    our forward model. 
+%    We impose a $M_r < -20$, $M_{FUV} < 13.5$, and $M_{NUV} < -14$
+%    absolute magnitude completeness limits of our SDSS sample to the
+%    observables of each simulation. 
+%    The forward modeled samples expectedly include lower mass star-forming
+%    galaxies that are more luminous, while they exclude lower mass quiescent
+%    galaxies that are less luminous. 
+%    While the forward modeled samples of TNG and EAGLE have comparable $M_*$
+%    and $\ssfr$ coverage, we find that SIMBA includes a significant population
+%    of lower mass star-forming and quiescent galaxies. 
+%    One reason for this is that SIMBA has much fewer massive galaxies above
+%    $M_* > 10^{11}M_\odot$ than TNG or EAGLE (see SMFs in
+%    Figure~\ref{fig:smf_msfr}). 
+%    With fewer massive galaxies, SIMBA requires less attenuation for quiescent
+%    galaxies and, thus, its forward model includes lower mass quiescent
+%    galaxies.
+%    Meanwhile, the $M_* < 10^{10}M_\odot$ lower mass star-forming galaxies included in
+%    SIMBA are high $\ssfr > 10^{-9.5}yr^{-1}$ starburst galaxies that lie
+%    significantly above the SFS (Figure~\ref{fig:smf_msfr}).
+%    This starburst population has also been identified in \cite{dave2019} (see
+%    their Figures~5 and 6) and is caused by large gas in low-mass galaxies at $z=0$. 
+%} 
+
 
 
 \begin{figure}
@@ -118,52 +118,56 @@ a major bottleneck for investigating galaxy formation using simulations.
 
 %There's hope! 
 Fortunately, there are many avenues for improving our understanding of dust
-with a forward modeling approach. In this work, we used a restrictive $M_r <
--20$ complete SDSS galaxy sample. 
-\ch{
-    Figure~\ref{fig:avmsfr} illustrates that our completeness cut limits the
-    number of quiescent galaxies below $M_* < 10^{11}M_\odot$.  
-}
-Instead of imposing a completeness limit, 
-we can include the actual SDSS selection function in the forward 
+with a forward modeling approach. 
+In this work, we used a restrictive SDSS galaxy sample with a $M_r < -20$,
+$M_{FUV} < 13.5$, and $M_{NUV} < -14$ completeness limit. 
+Figure~\ref{fig:avmsfr} illustrates that this selection excludes star-forming
+galaxies below $M_* \lesssim 10^{10}M_\odot$ and quiescent
+galaxies below $M_* \lesssim 10^{10.5}M_\odot$. 
+The $M_*$ limit of the selection is lower for SIMBA due to its lack of massive
+galaxies and low mass starburst galaxies. 
+Instead of imposing this completeness limit, we can include the actual SDSS
+selection function in the forward 
 model~\citep[\eg~][]{dickey2020}. 
-\ch{
-    This would allow us to compare the simulations with \eda~to the entire SDSS
-    sample, a substantially larger sample with a wider range of galaxies. 
-}
+This would allow us to compare the simulations with \eda~to the entire SDSS
+sample, a substantially larger sample with a wider range of galaxies. 
 Upcoming surveys, such as the Bright Galaxy Survey (BGS) of the Dark Energy
 Spectroscopic Instrument~\citep[DESI;][]{desicollaboration2016, ruiz-macias2020} 
 and galaxy evolution survey of the Prime Focus
 Spectrograph~\citep[PFS;][]{takada2014,tamura2016}, will also vastly expand galaxy
 observations. 
-\ch{ 
-    BGS, for instance, will measure $10\times$ the number of galaxy spectra as
-    SDSS out to $z\sim0.4$  and with its $r\sim20$ magnitude limit will probe
-    a significant number of low redshift dwarf galaxies. 
-    Such an observational sample will allow us to place tighter constraints on
-    the \eda~parameters, which may enable comparisons of the underlying galaxy
-    formation models, 
-    and shed light on dust in a broader range of galaxies. 
-}
-
-\ch{
-    In this work, we also only used observables derived from UV and optical
-    photometry, which means that we have only examined one side of the impact
-    that dust has on galaxy spectra.
-}
+BGS, for instance, will measure $10\times$ the number of galaxy spectra as
+SDSS out to $z\sim0.4$  and with its $r\sim20$ magnitude limit will probe
+a significant number of low redshift dwarf galaxies. 
+Such an observational sample will allow us to place tighter constraints on
+the \eda~parameters, which may enable comparisons of the underlying galaxy
+formation models, and shed light on dust in a broader range of galaxies.
+    
+In this work, we also only used observables derived from UV and optical
+photometry, which means that we have only examined one side of the impact
+that dust has on galaxy spectra.
 While dust attenuates light in the optical and UV, it emits light in
 IR. In fact, even though the TNG and EAGLE simulations reproduce the same UV and
 optical color-magnitude relations with the \eda, they predict significantly 
-different dust emission in the IR. In Figure~\ref{fig:lir}, we present IR dust
-emission luminosity, $L_{\rm IR}$, predicted by the \eda~with median parameter values of 
-the TNG (blue) and EAGLE (green) posteriors as a function of the $r$-band 
-absolute magnitude, $M_r$. The dust emissions are estimated using the standard
-energy balance assumption --- \ie~all starlight attenuated by dust is reemitted 
-in the IR~\citep{dacunha2008}. 
+different dust emission in the IR. 
+\chedit{
+    In Figure~\ref{fig:lir}, we present IR dust emission luminosity, $L_{\rm
+    IR}$, predicted by the \eda~with median parameter values of the EAGLE
+    (orange), TNG (blue), and EAGLE (green) posteriors as a function of the
+    $r$-band absolute magnitude, $M_r$.
+}
+The dust emissions are estimated using the standard energy balance assumption
+--- \ie~all starlight attenuated by dust is reemitted in the IR~\citep{dacunha2008}. 
 
 Despite reproducing the same SDSS UV and optical color-magnitude relations, the
-\eda~predicts significantly different IR dust emission for TNG and EAGLE. For
-TNG, the \eda~predicts an overall ${\sim}0.3$ dex ($2\times$) higher dust
+\eda~predicts significantly different IR dust emission the simulations.
+%update 
+%update 
+%update 
+%update 
+%update 
+%update 
+For TNG, the \eda~predicts an overall ${\sim}0.3$ dex ($2\times$) higher dust
 emissions than for EAGLE. Higher dust emission for TNG
 is consistent with the higher $\ctau$ we infer for TNG (Figure~\ref{fig:abc}).
 It is also consistent with the fact that TNG predicts bluer galaxies and more
