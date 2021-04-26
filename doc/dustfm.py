@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 26, 'tng': 25, 'eagle': 27}        # Niteration 
+nabc = {'simba': 28, 'tng': 26, 'eagle': 28}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -2898,6 +2898,100 @@ def ABC_Lir():
     return None 
 
 
+def _ABC_Lir_subpop(): 
+    ''' compare L_IR predicted by the ABC posterior dust attenuation 
+    '''
+    cinA    = 2.9979e18 # A/s
+    lsun    = 3.839e33 # erg/s
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+
+    def get_seds(sim, theta): 
+        sed = dustInfer._read_sed(sim) 
+
+        zerosfr = (sed['logsfr.inst'] == -999)
+
+        logsfr_min = sed['logsfr.inst'][~zerosfr].min() # minimum SFR
+        sed['logsfr.inst'][zerosfr] = logsfr_min
+
+        cuts = (sed['logmstar'] > 9.4) 
+
+        sed_nodust  = sed['sed_noneb'][cuts,:]
+        sed_dust    = dustFM.Attenuate(
+                theta, 
+                sed['wave'], 
+                sed['sed_noneb'][cuts,:], 
+                sed['sed_onlyneb'][cuts,:], 
+                sed['logmstar'][cuts],
+                sed['logsfr.inst'][cuts],
+                dem=dem) 
+
+        R_mag = measureObs.AbsMag_sed(sed['wave'], sed_dust, band='r_sdss') 
+
+        return sed['wave'], sed_nodust, sed_dust, R_mag, sed['logmstar'][cuts], sed['logsfr.inst'][cuts], zerosfr[cuts]
+    
+    sfr0s = [] 
+    mass, ssfr = [], [] 
+    L_irs, M_rs = [], [] 
+    for sim in sims: #['TNG', 'EAGLE']: 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
+
+        wave, sed_nodust, sed_dust, M_r, logm, logsfr, sfr0 = get_seds(sim.lower(), theta_med)
+
+        L_nodust    = measureObs.tsum(wave, sed_nodust * cinA / (wave**2)) # Lsun
+        L_dust      = measureObs.tsum(wave, sed_dust * cinA / (wave**2)) # Lsun
+    
+        # L_ir based on energy balance assumption of da Cunha+(2008) 
+        L_ir = L_nodust - L_dust 
+        notnan = ~np.isnan(np.log10(L_ir))
+        
+        sfr0s.append(sfr0)
+
+        L_irs.append(L_ir[notnan]) 
+        M_rs.append(-1.*M_r[notnan]) 
+        mass.append(logm)
+        ssfr.append(logsfr - logm)
+    
+    #########################################################################
+    # plotting 
+    #########################################################################
+    fig = plt.figure(figsize=(20,6))
+    for i, _M_r, _L_ir, sim in zip(range(3), M_rs, L_irs, sims): #['TNG', 'EAGLE']): 
+
+        # mass particle limit  
+        uvred   = sfr0s[i]
+        sb      = (ssfr[i] >= -9.5) 
+        sf      = (ssfr[i] >= -10) 
+        green   = (ssfr[i] < -10) & (ssfr[i] > -11)
+        q       = (ssfr[i] < -11) & ~uvred
+        subpops = [uvred, q, green, sf, sb]
+        colors  = ['r', 'C1', 'C2', 'C0', 'b']
+
+        sub = fig.add_subplot(1,3,i+1)
+    
+        for ii, subpop, clr in zip(range(len(subpops)), subpops, colors): 
+            sub.scatter(_M_r[subpop], np.log10(_L_ir[subpop]), c=clr,
+                    s=2-0.2*ii)
+
+        sub.set_xlim(20., 23) 
+        sub.set_xticks([20., 21., 22., 23]) 
+        sub.set_xticklabels([-20, -21, -22, -23]) 
+        if i == 0: 
+            sub.set_ylabel(r'IR dust emission $\log(~L_{\rm IR}$ [$L_\odot$] )', fontsize=25) 
+        elif i == 1: 
+            sub.set_xlabel(r'$M_r$ luminosity', fontsize=25) 
+        sub.set_ylim(4.5, 12) 
+    
+    ffig = os.path.join(fig_dir, '_abc_Lir_subpop.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def ABC_color_distribution(): 
     ''' (g-r) color distribution 
     '''
@@ -5238,15 +5332,15 @@ if __name__=="__main__":
 
     #DEM()
 
-    #Observables()
-    #_Observables_subpop()
+    Observables()
+    _Observables_subpop()
 
     # ABC posteriors 
-    #ABC_corner() 
+    ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    #ABC_Observables()
-    #_ABC_Observables_subpop()
+    ABC_Observables()
+    _ABC_Observables_subpop()
     #ABC_Observables_UVred()
     
     # color distriution in Mr bins 
@@ -5254,25 +5348,27 @@ if __name__=="__main__":
     
     # slope-AV relation for ABC posterior
     #ABC_slope_AV(gal_type='all')
-    #ABC_slope_AV(gal_type='starforming')
+    ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV(gal_type='quiescent')
 
     ##ABC_slope_AV_subpop()
 
     # amplitude normalized attenuation curves
-    #ABC_SF_attenuation()
-    #ABC_Q_attenuation_unnormalized()
+    ABC_SF_attenuation()
+    ABC_Q_attenuation_unnormalized()
 
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
     # Av and A1500 
-    #ABC_A_MsSFR()
+    ABC_A_MsSFR()
     ##_ABC_A_MsSFR_SIMBA()
     ##_ABC_stdA_MsSFR()
 
     # dust IR emission luminosity 
-    ABC_Lir()
+    #ABC_Lir()
+    _ABC_Lir_subpop()
+
 
     #gswlc2_dep()
 

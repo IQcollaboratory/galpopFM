@@ -22,7 +22,7 @@ the linear dependence was chosen primarily for its simplicity.
 The \eda~framework can be easily extended to more flexible
 parameterizations. 
 \chedit{
-    Though we find good agreement with SDSS observations with our
+    Though we already find good agreement with SDSS observations with our
     \eda~prescription a more flexible parameterization would likely produce
     even better agreement with the SDSS color-magnitude relations. 
 }
@@ -52,7 +52,7 @@ reproduce the same SDSS observations.
     For instance, SIMBA has significantly fewer massive galaxies above $M_* >
     10^{11}M_\odot$ than TNG or EAGLE (see SMFs in Figure~\ref{fig:smf_msfr}). 
     It also has $M_* < 10^{10}M_\odot$ starburst galaxies with $\ssfr >
-    10^{-9.5}yr^{-1}$, also identified in \cite{dave2019}(see their Figures~5 and 6),  
+    10^{-9.5}yr^{-1}$ (see also \citealt{dave2019} Figures~5 and 6)
     that are not found in TNG or EAGLE (Figure~\ref{fig:avmsfr}). 
     Despite these differences, aside from the luminous UV red galaxies, the
     forward modeled color-magnitude relations of SIMBA is able to comparably
@@ -65,12 +65,10 @@ observations, we would not be able to differentiate between the different
 galaxy physics prescriptions in the simulations. 
 Hence, current limitations in our understanding of dust is a major bottleneck
 for investigating galaxy formation using simulations.
-\ch{
-    In the next paper of the series, Starkenburg et al. (in preparation), we
-    will examine whether we can compare the prescriptions for star formation
-    quenching in different galaxy formation models once we include the
-    \eda~framework.
-} 
+In the next paper of the series, Starkenburg et al. (in preparation), we
+will examine whether we can compare the prescriptions for star formation
+quenching in different galaxy formation models once we include the
+\eda~framework.
 
 
 %\chedit{
@@ -105,13 +103,15 @@ for investigating galaxy formation using simulations.
     \includegraphics[width=0.45\textwidth]{figs/abc_Lir.pdf}
     \caption{\label{fig:lir}
     IR dust emission luminosity predicted by the \eda~with median parameter
-    values of the TNG (blue) and EAGLE (green) posteriors as a function of
-    $M_r$. The dust emission is estimated assuming the \cite{dacunha2008}
-    energy balance.  Despite reproducing the same SDSS UV and optical
-    color-magnitude relations, \emph{the \eda~predicts significantly different
-    IR dust emission for TNG and EAGLE}. Therefore, including IR
-    observations will significantly improve the constraints on \eda~parameters
-    and allow us to better differentiate galaxy formation models.
+    values of the SIMBA(orange), TNG (blue), and EAGLE (green) posteriors as a
+    function of $M_r$. 
+    The dust emission is estimated assuming the \cite{dacunha2008} energy balance.
+    Despite reproducing the same SDSS UV and optical color-magnitude relations,
+    because the simulations require different amounts of dust attenuation to do
+    this, \emph{the \eda~predicts significantly different IR dust emissions}.
+    Therefore, including IR observations will significantly improve the
+    constraints on \eda~parameters and allow us to better differentiate galaxy
+    formation models.
     }
 \end{center}
 \end{figure}
@@ -121,11 +121,13 @@ Fortunately, there are many avenues for improving our understanding of dust
 with a forward modeling approach. 
 In this work, we used a restrictive SDSS galaxy sample with a $M_r < -20$,
 $M_{FUV} < 13.5$, and $M_{NUV} < -14$ completeness limit. 
-Figure~\ref{fig:avmsfr} illustrates that this selection excludes star-forming
-galaxies below $M_* \lesssim 10^{10}M_\odot$ and quiescent
-galaxies below $M_* \lesssim 10^{10.5}M_\odot$. 
-The $M_*$ limit of the selection is lower for SIMBA due to its lack of massive
-galaxies and low mass starburst galaxies. 
+\chedit{
+    Figure~\ref{fig:avmsfr} illustrates that this selection excludes star-forming
+    galaxies below $M_* \lesssim 10^{10}M_\odot$ and quiescent
+    galaxies below $M_* \lesssim 10^{10.5}M_\odot$. 
+    The $M_*$ limit of the selection is lower for SIMBA due to its lack of massive
+    galaxies and low mass starburst galaxies. 
+}
 Instead of imposing this completeness limit, we can include the actual SDSS
 selection function in the forward 
 model~\citep[\eg~][]{dickey2020}. 
@@ -147,7 +149,7 @@ In this work, we also only used observables derived from UV and optical
 photometry, which means that we have only examined one side of the impact
 that dust has on galaxy spectra.
 While dust attenuates light in the optical and UV, it emits light in
-IR. In fact, even though the TNG and EAGLE simulations reproduce the same UV and
+IR. In fact, even though the simulations reproduce the same SDSS UV and
 optical color-magnitude relations with the \eda, they predict significantly 
 different dust emission in the IR. 
 \chedit{
@@ -158,34 +160,43 @@ different dust emission in the IR.
 }
 The dust emissions are estimated using the standard energy balance assumption
 --- \ie~all starlight attenuated by dust is reemitted in the IR~\citep{dacunha2008}. 
-
-Despite reproducing the same SDSS UV and optical color-magnitude relations, the
-\eda~predicts significantly different IR dust emission the simulations.
-%update 
-%update 
-%update 
-%update 
-%update 
-%update 
-For TNG, the \eda~predicts an overall ${\sim}0.3$ dex ($2\times$) higher dust
-emissions than for EAGLE. Higher dust emission for TNG
-is consistent with the higher $\ctau$ we infer for TNG (Figure~\ref{fig:abc}).
-It is also consistent with the fact that TNG predicts bluer galaxies and more
-luminous quiescent galaxies with red $\fnuv$ color than EAGLE
-(Figure~\ref{fig:obs}). Since IR dust emission measures the total dust
-attenuation, IR observations would specifically constrain the \eda~and
-therefore break degeneracies between dust and the galaxy physics in simulations.
-\ch{
-    While some upcoming surveys, such as BGS, will have existing near-IR
-    photometry from NEOWISE~\citep{meisner2018}, future observations will
-    dramatically expand the information we have in IR.
-    \emph{Nancy Grace Roman Space Telescope} and \emph{James Webb Space
-    Telescope (JWST)}, for instance, will provide valuable near and
-    mid-IR observations. 
-    Meanwhile, IR observations at even longer wavelengths will came from
-    Atacama Large Millimeter/submillimeter Array (ALMA) or future facilities
-    such as the Next-Generation Very Large Array (ngVLA) and Origins Space Telescope.
+\chedit{
+    Most noticably, SIMBA and TNG have bimodal distributions of dust emission
+    while EAGLE only has luminous IR dust emissions. 
+    This is because EAGLE requires significant dust attenuation in all
+    galaxies while SIMBA and TNG require quiescent galaxies to have
+    substantially lower dust attenuation than star-forming galaxies
+    (Figure~\ref{fig:q_raw_atten}). 
+    Meanwhile, the high $L_{\rm IR}$ mode of the $L_{\rm IR}$ distributions are
+    in good agreement for all simulations, since all simulations require
+    comparable dust attenuation in star-forming galaxies
+    (Figures~\ref{fig:slope} and~\ref{fig:q_raw_atten}). 
+    When we compare the IR dust emission of SIMBA+\eda~and TNG+\eda~further, we
+    find that TNG+\eda~produces more luminous galaxies with high IR dust
+    emission ($M_r < -22$ and $L_{rm IR} > 10^9L_\odot$) since it has more
+    intrinsically luminous star-forming galaxies~(Figure~\ref{fig:obs}).
+    On the other hand SIMBA+\eda~has more luminous galaxies with fainter IR
+    dust emissions, which correspond to the anomolous luminous UV red galaxies
+    highlighted in Figure~\ref{fig:uv_sfh}.
 }
+
+\chedit{
+    As we demonstrate in this work, dust attenuation can be adjusted within the
+    bounds set by current dust observations to reproduce UV and optical
+    observations.
+    However, since IR dust emission measures the total attenuation, IR
+    observations can place a limit on the total impact of dust and thereby
+    break the degeneracies between dust and the galaxy physics in simulations.
+}
+While some upcoming surveys, such as BGS, will have existing near-IR
+photometry from NEOWISE~\citep{meisner2018}, future observations will
+dramatically expand the information we have in IR.
+\emph{Nancy Grace Roman Space Telescope} and \emph{James Webb Space
+Telescope (JWST)}, for instance, will provide valuable near and
+mid-IR observations. 
+Meanwhile, IR observations at even longer wavelengths will came from
+Atacama Large Millimeter/submillimeter Array (ALMA) or future facilities
+such as the Next-Generation Very Large Array (ngVLA) and Origins Space Telescope.
 
 % Salim(2020): Chevallard et al. (2013), who aggregated and analyzed a diverse series of theoretical attenuation law studies by Pierini et al. (2004), Tuffs et al. (2004), Silva et al. (1998) and Jonsson et al. (2006), and showed that all the stud- ies predict, with some normalization differences, a relationship between the optical depth AV and attenuation law slope.
 
