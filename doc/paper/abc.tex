@@ -26,13 +26,11 @@ requiring evaluations of the likelihood.  Instead, ABC only requires a forward
 model of the observed data, a prior that can be sampled, and a distance metric
 that quantifies the ``closeness'' to the observed data. 
 Since ABC does not require evaluating the likelihood, it does not assume
-any functional form of the likelihood and so we avoid any biases from such
+any functional form of the likelihood so we avoid any biases from such
 assumptions. 
 \chedit{
-    Furthermore, it also allows us to infer the posterior using summary
-    statistics with likelihoods that are difficult or intractable to directly
-    estimate. 
-    ABC, therefore, provides a more general inference framework for our forward
+    It also expands the summary statistics we can use to infer the posteriors.
+    ABC, therefore, provides a general inference framework for our forward
     modeling approach~\citep{hahn2017a}. 
 }
 
@@ -85,18 +83,17 @@ and \cite{hahn2019a}.
 In this work, we use ABC-PMC with uninformative uniform priors on each of
 the \eda~parameters and choose ranges that encompass constraints in the
 literature.
-The prior ranges of $\mtaum, \mtaus, c_\tau$ are chosen to
-conservatively include the $A_V$ range and $M_*$ and $\sfr$ dependence of
-\cite{narayanan2018} and \cite{salim2020}. Meanwhile, the prior ranges of 
-$\mdeltam, \mdeltas, c_\delta$ are chosen to conservatively include the $\delta$
-range and $M_*$ and $\sfr$ dependence of \cite{leja2017} and \cite{salim2018}. 
+The prior ranges of $\mtaum, \mtaus, c_\tau$ include the $A_V$ range and $M_*$
+and $\sfr$ dependence of \cite{narayanan2018} and \cite{salim2020}. 
+Meanwhile, the prior ranges of $\mdeltam, \mdeltas, c_\delta$ include the
+$\delta$ range and $M_*$ and $\sfr$ dependence of \cite{leja2017} and
+\cite{salim2018}. 
 We list the range of the priors in Table~\ref{tab:free_param}. 
 For our forward model, we use the model described in
 Section~\ref{sec:fm}: we construct SEDs for every simulated galaxy from
 the hydrodynamic simulations, apply dust attenuation with our
-\eda, calculate the observables ($M_r$, $\gr$, and $\fnuv$),
-add uncertainties to them, and apply a $M_r < -20$ completeness 
-limit. 
+\eda, calculate the observables ($M_r$, $\gr$, and $\fnuv$), apply a noise
+model to them, and apply a $M_r < -20$ completeness limit. 
 We use the optical and UV color-magnitude relation, $(\gr)- M_r$ and
 $(\fnuv)-M_r$ as our summary statistic to fully exploit the $(M_r, \gr,
 \fnuv)$ observational-space. We measure the color-magnitude relations by
