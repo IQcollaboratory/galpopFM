@@ -5,10 +5,11 @@
     The stellar mass functions, $\Phi_{M_*}$ (left-most panel), and $M_*-\sfr$
     relation (right panels) of galaxies in three cosmological hydrodynamic 
     simulations: SIMBA (orange), TNG (blue), and EAGLE (green). 
-    For reference, we include $\Phi_{M_*}$ (black) and the $M_*-\sfr$ relation 
-    (black dashed) of from SDSS observations. Uncertainties for the 
-    SDSS $\Phi_{M_*}$ are derived using jackknife resampling. We describe the
-    simulations and observations in Section~\ref{sec:sims}. 
+    For reference, we include $\Phi_{M_*}$ and the $M_*-\sfr$ relation of from
+    SDSS observations (black).
+    Uncertainties for the SDSS $\Phi_{M_*}$ are derived using jackknife
+    resampling. 
+    We describe the simulations and observations in Section~\ref{sec:sims}. 
     There are significant differences between the $M_*-\sfr$ relations of
     SDSS and the simulations, which are driven by the inconsistencies
     between the simulations' theoretical $M_*$ and $\sfr$ predictions
@@ -35,8 +36,8 @@ observations used throughout this work.
 
 In Figure~\ref{fig:smf_msfr}, we present the stellar mass functions,
 $\Phi_{M_*}$ left-most panel, and $M_*-\sfr$ relations (right panels) of
-galaxies in the  SIMBA (orange), TNG (blue), and EAGLE (green) cosmological
-hydrodynamic simulations.  For reference, we include $\Phi_{M_*}$ and the 
+galaxies in SIMBA (orange), TNG (blue), and EAGLE (green). For reference, we
+include $\Phi_{M_*}$ and the 
 $M_*-\sfr$ relation for SDSS observations. For the simulations, $M_*$ is the
 total stellar mass within the subhalo and $\sfr$ is the instantaneous $\sfr$ in the
 dense and cold star-forming gas. 
@@ -99,7 +100,7 @@ the AGN feedback efficiency is calibrated to match the SMBH-galaxy mass relation
 The {\sc Simba} simulation suite~\citep{dave2019}, the successor to {\sc
 Mufasa}~\citep{dave2016, dave2017, dave2017a}, is a cosmological hydrodynamical
 simulation constructed using {\sc Gizmo}, a meshless finite mass hydrodynamics 
-code~\citep{hopkins2015, hopkins2017}. Of the simulations, we use
+code~\citep{hopkins2015, hopkins2017}. Of the suite, we use
 `m100n1024', which has a box size of $(100\,h^{-1}\,\mpc)^3$ and baryonic 
 mass resolution of $1.82 \times 10^7\ M_\odot$. The simulation uses the same
 subgrid models as {\sc Mufasa} for $\rm H_2$ based star formation, decoupled
@@ -128,16 +129,14 @@ a~\cite{chabrier2003} initial mass function.
 We impose a $M_r < -20$ completeness limit on the \cite{tinker2011} sample.
 \chedit{
     We also impose completeness limits in the $FUV$ and $NUV$ bands. 
-    UV fluxes in the NASA-Sloan Atlas are measured using forced photometry on
-    GALEX so galaxies can have $FUV$ and $NUV$ fluxes $\leq 0$. 
-    First, we exclude these galaxies from the SDSS sample. 
-    Furthermore, $\mathtt{kcorrect}$ UV absolute magnitudes are poorly
-    constrained for galaxies with low UV fluxes. 
+    %UV fluxes in the NASA-Sloan Atlas are measured using forced photometry on GALEX so galaxies can have $FUV$ and $NUV$ fluxes $\leq 0$.  First, we exclude these galaxies from the SDSS sample.  Furthermore,
+    $\mathtt{kcorrect}$ UV absolute magnitudes are poorly constrained for
+    galaxies with low UV fluxes. 
     We compare the reconstructed $FUV$ and $NUV$ fluxes from
     $\mathtt{kcorrect}$ to the measured fluxes and determine the flux limits
-    below which the fluxes are in good agreement. 
+    above which the fluxes are in good agreement. 
     The flux limits correspond to completeness limits of $M_{FUV} < -13.5$  and
-    $M_{NUV} < -14.0$, which we also impose on the SDSS sample. 
+    $M_{NUV} < -14.0$. 
     In total, our SDSS sample has 4,451 galaxies.
 }
 
@@ -148,7 +147,7 @@ A crucial step in this comparison is to \emph{forward model} the
 observables from the simulations. 
 The simulations can then be directly compared to observations in
 observational-space. 
-This means that the comparison does not rely on measured galaxy properties,
+Then the comparison does not rely on measured galaxy properties,
 which are impacted by variations, inconsistencies, and biases of different
 methods~\citep{dickey2020}. 
 The comparison can also include selection functions and observational systematic
@@ -161,7 +160,7 @@ of the simulated galaxies based on their star formation and metallicity
 histories (SFH and ZH) using the Flexible Stellar Population Synthesis
 model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. For each simulated
 galaxy, we bin the total stellar mass formed by age ($t$) and metallicity
-($Z$). We use a consistent $t$, $Z$ grid for all of the simulations
+($Z$). We use the same $t$, $Z$ grid for all of the simulations
 to account for the variable time and mass resolutions. For each point in the
 $t, Z$ grid, we generate a spectrum assuming a simple stellar population (SSP)
 using $\mathtt{FSPS}$ and take the mass-weighted linear combination of them to
@@ -178,7 +177,7 @@ curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$ broadband
 filters. We add realistic noise to $M_r$, $\gr$, and $\fnuv$ by sampling
 from the observed uncertainty distributions of the NASA Sloan-Atlas.
 \chedit{
-    Lastly, we apply the $M_r < -20$, $M_{FUV} < 13.5$, and $M_{NUV} < -14$
+    Lastly, we apply the $M_r < -20$, $M_{FUV} < -13.5$, and $M_{NUV} < -14$
     absolute magnitude completeness limits of our SDSS sample to the simulated 
     galaxies. 
 }
