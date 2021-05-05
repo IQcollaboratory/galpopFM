@@ -6,9 +6,9 @@ assigns attenuation curves to simulated galaxies based on their physical propert
 We apply the \eda~to 
 three state-of-the-art hydrodynamical simulations (SIMBA, TNG, and EAGLE) and
 forward model the optical and UV color-magnitude relations. We then compare
-the forward modeled simulations to a $M_r < -20$ complete SDSS galaxy sample  
-using likelihood-free inference. Based on this comparison, we find the
-following results: 
+the forward modeled simulations to a $M_r < -20, M_{FUV} < -13.5, M_{NUV} <
+-14.0$ complete SDSS galaxy sample using likelihood-free inference. Based on
+this comparison, we find the following results: 
 
 \begin{itemize}
     \item Dust attenuation is essential for our hydrodynamical simulations to
@@ -17,7 +17,7 @@ following results:
             Without dust, SIMBA, TNG, and EAGLE all struggle to reproduce the
             observed UV and optical color-magnitude relation. 
             They predict galaxies that are intrinsically much bluer and more
-            luminous in the optical and with a broader distriubtion of $\fnuv$
+            luminous in the optical and with broader distriubtions of $\fnuv$
             colors than SDSS. 
         }
     \item With the \eda, each of the simulations are able to produce UV and
@@ -25,21 +25,21 @@ following results:
         observations. 
         \chedit{
             However, we find that star formation quenching is too efficient for
-            the most massive quiescent galaxies in SIMBA and TNG. 
+            some of the most massive quiescent galaxies in SIMBA and TNG. 
             When forward modeled, these galaxies appear as luminous UV red
-            galaxies outside the observed UV color-magnitude relation and they
+            galaxies outside the observed UV color-magnitude relation that 
             cannot be reconciled by dust. 
         }
     \item The attenuation curves of star-forming galaxies predicted by the
-        \eda~forthe simulations are in good agreement with the observed
+        \eda~for the simulations are in good agreement with the observed
         attenuation-slope relation. 
         They also closely reproduce the observed attenuation curves
         of star-forming galaxies. 
         \chedit{
             The simulations, however, predict star-forming galaxies that are
-            intrinsically too luminous compared to observations, so the
-            \eda~does not find star-forming galaxies with $A_V < 0.3$, found in
-            the literature. 
+            intrinsically more luminous than observations. Hence, the \eda~does
+            not predict star-forming galaxies with $A_V < 0.3$, found in the
+            literature. 
         }
     \item \chedit{
             Lastly, with the \eda~we predict the attuenation curves of
@@ -78,12 +78,12 @@ our understanding of dust. In this paper, we used a restrictive
 $M_r$ complete SDSS galaxy sample. Comparison to a larger observed galaxy
 sample will place tighter constraints on \eda~parameters and enable better
 differentiation between the simulations. One way to expand the observed galaxy
-sample would be to remove the $M_r$ completeness limit by including the
+sample would be to remove the completeness limits and include the SDSS survey
 selection function to our forward model. Upcoming surveys, such as the DESI
 Bright Galaxy Survey and the PFS Galaxy Evolution Survey, will also soon
 provide much larger observational galaxy samples. Furthermore, IR observations,
-which measure dust emission and trace dust attenuation, also have the potential
-to tightly constrain the \eda~parameters and therefore break degeneracies
+which measure dust emission and trace the total dust attenuation, also have the
+potential to tightly constrain the \eda~parameters and therefore break degeneracies
 between dust and the galaxy physics in simulations. 
 In the next paper of the series, we will use the forward modeling approach
 with the \eda~to investigate star formation quenching in galaxy formation
