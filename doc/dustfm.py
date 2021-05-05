@@ -37,7 +37,7 @@ fig_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'paper', 'fi
 
 sims = ['SIMBA', 'TNG', 'EAGLE']                    # simulations 
 clrs = {'simba': 'C1', 'tng': 'C0', 'eagle': 'C2'}  # colors
-nabc = {'simba': 28, 'tng': 26, 'eagle': 28}        # Niteration 
+nabc = {'simba': 29, 'tng': 27, 'eagle': 29}        # Niteration 
 
 sfr0_prescript = 'sfrmin'                           # prescription of SFR=0 
 dem = 'slab_noll_mssfr_fixbump'
@@ -1343,9 +1343,9 @@ def ABC_Observables_UVred():
 
         # R vs (G - R)
         sub = fig.add_subplot(gs1[0,i])
-        sub.scatter(xs[i][0], xs[i][1], c='k', s=1) 
-        sub.scatter(xs[i][0][uv_red], xs[i][1][uv_red], c='r', s=1) 
-        sub.scatter(xs[i][0][q], xs[i][1][q], c='C1', s=5, marker='x') 
+        sub.scatter(xs[i][0], xs[i][1], c='k', s=1, rasterized=True) 
+        sub.scatter(xs[i][0][uv_red], xs[i][1][uv_red], c='r', s=1, rasterized=True) 
+        sub.scatter(xs[i][0][q], xs[i][1][q], c='C1', s=5, marker='x', rasterized=True) 
         sub.text(0.95, 0.95, '%s + EDA' % sim, 
                 ha='right', va='top', transform=sub.transAxes, fontsize=25)
         sub.set_xlim(20., 23) 
@@ -1358,9 +1358,9 @@ def ABC_Observables_UVred():
 
         # R vs FUV-NUV
         sub = fig.add_subplot(gs1[1,i])
-        sub.scatter(xs[i][0], xs[i][2], c='k', s=1) 
-        sub.scatter(xs[i][0][uv_red], xs[i][2][uv_red], c='r', s=1) 
-        sub.scatter(xs[i][0][q], xs[i][2][q], c='C1', s=5, marker='x') 
+        sub.scatter(xs[i][0], xs[i][2], c='k', s=1, rasterized=True) 
+        sub.scatter(xs[i][0][uv_red], xs[i][2][uv_red], c='r', s=1, rasterized=True) 
+        sub.scatter(xs[i][0][q], xs[i][2][q], c='C1', s=5, marker='x', rasterized=True) 
         sub.set_xlim(20., 23) 
         sub.set_xticks([20., 21., 22., 23]) 
         sub.set_xticklabels([-20, -21, -22, -23]) 
@@ -5332,16 +5332,16 @@ if __name__=="__main__":
 
     #DEM()
 
-    Observables()
-    _Observables_subpop()
+    #Observables()
+    #_Observables_subpop()
 
     # ABC posteriors 
     ABC_corner() 
     
     # color magnitude relation for ABC posterior
     ABC_Observables()
-    _ABC_Observables_subpop()
-    #ABC_Observables_UVred()
+    #_ABC_Observables_subpop()
+    ABC_Observables_UVred()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
@@ -5366,8 +5366,8 @@ if __name__=="__main__":
     ##_ABC_stdA_MsSFR()
 
     # dust IR emission luminosity 
-    #ABC_Lir()
-    _ABC_Lir_subpop()
+    ABC_Lir()
+    #_ABC_Lir_subpop()
 
 
     #gswlc2_dep()
