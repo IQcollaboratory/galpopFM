@@ -105,10 +105,21 @@ Taking Hydrodynamical Simulations with a Grain of Dust}
 \author{Tjitske K. Starkenburg}
 \affil{Center for Interdisciplinary Exploration and Research in Astrophysics (CIERA) and \\Department of Physics and Astronomy, 1800 Sherman Ave, Evanston IL 60201, USA}
 
+\author{Daniel Angles-Alc\'azar}
+\affil{Department of Physics, University of Connecticut, 196 Auditorium Road,
+U-3046, Storrs, CT 06269-3046, USA}
+\affil{Center for Computational Astrophysics, Flatiron Institute, 162 5th Ave,
+New York, NY 10010, USA}
+
 \author[0000-0002-8131-6378]{Ena Choi}
 \affil{Quantum Universe Center, 
         Korea Institute for Advanced Study, 
         Hoegiro 85, Seoul 02455, Korea}
+
+\author{Romeel Dav\'e}
+\affil{Institute for Astronomy, Royal Observatory, Univ. of Edinburgh, Edinburgh EH9 3HJ, UK}
+\affil{University of the Western Cape, Bellville, Cape Town 7535, South Africa}
+\affil{South African Astronomical Observatories, Observatory, Cape Town 7925, South Africa}
 
 \author[0000-0002-1081-3991]{Claire Dickey} 
 \affil{Department of Astronomy, Yale University, New Haven CT 06520 USA}
@@ -118,13 +129,19 @@ Taking Hydrodynamical Simulations with a Grain of Dust}
 \affil{Dunlap Institute for Astronomy and Astrophysics, University of Toronto,
 50 St George St, Toronto, ON M5S 3H4, Canada}
 
+\author{Ariyeh H. Maller}
+\affil{Department of Physics, New York City College of Technology, City
+University of New York, 300 Jay St., Brooklyn, NY 11201, USA}
+
+\author{Jeremy L. Tinker}
+
 \author{Rachel S. Somerville}
 \affil{Department of Physics and Astronomy, Rutgers University, 136
 Frelinghuysen Road, Piscataway, NJ 08854, USA}
 \affil{Center for Computational Astrophysics, Flatiron Institute, 162 5th Ave,
 New York, NY 10010, USA}
 
-\author{IQ Collaboratory}
+%\author{IQ Collaboratory}
 
 \begin{abstract}
     We present the Empirical Dust Attenuation (\eda) framework for applying
@@ -137,25 +154,40 @@ New York, NY 10010, USA}
     simulations: SIMBA, IllustrisTNG, and EAGLE.  We then compare the optical
     and UV color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$, for the
     forward modeled simulations to SDSS observations using likelihood-free
-    inference. As expected, for all three of the simulations dust attenuation
-    is necessary to match the observations.
-    %With \eda, we infer the dust attenuation curves as a function of galaxy properties so that the synthetic galaxy surveys best match the observed sample.
-    We find that we can accurately reproduce the color-magnitude relations of the
-    observational sample for TNG and EAGLE. For SIMBA, we struggle to reproduce
-    observations due to its overprediction of luminous low-mass galaxies with
-    high star-formation rates.  Examining the attenuation curves predicted by
-    \eda~for TNG and EAGLE, we find good agreement with observed
-    attenuation--slope relations and attenuation curves of star-forming
-    galaxies. Additionally, the \eda~provides, for the first time, predictions
+    inference. 
+    \chedit{
+        As expected, the simulations cannot match observations without dust. % for all three simulations, dust attenuation is {\em necessary} to match the observations.
+        With the \eda, however, we can reproduce the observed color-magnitude
+        for all of the simulations. 
+        For SIMBA and TNG, we find an excess of luminous UV red galaxies that
+        dust cannot fix because they quench star formation too efficiently
+        for the most massive galaxies. 
+    }
+    %We find that we can accurately reproduce the color-magnitude relations of the observational sample for TNG and EAGLE. For SIMBA, we struggle to reproduce observations due to its overprediction of luminous low-mass galaxies with high star-formation rates.
+    Examining the attenuation curves predicted by our dust prescription, we
+    find good agreement with observed attenuation--slope relations and
+    attenuation curves of star-forming galaxies. 
+    \chedit{
+        Although, the \eda~does not predict star-forming galaxies with low
+        $A_V$ since simulated star-forming galaxies are intrinsically much
+        brighter than observations.
+        }
+    Additionally, the \eda~provides, for the first time, predictions
     on the attenuation curves of quiescent galaxies, which are challenging to
-    measure observationally. To match observations, simulated quiescent
-    galaxies require significant UV and optical attenuation but with much
-    shallower slopes than star-forming galaxies. Overall, we find that more
-    massive galaxies in the simulations require higher dust attenuation, 
-    while galaxies with higher specific star formation rates have steeper 
-    attenuation curves. In addition to improving our understanding of dust in
-    galaxies, our results underscore the advantages of \eda~and the forward
-    modeling approach. 
+    measure observationally. 
+    \chedit{
+        The simulated quiescent galaxies require shallower attenuation curves
+        and lower dust attenuation than star-forming galaixes.
+        }
+    Overall, we find that more massive galaxies in the simulations require
+    higher dust attenuation, while galaxies with higher specific star formation
+    rates have steeper attenuation curves.
+    \chedit{
+        The \eda, combined with a forward modeling, provides an effective
+        approach for improving our understanding of dust in galaxies and
+        probing hydrodynamical simulations. 
+    } 
+    %In addition to improving our understanding of dust in galaxies and shedding light on hydrodynamical simulations, our results underscore the advantages of \eda~and the forward modeling approach. 
     %We apply \eda~separately to three state-of-the-art cosmological
     %hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE), forward
     %model their optical and UV
@@ -212,7 +244,6 @@ It's a pleasure to thank
     Shy Genel, 
     Daniel Kelson, 
     Mariska Kriek, 
-    Ariyeh H. Maller,
     Desika Narayanan,
     Katherine Suess, 
     Aaron Yung
