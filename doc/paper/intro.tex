@@ -60,17 +60,18 @@ about dust attenuation in quiescent galaxies.
     rocha2008, hayward2015, natale2015, hou2017}. 
     Radiative transfer models have even been applied to cosmological
     hydrodynamical simulations~\cite[\eg][]{camps2015, narayanan2018,
-    trayford2020}. 
+    cochrane2019, rodriguez-gomez2019, trayford2020}. 
     Dust has also been examined in a cosmological context using 
     semi-analytic models ~\citep[SAMs; \eg][]{granato2000, fontanot2009, wilkins2012,
     gonzalez-perez2013, popping2017}. 
     Yet there are still major limitations in modeling dust. 
     Dust models in cosmological simulations currently do not reproduce the
-    redshift evolution of dust properties~\citep{somerville2012, yung2019,
-    vogelsberger2020}. 
+    redshift evolution of dust properties~(\citealp{somerville2012, yung2019,
+    vogelsberger2020}, but see \citealp{li2019}). 
     Also, radiative transfer models produce attenuation-slope relations that are
     significantly steeper than observations. 
 }
+\tks{would it be nice to add a reference for this?}
 Many models also require significant hand-tuning (\eg~propagating rays/photons into
 particular cells) and make assumptions on the underlying dust grain models~\citep[see][for a review]{steinacker2013}. 
 %Lastly, radiative transfer models are computationally expensive.  
@@ -83,12 +84,12 @@ We take a different approach from the observational and theoretical works
 above --- \emph{we investigate dust attenuation using a forward modeling
 approach to compare simulations to observations}.
 Our ``forward model'' starts with three major large-scale hydrodynamical
-simulations: EAGLE, IllustrisTNG, and SIMBA. 
+simulations: EAGLE \citep{schaye2015}, IllustrisTNG \citep{nelson2019}, and SIMBA \citep{dave2019}. 
 We use their outputs (\eg~star formation history) to build SEDs for each
 simulated galaxy.
 %We take three major large-scale hydrodynamical simulations (EAGLE, IllustrisTNG, and SIMBA) and use their outputs (\eg~star formation history) to build SEDs for the simulated galaxies. 
 We then apply dust attenuation to all the SEDs using an Empirical Dust
-Attenuation framework, which we describe shortly.
+Attenuation (\eda) framework, which we describe shortly.
 Finally, we apply a realistic noise model and sample selection function on
 the attenuated SEDs and construct synthetic photometric observations. 
 Afterwards, we compare the synthetic observations from the forward model to
@@ -101,13 +102,12 @@ functions and observational systematic effects, they can account for these
 effects to exploit the full observational data set.
 
 An essential step in our forward model is applying the Empirical Dust
-Attenuation (\eda) framework, which provides a flexible and computationally
+Attenuation framework, which provides a flexible and computationally
 inexpensive prescription for applying dust attenuation.  
 The \eda~first assigns attenuation curves to every simulated galaxy. 
 In this work, we use the \cite{noll2009} attenuation curve parameterization
 with amplitude and slope of the curves determined from
-the simulated galaxy's $M_*$ and specific star formation
-rate ($\ssfr$) as well as a randomly sampled inclination ($i$). 
+the simulated galaxy's $M_*$ and $\ssfr$ as well as a randomly sampled inclination ($i$). 
 We use the same parameterization as observational studies so that the
 \eda~attenuation curves can easily be compared to observational constraints. 
 The $M_*$ and $\ssfr$ dependence is also motivated by
@@ -132,7 +132,7 @@ for comparisons would require huge computational resources.
 Using them with Monte Carlo methods for parameter exploration would be
 prohibitive.  
 On the other hand, with the \eda, we can apply a wide range of realistic
-dust attenuation to simulated galaxies in a matter of seconds. 
+dust attenuation curves to simulated galaxies in a matter of seconds. 
 We can easily explore and sample the dust parameter space and infer the
 relationship between dust attenuation and galaxy properties. 
 That is the focus of this paper. 
