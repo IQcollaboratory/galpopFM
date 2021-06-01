@@ -26,7 +26,7 @@
 % dust model can reproduce color magnitude relation
 Without dust attenuation, all of the hydrodynamical simulations struggle to 
 reproduce the $(\gr) - M_r$ and $(\fnuv) - M_r$ relations of SDSS (Figure~\ref{fig:obs}). 
-Both in the optical and UV, the simulations predict galaxies with significantly bluer
+Both in the optical and UV, the simulations predict galaxies significantly bluer
 than SDSS galaxies.
 The simulations also predict optically blue luminous galaxies with $M_r <
 -21.5$ that are not found in the observations; this is particularly
@@ -49,7 +49,7 @@ relations of SDSS observations (black-dashed) comparison. The contours mark
 the $68$ and $95$ percentiles of the distributions. 
 
 Dust dramatically impacts the observables of simulations. 
-The \eda~affects the the optical and UV color-magnitude relations in three
+The \eda~affects the optical and UV color-magnitude relations in three
 major ways to produce good agreement with SDSS. 
 First, the \eda~significantly reddens the simulated galaxies in the optical: 
 $\gr$ colors are ${\gtrsim}0.25~mag$ redder than the optical
@@ -83,9 +83,12 @@ optical or UV --- consistent with observations.
         In both TNG and SIMBA, the luminous UV red galaxies have negligible
         star formation within the last 2 Gyrs, unlike the other quiescent
         galaxies. 
-        \emph{Therefore, SIMBA and TNG pedict luminous UV red galaxies not
-        found in observations because their prescription for star formation
-        quenching is too efficient in the most massive galaxies.}
+        \chedit{
+            \emph{This suggests that SIMBA and TNG may be predicting luminous
+            UV-red galaxies not found in observations because their
+            prescription for star formation quenching is too efficient in the
+            most massive galaxies.}
+        } % softened
     }
     }
 \end{center}
@@ -100,8 +103,12 @@ $\sfr\lesssim 10^{-2}M_\odot/yr$, is especially pronounced in the UV
 color-magnitude of SIMBA but also present in TNG. 
 They are also present in the UV color-magnitude predictions without dust
 attenuation~(Figure~\ref{fig:obs}). 
-Since these galaxies are luminous and they have intrinsic $\fnuv > 2$, 
-dust attenuation cannot remove them from the UV color-magnitude relation.
+\chedit{
+    Since these galaxies are the most luminous ones in our sample, dust
+    attenuation cannot remove them from the UV color-magnitude relation. 
+    Furthermore, dust reddening would only increase the discrepancies with
+    observations since they have intrinsic $\fnuv > 2$.
+}
 In other words, the excess luminous UV-red galaxies predicted by SIMBA and
 TNG are irreconcilable even with dust attenuation. 
 
@@ -113,18 +120,19 @@ and UV color-magnitude relations predicted by the \eda~(red).
 The bottom panels present the median specific SFH (SSFH), $\ssfr$ as a
 function of lookback time, $t_{\rm lookback}$, with the shaded regions
 representing the 68 percentile of the SSFH.
-\chedit{
-    For comparison, we include the SSFHs of other quiescent galaxies 
-    ($\ssfr < 10^{-11}yr^{-1}$) with matching luminosities, $M_r < -22$ (orange).
-}
+For comparison, we include the SSFHs of other quiescent galaxies 
+($\ssfr < 10^{-11}yr^{-1}$) with matching luminosities, $M_r < -22$ (orange).
 The SSFHs reveal that, unlike other quiescent galaxies, the luminous UV-red
 galaxies of SIMBA and TNG have  almost no star formation within the last $t_{\rm lookback} \lesssim 2$ Gyr.
 With no recent star formation contributing to the SED in $FUV$ wavelength,
 these galaxies have faint $FUV$ magnitudes and, thus, high $\fnuv$ color.  
 The luminous UV-red galaxies in SIMBA and TNG, which are not found in
-observations, are a consequence of star formation quenching being too
-efficient in the most massive quiescent galaxies.
-
+observations, 
+\chedit{
+    suggest that star formation quenching is too efficient in the most massive
+    queiscent galaxies.
+} % softened a bit 
+%are a consequence of star formation quenching being too efficient in the most massive quiescent galaxies.
 
 The SSFHs in Figure~\ref{fig:uv_sfh} also reveal that luminous UV-red
 galaxies in SIMBA have a substantially different SSFH than other quiescent
@@ -241,7 +249,7 @@ to successfully reproduce the position of the SDSS red sequence and does not
 predict a significant excess of luminous blue galaxies. Also using EAGLE and 
 {\sc Skirt}, \cite{baes2019} find that they overestimate the observed cosmic 
 SED (CSED) in the UV regime and produce significantly higher $\fnuv$ color 
-than GAMA. The \eda~for EAGLE predict $\fnuv$ in good agreement with SDSS. 
+than GAMA. The \eda~for EAGLE predicts $\fnuv$ in good agreement with SDSS. 
 %\cite{baes2019}: EAGLE+SKIRT SED compparison with GAMA Far UV is not attenuated enough. underrestimates optical and NIR
 For TNG, \cite{nelson2018} calculate optical colors using a dust model that
 includes attenuation due to dense gas birth clouds surrounding young stellar
@@ -249,11 +257,10 @@ populations and also due to simulated distribution of neutral gas and metals.
 They find bluer red sequence peaks and a narrower blue cloud compared to SDSS.
 We find neither of these discrepancies for the TNG+\eda. The \eda~provides a
 simpler empirical framework for applying dust attenuation than the dust models
-in these works. Yet, with its flexibility, we are able to produce optical and
-UV color-magnitude relations that are in good agreement with observations.
-Furthermore, with its low computation costs we were able to fully
-explore our dust parameters. 
-%better agreement than observations than these works.
+in these works. 
+Yet, with its flexibility and low computation cost, we are able to fully
+explore our dust parameters and produce optical and UV color-magnitude
+relations that are in good agreement with observations.
 
 % without being fit, the EDA reproduces the attenuation-slope relation and SF
 % attenuation of SDSS observations  

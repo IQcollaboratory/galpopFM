@@ -86,8 +86,8 @@
 \definecolor{orange}{rgb}{1,0.5,0}
 \newcommand{\ch}[1]{#1}%{\color{orange}#1}}
 \newcommand{\chedit}[1]{{\color{orange}#1}}
-\newcommand{\tks}[1]{#1}%{\color{orange} #1}}
-\newcommand{\tksedit}[1]{#1}%{\color{orange}#1}}
+\newcommand{\tks}[1]{{\color{blue}#1}}
+\newcommand{\tksedit}[1]{{\color{blue}#1}}
 
 \begin{document} \sloppy\sloppypar\frenchspacing 
 
@@ -102,7 +102,7 @@ Taking Hydrodynamical Simulations with a Grain of Dust}
 \author{Tjitske K. Starkenburg}
 \affil{Center for Interdisciplinary Exploration and Research in Astrophysics (CIERA) and \\Department of Physics and Astronomy, 1800 Sherman Ave, Evanston IL 60201, USA}
 
-\author{Daniel Angles-Alc\'azar}
+\author{Daniel Angl\'es-Alc\'azar}
 \affil{Department of Physics, University of Connecticut, 196 Auditorium Road,
 U-3046, Storrs, CT 06269-3046, USA}
 \affil{Center for Computational Astrophysics, Flatiron Institute, 162 5th Ave,
@@ -147,7 +147,7 @@ New York, NY 10010, USA}
     prescription for 
     %for applying dust attenuation to galaxies from theoretical models. \eda~provides a flexible prescription 
     assigning realistic dust attenuation to simulated galaxies based on their
-    physical properties.% ($M_*$, $\ssfr$). %  and using the \cite{noll2009} attenuation curve parameterization. 
+    physical properties. % ($M_*$, $\ssfr$). %  and using the \cite{noll2009} attenuation curve parameterization. 
     Using the \eda, we forward model synthetic observations for a $M_r < -20$
     complete galaxy sample for three state-of-the-art large-scale cosmological
     hydrodynamical simulations: SIMBA, IllustrisTNG, and EAGLE.  We then
@@ -175,7 +175,7 @@ New York, NY 10010, USA}
     Simulated quiescent galaxies require shallower attenuation curves
     and lower dust attenuation than star-forming galaixes.
     %Overall, we find that more massive galaxies in the simulations require higher dust attenuation, while galaxies with higher specific star formation rates have steeper attenuation curves.
-    The \eda, combined with a forward modeling, provides an effective
+    The \eda, combined with forward modeling, provides an effective
     approach for improving our understanding of dust in galaxies and
     probing hydrodynamical simulations. 
     \chedit{
@@ -185,7 +185,6 @@ New York, NY 10010, USA}
         and optical observations. 
     }
     %Furthermore, this work demonstrates that dust attenuation is highly degenerate with differences among galaxy physics prescriptions.
-
     %In addition to improving our understanding of dust in galaxies and shedding light on hydrodynamical simulations, our results underscore the advantages of \eda~and the forward modeling approach. 
     %We apply \eda~separately to three state-of-the-art cosmological
     %hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE), forward
@@ -256,7 +255,7 @@ DE-AC02-05CH11231.  This project used resources of the National Energy Research
 Scientific Computing Center, a DOE Office of Science User Facility supported by
 the Office of Science of the U.S.  Department of Energy under Contract No.
 DE-AC02-05CH11231. 
-%\todo{schmidt acknowlegement?}
+CH is supported by the AI Accelerator program of the Schmidt Futures Foundation.
 
 We thank the Illustris collaboration and the Virgo Consortium for making their
 simulation data publicly available, and the SIMBA collaboration for sharing
@@ -277,7 +276,6 @@ Foundation, and the analysis was largely done using those facilities.
 The IQ~(Isolated \& Quiescent)~Collaboratory thanks the Flatiron Institute for hosting the collaboratory and its meetings. 
 The Flatiron Institute is supported by the Simons Foundation.
 Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P.
-
 Sloan Foundation, the U.S. Department of Energy Office of Science, and the
 Participating Institutions. SDSS acknowledges support and resources from the
 Center for High-Performance Computing at the University of Utah. The SDSS web
