@@ -130,6 +130,12 @@ Chabrier G.,  2003, \mn@doi [Publications of the Astronomical Society of the
 Chevallard J.,  Charlot S.,  Wandelt B.,   Wild V.,  2013, \mn@doi [Monthly
   Notices of the Royal Astronomical Society] {10.1093/mnras/stt523}, 432, 2061
 
+\bibitem[\protect\citeauthoryear{{Choi}, {Dotter}, {Conroy}, {Cantiello},
+  {Paxton}  \& {Johnson}}{{Choi} et~al.}{2016}]{choi2016}
+{Choi} J.,  {Dotter} A.,  {Conroy} C.,  {Cantiello} M.,  {Paxton} B.,
+  {Johnson} B.~D.,  2016, \mn@doi [\apj] {10.3847/0004-637X/823/2/102}, \href
+  {https://ui.adsabs.harvard.edu/abs/2016ApJ...823..102C} {823, 102}
+
 \bibitem[\protect\citeauthoryear{Code}{Code}{1969}]{code1969}
 Code A.~D.,  1969, \mn@doi [Publications of the Astronomical Society of the
   Pacific] {10.1086/128809}, 81, 475
@@ -214,6 +220,10 @@ Dickey C.~M.,  et~al., 2020, arXiv e-prints, 2010, arXiv:2010.01132
   Gratton}{1984}]{diggle1984}
 Diggle P.~J.,  Gratton R.~J.,  1984, Journal of the Royal Statistical Society.
   Series B (Methodological), 46, 193
+
+\bibitem[\protect\citeauthoryear{{Dotter}}{{Dotter}}{2016}]{dotter2016}
+{Dotter} A.,  2016, \mn@doi [\apjs] {10.3847/0067-0049/222/1/8}, \href
+  {https://ui.adsabs.harvard.edu/abs/2016ApJS..222....8D} {222, 8}
 
 \bibitem[\protect\citeauthoryear{Draine}{Draine}{2003}]{draine2003}
 Draine B.~T.,  2003, \mn@doi [The Astrophysical Journal] {10.1086/379118}, 598,
@@ -402,6 +412,22 @@ Noll S.,  Burgarella D.,  Giovannoli E.,  Buat V.,  Marcillac D.,
 O'Connell R.~W.,  1999, \mn@doi [Annual Review of Astronomy and Astrophysics]
   {10.1146/annurev.astro.37.1.603}, 37, 603
 
+\bibitem[\protect\citeauthoryear{{Paxton}, {Bildsten}, {Dotter}, {Herwig},
+  {Lesaffre}  \& {Timmes}}{{Paxton} et~al.}{2011}]{paxton2011}
+{Paxton} B.,  {Bildsten} L.,  {Dotter} A.,  {Herwig} F.,  {Lesaffre} P.,
+  {Timmes} F.,  2011, \mn@doi [\apjs] {10.1088/0067-0049/192/1/3}, \href
+  {https://ui.adsabs.harvard.edu/abs/2011ApJS..192....3P} {192, 3}
+
+\bibitem[\protect\citeauthoryear{{Paxton} et~al.,}{{Paxton}
+  et~al.}{2013}]{paxton2013}
+{Paxton} B.,  et~al., 2013, \mn@doi [\apjs] {10.1088/0067-0049/208/1/4}, \href
+  {https://ui.adsabs.harvard.edu/abs/2013ApJS..208....4P} {208, 4}
+
+\bibitem[\protect\citeauthoryear{{Paxton} et~al.,}{{Paxton}
+  et~al.}{2015}]{paxton2015}
+{Paxton} B.,  et~al., 2015, \mn@doi [\apjs] {10.1088/0067-0049/220/1/15}, \href
+  {https://ui.adsabs.harvard.edu/abs/2015ApJS..220...15P} {220, 15}
+
 \bibitem[\protect\citeauthoryear{Pillepich et~al.,}{Pillepich
   et~al.}{2018}]{pillepich2018}
 Pillepich A.,  et~al., 2018, \mn@doi [Monthly Notices of the Royal Astronomical
@@ -444,6 +470,12 @@ Salim S.,  et~al., 2016, \mn@doi [The Astrophysical Journal Supplement Series]
   et~al.}{2018}]{salim2018}
 Salim S.,  Boquien M.,   Lee J.~C.,  2018, \mn@doi [The Astrophysical Journal]
   {10.3847/1538-4357/aabf3c}, 859, 11
+
+\bibitem[\protect\citeauthoryear{{S{\'a}nchez-Bl{\'a}zquez}
+  et~al.,}{{S{\'a}nchez-Bl{\'a}zquez} et~al.}{2006}]{sanchez_blazquez2006}
+{S{\'a}nchez-Bl{\'a}zquez} P.,  et~al., 2006, \mn@doi [\mnras]
+  {10.1111/j.1365-2966.2006.10699.x}, \href
+  {https://ui.adsabs.harvard.edu/abs/2006MNRAS.371..703S} {371, 703}
 
 \bibitem[\protect\citeauthoryear{Schaye et~al.,}{Schaye
   et~al.}{2015}]{schaye2015}

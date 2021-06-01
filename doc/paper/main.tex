@@ -93,14 +93,11 @@
 
 \title{IQ Collaboratory III: The Empirical Dust Attenuation Framework ---
 Taking Hydrodynamical Simulations with a Grain of Dust}
-\date{\texttt{DRAFT~---~\githash~---~\gitdate~---~NOT READY FOR DISTRIBUTION}}
 
 \newcounter{affilcounter}
 \author[0000-0003-1197-0902]{ChangHoon Hahn}
 \altaffiliation{hahn.changhoon@gmail.com}
 \affil{Department of Astrophysical Sciences, Princeton University, Peyton Hall, Princeton NJ 08544, USA} 
-%\affil{Lawrence Berkeley National Laboratory, 1 Cyclotron Rd, Berkeley CA 94720, USA}
-%\affil{Berkeley Center for Cosmological Physics, University of California, Berkeley CA 94720, USA}
 
 \author{Tjitske K. Starkenburg}
 \affil{Center for Interdisciplinary Exploration and Research in Astrophysics (CIERA) and \\Department of Physics and Astronomy, 1800 Sherman Ave, Evanston IL 60201, USA}
@@ -129,7 +126,7 @@ New York, NY 10010, USA}
 \affil{Dunlap Institute for Astronomy and Astrophysics, University of Toronto,
 50 St George St, Toronto, ON M5S 3H4, Canada}
 
-\author{Ariyeh H. Maller}
+\author[0000-0003-2060-8331]{Ariyeh H. Maller}
 \affil{Department of Physics, New York City College of Technology, City
 University of New York, 300 Jay St., Brooklyn, NY 11201, USA}
 
@@ -142,53 +139,53 @@ New York, NY 10010, USA}
 \author{Jeremy L. Tinker}
 \affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 4 Washington Place, New York, NY 10003}
 
-
-%\author{IQ Collaboratory}
+\author{L. Y. Aaron Yung}
+\affil{Astrophysics Science Division, NASA Goddard Space Flight Center, 8800 Greenbelt Rd, Greenbelt, MD 20771, USA}
 
 \begin{abstract}
-    We present the Empirical Dust Attenuation (\eda) framework for applying
-    dust attenuation to galaxies from theoretical models. \eda~provides a
-    flexible prescription for assigning realistic dust attenuation to simulated
-    galaxies related to their physical properties ($M_*$, $\ssfr$) and using
-    the \cite{noll2009} attenuation curve parameterization. Using the \eda, we
-    forward model synthetic observations for a $M_r < -20$ complete galaxy
-    sample for three state-of-the-art large-scale cosmological hydrodynamical
-    simulations: SIMBA, IllustrisTNG, and EAGLE.  We then compare the optical
+    We present the Empirical Dust Attenuation (\eda) framework --- a flexible
+    prescription for 
+    %for applying dust attenuation to galaxies from theoretical models. \eda~provides a flexible prescription 
+    assigning realistic dust attenuation to simulated galaxies based on their
+    physical properties.% ($M_*$, $\ssfr$). %  and using the \cite{noll2009} attenuation curve parameterization. 
+    Using the \eda, we forward model synthetic observations for a $M_r < -20$
+    complete galaxy sample for three state-of-the-art large-scale cosmological
+    hydrodynamical simulations: SIMBA, IllustrisTNG, and EAGLE.  We then
+    compare the optical
     and UV color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$, for the
     forward modeled simulations to SDSS observations using likelihood-free
     inference. 
-    \chedit{
-        As expected, the simulations cannot match observations without dust. % for all three simulations, dust attenuation is {\em necessary} to match the observations.
-        With the \eda, however, we can reproduce the observed color-magnitude
-        for all of the simulations. 
-        For SIMBA and TNG, we find an excess of luminous UV red galaxies that
-        dust cannot fix because they quench star formation too efficiently
-        for the most massive galaxies. 
-    }
+    Without dust, none of the simulations can match observations as expected.
+    %As expected, the simulations cannot match observations without dust. % for all three simulations, dust attenuation is {\em necessary} to match the observations.
+    With the \eda, however, we can reproduce the observed color-magnitude
+    for all of the simulations. 
+    For SIMBA and TNG, we find an excess of luminous UV-red galaxies that
+    dust cannot fix because they quench star formation too efficiently
+    for the most massive galaxies. 
     %We find that we can accurately reproduce the color-magnitude relations of the observational sample for TNG and EAGLE. For SIMBA, we struggle to reproduce observations due to its overprediction of luminous low-mass galaxies with high star-formation rates.
     Examining the attenuation curves predicted by our dust prescription, we
     find good agreement with observed attenuation--slope relations and
     attenuation curves of star-forming galaxies. 
-    \chedit{
-        Although, the \eda~does not predict star-forming galaxies with low
-        $A_V$ since simulated star-forming galaxies are intrinsically much
-        brighter than observations.
-        }
+    However, the \eda~does not predict star-forming galaxies with low
+    $A_V$ since simulated star-forming galaxies are intrinsically much
+    brighter than observations.
     Additionally, the \eda~provides, for the first time, predictions
     on the attenuation curves of quiescent galaxies, which are challenging to
     measure observationally. 
+    Simulated quiescent galaxies require shallower attenuation curves
+    and lower dust attenuation than star-forming galaixes.
+    %Overall, we find that more massive galaxies in the simulations require higher dust attenuation, while galaxies with higher specific star formation rates have steeper attenuation curves.
+    The \eda, combined with a forward modeling, provides an effective
+    approach for improving our understanding of dust in galaxies and
+    probing hydrodynamical simulations. 
     \chedit{
-        The simulated quiescent galaxies require shallower attenuation curves
-        and lower dust attenuation than star-forming galaixes.
-        }
-    Overall, we find that more massive galaxies in the simulations require
-    higher dust attenuation, while galaxies with higher specific star formation
-    rates have steeper attenuation curves.
-    \chedit{
-        The \eda, combined with a forward modeling, provides an effective
-        approach for improving our understanding of dust in galaxies and
-        probing hydrodynamical simulations. 
-    } 
+        Furthermore, this work illustrates a major limitation in comparing galaxy
+        formation models: by adjusting dust attenation alone, simulations with
+        significantly different galaxy populations can reproduce the same UV
+        and optical observations. 
+    }
+    %Furthermore, this work demonstrates that dust attenuation is highly degenerate with differences among galaxy physics prescriptions.
+
     %In addition to improving our understanding of dust in galaxies and shedding light on hydrodynamical simulations, our results underscore the advantages of \eda~and the forward modeling approach. 
     %We apply \eda~separately to three state-of-the-art cosmological
     %hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE), forward
@@ -225,7 +222,7 @@ New York, NY 10010, USA}
 \end{abstract}
 
 \keywords{
-keyword1 -- keyword2 -- keyword3
+    Galaxies: formation -- 
 }
 
 % --- intro ---  
@@ -241,22 +238,25 @@ keyword1 -- keyword2 -- keyword3
 \input{summary}
 
 \section*{Acknowledgements}
-It's a pleasure to thank
+It's a pleasure to thank 
+    Michael Blanton, 
+    Nicholas T. Faucher, 
     Marla Geha, 
-    Shy Genel, 
+    Shy Genel,
+    Jenny E. Green,
     Daniel Kelson, 
     Mariska Kriek, 
-    Desika Narayanan,
-    Katherine Suess, 
-    Aaron Yung
-    ... 
-\ch{TBD}.
+    Peter Melchior, 
+    Desika Narayanan, 
+    and Katherine Suess for
+valuable discussions and comments.
 This material is based upon work supported by the U.S. Department of Energy,
 Office of Science, Office of High Energy Physics, under contract No.
 DE-AC02-05CH11231.  This project used resources of the National Energy Research
 Scientific Computing Center, a DOE Office of Science User Facility supported by
 the Office of Science of the U.S.  Department of Energy under Contract No.
 DE-AC02-05CH11231. 
+%\todo{schmidt acknowlegement?}
 
 We thank the Illustris collaboration and the Virgo Consortium for making their
 simulation data publicly available, and the SIMBA collaboration for sharing
