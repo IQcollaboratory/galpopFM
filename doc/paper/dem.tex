@@ -39,9 +39,10 @@ We parameterize $\tau_V$ using a linear $M_*$ and $\ssfr$ dependence:
 $\mtaum$, $\mtaus$, and $c_\tau$ represent the $M_*$ dependence, the $\ssfr$
 dependence, and amplitude of $\tau_V$. Since $\tau_V$ is optical depth, we
 impose a $\tau_V \ge 0$ limit.
-For each galaxy, we uniformly sample $\cos i$ from 0 to 1. \tks{By sampling
-$\cos i$, we introduce stochasticity in our \eda~prescription, which gives rise to significant variance in
-$A(\lambda)$ so galaxies with the same properties do not have identical dust attenuation.}
+For each galaxy, we uniformly sample $\cos i$ from 0 to 1. 
+By sampling $\cos i$, we introduce stochasticity in our \eda~prescription. 
+This produces significant variance in $A(\lambda)$ so galaxies with the same
+properties do not have identical dust attenuation.
 
 Previous works have parameterized dust attenuation based on galaxy properties
 such as gas density, gas metallicity, or star-gas geometry, motivated by
@@ -52,36 +53,15 @@ The galaxies in the SIMBA, TNG, and EAGLE simulations, however, have
 substantially different gas masses and metallicites~\citep[][Maller \etal~in prep.]{dave2020}.  
 If we were to parameterize $\tau_V$ using these properties, the differences
 in them between the simulations would dominate any comparison of dust attenuation.
-Instead, we parameterize $\tau_V$ on correlation between dust attenuation
-and galaxy properties that have been established in observations~\citep[\eg~][]{garn2010, battisti2016, salim2020}.
+Instead, our parameterization for $\tau_V$ is based on the correlation between
+dust attenuation and galaxy properties that have been established by
+observations~\citep[\eg~][]{garn2010, battisti2016, salim2020}.
 In Appendix~\ref{sec:slab}, we confirm the correlation between $A_V$ and
 the properties $M_*$ and $\ssfr$ using the \cite{salim2018} GSWLC2 sample
 (Figure~\ref{fig:dep}). 
 We therefore include in Eq.~\ref{eq:tauv} the correlation between $A_V$ and
 galaxy $M_*$ and $\ssfr$.
 
-
-%\tksedit{
-%The true properties of dust (grain size, temperature, and spatial
-%distributions), determined by detailed dust growth and destruction processes,
-%depend on local stellar and gas properties and the local star, gas, and dust
-%geometries. 
-%On scales relative for large-scale simulations the dust properties
-%are expected to vary with gas density (alternatively gas column density or
-%total gas mass), gas metallicity, and the relative star-gas geometry, and this
-%is often used in estimations of attenuation of starlight by dust
-%\citep[e.g.][]{somerville1999, somerville2012, steinacker2013, camps2015,
-%narayanan2018, trayford2020, vogelsberger2020}.
-%In this work we take an
-%observation-centered approach to modeling dust and therefore base our model on
-%observationally found relations between galaxy properties, $M_*$ and $\ssfr$,
-%and dust attenuation. Moreover, the galaxy populations in the SIMBA, TNG, and
-%EAGLE simulations show a variety of distributions in gas mass and gas
-%metallicity which would dominate any inference we could make on the relation
-%between dust and the galaxy population (e.g. \citealp{dave2020}, Maller et al.
-%in prep.). We will explore the relation between our inferred attenuation and
-%gas properties and compare in future work (Starkenburg et al. in prep.).
-%}
 
 In Eq.~\ref{eq:slab}, we use the slab model because it provides a simple
 prescription for generating a distribution of $A_V$ that depends on
@@ -90,7 +70,7 @@ For star-forming galaxies, which typically have disc-like morphologies, the
 slab model produces $A_V$ that is correlated with $i$ in a way consistent
 with observations: edge-on galaxies have higher $A_V$ than face-on
 galaxies~\citep[\eg][]{conroy2010, wild2011, battisti2017, salim2020}.
-Nevertheless, the slab model is a naive approximation. 
+Nevertheless, the slab model is a simplification. 
 In reality, $A_V$ depends on the detailed star-to-dust geometry.
 Furthermore, all galaxies, not just star-forming, in the simulations are
 assigned $A_V$ from the slab model.
@@ -104,10 +84,10 @@ In this regard, we demonstrate that the slab model based \eda~can match the
 observed distribution of $A_V$, even for samples that include quiescent
 galaxies (Appendix~\ref{sec:slab}).
 Hence, the slab model provides a sufficient prescription for reproducing
-the $A_V$ distribution for all galaxies. 
+the $A_V$ distribution for an ensemble of galaxies. 
 
 For the wavelength dependence of the attenuation curve, $k(\lambda)$, we
-use the \cite{noll2009} parameterization: 
+use \cite{noll2009}: 
 \begin{equation} \label{eq:noll}
     k(\lambda) = \left(k_{\rm Cal}(\lambda) + D(\lambda)\right) \left(
     \frac{\lambda}{\lambda_V} \right)^\delta.
@@ -137,7 +117,7 @@ $\tau_V$:
 % \cite{salim2020}, most recently, found that the driver of this trend is the
 % relationship between $A_V$ and slope. We therefore do not include an
 % inclination dependence in $\delta$. 
-$D(\lambda)$ in Eq.~\ref{eq:noll} is the UV dust bump, which we parameter using
+$D(\lambda)$ in Eq.~\ref{eq:noll} is the UV dust bump, which we parameterize using
 the standard Lorentzian-like Drude profile:
 \begin{equation}
     D(\lambda) = \frac{E_b(\lambda~\Delta \lambda)^2}{(\lambda^2 -
@@ -169,7 +149,8 @@ and~\ref{eq:delta} depend on $\log\ssfr$, they cannot be used in the equations
 to derive $\tau_V$ and $\delta$ for these galaxies. To account for this issue,
 we assign $\sfr_{\rm min}$, the minimum non-zero $\sfr$ in each simulation, to
 $\sfr=0$ galaxies when calculating $\tau_V$ and $\delta$. For SIMBA, TNG, and
-EAGLE, $\sfr_{\rm min}=0.000816$, $0.000268$, and $0.000707 M_\odot/yr$. Although 
+EAGLE, $\sfr_{\rm min}=0.000816$, $0.000268$, and $0.000707 M_\odot/yr$,
+respectively. Although 
 this assumes that $\sfr=0$ galaxies have similar dust properties as the galaxies 
 with $\sfr = \sfr_{\rm min}$, since the simulations have very low $\sfr_{\rm min}$ 
 we expect galaxies with $\sfr = \sfr_{\rm min}$ to have little recent

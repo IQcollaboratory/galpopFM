@@ -75,8 +75,6 @@ feedback from SMBH, where feedback energy is injected in the form of a kinetic
 AGN-driven wind at low SMBH accretion rates~\citep{weinberger2018}. This new
 implementation has been shown to alleviate discrepancies found between the
 original Illustris and observations for $> 10^{13-14} M_\odot$ massive halos. 
-%TNG has a baryonic mass resolution of $1.4\times10^6M_{\sun}$ \ch{temporal resolution?}\tks{why would you need to know temporal resolution? for the SFH?}.
-%\todo{details on the following properties that we use in the paper: SFH, ZH}
 
 \subsection{EAGLE} \label{sec:eagle} 
 The Virgo Consortium's EAGLE
@@ -89,7 +87,7 @@ which has a comoving volume of $(100\,\mpc)^3$, and a baryonic mass resolution o
 %that includes a conservative pressure-entropy formulation for the smoothed particle hydrodynamics calculation, artificial viscosity, artificial conduction and the time limiter that improve hydrodynamic computation performance. 
 EAGLE has subgrid models for star formation, stellar mass loss, metal enrichment
 and stellar feedback that stochastically inject thermal energy in the ISM as
-in~\citet{dallavecchia2012}. The feedback energy from AGN is also added to
+in~\cite{dallavecchia2012}. The feedback energy from AGN is also added to
 surrounding gas stochastically~\citep{booth2009}. Parameters of the stellar 
 feedback and SMBH accretion are calibrated to broadly reproduce the $z=0$ 
 stellar mass function and galaxy stellar size-stellar mass relation. Meanwhile, 
@@ -102,14 +100,35 @@ Mufasa}~\citep{dave2016, dave2017, dave2017a}, is a cosmological hydrodynamical
 simulation constructed using the {\sc Gizmo} meshless finite mass hydrodynamics 
 code~\citep{hopkins2015, hopkins2017}. Of the suite, we use
 `m100n1024', which has a box size of $(100\,h^{-1}\,\mpc)^3$ and baryonic 
-mass resolution of $1.82 \times 10^7\ M_\odot$. The simulation uses the same
+mass resolution of $1.82 \times 10^7\ M_\odot$. The simulation uses some of the same
 subgrid models as {\sc Mufasa} for $\rm H_2$ based star formation, decoupled
 two-phase winds for star formation driven galactic winds with velocity and mass loading 
 calibrated to reproduce the FIRE simulations \citep{muratov2015, angles-alcazar2017b}, and feedback from 
 Type I supernovae and AGB stars. {\sc Simba} uses a two-mode SMBH accretion 
 model, torque-limited accretion for cold gas~\citep{angles-alcazar2017} and 
-Bondi-based accretion for hot gas, and two-mode AGN feedback. %which ejects bipolar kinetic winds with $\sim 10^3 \kms$ for high SMBH accretion rate, and launches winds with increased velocity of $\sim 8000 \kms$ for low SMBH accretion of Eddington ratio below 2 \%.
+Bondi-based accretion for hot gas, and AGN feedback in jet, radiative, and
+X-ray modes. %which ejects bipolar kinetic winds with $\sim 10^3 \kms$ for high SMBH accretion rate, and launches winds with increased velocity of $\sim 8000 \kms$ for low SMBH accretion of Eddington ratio below 2 \%.
 %\todo{details on the following properties that we use in the paper: SFH, ZH}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{figs/sdss_selection.pdf} 
+    \caption{\label{fig:sdss_sel}
+    \chedit{
+        We derive our observational sample (blue) from the SDSS DR7 NYU-VAGC (black dashed). 
+        We impose $M_r < -20$, $M_{FUV} < -13.5$  and $M_{NUV} < -14.0$
+        completeness limits. 
+        We describe the galaxy sample and completess limits in more detail in
+        Section~\ref{sec:obs}. 
+        $M_*$ is estimated using $\mathtt{kcorrect}$ and SSFR is from
+        \cite{brinchmann2004}.
+        Our SDSS sample has 4,451 galaxies that includes both
+        star-forming and quiescent galaxies with $M_* \gtrsim 10^{10}M_\odot$.
+    }
+    }
+\end{center}
+\end{figure}
+
 
 \subsection{SDSS Galaxies} \label{sec:obs} 
 For our observations, we 
@@ -129,17 +148,21 @@ derived using $\mathtt{kcorrect}$~\citep{blanton2007a}, assuming
 a~\cite{chabrier2003} initial mass function. 
 
 We impose a $M_r < -20$ completeness limit on the \cite{tinker2011} sample.
+We also impose completeness limits in the $FUV$ and $NUV$ bands. 
+%UV fluxes in the NASA-Sloan Atlas are measured using forced photometry on GALEX so galaxies can have $FUV$ and $NUV$ fluxes $\leq 0$.  First, we exclude these galaxies from the SDSS sample.  Furthermore,
+$\mathtt{kcorrect}$ UV absolute magnitudes are poorly constrained for
+galaxies with low UV fluxes. 
+We compare the reconstructed $FUV$ and $NUV$ fluxes from
+$\mathtt{kcorrect}$ to the measured fluxes and determine the flux limits
+above which the fluxes are in good agreement. 
+The flux limits correspond to completeness limits of $M_{FUV} < -13.5$  and
+$M_{NUV} < -14.0$. 
 \chedit{
-    We also impose completeness limits in the $FUV$ and $NUV$ bands. 
-    %UV fluxes in the NASA-Sloan Atlas are measured using forced photometry on GALEX so galaxies can have $FUV$ and $NUV$ fluxes $\leq 0$.  First, we exclude these galaxies from the SDSS sample.  Furthermore,
-    $\mathtt{kcorrect}$ UV absolute magnitudes are poorly constrained for
-    galaxies with low UV fluxes. 
-    We compare the reconstructed $FUV$ and $NUV$ fluxes from
-    $\mathtt{kcorrect}$ to the measured fluxes and determine the flux limits
-    above which the fluxes are in good agreement. 
-    The flux limits correspond to completeness limits of $M_{FUV} < -13.5$  and
-    $M_{NUV} < -14.0$. 
-    In total, our SDSS sample has 4,451 galaxies.
+    In Figure~\ref{fig:sdss_sel}, we present the $M_*$-SSFR relation of our
+    observational sample (blue). 
+    We include the original SDSS NYU-VAGC (black dash) for comparison.
+    In total, our SDSS sample has 4,451 star-forming and quiescent galaxies
+    with $M_* \gtrsim 10^{10}M_\odot$.
 }
 
 \subsection{Forward Modeling Observations} \label{sec:fm} 
@@ -160,8 +183,10 @@ and UV color ($\fnuv$) as our observables.
 As the first step in our forward model, we construct SEDs for all
 of the simulated galaxies based on their star formation and metallicity
 histories (SFH and ZH) using the Flexible Stellar Population Synthesis
-model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010}. For each simulated
-galaxy, we bin the total stellar mass formed by age ($t$) and metallicity
+model~\citep[$\mathtt{FSPS}$;][]{conroy2009, conroy2010} with the MILES
+spectral library~\citep{sanchez_blazquez2006} and MIST
+isochrones~\citep{paxton2011, paxton2013, paxton2015, choi2016, dotter2016}.
+For each simulated galaxy, we bin the total stellar mass formed by age ($t$) and metallicity
 ($Z$). We use the same $t$, $Z$ grid for all of the simulations
 to account for the variable time and mass resolutions. For each point in the
 $t, Z$ grid, we generate a spectrum assuming a simple stellar population (SSP)
@@ -178,11 +203,9 @@ measure the observables by convolving the attenuated SEDs with transmission
 curves of the GALEX $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$ broadband
 filters. We add realistic noise to $M_r$, $\gr$, and $\fnuv$ by sampling
 from the observed uncertainty distributions of the NASA Sloan-Atlas.
-\chedit{
-    Lastly, we apply the $M_r < -20$, $M_{FUV} < -13.5$, and $M_{NUV} < -14$
-    absolute magnitude completeness limits of our SDSS sample to the simulated 
-    galaxies. 
-}
+Lastly, we apply the $M_r < -20$, $M_{FUV} < -13.5$, and $M_{NUV} < -14$
+absolute magnitude completeness limits of our SDSS sample to the simulated 
+galaxies. 
 
 In Figure~\ref{fig:obs}, we present the forward modeled optical and UV
 color-magnitude relations, $(\gr)-M_r$ (top) and $(\fnuv)-M_r$ (bottom),
