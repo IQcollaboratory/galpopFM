@@ -90,6 +90,51 @@ def SDSS():
     return None 
 
 
+def SDSS_selection():
+    ''' figure illustrating the selection on SDSS
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    sdss_nmgy_fuv, sdss_nmgy_nuv = sdss.data['NSA_NMGY'][:,0], sdss.data['NSA_NMGY'][:,1]
+
+    obs_cuts = ((sdss_M_r < -20.) &
+        (sdss_M_fuv != -999) & (sdss_M_fuv < -13.5) & 
+        (sdss_M_nuv != -999) & (sdss_M_nuv < -14.0) & 
+        (sdss_nmgy_fuv > 0) & (sdss_nmgy_nuv > 0)
+       ) 
+    print('%i galaxies in the SDSS sample' % np.sum(obs_cuts)) 
+
+    fig = plt.figure(figsize=(6,6))
+    sub = fig.add_subplot(111)
+    
+    DFM.hist2d(sdss.data['log.M_star'], sdss.data['log.ssfr'], levels=[0.68, 0.95],	
+            range=[[9., 12.], [-14., -9.]], color='k', 	
+            contour_kwargs={'linewidths': 1.5, 'linestyles': 'dashed'}, 	
+            plot_datapoints=False, fill_contours=False, plot_density=False,
+            ax=sub)
+    sub.plot([0.], [0.], c='k', ls='--', label='SDSS-VAGC') 
+    
+    sub.scatter(sdss.data['log.M_star'][obs_cuts],
+            sdss.data['log.ssfr'][obs_cuts], c='C0', s=2, label='Our Selection')
+            
+    sub.text(0.95, 0.95, 'SDSS', transform=sub.transAxes, ha='right', va='top', fontsize=25) 
+    sub.legend(loc='lower left', handletextpad=0., markerscale=10, fontsize=20)
+    sub.set_xlim([9.5, 12.]) 
+    sub.set_ylim([-13.75, -9.])
+    sub.set_xticks([9.5, 10., 10.5, 11., 11.5, 12.]) 
+    sub.set_yticks([-13, -12., -11., -10., -9.]) 
+    
+    sub.set_xlabel(r'log ( $M_* \;\;[M_\odot]$ )', labelpad=10, fontsize=25) 
+    sub.set_ylabel(r'log ( SSFR $[M_\odot \, yr^{-1}]$ )', labelpad=20, fontsize=25) 
+    
+    ffig = os.path.join(fig_dir, 'sdss_selection.png') 
+    fig.savefig(ffig.replace('.png', '.pdf'), bbox_inches='tight') 
+    return None 
+
+
 def NSA():
     ''' figure illustrating our SDSS 
     '''
@@ -1159,6 +1204,111 @@ def ABC_Observables():
     return None 
 
 
+def ABC_Observables_colordist(): 
+    ''' Figure the color-magnitude relation of simulations with DEM to SDSS
+    '''
+    #########################################################################
+    # read in SDSS measurements
+    #########################################################################
+    r_edges, gr_edges, fn_edges, _ = dustInfer.sumstat_obs(statistic='2d', return_bins=True)
+    dr  = r_edges[1] - r_edges[0]
+    dgr = gr_edges[1] - gr_edges[0]
+    dfn = fn_edges[1] - fn_edges[0]
+    ranges = [(r_edges[0], r_edges[-1]), (-0.05, 1.7), (-1., 4.)]
+    
+    print(dgr)
+    print((ranges[1][1] - ranges[1][0])/dgr) 
+    print((ranges[2][1] - ranges[2][0])/dfn)
+
+    sdss = Catalog('tinker') 
+    sdss_M_fuv, sdss_M_nuv, _, sdss_M_g, sdss_M_r, _, _ = sdss.data['NSA_ABSMAG'].T
+    sdss_nmgy_fuv, sdss_nmgy_nuv = sdss.data['NSA_NMGY'][:,0], sdss.data['NSA_NMGY'][:,1]
+
+    obs_cuts = ((sdss_M_r < -20.) &
+        (sdss_M_fuv != -999) & (sdss_M_fuv < -13.5) & 
+        (sdss_M_nuv != -999) & (sdss_M_nuv < -14.0) & 
+        (sdss_nmgy_fuv > 0) & (sdss_nmgy_nuv > 0)
+       ) 
+
+    x_obs = [-1.*sdss_M_r[obs_cuts], 
+            sdss_M_g[obs_cuts] - sdss_M_r[obs_cuts], 
+            sdss_M_fuv[obs_cuts] - sdss_M_nuv[obs_cuts]] 
+    #########################################################################
+    # read in simulations without dust attenuation
+    #########################################################################
+    xs, sfr0s = [], [] 
+    for sim in sims: 
+        theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
+        rho_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
+            abc_run(sim.lower()), 'rho.t%i.dat' % nabc[sim.lower()])) 
+        theta_med = np.median(theta_T, axis=0) 
+        print('%s median rho = %.3e' % (sim, np.median(rho_T)))
+
+        x_mod, _, sfr0 = _sim_observables(sim.lower(), theta_med)
+        xs.append(x_mod) 
+        sfr0s.append(sfr0) 
+    #########################################################################
+    # plotting 
+    #########################################################################
+    
+    mr_bins = [(20, 21.5), (21.5, 23)]
+
+    fig = plt.figure(figsize=(10,3*len(mr_bins)))
+    for i, mr_bin in enumerate(mr_bins): 
+        in_bin_obs = (x_obs[0] > mr_bin[0]) & (x_obs[0] < mr_bin[1]) 
+
+        # P(G - R)
+        sub = fig.add_subplot(len(mr_bins),2,2*i+1)
+        _ = sub.hist(x_obs[1][in_bin_obs], range=ranges[1], bins=28, 
+                color='k', linestyle='--', linewidth=3, density=True, 
+                histtype='step')
+        
+        for ii, sim in enumerate(sims): 
+            in_bin_sim = (xs[ii][0] > mr_bin[0]) & (xs[ii][0] < mr_bin[1]) 
+            _ = sub.hist(xs[ii][1][in_bin_sim], range=ranges[1], bins=28, 
+                    color=clrs[sim.lower()], linewidth=1.5, density=True, histtype='step')
+
+        sub.set_xlim(0.3, 1.3)
+        if i == len(mr_bins)-1: sub.set_xlabel(r'$g-r$', fontsize=20) 
+        else: sub.set_xticklabels([])
+        sub.text(0.05, 0.95, r'$%.1f < M_r < %.1f$' % mr_bin,
+                ha='left', va='top', transform=sub.transAxes, fontsize=20)
+
+        sub = fig.add_subplot(len(mr_bins),2,2*i+2)
+        _ = sub.hist(x_obs[2][in_bin_obs], range=ranges[2], bins=20, 
+                color='k', linestyle='--', linewidth=3, density=True, 
+                histtype='step')
+
+        for ii, sim in enumerate(sims): 
+            in_bin_sim = (xs[ii][0] > mr_bin[0]) & (xs[ii][0] < mr_bin[1]) 
+            _ = sub.hist(xs[ii][2][in_bin_sim], range=ranges[2], bins=20,
+                    color=clrs[sim.lower()], linewidth=1.5, density=True, histtype='step')
+        sub.set_xlim(ranges[2])
+        if i == len(mr_bins)-1: sub.set_xlabel(r'$FUV - NUV$', fontsize=20) 
+        else: sub.set_xticklabels([]) 
+        if i == 0: 
+            _plth0, = sub.plot([], [], c='k', ls='--')
+            _plth1, = sub.plot([], [], c='C1', ls='-')
+            _plth2, = sub.plot([], [], c='C0', ls='-')
+            _plth3, = sub.plot([], [], c='C2', ls='-')
+            sub.legend([_plth0, _plth1, _plth2, _plth3], 
+                    ['SDSS', 'SIMBA+EDA', 'TNG+EDA', 'EAGLE+EDA'], 
+                    loc='upper right', handletextpad=0.1, fontsize=15)
+
+    bkgd = fig.add_subplot(111, frameon=False)
+    bkgd.set_ylabel(r'normalized color distribution', labelpad=10, fontsize=25) 
+    #bkgd.set_xlabel(r'$M_r$ luminosity', labelpad=10, fontsize=25) 
+    bkgd.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    fig.subplots_adjust(wspace=0.2, hspace=0.1)
+
+    ffig = os.path.join(fig_dir, 'abc_observables_colordist.png') 
+    fig.savefig(ffig, bbox_inches='tight') 
+    #fig.savefig(fig_tex(ffig, pdf=True), bbox_inches='tight') 
+    plt.close()
+    return None 
+
+
 def _ABC_Observables_subpop(): 
     ''' Figure the color-magnitude relation of simulations with DEM to SDSS
     '''
@@ -1285,7 +1435,7 @@ def ABC_Observables_UVred():
     t_sfh_low, t_sfh_high = np.loadtxt('/Users/chahah/data/galpopfm/sed/simba/t_sfh.txt', 
             unpack=True, delimiter=',', usecols=[0, 1])
 
-    xs, sfr0s, sfrhs = [], [], [] 
+    xs, sfr0s, sfrhs, ssfrs = [], [], [], [] 
     for sim in ['SIMBA', 'TNG']: 
         theta_T = np.loadtxt(os.path.join(os.environ['GALPOPFM_DIR'], 'abc',
             abc_run(sim.lower()), 'theta.t%i.dat' % nabc[sim.lower()])) 
@@ -1329,6 +1479,7 @@ def ABC_Observables_UVred():
         xs.append(x_mod) 
         sfr0s.append(sfr0) 
         sfrhs.append(ssfr_t)#sfr_t[cuts,:])
+        ssfrs.append((sim_sed['logsfr.inst'] - sim_sed['logmstar'])[cuts])
     #########################################################################
     # plotting 
     #########################################################################
@@ -1339,7 +1490,9 @@ def ABC_Observables_UVred():
     for i, sim in enumerate(['SIMBA', 'TNG']): 
 
         uv_red = (xs[i][0] > 22) & (xs[i][2] > 2.) 
-        q = (xs[i][0] > 22)  & (xs[i][2] < 2.) 
+        q = (xs[i][0] > 22) & ~uv_red & (ssfrs[i] < -11) #& (xs[i][2] < 2.) 
+        print(ssfrs[i][uv_red]) 
+        print(ssfrs[i][q])
 
         # R vs (G - R)
         sub = fig.add_subplot(gs1[0,i])
@@ -5331,42 +5484,43 @@ if __name__=="__main__":
     #SMF_MsSFR()
 
     #DEM()
-
+    #SDSS_selection()
     #Observables()
     #_Observables_subpop()
 
     # ABC posteriors 
-    ABC_corner() 
+    #ABC_corner() 
     
     # color magnitude relation for ABC posterior
-    ABC_Observables()
+    #ABC_Observables()
     #_ABC_Observables_subpop()
-    ABC_Observables_UVred()
+    #ABC_Observables_UVred()
+    ABC_Observables_colordist()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
     
     # slope-AV relation for ABC posterior
     #ABC_slope_AV(gal_type='all')
-    ABC_slope_AV(gal_type='starforming')
+    #ABC_slope_AV(gal_type='starforming')
     #ABC_slope_AV(gal_type='quiescent')
 
     ##ABC_slope_AV_subpop()
 
     # amplitude normalized attenuation curves
-    ABC_SF_attenuation()
-    ABC_Q_attenuation_unnormalized()
+    #ABC_SF_attenuation()
+    #ABC_Q_attenuation_unnormalized()
 
     #ABC_attenuation()
     #ABC_attenuation_unnormalized()
     
     # Av and A1500 
-    ABC_A_MsSFR()
+    #ABC_A_MsSFR()
     ##_ABC_A_MsSFR_SIMBA()
     ##_ABC_stdA_MsSFR()
 
     # dust IR emission luminosity 
-    ABC_Lir()
+    #ABC_Lir()
     #_ABC_Lir_subpop()
 
 

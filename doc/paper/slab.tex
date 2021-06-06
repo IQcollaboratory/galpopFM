@@ -3,20 +3,17 @@
         \includegraphics[width=0.66\textwidth]{figs/slab_model.pdf} 
         \caption{\label{fig:av_dist}
         The $A_V$ distributions, $p(A_V)$, generated from the slab model (Eq.~\ref{eq:slab};
-        black dash) compared to $p(A_V)$ of star-forming galaxies \tks{our volume-limited} SDSS \tks{sample}
-        (blue) and of $M_* > 10^{10}M_\odot$ galaxies in the \tks{full} \cite{salim2018} GSWLC2 sample (orange). 
-        \tks{These samples comprise different, but partially overlapping galaxy populations.} The $A_V$ values for both observations are derived using SED
-        fitting\tks{, but using different bands and methodology}~\citep{brinchmann2004, salim2018}. 
+        black dash) compared to $p(A_V)$ of star-forming galaxies our SDSS
+        sample (blue; Section~\ref{sec:obs}) and of $M_* > 10^{10}M_\odot$
+        galaxies in the full \cite{salim2018} GSWLC2 sample (orange). 
+        The $A_V$ values for both observations are derived using SED
+        fitting but using different bands and methodology~\citep{brinchmann2004, salim2018}. 
         Meanwhile, for the slab model, we generate $A_V$ values for each galaxy
         in the SDSS and GSWLC2 samples using Eq.~\ref{eq:slab} with its
         measured $M_*$ and $\ssfr$. 
-        The significant difference between the $p(A_V)$ of SDSS and GSWLC2 is
-        due to \tks{both differences in the galaxy samples \emph{and}} inconsistencies in the $A_V$ measurements of the two catalogs. 
-        \tks{The first highlights the importance of matching observational selections, while the last} illustrates the challenges in observationally measuring $A_V$.
-        \tks{Both of these challenges highlight} the advantages of our forward modeling approach.
-        Despite the significant differences between the two, the slab model is
-        able to generate $p(A_V)$ in good agreement with $p(A_V)$ from both
-        observations with parameter values chosen within the
+        Despite the significant differences between the $p(A_V)$ of SDSS and
+        GSWLC2, the slab model is able to generate $p(A_V)$ in good agreement
+        with $p(A_V)$ from both observations with parameter values chosen within the
         Table~\ref{tab:free_param} prior range. 
         Therefore, the slab model provides a sufficiently flexible prescription
         for our \eda.
@@ -46,88 +43,124 @@ For a given $\tau_V$, the attenuation depends solely on the orientation of the g
     prescription that allows us to produce realistic distributions of $A_V$. 
 }
 
-\ch{ 
-    In Figure~\ref{fig:av_dist}, we compare the $A_V$ distributions, $p(A_V)$,
-    of star-forming galaxies in SDSS (blue) and galaxies in the
-    \cite{salim2018} GSWLC2 sample (orange) to the $p(A_V)$ generated from the
-    slab model (black dashed). 
-    The $A_V$ values of the SDSS are derived using SED fitting from the
-    \cite{brinchmann2004} MPA-JHU catalog.
-    The $A_V$ values of the GSWLC2 galaxies are also derived from SED fitting UV and optical
-    photometry from GALEX and SDSS observations as well as mid-IR photometry from WISE. 
-    We include all GSWLC2 galaxies, including quiescent galaxies, above $M_* > 10^{10}M_\odot$. 
-    We generate two $p(A_V)$ with the slab model for the SDSS and GSWLC2
-    samples separately.
-    For each SDSS/GSWLC2 galaxy, we determine $A_V$ by uniformly sampling 
-    $\cos i$ from 0 to 1 and derive $\tau_V$ (Eq.~\ref{eq:tauv}) with the
-    galaxy's measured $M_*$ and $\ssfr$. 
-    We pick $\mtaum, \mtaus, c_\tau$ values within the prior range
-    (Table~\ref{tab:free_param}) by hand to roughly reproduce the SDSS and GSWLC2 $p(A_V)$
-    distributions. 
-}
+In Figure~\ref{fig:av_dist}, we compare the $A_V$ distributions, $p(A_V)$,
+of star-forming galaxies in SDSS (blue) and galaxies in the
+\cite{salim2018} GSWLC2 sample (orange) to the $p(A_V)$ generated from the
+slab model (black dashed). 
+The $A_V$ values of the SDSS are derived using SED fitting from the
+\cite{brinchmann2004} MPA-JHU catalog.
+The $A_V$ values of the GSWLC2 galaxies are also derived from SED fitting UV and optical
+photometry from GALEX and SDSS observations as well as mid-IR photometry from WISE. 
+We include all GSWLC2 galaxies, including quiescent galaxies, above $M_* > 10^{10}M_\odot$. 
+We generate two $p(A_V)$ with the slab model for the SDSS and GSWLC2
+samples separately.
+For each SDSS/GSWLC2 galaxy, we determine $A_V$ by uniformly sampling 
+$\cos i$ from 0 to 1 and derive $\tau_V$ (Eq.~\ref{eq:tauv}) with the
+galaxy's measured $M_*$ and $\ssfr$. 
+We pick $\mtaum, \mtaus, c_\tau$ values within the prior range
+(Table~\ref{tab:free_param}) by hand to roughly reproduce the SDSS and GSWLC2 $p(A_V)$
+distributions. 
 
-\ch{
-    Galaxies in SDSS and GSWLC2 have substantially different $p(A_V)$. 
-    \tks{While the galaxy populations only partially overlap, this difference is mostly} due to inconsistencies in the $A_V$ measurements of MPA-JHU and
-    GSWLC2 --- even for the same galaxy, the $A_V$ measurements from the two
-    catalogs differ significantly. \tks{In fact for the ${\sim}8000$ galaxies that are in both samples, the $A_V$ distributions appear similar to those of the corresponding complete samples.}
-    This difference in $p(A_V)$ illustrates the challenges in directly measuring
-    dust attenuation and yet again highlights the advantages of our forward
-    modeling approach. 
-    Despite the dramatic differences between the two, the slab model can
-    produce $p(A_V)$ in good agreement with both observed distributions. 
-    We therefore conclude that the slab model provides a sufficiently flexible
-    prescription to sample a realistic distribution of $A_V$. 
-}
-
-
-\ch{
-    In addition to the slab model, in the \eda, we also use a linear
-    dependence on $M_*$ and $\ssfr$ in the $V$ band optical depth,
-    $\tau_V$ (see Eq.~\ref{eq:tauv}).
-    This parameterization is motivated by observations that find significant
-    correlation between $A_V$ and $M_*$ and $\ssfr$~\citep[\eg~][]{garn2010, battisti2016, salim2020}. 
-    We take a closer look at this correlation using the GWSLC2 sample in
-    Figure~\ref{fig:dep}.
-    We present the dependence of $A_V$ on $M_*$ (left panel) and $\ssfr$ (right
-    panel). 
-    In the left panel, we divide the GSWLC2 galaxies by $\ssfr$: 
-    $\ssfr < 10^{-11}yr^{-1}$ (purple), $10^{-11} < \ssfr < 10^{-10}yr^{-1}$
-    (red), and  $10^{-10} < \ssfr$ (orange). 
-    For each of the $\ssfr$ bins, we find significant $\log M_*$ dependence in
-    $A_V$: galaxies with higher $\ssfr$ have a stronger $M_*$ dependence.  
-    In the right, we divide the galaxies by $M_*$: 
-    $10^{9.5} < M_* < 10^{10.5}M_\odot$ (blue) and $10^{10.5} M_\odot < M_*$
-    (green).
-    Although both $M_*$ bins have some $\ssfr$ dependence, the dependence is
-    stronger for galaxies with $M_* > 10^{10.5}M_\odot$. 
-    This stellar mass limit roughly corresponds to galaxies that are included
-    in our forward model (see Figure~\ref{fig:avmsfr}). 
-    The $M_*$ and $\ssfr$ dependence we find in $A_V$ from the GSWLC2 sample is
-    consistent with previous observations and further motivates our
-    \eda~prescription.
-}
+Galaxies in SDSS and GSWLC2 have substantially different $p(A_V)$. 
+While the galaxy populations only partially overlap, this difference is 
+{\em mostly} due to inconsistencies in the $A_V$ measurements of MPA-JHU and GSWLC2 --- even
+for the same galaxy, the $A_V$ measurements from the two catalogs differ significantly. 
+%In fact for the ${\sim}8000$ galaxies that are in both samples, the $A_V$ distributions appear similar to those of the corresponding complete samples.}
+This difference in $p(A_V)$ illustrates the challenges in directly measuring
+dust attenuation and yet again highlights the advantages of our forward
+modeling approach. 
+Despite the dramatic differences between the two, the slab model can
+produce $p(A_V)$ in good agreement with both observed distributions. 
+We therefore conclude that the slab model provides a sufficiently flexible
+prescription to sample a realistic distribution of $A_V$. 
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=\textwidth]{figs/gswlc_dep.pdf}
+    \includegraphics[width=0.8\textwidth]{figs/gswlc_dep.pdf}
     \caption{\label{fig:dep}
-    \ch{
-        Dependence of $A_V$ on $M_*$ (left) and $\ssfr$ (right) for the
-        \cite{salim2018} GSWLC2 sample.
-        In the left panel, we divide the GSWLC2 sample into bins of $\ssfr$: 
-        $\ssfr < 10^{-11}yr^{-1}$ (purple), 
-        $10^{-11} < \ssfr < 10^{-10}yr^{-1}$ (red),
-        and  $10^{-10} < \ssfr$ (orange). 
-        In each of the $\ssfr$ bins, we find significant $M_*$ dependence. 
-        In the right panel, we divide the sample into bins of $M_*$:  
-        $10^{9.5} < M_* < 10^{10.5}M_\odot$ (blue) and $10^{10.5} M_\odot < M_*$ (green).
-        In the $M_* > 10^{10.5}M_\odot$ bin, which roughly corresponds to our
-        SDSS sample, we find significant $\ssfr$ dependence.
-        The $M_*$ and $\ssfr$ dependence in $A_V$ we find in GSWLC2 is
-        consistent with previous works and provides further motivation for our
-        \eda~prescription.
-    }
+    Dependence of $A_V$ on $M_*$ (left) and $\ssfr$ (right) for the
+    \cite{salim2018} GSWLC2 sample.
+    In the left panel, we divide the GSWLC2 sample into bins of $\ssfr$: 
+    $\ssfr < 10^{-11}yr^{-1}$ (purple), 
+    $10^{-11} < \ssfr < 10^{-10}yr^{-1}$ (red),
+    and  $10^{-10} < \ssfr$ (orange). 
+    In each of the $\ssfr$ bins, we find significant $M_*$ dependence. 
+    In the right panel, we divide the sample into bins of $M_*$:  
+    $10^{9.5} < M_* < 10^{10.5}M_\odot$ (blue) and $10^{10.5} M_\odot < M_*$ (green).
+    In the $M_* > 10^{10.5}M_\odot$ bin, which roughly corresponds to our
+    SDSS sample, we find significant $\ssfr$ dependence.
+    The $M_*$ and $\ssfr$ dependence in $A_V$ we find in GSWLC2 is
+    consistent with previous works and provides further motivation for our
+    \eda~prescription.
     }
 \end{center}
 \end{figure}
+
+In addition to the slab model, in the \eda, we also use a linear
+dependence on $M_*$ and $\ssfr$ in the $V$ band optical depth,
+$\tau_V$ (see Eq.~\ref{eq:tauv}).
+This parameterization is motivated by observations that find significant
+correlation between $A_V$ and $M_*$ and $\ssfr$~\citep[\eg~][]{garn2010, battisti2016, salim2020}. 
+We take a closer look at this correlation using the GWSLC2 sample in
+Figure~\ref{fig:dep}.
+We present the dependence of $A_V$ on $M_*$ (left panel) and $\ssfr$ (right
+panel). 
+In the left panel, we divide the GSWLC2 galaxies by $\ssfr$: 
+$\ssfr < 10^{-11}yr^{-1}$ (purple), $10^{-11} < \ssfr < 10^{-10}yr^{-1}$
+(red), and  $10^{-10} < \ssfr$ (orange). 
+For each of the $\ssfr$ bins, we find significant $\log M_*$ dependence in
+$A_V$: galaxies with higher $\ssfr$ have a stronger $M_*$ dependence.  
+In the right, we divide the galaxies by $M_*$: 
+$10^{9.5} < M_* < 10^{10.5}M_\odot$ (blue) and $10^{10.5} M_\odot < M_*$
+(green).
+Although both $M_*$ bins have some $\ssfr$ dependence, the dependence is
+stronger for galaxies with $M_* > 10^{10.5}M_\odot$. 
+This stellar mass limit roughly corresponds to galaxies that are included
+in our forward model (see Figure~\ref{fig:avmsfr}). 
+The $M_*$ and $\ssfr$ dependence we find in $A_V$ from the GSWLC2 sample is
+consistent with previous observations and further motivates our
+\eda~prescription.
+
+\begin{figure}
+\begin{center}
+    \includegraphics[width=\textwidth]{figs/av_mssfr_obs.pdf}
+    \caption{\label{fig:av_obs}
+    $M_*$ and $\ssfr$ dependence of dust attenuation at $1500 \AA$
+    ($A_{1500}$; top) and at $5500\AA$ ($A_{V}$; bottom) of SDSS galaxies. 
+    The sample includes 2361 galaxies that pass our selection cut
+    (Section~\ref{sec:obs}) and are also part of the GSWLC2 and MPA-JHU
+    samples. 
+    In the left panels, we use $A_{1500}$ and $A_V$ from GSWLC2.
+    In the center panel, we use $A_V$ from MPA-JHU. 
+    In the right panel, we use $A_V$ from the NSA. 
+    Same as Figure~\ref{fig:avmsfr}, the colormap in each hexbin represents the
+    median attenuation for all galaxies in the bin (right color bar).
+    We only include bins with more than 5 galaxies.
+    The bottom panels illustrate that $A_V$ measurements from GSWLC2, MPA-JHU,
+    and NSA differ {\em significantly} even for the same galaxies.
+    We, therefore, refrain from directly comparing our \eda~predictions to
+    observations. 
+    }
+\end{center}
+\end{figure}
+
+In Figure~\ref{fig:av_obs}, we present the $M_*$ and $\ssfr$ dependence of dust
+attenuation in SDSS galaxies, which contains 2361 galaxies that pass our
+selection cut and are also in the GSWLC2 and MPA-JHU samples.
+In the top panel, we present $A_{1500}$ from GSWLC2 as a function of $M_*$ and
+$\ssfr$.
+In the bottom panels, we present $A_V$ from GSWLC2 (left), MPA-JHU (center),
+and NSA (right).
+The NSA $A_V$ measurements are derived assuming intrinsic Balmer decrement of
+2.85, $R_V=3.1$ and \cite{odonnell1994} extinction. 
+The colormap in each hexbin represents the median attenuation for galaxies in
+the bin, same  as in Figure~\ref{fig:avmsfr}. 
+Bins with less than 5 galaxies are omitted. 
+The bottom left panel illustrates that we find the same same $M_*$ and $\ssfr$
+dependence of $A_V$ as Figure~\ref{fig:dep} even after our selection cut. 
+In the bottom panels, we find that $A_V$ from GSWLC2, MPA-JHU, and NSA have
+significant differently amplitudes. 
+Since observations have large discrepancies among dust attenuation measurements
+and a detailed comparison is beyond the scope of this work, we refrain from
+comparing our \eda~predicted dust attenuation (Section~\ref{sec:results}) to
+observations.
