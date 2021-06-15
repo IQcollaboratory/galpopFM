@@ -30,7 +30,7 @@ any functional form of the likelihood so we avoid any biases from such
 assumptions. 
 It also expands the summary statistics we can use to infer the posteriors.
 ABC, therefore, provides a general inference framework for our forward
-modeling approach~\citep{hahn2017a}. 
+modeling approach. 
 
 In the simplest version of ABC, with a rejection sample
 framework~\citep{pritchard1999}, a proposal set of parameter values are drawn
@@ -64,13 +64,16 @@ and \cite{hahn2019a}.
 
 \begin{figure}
 \begin{center}
-    \includegraphics[width=\textwidth]{figs/abc.pdf}
+    \includegraphics[width=0.9\textwidth]{figs/abc.pdf}
     \caption{\label{fig:abc}
     Posterior distributions of the \eda~parameters for the SIMBA (orange), TNG
-    (blue), and EAGLE (green) hydrodynamical simulations. The contours mark the $68$
-    and $95$ percentiles of the distributions. The posteriors are derived from 
-    likelihood-free inference using Approximate Bayesian Computation with
-    Population Monte Carlo (Section~\ref{sec:abc}). 
+    (blue), and EAGLE (green) hydrodynamical simulations derived from comparing
+    the simulations to SDSS with a forward modeling approach. 
+    The \eda~parameters determine the $M_*$ dependence, $\ssfr$ dependence, and
+    amplitude of $\tau_V$ and $\delta$ (Table~\ref{tab:free_param}). 
+    The contours mark the $68$ and $95$ percentiles of the distributions. 
+    The posteriors are derived from likelihood-free inference using Approximate
+    Bayesian Computation with Population Monte Carlo (Section~\ref{sec:abc}). 
     }
 \end{center}
 \end{figure}
