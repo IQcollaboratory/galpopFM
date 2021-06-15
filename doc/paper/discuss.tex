@@ -1,7 +1,7 @@
 \subsection{Discussion}  
 We make a number of assumptions and choices in our \eda~prescription. 
 First, we use the slab model (Eq.~\ref{eq:slab}) to assign $A_V$ as a
-function of $\tau_V$ and randomly sampled $i$. 
+function of $\tau_V(M_*, \ssfr)$ and randomly sampled $i$. 
 This choice is motivated by the fact that the slab model reproduces
 the correlation between attenuations and inclination found in star-forming
 galaxies from observations~\citep{conroy2010b, wild2011, battisti2017,
@@ -10,11 +10,12 @@ narayanan2018, trayford2020}.
 More importantly, the slab model can reproduce the $A_V$ distribution of
 SDSS star-forming galaxies as well as the GSWLC2 sample, which includes
 quiescent galaxies (Appendix~\ref{sec:slab}).
-We therefore conclude that we can sample $A_V$ in our \eda~with sufficient
-flexibility using the slab model. 
+It therefore provides sufficient flexibility for sampling $A_V$ in our
+\eda~prescription.
+%We therefore conclude that we can sample $A_V$ in our \eda~with sufficient flexibility using the slab model. 
 %It can also reproduce the SDSS $A_V$ distribution (Figure~\ref{fig:av_dist}). If we replace the slab model with a more flexible model for sampling $A_V$ using truncated normal distributions, we find that our results are not significantly impacted (see Appendix~\ref{sec:slab} for details). Therefore, we conclude that our results do not sigificantly depend on our choice of the slab model. 
 
-In our \eda, we also use a parameterization of $\tau_V$ and $\delta$ that
+We also use a parameterization of $\tau_V$ and $\delta$ that
 depend linearly on $\log M_*$ and $\log {\rm SSFR}$. 
 While the $M_*$ and $\ssfr$ dependence of $A_V$ is well-motivated and is
 found in, for instance, the \cite{salim2018} GSWLC2 catalog (Appendix~\ref{sec:slab}), 
@@ -22,7 +23,7 @@ the linear dependence was chosen primarily for its simplicity.
 The \eda~framework can be easily extended to more flexible
 parameterizations. 
 Though we already find good agreement with SDSS observations, a more
-flexible parameterization would likely produce
+flexible parameterization can produce
 even better agreement with the SDSS color-magnitude relations. 
 %Our \eda~prescription, for instance, produces slightly broader distributions of optical colors than SDSS. 
 The main challenges for a more flexible parameterization would be model
@@ -34,8 +35,9 @@ We demonstrate in this work that accounting for dust attenuation is
 essential when comparing simulations to observations. 
 After all, none of the simulations reproduce the UV and optical
 color-magnitude relation without dust (Figure~\ref{fig:obs}). 
-Furthermore, the fact that we can use the \eda~to reproduce SDSS observations 
-for different hydrodynamical simulations highlights how our current lack of 
+Moreover, this work demonstrates that our current lack of 
+%Furthermore, the fact that we can use the \eda~to reproduce SDSS observations 
+%for different hydrodynamical simulations highlights how our current lack of 
 understanding of dust limits our ability to closely compare galaxy
 formation models. 
 Our \eda~prescription is built on what we currently know about dust attenuation
@@ -49,16 +51,17 @@ For instance, SIMBA has significantly fewer massive galaxies above $M_* >
 It also has $M_* < 10^{10}M_\odot$ starburst galaxies with $\ssfr >
 10^{-9.5}yr^{-1}$ (see also \citealt{dave2019} Figures~5 and 6)
 that are not found in TNG or EAGLE (Figure~\ref{fig:avmsfr}). 
-Despite these differences, the forward modeled color-magnitude relations of
-SIMBA is able to comparably reproduce SDSS observations, besides the
-luminous UV red galaxies (Figure~\ref{fig:dem})
+Meanwhile, star-forming galaxies in TNG have significantly higher $\sfr$s than
+in EAGLE.
+Despite all these differences, by adjusting dust attenuation, the forward
+modeled simulations comparably reproduce the observations.
 
 All this suggests that dust is highly degenerate with the differences between simulations. 
 Put another way --- if we were to marginalize over dust in our comparison to
 observations, we would not be able to differentiate between the different
 galaxy physics prescriptions in the simulations. 
 Hence, current limitations in our understanding of dust are a major bottleneck
-for investigating galaxy formation using simulations.
+for investigating galaxy formation with simulations.
 In the next paper of the series, Starkenburg et al. (in preparation), we
 will examine whether we can compare the prescriptions for star formation
 quenching in different galaxy formation models once we include the
@@ -127,13 +130,13 @@ This would allow us to compare the simulations with \eda~to the entire SDSS
 sample, a substantially larger sample with a wider range of galaxies. 
 Upcoming surveys, such as the Bright Galaxy Survey (BGS) of the Dark Energy
 Spectroscopic Instrument~\citep[DESI;][]{desicollaboration2016, ruiz-macias2020} 
-and galaxy evolution survey of the Prime Focus
+and the galaxy evolution survey of the Prime Focus
 Spectrograph~\citep[PFS;][]{takada2014,tamura2016}, will vastly expand galaxy
 observations. 
 BGS, for instance, will measure $10\times$ the number of galaxy spectra as
 SDSS out to $z\sim0.4$  and with its $r\sim20$ magnitude limit will probe
-a significant number of low redshift dwarf galaxies. 
-Such an observational sample will allow us to place tighter constraints on
+a broader range of galaxies than SDSS.
+Such observations will allow us to place tighter constraints on
 the \eda~parameters, which may enable comparisons of the underlying galaxy
 formation models, and shed light on dust in a broader range of galaxies.
     
@@ -162,10 +165,10 @@ attenuation in star-forming galaxies
 (Figures~\ref{fig:slope} and~\ref{fig:q_raw_atten}). 
 When we compare the IR dust emission of SIMBA+\eda~and TNG+\eda~further, we
 find that TNG+\eda~produces more luminous galaxies with high IR dust
-emission ($M_r < -22$ and $L_{rm IR} > 10^9L_\odot$) since it has more
+emission ($M_r < -22$ and $L_{\rm IR} > 10^9L_\odot$) since it has more
 intrinsically luminous star-forming galaxies~(Figure~\ref{fig:obs}).
 On the other hand SIMBA+\eda~has more luminous galaxies with fainter IR
-dust emissions, which correspond to the anomolous luminous UV red galaxies
+dust emissions, which correspond to the anomolous luminous UV-red galaxies
 highlighted in Figure~\ref{fig:uv_sfh}.
 
 While dust attenuation can be adjusted to reproduce UV and optical
