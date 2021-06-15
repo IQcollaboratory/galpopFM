@@ -155,13 +155,13 @@ New York, NY 10010, USA}
     and UV color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$, for the
     forward modeled simulations to SDSS observations using likelihood-free
     inference. 
-    Without dust, none of the simulations can match observations as expected.
+    Without dust, none of the simulations can match observations, as expected.
     %As expected, the simulations cannot match observations without dust. % for all three simulations, dust attenuation is {\em necessary} to match the observations.
     With the \eda, however, we can reproduce the observed color-magnitude
-    for all of the simulations. 
+    with all three simulations. 
     For SIMBA and TNG, we find an excess of luminous UV-red galaxies that
-    dust cannot fix because they quench star formation too efficiently
-    for the most massive galaxies. 
+    dust cannot fix because the simulations quench star formation too
+    efficiently in the most massive galaxies. 
     %We find that we can accurately reproduce the color-magnitude relations of the observational sample for TNG and EAGLE. For SIMBA, we struggle to reproduce observations due to its overprediction of luminous low-mass galaxies with high star-formation rates.
     Examining the attenuation curves predicted by our dust prescription, we
     find good agreement with observed attenuation--slope relations and
@@ -173,55 +173,19 @@ New York, NY 10010, USA}
     on the attenuation curves of quiescent galaxies, which are challenging to
     measure observationally. 
     Simulated quiescent galaxies require shallower attenuation curves
-    and lower dust attenuation than star-forming galaixes.
+    with lower amplitude than star-forming galaixes.
     %Overall, we find that more massive galaxies in the simulations require higher dust attenuation, while galaxies with higher specific star formation rates have steeper attenuation curves.
     The \eda, combined with forward modeling, provides an effective
     approach for improving our understanding of dust in galaxies and
     probing hydrodynamical simulations. 
-    \chedit{
-        Furthermore, this work illustrates a major limitation in comparing galaxy
-        formation models: by adjusting dust attenation alone, simulations with
-        significantly different galaxy populations can reproduce the same UV
-        and optical observations. 
-    }
-    %Furthermore, this work demonstrates that dust attenuation is highly degenerate with differences among galaxy physics prescriptions.
-    %In addition to improving our understanding of dust in galaxies and shedding light on hydrodynamical simulations, our results underscore the advantages of \eda~and the forward modeling approach. 
-    %We apply \eda~separately to three state-of-the-art cosmological
-    %hydrodynamical simulations (SIMBA, IllustrisTNG, and EAGLE), forward
-    %model their optical and UV
-    %color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$. 
-    %We then compare the simulations to a $M_r < -20$ complete SDSS galaxy sample
-    %using simulation-based inference. 
-    %\ch{
-     %   We find that dust attenuation is necessary for any of the simulations
-     %   to match the observations. 
-    %}
-    %With the \eda, we accurately reproduce the color-magnitude relations of the
-    %observational sample for TNG and EAGLE. 
-    %For SIMBA, we struggle to reproduce observations due to an overprediction
-    %of starburst galaxies. 
-    %\ch{ 
-     %   Examining the attenuation curves predicted by the \eda~for TNG and
-     %   EAGLE, we find good agreement with the observed attenuation--slope
-     %   relations and attenuation curve of star-forming galaxies.
-    %}
-   % Beyond reproducing observations,
-    %the \eda~also sheds light on dust attenuation in quiescent galaxies, which
-    %is challenging to measure observationally. We find that quiescent galaxies 
-    %have significant UV and optical attenuation but with much shallower
-    %slopes than star-forming galaxies. 
-    %\ch{ 
-    %    Overall, we find that more massive galaxies in the simulations require
-    %    higher dust attenuation, 
-  %  }
-  %  while galaxies with higher specific star formation rates have steeper 
- %   attenuation curves.
- %   In addition to improving our understanding of dust in galaxies, our results
-%    underscore the advantages of the \eda~and the forward modeling approach. 
+    Furthermore, this work illustrates a major limitation in comparing galaxy
+    formation models: by adjusting dust attenation alone, simulations with
+    significantly different galaxy populations can reproduce the same UV
+    and optical observations. 
 \end{abstract}
 
 \keywords{
-    Galaxies: formation -- 
+    galaxies: formation -- galaxies: evolution -- galaxies: statistics -- methods: numerical 
 }
 
 % --- intro ---  
@@ -230,6 +194,7 @@ New York, NY 10010, USA}
 \input{sims} 
 % --- methods ---  
 \input{dem}
+
 \input{abc}
 % --- results ---  
 \input{results}
@@ -252,9 +217,6 @@ It's a pleasure to thank
 valuable discussions and comments.
 This material is based upon work supported by the U.S. Department of Energy,
 Office of Science, Office of High Energy Physics, under contract No.
-DE-AC02-05CH11231.  This project used resources of the National Energy Research
-Scientific Computing Center, a DOE Office of Science User Facility supported by
-the Office of Science of the U.S.  Department of Energy under Contract No.
 DE-AC02-05CH11231. 
 CH is supported by the AI Accelerator program of the Schmidt Futures Foundation.
 

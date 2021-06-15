@@ -1,48 +1,48 @@
-This is BibTeX, Version 0.99d (TeX Live 2019)
-Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+This is BibTeX, Version 0.99d (TeX Live 2020)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: mnras.bst
 Database file #1: galpopfm.bib
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 128 entries,
+You've used 129 entries,
             2881 wiz_defined-function locations,
-            1539 strings with 57435 characters,
-and the built_in function-call counts, 59934 in all, are:
-= -- 5016
-> -- 4441
-< -- 235
-+ -- 1985
-- -- 654
-* -- 7446
-:= -- 9437
+            1546 strings with 57596 characters,
+and the built_in function-call counts, 60349 in all, are:
+= -- 5052
+> -- 4465
+< -- 239
++ -- 1997
+- -- 656
+* -- 7497
+:= -- 9504
 add.period$ -- 0
-call.type$ -- 128
-change.case$ -- 256
-chr.to.int$ -- 123
-cite$ -- 128
-duplicate$ -- 2858
-empty$ -- 2827
-format.name$ -- 1044
-if$ -- 10307
+call.type$ -- 129
+change.case$ -- 258
+chr.to.int$ -- 124
+cite$ -- 129
+duplicate$ -- 2879
+empty$ -- 2849
+format.name$ -- 1048
+if$ -- 10377
 int.to.chr$ -- 6
 int.to.str$ -- 0
-missing$ -- 128
-newline$ -- 397
-num.names$ -- 854
-pop$ -- 614
+missing$ -- 129
+newline$ -- 400
+num.names$ -- 860
+pop$ -- 619
 preamble$ -- 1
-purify$ -- 512
+purify$ -- 516
 quote$ -- 0
-skip$ -- 1657
+skip$ -- 1670
 stack$ -- 0
-substring$ -- 3621
-swap$ -- 1377
-text.length$ -- 513
+substring$ -- 3647
+swap$ -- 1385
+text.length$ -- 517
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 1152
+type$ -- 1161
 warning$ -- 0
-while$ -- 932
+while$ -- 940
 width$ -- 0
-write$ -- 1285
+write$ -- 1295
