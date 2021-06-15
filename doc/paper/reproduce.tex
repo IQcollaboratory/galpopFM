@@ -40,18 +40,18 @@ SIMBA (left), TNG (center) and EAGLE (right).
 For comparison, we include the observed attenuation-slope relations of
 GSWLC2 galaxies~\citep[grey shaded;][]{salim2020}.
 For attenuation we use $A_V$ and for slope we use the UV-optical slope, $S
-= A(1500\AA)/A_V$, commonly found in the literature. 
-The contours mark the 68 and 95 percentiles. 
-Most noticably, we find that the \eda~does not predict $A_V < 0.3$. 
-\chedit{
-    This is not due to the selection function imposed by our forward model. 
-    The attenuation-slope relation of star-forming galaxies in GSWLC2 does not
-    change significantly if we impose similar selection cuts as our
-    observational sample.
-    Instead, the lack of star-forming galaxies with $A_V < 0.3$ is a
-    consequence of SIMBA, TNG, and EAGLE predicting star-forming galaxies that
-    are more luminous than observations.  
-}
+= A(1500\AA)/A_V$.  The contours mark the 68 and 95 percentiles. 
+
+Most noticably, we find that the \eda~does not predict $A_V < 0.3$ for
+star-forming galaxies.
+%\chedit{
+%    This is not due to the selection function imposed by our forward model. 
+%    The attenuation-slope relation of star-forming galaxies in GSWLC2 does not
+%    change significantly if we impose similar selection cuts as our
+%    observational sample.
+%    Instead, the lack of star-forming galaxies with $A_V < 0.3$ is a
+This is a consequence of SIMBA, TNG, and EAGLE predicting star-forming galaxies
+that are more luminous than observations.  
 All of the simulations have star-forming galaxies with intrinsic $M_r <
 -21$ and $\gr < 0.5$ (Figure~\ref{fig:obs}). 
 This is further corroborated by the $\sfr-M*$ relations in
@@ -61,15 +61,14 @@ To reproduce the SDSS optical color-magnitude relation these galaxies would
 need to be significantly reddened and attenuated. 
 Hence, any dust prescription for the simulations would require high 
 $A_V$ for star-forming galaxies.
+We also note that $A_V$ values can vary {\em significantly} between
+different observational measurements --- even for the same galaxy. 
+SDSS star-forming galaxies, for instance, have significantly higher 
+$A_V > 0.3$ according to the \cite{brinchmann2004} measurements
+(Appendix~\ref{sec:slab}).
 Nevertheless, for $A_V > 0.3$, we find good agreement between the 
 attenuation-slope relation predicted by the \eda~and observations. 
-\chedit{
-    We also note that $A_V$ values can vary {\em significantly} between
-    different measurements --- even for the same galaxy. 
-    SDSS star-forming galaxies, for instance, have significantly higher 
-    $A_V > 0.3$ according to the \cite{brinchmann2004} measurements
-    (Appendix~\ref{sec:slab}).
-}
+
 
 %We note that the difference in the $A_V$ ranges is due to the $M_r$
 %completeness limit imposed by our forward model (Section~\ref{sec:fm}).
@@ -86,14 +85,14 @@ attenuation-slope relation predicted by the \eda~and observations.
     The normalized attenuation curves of star-forming galaxies predicted by
     the \eda~for median posterior parameter values of SIMBA (orange), TNG
     (blue), and EAGLE (green).  
-    Galaxies with $\log \ssfr > -11~yr^{-1}$ are classified as star-forming. 
+    We classify galaxies with $\log \ssfr > -11~yr^{-1}$ as star-forming. 
     The attenuation curves are normalized at $3000\AA$ and we mark the
     68 percentile of the attenuation curves with the shaded region.
     For comparison, we include $A(\lambda)/A(3000\AA)$ measurements from
     the~\cite{narayanan2018} radiative transfer simulation (dashed) and
     \cite{salim2018} observations (dotted).
     %The \cite{calzetti2000} and \cite{battisti2017} attenuation curves are shallower than the \eda~attenuation curves; however, they probe lower $M_*$ galaxies than our forward modeled TNG and EAGLE samples.  For attenuation curve from \cite{salim2018}, which probe a similar $M_*$ range, we find goood agreement. 
-    {\em The \eda~predict attenuation curves of star-forming galaxies that
+    {\em The \eda~predict attenuation curves of star-forming galaxies
     are in good agreement with the attenuation curves measured from
     the simulation and observations in the literature.}
     %We also find good agreement with median attenuation curve of star-forming galaxies in the radiative transfer simulations of \cite{narayanan2018}.
@@ -120,7 +119,7 @@ Since we do not vary the UV bump in our \eda~prescription, we ignore any
 discrepancies in the amplitudes of the bump. 
 \emph{Overall, we find good agreement between the \eda~attenuation curves for
 star-forming galaxies and the attenuation curves from observations and
-simulations in the literature.}
+simulations.}
 
 %Again, the fact that we reproduce the detailed dust attenuation curves of star-forming galaxies in observations and simulations with the \eda~without fitting for them, highlights the advantages of a forward modeling approach. 
 
