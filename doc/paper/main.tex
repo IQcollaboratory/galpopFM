@@ -1,36 +1,13 @@
-\documentclass[12pt, letterpaper, preprint, comicneue]{aastex63}
-%\usepackage[default]{comicneue} % comic sans font for editing
+\documentclass{aastex63}
 \usepackage[T1]{fontenc}
-%\input{vc}
 \usepackage{color}
 \usepackage{amsmath}
 \usepackage{natbib}
 \usepackage{ctable}
 \usepackage{bm}
-\usepackage[normalem]{ulem} % Added by MS for \sout -> not required for final version
 \usepackage{xspace}
-\usepackage{csvsimple} 
 
 \usepackage{graphicx}
-\usepackage{pgfkeys, pgfsys, pgfcalendar}
-
-
-% typesetting shih
-\linespread{1.08} % close to 10/13 spacing
-\setlength{\parindent}{1.08\baselineskip} % Bringhurst
-\setlength{\parskip}{0ex}
-\let\oldbibliography\thebibliography % killin' me.
-\renewcommand{\thebibliography}[1]{%
-  \oldbibliography{#1}%
-  \setlength{\itemsep}{0pt}%
-  \setlength{\parsep}{0pt}%
-  \setlength{\parskip}{0pt}%
-  \setlength{\bibsep}{0ex}
-  \raggedright
-}
-\setlength{\footnotesep}{0ex} % seriously?
-
-% citation alias
 
 % math shih
 \newcommand{\setof}[1]{\left\{{#1}\right\}}
@@ -89,14 +66,18 @@
 \newcommand{\tks}[1]{{\color{blue}#1}}
 \newcommand{\tksedit}[1]{{\color{blue}#1}}
 
-\begin{document} \sloppy\sloppypar\frenchspacing 
+\shorttitle{The Empirical Dust Attenuation Framework}
+\shortauthors{Hahn et al.}
+
+
+\begin{document} 
 
 \title{IQ Collaboratory III: The Empirical Dust Attenuation Framework ---
 Taking Hydrodynamical Simulations with a Grain of Dust}
 
-\newcounter{affilcounter}
 \author[0000-0003-1197-0902]{ChangHoon Hahn}
-\altaffiliation{hahn.changhoon@gmail.com}
+\correspondingauthor{ChangHoon Hahn}
+\email{changhoon.hahn@princeton.edu}
 \affil{Department of Astrophysical Sciences, Princeton University, Peyton Hall, Princeton NJ 08544, USA} 
 
 \author{Tjitske K. Starkenburg}
@@ -121,7 +102,7 @@ New York, NY 10010, USA}
 \author[0000-0002-1081-3991]{Claire Dickey} 
 \affil{Department of Astronomy, Yale University, New Haven CT 06520 USA}
 
-
+%\suppressAffiliations
 \author[0000-0001-9298-3523]{Kartheik G. Iyer}
 \affil{Dunlap Institute for Astronomy and Astrophysics, University of Toronto,
 50 St George St, Toronto, ON M5S 3H4, Canada}
@@ -142,29 +123,29 @@ New York, NY 10010, USA}
 \author{L. Y. Aaron Yung}
 \affil{Astrophysics Science Division, NASA Goddard Space Flight Center, 8800 Greenbelt Rd, Greenbelt, MD 20771, USA}
 
+%\collaboration{2}{IQ Collaboratory}
+
+%\AuthorCallLimit=3
+
 \begin{abstract}
     We present the Empirical Dust Attenuation (\eda) framework --- a flexible
     prescription for 
     %for applying dust attenuation to galaxies from theoretical models. \eda~provides a flexible prescription 
     assigning realistic dust attenuation to simulated galaxies based on their
     physical properties. % ($M_*$, $\ssfr$). %  and using the \cite{noll2009} attenuation curve parameterization. 
-    Using the \eda, we forward model synthetic observations for a $M_r < -20$
-    complete galaxy sample for three state-of-the-art large-scale cosmological
-    hydrodynamical simulations: SIMBA, IllustrisTNG, and EAGLE.  We then
-    compare the optical
-    and UV color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$, for the
-    forward modeled simulations to SDSS observations using likelihood-free
-    inference. 
-    Without dust, none of the simulations can match observations, as expected.
+    We use the \eda~to forward model synthetic observations for three state-of-the-art large-scale cosmological
+    hydrodynamical simulations: SIMBA, IllustrisTNG, and EAGLE. 
+    We then compare the optical
+    and UV color-magnitude relations, $(\gr) - M_r$ and $(\fnuv)-M_r$, of the
+    simulations to a $M_r < -20$ complete SDSS galaxy sample using
+    likelihood-free inference. 
+    Without dust, none of the simulations match observations, as expected.
     %As expected, the simulations cannot match observations without dust. % for all three simulations, dust attenuation is {\em necessary} to match the observations.
     With the \eda, however, we can reproduce the observed color-magnitude
     with all three simulations. 
-    For SIMBA and TNG, we find an excess of luminous UV-red galaxies that
-    dust cannot fix because the simulations quench star formation too
-    efficiently in the most massive galaxies. 
-    %We find that we can accurately reproduce the color-magnitude relations of the observational sample for TNG and EAGLE. For SIMBA, we struggle to reproduce observations due to its overprediction of luminous low-mass galaxies with high star-formation rates.
-    Examining the attenuation curves predicted by our dust prescription, we
-    find good agreement with observed attenuation--slope relations and
+    %For SIMBA and TNG, we find an excess of luminous UV-red galaxies that dust cannot fix because the simulations quench star formation too efficiently in the most massive galaxies. 
+    Furthermore, the attenuation curves predicted by our dust prescription are
+    in good agreement with the observed attenuation--slope relations and
     attenuation curves of star-forming galaxies. 
     However, the \eda~does not predict star-forming galaxies with low
     $A_V$ since simulated star-forming galaxies are intrinsically much
@@ -176,10 +157,10 @@ New York, NY 10010, USA}
     with lower amplitude than star-forming galaixes.
     %Overall, we find that more massive galaxies in the simulations require higher dust attenuation, while galaxies with higher specific star formation rates have steeper attenuation curves.
     The \eda, combined with forward modeling, provides an effective
-    approach for improving our understanding of dust in galaxies and
+    approach for shedding light on  dust in galaxies and
     probing hydrodynamical simulations. 
-    Furthermore, this work illustrates a major limitation in comparing galaxy
-    formation models: by adjusting dust attenation alone, simulations with
+    This work also illustrates a major limitation in comparing galaxy
+    formation models: by adjusting dust attenation, simulations that predict
     significantly different galaxy populations can reproduce the same UV
     and optical observations. 
 \end{abstract}
@@ -187,6 +168,7 @@ New York, NY 10010, USA}
 \keywords{
     galaxies: formation -- galaxies: evolution -- galaxies: statistics -- methods: numerical 
 }
+\NewPageAfterKeywords
 
 % --- intro ---  
 \input{intro}
@@ -251,6 +233,9 @@ Participating Institutions.
 %\input{res.tex} 
 \input{slab.tex} 
 
+
 \bibliographystyle{mnras}
 \bibliography{galpopfm} 
+
+\allauthors
 \end{document}

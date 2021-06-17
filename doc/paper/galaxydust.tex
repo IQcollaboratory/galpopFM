@@ -20,12 +20,12 @@
 \end{figure}
 
 \subsection{The Galaxy -- Dust Connection}  
-In the previous section, we presented the attenuation curves predicted by
-the \eda~for quiescent galaxies. 
-By comparing them to the attenuation curves of star-forming galaxies, we
-found significant $\ssfr$ dependence in dust attenuation: quiescent galaxies
-have attenuation curves with shallower slopes and lower amplitude than
-star-forming galaxies. 
+%In the previous section, we presented the attenuation curves predicted by
+%the \eda~for quiescent galaxies. 
+%By comparing them to the attenuation curves of star-forming galaxies, we
+%found significant $\ssfr$ dependence in dust attenuation: quiescent galaxies
+%have attenuation curves with shallower slopes and lower amplitude than
+%star-forming galaxies. 
 In this section, we examine the connection between dust attenuation and galaxy
 properties in more detail. 
 First, we examine the galaxy-dust connection using the $M_*$ and $\ssfr$
@@ -34,8 +34,10 @@ dependent parameterization of our
 In Table~\ref{tab:posterior}, we list the median values and the 68\%
 confidence interval of the inferred \eda~parameter posteriors for the 
 three simulations. 
-In addition to the $\ssfr$ dependence, we also find
-significant $M_*$ dependence in $\tau_V$: $m_{\tau,M_*} > 0$.
+We find significant $\ssfr$ dependence, $m_{\tau,\ssfr} > 0$, consistent with
+what we found in the previous section: quiescent galaxies have lower dust
+attenuation than star-forming galaxies.
+We also find significant $M_*$ dependence in $\tau_V$: $m_{\tau,M_*} > 0$.
 $V$-band dust attenuation is higher for more massive galaxies.  
 There is, however, little $M_*$ dependence in the slope of the dust
 attenuation.
@@ -73,17 +75,17 @@ simulated galaxies in the bin.
 We only include bins with more than 10 galaxies. 
 We include, for reference, the $M_* - \ssfr$ relation of all galaxies in the
 simulations in black dashed contours, which mark the 68 and 95 percentiles.
-We do not include a direct comparison with $A_{1500}$ and $A_V$ measured
-from observations because there are large variations between different
-measurements (Appendix~\ref{sec:slab}, see also Figure~\ref{fig:av_obs}).  
+We do not include a direct comparison with observations because there are large
+variations between different measurements (Appendix~\ref{sec:slab}, see also
+Figure~\ref{fig:av_obs}).  
 
 In each panel, we find that SIMBA, TNG, and EAGLE galaxies with higher
 $M_*$ have higher dust attenuation at constant SSFR --- consistent with the literature.
 \cite{burgarella2005}, for instance, found significant positive $M_*$
 dependence in $FUV$ attenuation in NUV-selected and FIR-selected samples. 
-\cite{garn2010} and \cite{battisti2016} also find higher attenuation in
+\cite{garn2010} and \cite{battisti2016} also found higher attenuation in
 more massive SDSS star-forming galaxies. 
-Most recently, \cite{salim2018} find higher $V$ and $FUV$ attenuation for
+Most recently, \cite{salim2018} found higher $V$ and $FUV$ attenuation for
 more massive star-forming galaxies in GSWLC2. 
 For the $\ssfr$ dependence, we find that galaxies with higher $\ssfr$ have
 higher $A_{1500}$ (top) and $A_V$ (bottom) as well as steeper slopes. 
@@ -91,8 +93,8 @@ The $\ssfr$ dependence is not as prominent in EAGLE (see also
 Table~\ref{tab:posterior}), which has a narrower $\ssfr$ distribution than
 SIMBA and TNG with no starburst galaxies or quiescent galaxies with $\ssfr <
 10^{-12}yr^{-1}$. 
-EAGLE, therefore, has fewer intrinsically luminous star-forming galaxies
-or UV red galaxies (Figure~\ref{fig:obs}) and a narrower intrinsic $\gr$
+EAGLE has fewer intrinsically luminous star-forming galaxies
+or UV-red galaxies (Figure~\ref{fig:obs}) and a narrower intrinsic $\gr$
 and $\fnuv$ color distributions. 
 To reproduce observations, it requires an overall attenuation and reddenning
 without a significant $\ssfr$ dependence. 
@@ -100,10 +102,7 @@ Nevertheless, in all simulations, star-forming galaxies have slopes that
 are consistent with observations (Section~\ref{sec:reproduce}) while
 quiescent galaxies with the lowest $\ssfr$ have nearly flat attenuation
 curves. 
-Since observations have only focused on star-forming galaxies due to the
-difficulty in measuring dust attenuation in quiescent galaxies, the
-\eda~predictions provide new insight into the $\ssfr$ dependence of dust
-attenuation. 
+%Since observations have only focused on star-forming galaxies due to the difficulty in measuring dust attenuation in quiescent galaxies, the \eda~predictions provide new insight into the $\ssfr$ dependence of dust attenuation. 
 In summary, we find that \emph{SIMBA, TNG, and EAGLE galaxies with higher
 $M_*$ require overall higher dust attenuation and galaxies with higher
 $\ssfr$ require steeper attenuation curves}.

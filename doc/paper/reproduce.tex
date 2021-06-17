@@ -10,37 +10,33 @@
     from GSWLC2~\citep{salim2020}. 
     We use $A_V$ and $S = A(1500\AA)/A_V$ as measurements of attenuation and
     slope, respectively. 
-    \chedit{
-        \emph{The \eda~does not predict $A_V < 0.3$ because star-forming galaxies in
-        the simulations are too lumnious and require significant attenuation to
-        reproduce observations.}
-        Beyond $A_V > 0.3$, however, there is good agreement between the
-        attenuation-slope relation predicted by the \eda~and observations. 
-    }
+    \emph{The \eda~does not predict $A_V < 0.3$ because star-forming galaxies in
+    the simulations are intrinsically too lumnious and require significant attenuation to
+    match observations.}
+    Beyond $A_V > 0.3$, however, there is good agreement between the
+    attenuation-slope relation predicted by the \eda~and observations. 
     }
 \end{center}
 \end{figure}
 
 \subsection{Comparison to Dust Observations} \label{sec:reproduce}
-With our \eda~prescription, we are able to accurately reproduce the
-observed optical and UV color-magnitude relations with our simulations. 
-In addition to  reproducing observations, since the \eda~assigns dust
-attenuation curves to each simulated galaxy, we can compare the
-\eda~attenuation curves to dust attenuation measured from
-observations. 
+In addition to  reproducing observations, the \eda~assigns dust attenuation
+curves to each simulated galaxy so we can compare the \eda~attenuation curves
+to dust attenuation measured from observations. 
 We begin with the well-established attenuation-slope relation: star-forming
 galaxies with higher dust attenuation have shallower attenuation curves. 
 This relation is a consequence of dust scattering dominating absorption at
 low attenuation while dust absorption dominates at high
 attenuation~\citep{gordon1994, witt2000, draine2003, chevallard2013}. 
 In Figure~\ref{fig:slope}, we present the attenuation-slope relation of
-star-forming galaxies with $\ssfr > 10^{-11}yr^{-1}$ based on the
+star-forming galaxies with $\ssfr > 10^{-11}yr^{-1}$ using the
 dust attenuation curves predicted by the \eda~for the median posteriors of
 SIMBA (left), TNG (center) and EAGLE (right).
 For comparison, we include the observed attenuation-slope relations of
 GSWLC2 galaxies~\citep[grey shaded;][]{salim2020}.
-For attenuation we use $A_V$ and for slope we use the UV-optical slope, $S
-= A(1500\AA)/A_V$.  The contours mark the 68 and 95 percentiles. 
+For attenuation, we use $A_V$; for slope, we use the UV-optical slope, $S
+= A(1500\AA)/A_V$. 
+The contours mark the 68 and 95 percentiles. 
 
 Most noticably, we find that the \eda~does not predict $A_V < 0.3$ for
 star-forming galaxies.
@@ -51,23 +47,23 @@ star-forming galaxies.
 %    observational sample.
 %    Instead, the lack of star-forming galaxies with $A_V < 0.3$ is a
 This is a consequence of SIMBA, TNG, and EAGLE predicting star-forming galaxies
-that are more luminous than observations.  
+that are intrinsically more luminous than observations.  
 All of the simulations have star-forming galaxies with intrinsic $M_r <
 -21$ and $\gr < 0.5$ (Figure~\ref{fig:obs}). 
 This is further corroborated by the $\sfr-M*$ relations in
 Figure~\ref{fig:smf_msfr}, where the simulations all have star-forming
 galaxies with $M_* > 10^{11}M_\odot$, not found in SDSS. 
 To reproduce the SDSS optical color-magnitude relation these galaxies would
-need to be significantly reddened and attenuated. 
-Hence, any dust prescription for the simulations would require high 
-$A_V$ for star-forming galaxies.
-We also note that $A_V$ values can vary {\em significantly} between
-different observational measurements --- even for the same galaxy. 
+need to be significantly reddened and attenuated so any dust prescription would
+need to assign high $A_V$ to star-forming galaxies.
+Nevertheless, for $A_V > 0.3$, we find good agreement between the 
+attenuation-slope relation predicted by the \eda~and observations. 
+We refrain from further scrutinizing on $A_V$ values, since they can vary {\em
+significantly} between different observational measurements --- even for the
+same galaxy. 
 SDSS star-forming galaxies, for instance, have significantly higher 
 $A_V > 0.3$ according to the \cite{brinchmann2004} measurements
 (Appendix~\ref{sec:slab}).
-Nevertheless, for $A_V > 0.3$, we find good agreement between the 
-attenuation-slope relation predicted by the \eda~and observations. 
 
 
 %We note that the difference in the $A_V$ ranges is due to the $M_r$

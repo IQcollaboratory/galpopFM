@@ -5,18 +5,17 @@
     The stellar mass functions, $\Phi_{M_*}$ (left-most panel), and $M_*-\sfr$
     relation (right panels) of galaxies in three cosmological hydrodynamic 
     simulations: SIMBA (orange), TNG (blue), and EAGLE (green). 
-    For reference, we include $\Phi_{M_*}$ and the $M_*-\sfr$ relation of from
+    For reference, we include $\Phi_{M_*}$ and the $M_*-\sfr$ relation of
     SDSS observations (black).
     Uncertainties for the SDSS $\Phi_{M_*}$ are derived using jackknife
     resampling. 
     We describe the simulations and observations in Section~\ref{sec:sims}. 
-    There are significant differences between the $M_*-\sfr$ relations of
-    SDSS and the simulations, which are driven by the inconsistencies
-    between the simulations' theoretical $M_*$ and $\sfr$ predictions
-    and the SDSS measurements.
+    Although, we see significant differences between the $M_*-\sfr$ relations of
+    SDSS and the simulations, the SDSS measurements cannot be directly compared
+    to the simulations' theoretical $M_*$ and $\sfr$ predictions.
     A forward modeling approach, where we construct synthetic observations
-    for the simulations, reduces the inconsistencies and enables an
-    apples-to-apples comparison between simulations and observation. 
+    for the simulations, enables an apples-to-apples comparison between
+    simulations and observation. 
     \emph{Furthermore, differences
     in $\Phi_{M_*}$ and the $M_*-\sfr$ relations among the hydrodynamic simulations 
     highlight how they predict galaxy populations with significantly different
@@ -35,7 +34,7 @@ SDSS. Below, we briefly describe the simulations and the SDSS observations used
 throughout this work.
 
 In Figure~\ref{fig:smf_msfr}, we present the stellar mass functions,
-$\Phi_{M_*}$ left-most panel, and $M_*-\sfr$ relations (right panels) of
+$\Phi_{M_*}$ (left-most panel), and $M_*-\sfr$ relations (right panels) of
 galaxies in SIMBA (orange), TNG (blue), and EAGLE (green). For reference, we
 include $\Phi_{M_*}$ and the 
 $M_*-\sfr$ relation for SDSS observations. For the simulations, $M_*$ is the
@@ -48,8 +47,8 @@ current release of \cite{brinchmann2004}\footnote{\url{http://www.mpa-garching.m
 The uncertainties for the SDSS SMF are derived from jackknife resampling.
 Although, we find striking differences between the $M_*-\sfr$ relation of SDSS
 and the simulations, the $M_*$ and $\sfr$ of simulations are theoretical
-predictions while the SDSS values are measurements, which are subject to
-\eg~$\sfr$ measurement limits, inconsistencies among $\sfr$ tracers, and
+predictions while the SDSS values are measurements, which are subject to, for
+instance, $\sfr$ measurement limits, inconsistencies among $\sfr$ tracers, and
 aperture effects.
 This inconsistency prevents a meaningful direct comparison. 
 However, with a forward modeling approach of constructing synthetic
@@ -64,7 +63,7 @@ observations~\citep[see \eg][Starkenburg et al. in prep.]{dickey2020}.
 %models, the simulations can be more consistently compared to
 %observations~\citep[see \eg][Starkenburg et al. in prep.]{dickey2020}.
 Figure~\ref{fig:smf_msfr} also illustrates that the hydrodynamical simulations
-predict different SMFs and $M_*-\sfr$ relations from each other.
+predict significantly different SMFs and $M_*-\sfr$ relations from each other.
 This difference, which was also recently highlighted in \cite{hahn2019c},
 demonstrates that \emph{the hydrodynamical simulations predict galaxy
 populations with significantly different physical properties from one
@@ -121,17 +120,14 @@ X-ray modes. %which ejects bipolar kinetic winds with $\sim 10^3 \kms$ for high 
 \begin{center}
     \includegraphics[width=0.45\textwidth]{figs/sdss_selection.pdf} 
     \caption{\label{fig:sdss_sel}
-    \chedit{
-        We derive our observational sample (blue) from the \cite{tinker2011}
-        SDSS DR7 NYU-VAGC sample (black dashed) by impose $M_r < -20$, $M_{FUV}
-        < -13.5$  and $M_{NUV} < -14.0$ completeness limits. 
-        We describe the galaxy sample and completess limits in more detail in
-        Section~\ref{sec:obs}. 
-        $M_*$ is estimated using $\mathtt{kcorrect}$ and SSFR is from
-        \cite{brinchmann2004}.
-        Our SDSS sample has 4,451 galaxies that includes both
-        star-forming and quiescent galaxies with $M_* \gtrsim 10^{10}M_\odot$.
-    }
+    We derive our observational sample (blue) from the \cite{tinker2011}
+    SDSS sample (black dashed) by impose $M_r < -20$, $M_{FUV}
+    < -13.5$  and $M_{NUV} < -14.0$ completeness limits. 
+    We describe the galaxy sample and completess limits in Section~\ref{sec:obs}. 
+    $M_*$ is estimated using $\mathtt{kcorrect}$ and SSFR is from
+    \cite{brinchmann2004}.
+    Our SDSS sample has 4,451 galaxies that includes both
+    star-forming and quiescent galaxies with $M_* \gtrsim 10^{10}M_\odot$.
     }
 \end{center}
 \end{figure}
@@ -144,9 +140,9 @@ begin with the volume-limited \cite{tinker2011} sample derived from the SDSS
 DR7~\citep{abazajian2009} NYU Value-Added Galaxy
 Catalog~\citep[VAGC;][]{blanton2005}, which has a $M_* > 10^{9.7} M_\odot$
 completeness limit. 
-We focus on observables that can be consistently defined and derived in both simulations 
-and observations: the $r$-band absolute magnitude, $M_r$, the optical $\gr$
-color, and the $\fnuv$ color. 
+However, rather than $M_*$, we focus on observables that can be consistently
+defined and derived in both simulations and observations: the $r$-band absolute
+magnitude, $M_r$, the optical $\gr$ color, and the $\fnuv$ color. 
 We use $FUV$, $NUV$, $r$ and $g$ band absolute magnitudes from the NASA-Sloan
 Atlas\footnote{\url{http://nsatlas.org/}} (NSA), which is a re-reduction of SDSS DR8
 \citep{aihara2011} that includes an improved background subtraction~\citep{blanton2011} 
@@ -154,8 +150,8 @@ and near and far UV photometry from GALEX. These absolute magnitudes are
 derived using $\mathtt{kcorrect}$~\citep{blanton2007a}, assuming
 a~\cite{chabrier2003} initial mass function. 
 
-We impose a $M_r < -20$ completeness limit on the \cite{tinker2011} sample.
-We also impose completeness limits in the $FUV$ and $NUV$ bands. 
+We impose a $M_r < -20$ completeness limit on the \cite{tinker2011} sample as
+well as completeness limits in the $FUV$ and $NUV$ bands. 
 %UV fluxes in the NASA-Sloan Atlas are measured using forced photometry on GALEX so galaxies can have $FUV$ and $NUV$ fluxes $\leq 0$.  First, we exclude these galaxies from the SDSS sample.  Furthermore,
 $\mathtt{kcorrect}$ UV absolute magnitudes are poorly constrained for
 galaxies with low UV fluxes. 
@@ -164,13 +160,12 @@ $\mathtt{kcorrect}$ to the measured fluxes and determine the flux limits
 above which the fluxes are in good agreement. 
 The flux limits correspond to completeness limits of $M_{FUV} < -13.5$  and
 $M_{NUV} < -14.0$. 
-\chedit{
-    In Figure~\ref{fig:sdss_sel}, we present the $M_*$-SSFR relation of our
-    observational sample (blue). 
-    We include the original SDSS NYU-VAGC (black dash) for comparison.
-    In total, our SDSS sample has 4,451 star-forming and quiescent galaxies
-    with $M_* \gtrsim 10^{10}M_\odot$.
-}
+In Figure~\ref{fig:sdss_sel}, we present the $M_*$-SSFR relation of our
+observational sample (blue). 
+We include the original \cite{tinker2011} SDSS sample (black dash) for
+comparison.  
+In total, our SDSS sample has 4,451 star-forming and quiescent galaxies
+with $M_* \gtrsim 10^{10}M_\odot$.
 
 \subsection{Forward Modeling Observations} \label{sec:fm} 
 One of the main goals of this work is to conduct an ``apples-to-apples''
@@ -178,8 +173,7 @@ comparison between the simulations and observations.
 A crucial step in this comparison is to \emph{forward model} the
 observables from the simulations. 
 The simulations can then be directly compared to observations in
-observational-space. 
-Then the comparison does not rely on measured galaxy properties,
+observational-space, instead of relying on measured galaxy properties,
 which are impacted by variations, inconsistencies, and biases of different
 methods~\citep{dickey2020}. 
 The comparison can also include selection functions and observational systematic
@@ -196,16 +190,15 @@ and \cite{chabrier2003} initial mass function.
 For each simulated galaxy, we bin the total stellar mass formed by age ($t$) and metallicity
 ($Z$). We use the same $t$, $Z$ grid for all of the simulations
 to account for the variable time and mass resolutions. 
-For each $(t, Z)$ bin, we generate a spectrum assuming a simple stellar
-population (SSP) using $\mathtt{FSPS}$ and take the mass-weighted linear
+We assume each $(t, Z)$ bin is a single stellar population and generate a
+spectrum assuming using $\mathtt{FSPS}$ and take the mass-weighted linear
 combination of them to produce the galaxy SED. 
 For further details on how we construct the SEDs, we refer readers to
 Starkenberg et al. (in prep.).
 
-Next, we apply dust attenuation to the SEDs. We use the \eda~prescription
-to assign dust attenuation curves for each simulated galaxy based on its physical
-properties, a randomly sampled inclination, and \eda~model parameters
-(Section~\ref{sec:dem}). 
+Next, we apply dust attenuation to the SEDs using the \eda~prescription, which 
+assigns dust attenuation curves to each simulated galaxy based on its physical
+properties and \eda~model parameters (Section~\ref{sec:dem}). 
 We then convolve the attenuated SEDs with the transmission curves of the GALEX
 $FUV$, GALEX $NUV$, SDSS $g$, and SDSS $r$ broadband filter to construct the
 observables. 

@@ -12,7 +12,7 @@ incorrect form of the likelihood can significantly bias the inferred
 posteriors~\citep[\eg][]{hahn2019}. In this work, we use the optical and UV
 color-magnitude relations as our summary statistic. Since this statistic is
 a three-dimensional histogram, the likelihood is {\em not} Gaussian.
-Furthermore, since the bins are not independent the true likelihood is
+Furthermore, since the bins are not independent, the true likelihood is
 difficult to analytically write down.
 
 Rather than \emph{incorrectly} assuming a Gaussian likelihood or attempting
@@ -28,16 +28,14 @@ that quantifies the ``closeness'' to the observed data.
 Since ABC does not require evaluating the likelihood, it does not assume
 any functional form of the likelihood so we avoid any biases from such
 assumptions. 
-It also expands the summary statistics we can use to infer the posteriors.
-ABC, therefore, provides a general inference framework for our forward
-modeling approach. 
+It also expands the summary statistics we can use to infer the posteriors and,
+therefore, provides a general inference framework for a forward modeling 
+approach. 
 
-In the simplest version of ABC, with a rejection sample
-framework~\citep{pritchard1999}, a proposal set of parameter values are drawn
+In the simplest version of ABC, with rejection sampling~\citep{pritchard1999}, a proposal set of parameter values are drawn
 from the prior. The forward model is run with the proposal parameter values.
 The output of the forward model is then compared to the observed data using
-a distance metric that quantifies the ``closeness'' of the forward model
-output to the observed data. 
+a distance metric. 
 If the distance is within some small threshold, we keep the proposed
 parameters; otherwise, we discard them.  Proposals are
 drawn until enough pass the threshold to sample the posterior. A
@@ -87,11 +85,10 @@ Meanwhile, the prior ranges of $\mdeltam, \mdeltas, c_\delta$ include the
 $\delta$ range and $M_*$ and $\sfr$ dependence of \cite{leja2017} and
 \cite{salim2018}. 
 We list the range of the priors in Table~\ref{tab:free_param}. 
-For our forward model, we use the model described in
-Section~\ref{sec:fm}: we construct SEDs for every simulated galaxy from
-the hydrodynamic simulations, apply dust attenuation with our
-\eda, calculate the observables ($M_r$, $\gr$, and $\fnuv$), apply a noise
-model to them, and apply a $M_r < -20$ completeness limit. 
+We use the forward model described in Section~\ref{sec:fm}, where we construct
+SEDs for every simulated galaxy from SIMBA, TNG, and EAGLE, apply dust
+attenuation with our \eda, calculate the observables ($M_r$, $\gr$, and
+$\fnuv$), add realistic noise, and apply a $M_r < -20$ completeness limit. 
 We use the optical and UV color-magnitude relation, $(\gr)- M_r$ and
 $(\fnuv)-M_r$ as our summary statistic to fully exploit the $(M_r, \gr,
 \fnuv)$ observational-space. We measure the color-magnitude relations by
@@ -104,5 +101,5 @@ of our forward model, $n^{\rm FM}(\theta_{\rm \eda})$:
     n_{ij}^{\rm FM}(\theta_{\rm \eda}) \right]^2.
 \end{equation}
 In Figure~\ref{fig:abc}, we present the posterior distributions of the \eda~parameters
-derived using ABC-PMC for the SIMBA (orange), TNG (blue), and EAGLE (green) hydrodynamical 
-simulations. The contours mark the $68$ and $95$ percentiles of the distributions. 
+derived using ABC-PMC for the SIMBA (orange), TNG (blue), and EAGLE (green).
+The contours mark the $68$ and $95$ percentiles of the distributions. 
