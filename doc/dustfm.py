@@ -1684,7 +1684,7 @@ def ABC_A_MsSFR():
     wave = np.linspace(1000, 10000, 451) 
     i1500 = 25
     i5500 = 225
-    gridsize=[18, 15, 13]
+    gridsize=[17, 15, 13]
 
     # plotting 
     fig = plt.figure(figsize=(16,10))
@@ -1723,7 +1723,7 @@ def ABC_A_MsSFR():
 
             scs.append(
                     sub.hexbin(_sim['logmstar'][cuts], _sim['logsfr.inst'][cuts] - _sim['logmstar'][cuts], 
-                        C=A[cuts], reduce_C_function=np.median, gridsize=gridsize[i],
+                        C=A[cuts], reduce_C_function=np.median, extent=(9, 12, -13, -9), gridsize=13, #gridsize[i],
                         vmin=0.5, vmax=5., mincnt=10, cmap='Spectral_r'))
                         #vmin=[1.5, 0.2][ii], vmax=[5., 1.4][ii], mincnt=10, cmap=['Blues', 'Oranges'][ii]))
                         #vmin=0.2, vmax=5., mincnt=10, cmap='Spectral'))
@@ -5495,7 +5495,7 @@ if __name__=="__main__":
     #ABC_Observables()
     #_ABC_Observables_subpop()
     #ABC_Observables_UVred()
-    ABC_Observables_colordist()
+    #ABC_Observables_colordist()
     
     # color distriution in Mr bins 
     #ABC_color_distribution()
@@ -5515,7 +5515,7 @@ if __name__=="__main__":
     #ABC_attenuation_unnormalized()
     
     # Av and A1500 
-    #ABC_A_MsSFR()
+    ABC_A_MsSFR()
     ##_ABC_A_MsSFR_SIMBA()
     ##_ABC_stdA_MsSFR()
 
